@@ -1,0 +1,50 @@
+# COLIDE Master Configuration
+# All experiments reference this file.
+# Never hardcode values in scripts — always read from here.
+
+seed: 42
+
+data:
+  raw_path: "data/raw/"
+  processed_path: "data/processed/"
+  splits_path: "data/splits/"
+  test_size: 0.2
+  val_size: 0.1
+  label_column: "attack"          # confirm after EDA
+  feature_columns: null           # populated after EDA
+  num_classes: null               # populated after EDA
+  class_names: null               # populated after EDA
+
+preprocessing:
+  window_size: 20
+  normalize: "minmax"             # minmax | standard
+  imbalance_strategy: "smote"     # smote | undersample | combined
+  smote_k: 5
+
+model:
+  input_features: null            # populated after EDA
+  window_size: 20
+  cnn_filters_1: 64
+  cnn_filters_2: 128
+  cnn_kernel_size: 3
+  pool_size: 2
+  bilstm_units_1: 128
+  bilstm_units_2: 64
+  dense_units: 64
+  dropout_rate: 0.3
+  precision: ["fp32", "fp16"]
+  weight_export_path: "model/weights/"
+
+training:
+  batch_size: 128                 # conservative for 6GB VRAM
+  epochs: 50
+  lr: 0.001
+  lr_scheduler: "cosine"
+  early_stopping_patience: 10
+  device: "cuda"
+
+benchmarking:
+  runs: 10
+  warmup_runs: 3
+  percentiles: [50, 95, 99]
+  batch_sizes: [1, 32, 128, 256]  # max 256 given 6GB VRAM

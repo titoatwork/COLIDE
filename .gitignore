@@ -1,0 +1,35 @@
+# Virtual environment — never commit this
+.venv/
+
+# Dataset — too large for git
+data/raw/
+data/processed/
+data/splits/
+
+# Model weights — exported separately
+model/weights/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Benchmark raw results — keep plots, not raw data
+benchmarks/results/
+
+# Compiled CUDA artifacts
+*.so
+*.o
+*.ptx
+*.cubin
+
+# Environment secrets
+.env
+
+# OS artifacts
+.DS_Store
+Thumbs.db
