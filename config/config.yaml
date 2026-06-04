@@ -64,3 +64,22 @@ benchmarking:
   - 32
   - 128
   - 256
+resampling:
+  DDoS: 100000
+  DoS: 100000
+  Reconnaissance: 65627
+  Normal: 20000
+  Theft: 10000
+  smote_k_normal: 3
+  smote_k_theft: 2
+
+evaluation:
+  checkpoint_metric: macro_f1
+  metrics:
+    - precision
+    - recall
+    - f1
+    - macro_f1
+    - weighted_f1
+    - confusion_matrix
+  per_class: true
