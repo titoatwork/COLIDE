@@ -1,360 +1,197 @@
-"""
-COLIDE
-CNN-BiLSTM Architecture
-
-Input:
-    (batch_size, window_size, num_features)
-
-Example:
-    (128, 20, 10)
-
-Author:
-    COLIDE Data Science Team
-"""
-
-from pathlib import Path
-
+import yaml
 import numpy as np
 import torch
 import torch.nn as nn
+from pathlib import Path
 
 
 class CNNBiLSTM(nn.Module):
-    """
-    CNN-BiLSTM Hybrid Network
-    """
-
     def __init__(self, config):
-
         super().__init__()
 
         model_cfg = config["model"]
 
         self.input_features = model_cfg["input_features"]
-
-        self.window_size = model_cfg["window_size"]
-
+        self.projection_dim = model_cfg["projection_dim"]
+        self.reshape_channels = model_cfg["reshape"][0]
+        self.reshape_length = model_cfg["reshape"][1]
         self.cnn_filters_1 = model_cfg["cnn_filters_1"]
         self.cnn_filters_2 = model_cfg["cnn_filters_2"]
-
-        self.cnn_kernel_size = model_cfg["cnn_kernel_size"]
-
+        self.kernel_size = model_cfg["cnn_kernel_size"]
         self.pool_size = model_cfg["pool_size"]
-
         self.bilstm_units_1 = model_cfg["bilstm_units_1"]
         self.bilstm_units_2 = model_cfg["bilstm_units_2"]
-
         self.dense_units = model_cfg["dense_units"]
-
         self.dropout_rate = model_cfg["dropout_rate"]
-
         self.num_classes = model_cfg["num_classes"]
 
-        # ----------------------------------------------------
-        # CNN
-        # ----------------------------------------------------
+        self.input_projection = nn.Linear(
+            self.input_features,
+            self.projection_dim,
+        )
 
         self.conv1 = nn.Conv1d(
-            in_channels=self.input_features,
+            in_channels=self.reshape_channels,
             out_channels=self.cnn_filters_1,
-            kernel_size=self.cnn_kernel_size,
-            padding=1
+            kernel_size=self.kernel_size,
+            padding=1,
         )
+        self.bn1 = nn.BatchNorm1d(self.cnn_filters_1)
 
         self.conv2 = nn.Conv1d(
             in_channels=self.cnn_filters_1,
             out_channels=self.cnn_filters_2,
-            kernel_size=self.cnn_kernel_size,
-            padding=1
+            kernel_size=self.kernel_size,
+            padding=1,
         )
+        self.bn2 = nn.BatchNorm1d(self.cnn_filters_2)
 
-        self.relu = nn.ReLU()
-
-        self.pool = nn.MaxPool1d(
-            kernel_size=self.pool_size
-        )
-
-        self.dropout = nn.Dropout(
-            self.dropout_rate
-        )
-
-        # ----------------------------------------------------
-        # BiLSTM 1
-        # ----------------------------------------------------
+        self.pool = nn.MaxPool1d(kernel_size=self.pool_size)
+        self.dropout = nn.Dropout(self.dropout_rate)
 
         self.bilstm1 = nn.LSTM(
             input_size=self.cnn_filters_2,
             hidden_size=self.bilstm_units_1,
             num_layers=1,
             batch_first=True,
-            bidirectional=True
+            bidirectional=True,
         )
-
-        # ----------------------------------------------------
-        # BiLSTM 2
-        # ----------------------------------------------------
 
         self.bilstm2 = nn.LSTM(
             input_size=self.bilstm_units_1 * 2,
             hidden_size=self.bilstm_units_2,
             num_layers=1,
             batch_first=True,
-            bidirectional=True
+            bidirectional=True,
         )
-
-        # ----------------------------------------------------
-        # Dense Layers
-        # ----------------------------------------------------
 
         self.fc1 = nn.Linear(
             self.bilstm_units_2 * 2,
-            self.dense_units
+            self.dense_units,
         )
-
         self.fc2 = nn.Linear(
             self.dense_units,
-            self.num_classes
+            self.num_classes,
         )
+        self.relu = nn.ReLU()
 
     def forward(self, x):
-
-        # --------------------------------------------
-        # Input:
-        # (B, 20, 10)
-        # --------------------------------------------
-
-        x = x.permute(
-            0,
-            2,
-            1
+        x = self.input_projection(x)
+        x = x.view(
+            x.size(0),
+            self.reshape_channels,
+            self.reshape_length,
         )
 
-        # --------------------------------------------
-        # CNN
-        # --------------------------------------------
-
-        x = self.relu(
-            self.conv1(x)
-        )
-
-        x = self.relu(
-            self.conv2(x)
-        )
-
+        x = self.conv1(x)
+        x = self.bn1(x)
+        x = self.relu(x)
+        x = self.conv2(x)
+        x = self.bn2(x)
+        x = self.relu(x)
         x = self.pool(x)
-
         x = self.dropout(x)
 
-        # --------------------------------------------
-        # Convert for LSTM
-        #
-        # (B, C, L)
-        # ->
-        # (B, L, C)
-        # --------------------------------------------
-
-        x = x.permute(
-            0,
-            2,
-            1
-        )
-
-        # --------------------------------------------
-        # BiLSTM 1
-        # --------------------------------------------
+        x = x.permute(0, 2, 1)
 
         x, _ = self.bilstm1(x)
-
         x = self.dropout(x)
-
-        # --------------------------------------------
-        # BiLSTM 2
-        # --------------------------------------------
-
         x, _ = self.bilstm2(x)
-
         x = self.dropout(x)
-
-        # --------------------------------------------
-        # Last Timestep
-        # --------------------------------------------
 
         x = x[:, -1, :]
 
-        # --------------------------------------------
-        # Dense
-        # --------------------------------------------
-
-        x = self.relu(
-            self.fc1(x)
-        )
-
+        x = self.fc1(x)
+        x = self.relu(x)
         x = self.dropout(x)
 
         logits = self.fc2(x)
-
         return logits
 
-    # ==================================================
-    # Utilities
-    # ==================================================
+    def count_parameters(self):
+        return sum(
+            p.numel() for p in self.parameters() if p.requires_grad
+        )
 
     def get_model_summary(self):
-
-        total_params = sum(
-            p.numel()
-            for p in self.parameters()
-        )
-
-        trainable_params = sum(
-            p.numel()
-            for p in self.parameters()
-            if p.requires_grad
-        )
-
-        model_size_mb = (
-            total_params * 4
-        ) / (1024 ** 2)
+        params = self.count_parameters()
+        size_mb = (params * 4) / (1024 ** 2)
 
         print("\n" + "=" * 70)
         print("MODEL SUMMARY")
         print("=" * 70)
+        print(f"Total Parameters    : {params:,}")
+        print(f"FP32 Size (MB)      : {size_mb:.2f}")
 
-        print(
-            f"Total Parameters    : "
-            f"{total_params:,}"
+    def export_weights(self):
+        config_path = (
+            Path(__file__)
+            .resolve()
+            .parent
+            .parent
+            / "config"
+            / "config.yaml"
         )
 
-        print(
-            f"Trainable Parameters: "
-            f"{trainable_params:,}"
+        with open(config_path, "r") as f:
+            config = yaml.safe_load(f)
+
+        export_dir = (
+            Path(__file__)
+            .resolve()
+            .parent
+            .parent
+            / config["model"]["weight_export_path"]
         )
 
-        print(
-            f"FP32 Size (MB)      : "
-            f"{model_size_mb:.2f}"
-        )
-    def count_parameters(self):
-        """
-        Return number of trainable parameters.
-        """
+        export_dir.mkdir(parents=True, exist_ok=True)
 
-        return sum(
-            p.numel()
-            for p in self.parameters()
-            if p.requires_grad
-        )
-    def export_weights(
-        self,
-        export_dir
-    ):
+        print("\nExporting Weights...")
 
-        export_dir = Path(export_dir)
+        for name, param in self.named_parameters():
+            safe_name = name.replace(".", "_")
+            fp32_path = export_dir / f"{safe_name}_fp32.npy"
+            fp16_path = export_dir / f"{safe_name}_fp16.npy"
+            weights = param.detach().cpu().numpy()
 
-        fp32_dir = (
-            export_dir /
-            "fp32"
-        )
+            np.save(fp32_path, weights.astype(np.float32))
+            np.save(fp16_path, weights.astype(np.float16))
 
-        fp16_dir = (
-            export_dir /
-            "fp16"
-        )
-
-        fp32_dir.mkdir(
-            parents=True,
-            exist_ok=True
-        )
-
-        fp16_dir.mkdir(
-            parents=True,
-            exist_ok=True
-        )
-
-        print(
-            "\nExporting weights..."
-        )
-
-        for name, param in self.state_dict().items():
-
-            clean_name = (
-                name.replace(".", "_")
-            )
-
-            fp32_path = (
-                fp32_dir /
-                f"{clean_name}.npy"
-            )
-
-            fp16_path = (
-                fp16_dir /
-                f"{clean_name}.npy"
-            )
-
-            np.save(
-                fp32_path,
-                param.cpu()
-                .numpy()
-                .astype(np.float32)
-            )
-
-            np.save(
-                fp16_path,
-                param.cpu()
-                .numpy()
-                .astype(np.float16)
-            )
-
-        print(
-            "Weight export complete."
-        )
+        print(f"Saved weights to: {export_dir}")
 
 
-# ==========================================================
-# Sanity Check
-# ==========================================================
+def load_config():
+    config_path = (
+        Path(__file__)
+        .resolve()
+        .parent
+        .parent
+        / "config"
+        / "config.yaml"
+    )
+
+    with open(config_path, "r") as f:
+        config = yaml.safe_load(f)
+
+    return config
+
 
 if __name__ == "__main__":
+    config = load_config()
+    model = CNNBiLSTM(config)
 
-    cfg = {
-        "model": {
-            "input_features": 10,
-            "window_size": 20,
-            "cnn_filters_1": 64,
-            "cnn_filters_2": 128,
-            "cnn_kernel_size": 3,
-            "pool_size": 2,
-            "bilstm_units_1": 128,
-            "bilstm_units_2": 64,
-            "dense_units": 64,
-            "dropout_rate": 0.3,
-            "num_classes": 5
-        }
-    }
-
-    model = CNNBiLSTM(cfg)
-
-    x = torch.randn(
+    dummy_input = torch.randn(
         4,
-        20,
-        10
+        config["model"]["input_features"],
     )
 
-    y = model(x)
+    output = model(dummy_input)
 
-    print(
-        "Output Shape:",
-        y.shape
-    )
-
-    assert y.shape == (
+    print(f"Output Shape: {output.shape}")
+    assert output.shape == (
         4,
-        5
+        config["model"]["num_classes"],
     )
 
     model.get_model_summary()
-
-    print(
-        "\nSanity check passed."
-    )
-
+    print("\nSanity check passed.")

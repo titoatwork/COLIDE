@@ -1,4 +1,5 @@
 seed: 42
+
 data:
   raw_path: data/raw/
   processed_path: data/processed/
@@ -24,14 +25,25 @@ data:
   - Normal
   - Reconnaissance
   - Theft
+
 preprocessing:
-  window_size: 20
+  mode: per_flow
   normalize: minmax
-  imbalance_strategy: smote
-  smote_k: 5
+  imbalance_strategy: smote_undersample
+
+resampling:
+  DDoS: 100000
+  DoS: 100000
+  Reconnaissance: 65627
+  Normal: 2000
+  Theft: 1000
+  smote_k_normal: 3
+  smote_k_theft: 2
+
 model:
   input_features: 10
-  window_size: 20
+  projection_dim: 64
+  reshape: [2, 32]
   cnn_filters_1: 64
   cnn_filters_2: 128
   cnn_kernel_size: 3
@@ -45,6 +57,7 @@ model:
   - fp16
   weight_export_path: model/weights/
   num_classes: 5
+
 training:
   batch_size: 128
   epochs: 50
@@ -52,6 +65,19 @@ training:
   lr_scheduler: cosine
   early_stopping_patience: 10
   device: cuda
+  use_class_weights: false
+
+evaluation:
+  checkpoint_metric: macro_f1
+  metrics:
+  - precision
+  - recall
+  - f1
+  - macro_f1
+  - weighted_f1
+  - confusion_matrix
+  per_class: true
+
 benchmarking:
   runs: 10
   warmup_runs: 3
@@ -64,22 +90,3 @@ benchmarking:
   - 32
   - 128
   - 256
-resampling:
-  DDoS: 100000
-  DoS: 100000
-  Reconnaissance: 65627
-  Normal: 20000
-  Theft: 10000
-  smote_k_normal: 3
-  smote_k_theft: 2
-
-evaluation:
-  checkpoint_metric: macro_f1
-  metrics:
-    - precision
-    - recall
-    - f1
-    - macro_f1
-    - weighted_f1
-    - confusion_matrix
-  per_class: true
