@@ -57,6 +57,8 @@ model:
   - fp16
   weight_export_path: model/weights/
   num_classes: 5
+  attention_heads: 4
+  attention_dropout: 0.1
 
 training:
   batch_size: 128

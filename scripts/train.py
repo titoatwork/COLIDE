@@ -45,8 +45,8 @@ sys.path.append(
 str(PROJECT_ROOT)
 )
 
-from model.cnn_bilstm import (
-CNNBiLSTM
+from model.cnn_bilstm_v3_attention import (
+CNNBiLSTMAttention as CNNBiLSTM
 )
 
 # ============================================================
