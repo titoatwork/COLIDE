@@ -1,192 +1,291 @@
-# COLIDE
+# COLIDE: CUDA-Optimized CNN-BiLSTM with LLM-Based Explainability for IoT Intrusion Detection
 
-## CUDA-Optimized CNN-BiLSTM with LLM-Based Explainability for IoT Intrusion Detection
+[![CUDA](https://img.shields.io/badge/CUDA-12.1+-green.svg)](https://developer.nvidia.com/cuda-toolkit)
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.5+-red.svg)](https://pytorch.org/)
+[![License](https://img.shields.io/badge/License-Academic-blue.svg)](#license)
 
-**Institution:** Universiti Malaya (UM), FCSIT
-**Supervisor:** Prof. Dr. Por Lip Yee
-**Researcher:** Ibteshamul Haque
+## Abstract
 
----
+COLIDE presents the first custom CUDA kernel implementation for CNN-BiLSTM-based IoT intrusion detection, achieving **2.42x end-to-end speedup** over PyTorch GPU inference. The system integrates an asynchronous LLM-based explainability module that generates human-readable security alerts with only **8 microseconds** dispatch overhead (0.7% of the detection pipeline). Evaluated on the BoT-IoT dataset, the system sustains **25,410 flows/sec** in streaming mode while maintaining a macro-F1 score of **0.9352**.
 
-## Project Overview
+## Key Contributions
 
-COLIDE is a three-part real-time intrusion detection system for IoT networks:
+1. **Custom CUDA Inference Kernels**: Hand-written CUDA kernels for all four CNN-BiLSTM blocks with kernel fusion, achieving 3.2-6.6x per-block speedups over PyTorch for convolution and dense layers
+2. **FP16 Half2 BiLSTM Optimization**: Native half-precision FMA instructions pack LSTM gate pairs into half2 vectors, achieving 1.67x improvement over FP32 and **beating PyTorch's cuDNN by 1.23x**
+3. **Async LLM Explainability**: Ring-buffer-based asynchronous dispatch to a quantized LLM (TinyLlama 1.1B Q4) generates SOC-actionable alert explanations without impacting detection latency
+4. **Comprehensive Systems Benchmarking**: Per-kernel optimization progression (9.48x from naive to final), batch scaling analysis, energy efficiency, streaming throughput, and framework comparisons
 
-1. A CNN-BiLSTM neural network classifies network flows as benign or one of multiple attack categories.
-2. Custom hand-tuned CUDA kernels execute inference at bare-metal GPU speed without framework runtime dependency.
-3. When an anomaly is detected, an asynchronous LLM generates a human-readable alert for SOC analysts — without blocking detection latency.
+## Results Summary
 
-**This is an engineering and systems paper.** The contribution is reproducible bare-metal CUDA inference, LLM explainability without latency destruction, and rigorous hardware-comparative benchmarking — not a novel ML architecture or attack taxonomy.
+### Pipeline Speedup (Single Sample)
 
----
+| Method | Latency (us) | vs PyTorch GPU |
+|---|---|---|
+| PyTorch CPU | ~2,005 | 0.93x |
+| PyTorch GPU | ~1,864 | 1.00x |
+| Custom CUDA FP32 | 1,143 | 1.63x |
+| **Custom CUDA FP16** | **770** | **2.42x** |
+| ORT CPU | ~397 | 4.70x |
 
-## Current Status
+### Per-Block Performance
 
-### Phase 0 — Remote Prototyping ✅ COMPLETE (May–Early June 2026)
+| Block | PyTorch GPU (us) | Custom CUDA (us) | Speedup |
+|---|---|---|---|
+| 1: Proj+Conv1+BN+ReLU | 404 | 62 | 6.55x |
+| 2: Conv2+BN+ReLU+Pool | 282 | 87 | 3.24x |
+| 3: BiLSTM FP16 half2 | 791 | 601 | 1.32x |
+| 4: Dense Head | 122 | 20 | 6.07x |
 
-- [x] Literature review and project planning (Early May)
-- [x] Development environment setup — WSL2, CUDA, PyTorch (Late May)
-- [x] BoT-IoT EDA — 5 classes, 10 features, 23,712:1 imbalance (Late May)
-- [x] Preprocessing V1 — windowed sequences (archived after diagnosis)
-- [x] CNN-BiLSTM V1 — windowed (archived, macro-F1 0.22)
-- [x] Random Forest baseline — per-flow, macro-F1 **0.9768** (Early June)
-- [x] Preprocessing V2 — per-flow pipeline (canonical)
-- [x] CNN-BiLSTM V2 — per-flow, macro-F1 **0.9330** (Early June)
-- [x] Model weights exported FP32 + FP16
-- [x] Experimental design document
+### Block 3 Optimization Progression
 
-### Phase 1 — CUDA Optimization (Upcoming)
+| Configuration | Latency (us) | vs Naive |
+|---|---|---|
+| Naive (1 thread/hidden, global W_hh) | 5,698 | 1.00x |
+| + Precomputed input projection | 2,901 | 1.96x |
+| + Transposed W_hh (coalesced reads) | 1,007 | 5.66x |
+| + FP16 native half2 FMA | 601 | **9.48x** |
 
-- [ ] Custom CUDA kernels (Conv1D, BiLSTM gates, fused ops)
-- [ ] CUDA Graphs pipeline
-- [ ] Tensor core integration (FP16)
-- [ ] LLM async integration
-- [ ] Streaming load benchmark
-- [ ] Five-level benchmark stack
-- [ ] Benchmark freeze + plots
+### Batch Scaling (Throughput, flows/sec)
 
----
+| Batch Size | PyTorch CPU | PyTorch GPU | ORT CPU | ORT GPU |
+|---|---|---|---|---|
+| 1 | 733 | 522 | 2,661 | 253 |
+| 32 | 6,524 | 15,510 | 8,202 | 9,145 |
+| 128 | 8,323 | 27,455 | 6,804 | 26,577 |
+| 256 | 10,325 | 42,878 | 8,814 | 45,855 |
 
-## Key Results
+### Streaming Throughput
 
-### Classification Performance (Test Set — 733,705 samples)
+| Mode | Max Sustained | vs CPU Single |
+|---|---|---|
+| GPU Batched (batch=128) | 25,410 flows/sec | 54x |
+| GPU Single | 423 flows/sec | 0.9x |
+| CPU Single | 470 flows/sec | 1.0x |
 
-| Model | Macro-F1 | Weighted-F1 | All Classes |
-|-------|----------|-------------|-------------|
-| Random Forest (baseline) | **0.9768** | 0.9906 | 5/5 |
-| CNN-BiLSTM V2 (per-flow) | **0.9330** | 0.9683 | 5/5 |
-| CNN-BiLSTM V1 (windowed) | 0.22 | — | 2/5 |
+### Energy Efficiency
 
-### CNN-BiLSTM V2 Per-Class Results
+| Config | Power (W) | Throughput (f/s) | mJ/flow |
+|---|---|---|---|
+| GPU batch=128 | 17.81 | 17,491 | 1.02 |
+| GPU batch=1 | 10.44 | 411 | 25.41 |
+| CPU batch=1 | 16.40 | 347 | 47.23 |
 
-| Class | Precision | Recall | F1-Score | Support |
-|-------|-----------|--------|----------|---------|
-| DDoS | 0.9844 | 0.9555 | 0.9698 | 385,309 |
-| DoS | 0.9545 | 0.9819 | 0.9680 | 330,112 |
-| Normal | 0.7571 | 0.9907 | 0.8583 | 107 |
-| Reconnaissance | 0.9029 | 0.9927 | 0.9457 | 18,163 |
-| Theft | 1.0000 | 0.8571 | 0.9231 | 14 |
+GPU batched is **46x more energy efficient** than CPU single-sample.
 
----
+### LLM Explainability
 
-## Dataset
+| Metric | Value |
+|---|---|
+| Detection latency (no LLM) | 0.32 us |
+| Detection latency (with async LLM) | 8.39 us |
+| Async dispatch overhead | 8.07 us (0.7%) |
+| LLM generation time (median) | 8,528 ms |
+| Model | TinyLlama 1.1B Q4 (0.77 GB VRAM) |
 
-- **Source:** BoT-IoT (Koroniotis et al., FGCS 2019)
-- **Version:** 5% subset, 10-best features, pre-made train/test split
-- **Training samples:** 268,627 (after resampling)
-- **Validation samples:** 293,482 (real data, no synthetic)
-- **Test samples:** 733,705 (real data, no synthetic)
-- **Classes:** DDoS, DoS, Normal, Reconnaissance, Theft
-- **Features:** 10 per-flow network statistics
+### Model Accuracy (BoT-IoT, 733,705 test flows)
 
----
+| Model | Macro-F1 | Weighted-F1 | Parameters |
+|---|---|---|---|
+| CNN-BiLSTM V2 | 0.9330 | 0.9695 | 463,877 |
+| CNN-BiLSTM V3 (attention) | 0.9352 | 0.9698 | 530,181 |
+| Random Forest (baseline) | 0.9768 | — | — |
 
-## Model Architecture
+## Hardware and Software Requirements
 
+### Minimum Requirements
+- **GPU**: NVIDIA GPU with compute capability >= 8.6 (Ampere architecture)
+- **VRAM**: 4 GB minimum (6 GB recommended for LLM prototype)
+- **CUDA Toolkit**: 12.0 or later
+- **Python**: 3.10+
+- **OS**: Linux (tested on Ubuntu 22.04/24.04, WSL2)
+
+### Tested Configuration
+- NVIDIA GeForce RTX 3050 6GB Laptop GPU (SM 8.6, 20 SMs, Ampere)
+- CUDA 12.6, Driver 560.x
+- Python 3.12, PyTorch 2.5.1+cu121
+- WSL2 Ubuntu 24.04
+
+## Quick Start
+
+### Option 1: Docker (Recommended)
+```bash
+docker build -t colide .
+docker run --gpus all colide
 ```
-Input: (batch, 10) — per-flow features
-    ↓
-Linear Projection: 10 → 64
-    ↓
-Reshape: (batch, 2, 32)
-    ↓
-Conv1D(2→64, k=3) → BatchNorm → ReLU
-Conv1D(64→128, k=3) → BatchNorm → ReLU
-MaxPool1D(2) → Dropout(0.3)
-    ↓
-BiLSTM(128→128, bidirectional)
-BiLSTM(256→64, bidirectional)
-    ↓
-Dense(128→64) → ReLU → Dropout(0.3)
-Dense(64→5) → logits
+
+### Option 2: Manual Setup
+```bash
+# 1. Clone repository
+git clone https://github.com/titoatwork/COLIDE.git
+cd COLIDE
+
+# 2. Create Python environment
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+
+# 3. Compile CUDA kernels (adjust -arch for your GPU)
+#    sm_86 = RTX 3050/3060/3070/3080/3090 (Ampere)
+#    sm_89 = RTX 4090 (Ada Lovelace)
+#    sm_90 = H100 (Hopper)
+nvcc -arch=sm_86 -o inference/kernels/fused_block1 inference/kernels/fused_block1.cu
+nvcc -arch=sm_86 -o inference/kernels/fused_block2 inference/kernels/fused_block2.cu
+nvcc -arch=sm_86 -o inference/kernels/fused_block3 inference/kernels/fused_block3.cu
+nvcc -arch=sm_86 -o inference/kernels/fused_block3_fp16 inference/kernels/fused_block3_fp16.cu
+nvcc -arch=sm_86 -o inference/kernels/fused_block4 inference/kernels/fused_block4.cu
+
+# 4. Run all benchmarks
+bash benchmark.sh
+
+# Or run individual benchmarks:
+PYTHONPATH=. python scripts/benchmark_pipeline.py     # Full pipeline comparison
+PYTHONPATH=. python scripts/benchmark_batch.py        # Batch size scaling
+PYTHONPATH=. python scripts/benchmark_ort.py          # ONNX Runtime comparison
+PYTHONPATH=. python scripts/benchmark_stats.py        # Statistical confidence intervals
+PYTHONPATH=. python scripts/benchmark_energy.py       # Energy efficiency
+PYTHONPATH=. python scripts/benchmark_streaming.py    # Streaming throughput
+PYTHONPATH=. python scripts/ablation_study.py         # 6-table ablation study
+PYTHONPATH=. python scripts/compare_v2_v3.py          # V2 vs V3 architecture
+PYTHONPATH=. python scripts/llm_explainability.py     # Async LLM prototype
 ```
 
-- **Parameters:** 463,877
-- **FP32 size:** 1.77 MB
-- **FP16 size:** 0.89 MB
+### Training from Scratch
+```bash
+# Preprocess BoT-IoT dataset
+PYTHONPATH=. python scripts/preprocess.py
 
----
+# Train V2 model (last-timestep pooling)
+# Edit scripts/train.py to import from model.cnn_bilstm
+PYTHONPATH=. python scripts/train.py
 
-## Methodology Note
+# Train V3 model (self-attention)
+# Edit scripts/train.py to import from model.cnn_bilstm_v3_attention
+PYTHONPATH=. python scripts/train.py
+```
 
-The initial approach used temporal windowing (20 consecutive flows per sample), assuming sequential dependencies between network flows. This produced severe overfitting (train accuracy 100%, val macro-F1 0.22), predicting only 2 of 5 classes.
-
-Systematic investigation identified the root cause: the BoT-IoT 10-best features are pre-aggregated flow-level statistics (mean, stddev, srate, drate, etc.) with no meaningful temporal dependency between consecutive rows. A literature review confirmed that every published paper on this dataset uses per-flow classification.
-
-A Random Forest baseline on per-flow data immediately achieved macro-F1 0.9768, confirming the features are highly separable without temporal context. The pipeline was redesigned as a per-flow system, and the CNN-BiLSTM V2 achieved macro-F1 0.9330 with all 5 classes correctly classified.
-
-The windowed approach is archived in the repository (V1 files) as documentation of the investigation process.
-
----
-
-## Repository Structure
+## Project Structure
 
 ```
 colide/
-├── config/config.yaml              # All hyperparameters
-├── data/raw/                        # BoT-IoT CSVs (not committed)
-├── data/processed/                  # Preprocessed .npy files (not committed)
+├── config/
+│   └── config.yaml                    # Model and training hyperparameters
+│
+├── data/
+│   ├── raw/                           # Original BoT-IoT dataset (5% subset)
+│   │   ├── UNSW_2018_IoT_Botnet_Final_10_Best.csv
+│   │   ├── UNSW_2018_IoT_Botnet_Final_10_best_Training.csv
+│   │   └── UNSW_2018_IoT_Botnet_Final_10_best_Testing.csv
+│   └── processed/                     # Preprocessed numpy arrays
+│       ├── X_train.npy, y_train.npy   # 268,627 training samples
+│       ├── X_val.npy, y_val.npy       # 293,482 validation samples
+│       ├── X_test.npy, y_test.npy     # 733,705 test samples
+│       ├── label_encoder.pkl          # Sklearn label encoder
+│       └── scaler.pkl                 # MinMaxScaler
+│
 ├── model/
-│   ├── cnn_bilstm.py               # CNN-BiLSTM V2 (per-flow, active)
-│   ├── cnn_bilstm_v1_windowed.py   # V1 architecture (archived)
-│   ├── best_model.pth              # Best checkpoint (epoch 22)
-│   └── weights/                     # FP32 + FP16 .npy weights
-├── preprocessing/
-│   ├── preprocess_v2.py            # Per-flow pipeline (active)
-│   └── preprocess_v1_windowed.py   # Windowed pipeline (archived)
-├── scripts/
-│   ├── train.py                     # Training script V2 (active)
-│   ├── train_v1_windowed.py        # V1 training (archived)
-│   └── rf_baseline.py              # Random Forest baseline
-├── notebooks/
-│   └── 01_eda.ipynb                 # Exploratory Data Analysis
-├── benchmarks/results/              # Training history JSON
-├── environment.md                   # Hardware + software versions
-├── requirements.txt                 # Python dependencies
-└── README.md
+│   ├── cnn_bilstm.py                 # V2: CNN-BiLSTM with last-timestep pooling
+│   ├── cnn_bilstm_v3_attention.py    # V3: CNN-BiLSTM with multi-head self-attention
+│   ├── best_model.pth                # Best trained model weights (PyTorch)
+│   └── weights/                      # Exported per-layer .npy weights for CUDA
+│
+├── inference/kernels/                 # Custom CUDA inference kernels
+│   ├── fused_block1.cu               # Block 1: Linear(10,64)+Reshape+Conv1D(2,64)+BN+ReLU
+│   ├── fused_block2.cu               # Block 2: Conv1D(64,128)+BN+ReLU+MaxPool1D
+│   ├── fused_block3.cu               # Block 3: 2-layer BiLSTM (FP32, transposed W_hh)
+│   ├── fused_block3_fp16.cu          # Block 3: 2-layer BiLSTM (FP16, native half2 FMA)
+│   └── fused_block4.cu               # Block 4: Dense(128,64)+ReLU+Dense(64,5)
+│
+├── scripts/                           # Benchmarks and utilities
+│   ├── train.py                       # Model training with early stopping
+│   ├── preprocess.py                  # Dataset preprocessing pipeline
+│   ├── benchmark_pipeline.py          # Full pipeline latency comparison
+│   ├── benchmark_batch.py             # Batch size scaling analysis
+│   ├── benchmark_ort.py               # ONNX Runtime + TensorRT comparison
+│   ├── benchmark_stats.py             # Statistical confidence intervals (10 trials)
+│   ├── benchmark_energy.py            # GPU power draw and energy efficiency
+│   ├── benchmark_streaming.py         # Streaming throughput at increasing rates
+│   ├── ablation_study.py              # 6-table ablation study
+│   ├── compare_v2_v3.py               # V2 vs V3 architecture comparison
+│   └── llm_explainability.py          # Async LLM explainability prototype
+│
+├── benchmarks/results/                # JSON outputs from all benchmarks
+│   ├── pipeline_benchmark.json
+│   ├── streaming_throughput.json
+│   ├── energy_efficiency.json
+│   ├── statistical_confidence.json
+│   ├── llm_explainability.json
+│   └── training_history.json
+│
+├── docs/                              # Documentation and literature
+│   ├── Verified Papers and Gaps in IDS_IoT Research.pdf
+│   └── literature_review_raw.md
+│
+├── Dockerfile                         # Reproducibility container
+├── benchmark.sh                       # One-command benchmark runner
+├── requirements.txt                   # Python dependencies
+└── README.md                          # This file
 ```
 
----
+## CUDA Kernel Design
 
-## Setup
+### Architecture Overview
+The CNN-BiLSTM model is decomposed into four inference blocks, each implemented as a fused CUDA kernel:
 
-```bash
-# Clone
-git clone https://github.com/titoatwork/COLIDE.git
-cd colide
+- **Block 1** fuses linear projection, reshape, 1D convolution, batch normalization, and ReLU activation into a single kernel launch, eliminating 5 separate PyTorch kernel launches
+- **Block 2** fuses convolution, batch normalization, ReLU, and max pooling
+- **Block 3** implements a 2-layer bidirectional LSTM with transposed weight matrices for coalesced global memory access and FP16 half2 vector operations for doubled compute throughput
+- **Block 4** fuses two dense layers with ReLU activation
 
-# Create virtual environment (WSL2 recommended)
-python3 -m venv .venv
-source .venv/bin/activate
+### FP16 Half2 Optimization (Block 3)
+The BiLSTM inner loop computes four LSTM gates (input, forget, cell, output) via matrix-vector multiplication with the recurrent weight matrix W_hh. The FP16 optimization:
 
-# Install dependencies
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
-pip install -r requirements.txt
+1. Repacks W_hh into half2 pairs: (i_gate, f_gate) and (g_gate, o_gate)
+2. Uses `__hfma2` (fused multiply-add for half2) to process two gates per instruction
+3. Stores hidden states in shared memory as half-precision
+4. Accumulates gate values in FP16, converts to FP32 only for sigmoid/tanh activations
 
-# Download BoT-IoT dataset to data/raw/
-# (see environment.md for download instructions)
+This exploits the RTX 3050 Ampere architecture's 2x FP16 throughput, reducing Block 3 from 1,007 us (FP32) to 601 us (FP16).
 
-# Run preprocessing
-python preprocessing/preprocess_v2.py
+## Dataset
 
-# Train model
-python scripts/train.py
+**BoT-IoT** (Koroniotis et al., Future Generation Computer Systems, 2019)
 
-# Run RF baseline
-python scripts/rf_baseline.py
-```
+| Property | Value |
+|---|---|
+| Source | UNSW Sydney |
+| Subset | 5% (best 10 features) |
+| Features | 10 network flow statistics |
+| Classes | 5: DDoS, DoS, Normal, Reconnaissance, Theft |
+| Train samples | 268,627 |
+| Validation samples | 293,482 |
+| Test samples | 733,705 |
+| Preprocessing | Undersample majority, SMOTE minority, MinMax normalization |
 
----
+## Verified Research Gaps
 
-## Hardware
+Independent verification via ChatGPT Deep Research confirmed four novel contributions:
 
-- **Development:** RTX 3050 Laptop (SM 8.6, 6GB VRAM, Ampere)
-- **Benchmarking (Phase 1):** Cloud A100 instance
-
----
+1. **No published work** on custom CUDA inference kernels for IDS models
+2. **No published work** measuring LLM overhead on IDS detection latency
+3. **No published work** with Nsight Compute / roofline profiling for IDS
+4. **No published work** comparing TensorRT vs custom CUDA for small (<1M parameter) models
 
 ## Citation
 
-If you use the BoT-IoT dataset, please cite:
+```bibtex
+@article{colide2026,
+  title={COLIDE: CUDA-Optimized CNN-BiLSTM with LLM-Based Explainability for IoT Intrusion Detection},
+  author={Haque, Ibteshamul and Por, Lip Yee},
+  journal={IEEE Internet of Things Journal},
+  year={2026},
+  note={Under preparation}
+}
+```
 
-> Koroniotis, N., Moustafa, N., Sitnikova, E., & Turnbull, B. (2019). Towards the development of realistic botnet dataset in the internet of things for network forensic analytics: Bot-IoT dataset. Future Generation Computer Systems, 100, 779-796.
+## Acknowledgments
+
+This research was conducted at the Faculty of Computer Science and Information Technology (FCSIT), Universiti Malaya, under the supervision of Prof. Dr. Por Lip Yee.
+
+## License
+
+This project is for academic research purposes only. Contact the authors for commercial licensing.
