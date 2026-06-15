@@ -108,8 +108,10 @@ print(f"{'-'*70}")
 print(f"{'Block 1 (Conv)':<30} {'61.7':>15} {'100 iters, p50':>25}")
 print(f"{'Block 2 (Conv)':<30} {'87.2':>15} {'100 iters, p50':>25}")
 print(f"{'Block 3 (BiLSTM)':<30} {'973.8':>15} {'100 iters, CUDA Graphs':>25}")
+print(f"{'Block 3 FP16 (half2)':<30} {'601.4':>15} {'100 iters, p50':>25}")
 print(f"{'Block 4 (Dense)':<30} {'20.1':>15} {'10000 iters, p50':>25}")
 print(f"{'TOTAL':<30} {'1142.8':>15} {'sum of blocks':>25}")
+print(f"{'TOTAL (FP16)':<30} {'770.4':>15} {'sum of blocks (FP16 block3)':>25}")
 
 # Save
 results = {
