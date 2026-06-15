@@ -38,10 +38,12 @@ cuda_blocks = {
     'block1_proj_conv_bn_relu': 61.7,
     'block2_conv_bn_relu_pool': 87.2,
     'block3_bilstm_transposed': 973.8,   # with CUDA Graphs
+    'block3_bilstm_fp16_half2': 601.4,
     'block3_bilstm_no_graphs':  1007.3,   # without CUDA Graphs
     'block4_dense_head':        20.1,
 }
 cuda_total_graphs = cuda_blocks['block1_proj_conv_bn_relu'] + cuda_blocks['block2_conv_bn_relu_pool'] + cuda_blocks['block3_bilstm_transposed'] + cuda_blocks['block4_dense_head']
+cuda_total_fp16 = cuda_blocks['block1_proj_conv_bn_relu'] + cuda_blocks['block2_conv_bn_relu_pool'] + cuda_blocks['block3_bilstm_fp16_half2'] + cuda_blocks['block4_dense_head']
 cuda_total_no_graphs = cuda_blocks['block1_proj_conv_bn_relu'] + cuda_blocks['block2_conv_bn_relu_pool'] + cuda_blocks['block3_bilstm_no_graphs'] + cuda_blocks['block4_dense_head']
 
 print(f"\n--- Custom CUDA Block Times (single sample) ---")
@@ -214,6 +216,7 @@ methods = [
     ("PyTorch CPU", full_cpu),
     ("PyTorch GPU", full_gpu),
     ("Custom CUDA FP32", cuda_total_graphs),
+    ("Custom CUDA FP16", cuda_total_fp16),
     ("Custom CUDA (no graphs)", cuda_total_no_graphs),
 ]
 for name, lat in methods:

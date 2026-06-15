@@ -163,5 +163,6 @@ if has_gpu:
     print(f"{'ORT GPU':<25} {ort_gpu_us:>12.1f} {pytorch_gpu_us/ort_gpu_us:>14.2f}x")
 if 'TensorrtExecutionProvider' in gpu_providers:
     print(f"{'TensorRT':<25} {trt_us:>12.1f} {pytorch_gpu_us/trt_us:>14.2f}x")
-print(f"{'Custom CUDA (sum)':<25} {'1143':>12} {pytorch_gpu_us/1143:>14.2f}x")
+print(f"{'Custom CUDA FP32':<25} {'1143':>12} {pytorch_gpu_us/1143:>14.2f}x")
+print(f"{'Custom CUDA FP16':<25} {'770':>12} {pytorch_gpu_us/770:>14.2f}x")
 print(f"{'='*55}")

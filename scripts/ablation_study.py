@@ -23,6 +23,7 @@ b3_configs = [
     ("+ Precomputed input projection (W_ih*X)", 2901.0, 1.96, 0.26),
     ("+ Transposed W_hh (coalesced reads)", 1007.3, 5.66, 0.74),
     ("+ CUDA Graphs", 973.8, 5.85, 0.76),
+    ("+ FP16 native half2 FMA", 601.4, 9.48, 1.23),
 ]
 
 for name, lat, vs_naive, vs_pytorch in b3_configs:
@@ -62,6 +63,8 @@ print(f"{'TOTAL':<30} {total_pt:>10.1f} us {total_cuda:>10.1f} us {total_pt/tota
 print(f"\nKey insight: Block 3 (BiLSTM) accounts for 85.2% of custom CUDA")
 print(f"pipeline time. Blocks 1, 2, 4 achieve 3.2-6.6x speedups by fusing")
 print(f"multiple PyTorch kernel launches into single custom kernels.")
+print(f"Block 3 FP16 achieves 1.23x over PyTorch.")
+print(f"FP16 pipeline total: 770.4 us (2.08x over PyTorch GPU)")
 
 # ================================================================
 # Table 3: Framework Comparison at Different Batch Sizes
