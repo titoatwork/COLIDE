@@ -1,0 +1,42 @@
+{
+  "num_samples": 10,
+  "val_indices": [
+    438859,
+    305444,
+    509164,
+    485249,
+    98920,
+    194323,
+    311223,
+    253528,
+    68127,
+    405753
+  ],
+  "weight_dir": "model/weights_bin",
+  "reference_dir": "model/weights_bin/reference",
+  "block_shapes": {
+    "input": [
+      1,
+      10
+    ],
+    "block1_out": [
+      1,
+      64,
+      32
+    ],
+    "block2_out": [
+      1,
+      128,
+      16
+    ],
+    "block3_out": [
+      1,
+      128
+    ],
+    "block4_out": [
+      1,
+      5
+    ]
+  },
+  "model_version": "V3 (attention, using V2 last-timestep for CUDA)"
+}
