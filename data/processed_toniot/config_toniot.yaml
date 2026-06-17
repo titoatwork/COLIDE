@@ -1,0 +1,50 @@
+data:
+  class_names:
+  - backdoor
+  - ddos
+  - dos
+  - injection
+  - mitm
+  - normal
+  - password
+  - ransomware
+  - scanning
+  - xss
+  feature_columns:
+  - duration
+  - src_bytes
+  - dst_bytes
+  - src_pkts
+  - dst_pkts
+  - src_ip_bytes
+  - dst_ip_bytes
+  - src_port
+  - dst_port
+  - missed_bytes
+  - proto
+  - service
+  - conn_state
+  num_classes: 10
+model:
+  attention_dropout: 0.1
+  attention_heads: 4
+  bilstm_units_1: 128
+  bilstm_units_2: 64
+  cnn_filters_1: 64
+  cnn_filters_2: 128
+  cnn_kernel_size: 3
+  dense_units: 64
+  dropout_rate: 0.3
+  input_features: 13
+  num_classes: 10
+  pool_size: 2
+  projection_dim: 64
+  reshape:
+  - 2
+  - 32
+seed: 42
+training:
+  batch_size: 256
+  early_stopping_patience: 10
+  epochs: 50
+  lr: 0.001
