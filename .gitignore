@@ -33,3 +33,4 @@ benchmarks/results/
 # OS artifacts
 .DS_Store
 Thumbs.db
+*:Zone.Identifier
