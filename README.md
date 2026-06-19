@@ -6,7 +6,7 @@
 
 ## Abstract
 
-COLIDE presents the first custom CUDA kernel implementation for CNN-BiLSTM-based IoT intrusion detection, achieving **2.42x end-to-end speedup** over PyTorch GPU inference. The system integrates an asynchronous LLM-based explainability module that generates human-readable security alerts with only **8 microseconds** dispatch overhead (0.7% of the detection pipeline). Evaluated on the BoT-IoT dataset, the system sustains **25,410 flows/sec** in streaming mode while maintaining a macro-F1 score of **0.9352**.
+COLIDE presents the first custom CUDA kernel implementation for CNN-BiLSTM-based IoT intrusion detection, achieving **2.42x end-to-end speedup** over PyTorch GPU inference. The system integrates an asynchronous LLM-based explainability module that generates human-readable security alerts with only **8 microseconds** dispatch overhead (0.7% of the detection pipeline). Evaluated on the BoT-IoT and ToN-IoT datasets, the system sustains **25,410 flows/sec** in streaming mode while maintaining a macro-F1 score of **0.9352**.
 
 ## Key Contributions
 
@@ -90,10 +90,30 @@ GPU batched is **46x more energy efficient** than CPU single-sample.
 | CNN-BiLSTM V3 (attention) | 0.9352 | 0.9698 | 530,181 |
 | Random Forest (baseline) | 0.9768 | — | — |
 
+### Cross-Dataset Validation
+
+| Dataset | Model | Macro-F1 | Weighted-F1 | Classes | Test Samples |
+|---|---|---|---|---|---|
+| BoT-IoT | RF Baseline | 0.9768 | — | 5 | 733,705 |
+| BoT-IoT | CNN-BiLSTM V3 | 0.9352 | 0.9698 | 5 | 733,705 |
+| ToN-IoT | RF Baseline | 0.9396 | 0.9844 | 10 | 42,209 |
+| ToN-IoT | CNN-BiLSTM V3 | 0.8029 | 0.8622 | 10 | 42,209 |
+
+### Cross-Hardware CUDA Kernel Comparison
+
+| Block | RTX 3050 (Ampere) | V100S 32GB (Volta) | V100S vs 3050 |
+|---|---|---|---|
+| Block 1 (Conv) | 61.7 us | 11.5 us | 5.4x faster |
+| Block 2 (Conv) | 87.2 us | 31.2 us | 2.8x faster |
+| Block 3 FP16 (BiLSTM) | 601.0 us | 650.8 us | 0.92x (slower) |
+| Block 4 (Dense) | 20.1 us | 10.5 us | 1.9x faster |
+
+Block 3 FP16 is slightly slower on V100S because RTX 3050 (Ampere) has improved FP16 ALUs compared to V100S (Volta), confirming our half2 optimization specifically benefits from Ampere's enhanced FP16 capabilities.
+
 ## Hardware and Software Requirements
 
 ### Minimum Requirements
-- **GPU**: NVIDIA GPU with compute capability >= 8.6 (Ampere architecture)
+- **GPU**: NVIDIA GPU with compute capability >= 7.0 (Volta architecture or newer)
 - **VRAM**: 4 GB minimum (6 GB recommended for LLM prototype)
 - **CUDA Toolkit**: 12.0 or later
 - **Python**: 3.10+
@@ -144,7 +164,7 @@ PYTHONPATH=. python scripts/benchmark_ort.py          # ONNX Runtime comparison
 PYTHONPATH=. python scripts/benchmark_stats.py        # Statistical confidence intervals
 PYTHONPATH=. python scripts/benchmark_energy.py       # Energy efficiency
 PYTHONPATH=. python scripts/benchmark_streaming.py    # Streaming throughput
-PYTHONPATH=. python scripts/ablation_study.py         # 6-table ablation study
+PYTHONPATH=. python scripts/ablation_study.py         # 8-table ablation study
 PYTHONPATH=. python scripts/compare_v2_v3.py          # V2 vs V3 architecture
 PYTHONPATH=. python scripts/llm_explainability.py     # Async LLM prototype
 ```
@@ -174,18 +194,33 @@ colide/
 │   ├── raw/                           # Original BoT-IoT dataset (5% subset)
 │   │   ├── UNSW_2018_IoT_Botnet_Final_10_Best.csv
 │   │   ├── UNSW_2018_IoT_Botnet_Final_10_best_Training.csv
-│   │   └── UNSW_2018_IoT_Botnet_Final_10_best_Testing.csv
-│   └── processed/                     # Preprocessed numpy arrays
-│       ├── X_train.npy, y_train.npy   # 268,627 training samples
-│       ├── X_val.npy, y_val.npy       # 293,482 validation samples
-│       ├── X_test.npy, y_test.npy     # 733,705 test samples
-│       ├── label_encoder.pkl          # Sklearn label encoder
-│       └── scaler.pkl                 # MinMaxScaler
+│   │   ├── UNSW_2018_IoT_Botnet_Final_10_best_Testing.csv
+│   │   └── toniot/                    # ToN-IoT dataset raw files
+│   │       └── train_test_network.csv
+│   ├── processed/                     # Preprocessed numpy arrays
+│   │   ├── X_train.npy, y_train.npy   # 268,627 training samples
+│   │   ├── X_val.npy, y_val.npy       # 293,482 validation samples
+│   │   ├── X_test.npy, y_test.npy     # 733,705 test samples
+│   │   ├── label_encoder.pkl          # Sklearn label encoder
+│   │   └── scaler.pkl                 # MinMaxScaler
+│   └── processed_toniot/              # ToN-IoT preprocessed numpy arrays
+│       ├── X_train.npy, y_train.npy   # 95,000 training samples
+│       ├── X_val.npy, y_val.npy       # 42,209 validation samples
+│       ├── X_test.npy, y_test.npy     # 42,209 test samples
+│       └── config_toniot.yaml         # ToN-IoT model config
 │
+├── dicc_scripts/                      # SLURM job scripts for DICC HPC cluster
+│   ├── 01_setup.sh                    # Clone repo, install deps, compile kernels
+│   ├── 02_benchmark_v100.sh           # V100S benchmark job
+│   ├── 03_benchmark_a100.sh           # A100 benchmark job
+│   ├── 04_nsight_profile.sh           # Nsight Compute profiling job
+│   └── 05_run_all.sh                  # Submit all jobs
+
 ├── model/
 │   ├── cnn_bilstm.py                 # V2: CNN-BiLSTM with last-timestep pooling
 │   ├── cnn_bilstm_v3_attention.py    # V3: CNN-BiLSTM with multi-head self-attention
 │   ├── best_model.pth                # Best trained model weights (PyTorch)
+│   ├── best_model_toniot.pth         # Best trained ToN-IoT model weights
 │   └── weights/                      # Exported per-layer .npy weights for CUDA
 │
 ├── inference/kernels/                 # Custom CUDA inference kernels
@@ -198,13 +233,18 @@ colide/
 ├── scripts/                           # Benchmarks and utilities
 │   ├── train.py                       # Model training with early stopping
 │   ├── preprocess.py                  # Dataset preprocessing pipeline
+│   ├── preprocess_toniot.py           # ToN-IoT preprocessing pipeline
 │   ├── benchmark_pipeline.py          # Full pipeline latency comparison
 │   ├── benchmark_batch.py             # Batch size scaling analysis
 │   ├── benchmark_ort.py               # ONNX Runtime + TensorRT comparison
 │   ├── benchmark_stats.py             # Statistical confidence intervals (10 trials)
 │   ├── benchmark_energy.py            # GPU power draw and energy efficiency
 │   ├── benchmark_streaming.py         # Streaming throughput at increasing rates
-│   ├── ablation_study.py              # 6-table ablation study
+│   ├── ablation_study.py              # 8-table ablation study
+│   ├── train_toniot.py                # ToN-IoT model training
+│   ├── rf_baseline_toniot.py          # Random Forest baseline on ToN-IoT
+│   ├── validate_weights.py            # Export real weights for CUDA validation
+│   ├── compare_datasets.py            # Cross-dataset comparison table
 │   ├── compare_v2_v3.py               # V2 vs V3 architecture comparison
 │   └── llm_explainability.py          # Async LLM explainability prototype
 │
@@ -214,7 +254,9 @@ colide/
 │   ├── energy_efficiency.json
 │   ├── statistical_confidence.json
 │   ├── llm_explainability.json
-│   └── training_history.json
+│   ├── training_history.json
+│   ├── training_history_toniot.json
+│   └── rf_baseline_toniot.json
 │
 ├── docs/                              # Documentation and literature
 │   ├── Verified Papers and Gaps in IDS_IoT Research.pdf
@@ -261,6 +303,18 @@ This exploits the RTX 3050 Ampere architecture's 2x FP16 throughput, reducing Bl
 | Test samples | 733,705 |
 | Preprocessing | Undersample majority, SMOTE minority, MinMax normalization |
 
+**ToN-IoT** (Moustafa, 2021)
+
+| Property | Value |
+|---|---|
+| Source | UNSW Canberra |
+| Features | 13 (10 numeric + 3 categorical encoded) |
+| Classes | 10: backdoor, ddos, dos, injection, mitm, normal, password, ransomware, scanning, xss |
+| Train samples | 95,000 (balanced) |
+| Validation samples | 42,209 |
+| Test samples | 42,209 |
+| Preprocessing | Undersample majority to 10K, SMOTE minority to 5K, MinMax normalization |
+
 ## Verified Research Gaps
 
 Independent verification via ChatGPT Deep Research confirmed four novel contributions:
@@ -285,6 +339,8 @@ Independent verification via ChatGPT Deep Research confirmed four novel contribu
 ## Acknowledgments
 
 This research was conducted at the Faculty of Computer Science and Information Technology (FCSIT), Universiti Malaya, under the supervision of Prof. Dr. Por Lip Yee.
+
+This research was supported in part through computational resources provided by the Data-Intensive Computing Centre, Universiti Malaya.
 
 ## License
 
