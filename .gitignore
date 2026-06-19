@@ -34,3 +34,4 @@ benchmarks/results/
 .DS_Store
 Thumbs.db
 *:Zone.Identifier
+v100_block*
