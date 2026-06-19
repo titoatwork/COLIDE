@@ -10,6 +10,7 @@ data:
   - ransomware
   - scanning
   - xss
+  dataset: ToN-IoT
   feature_columns:
   - duration
   - src_bytes
@@ -25,6 +26,7 @@ data:
   - service
   - conn_state
   num_classes: 10
+  source: https://research.unsw.edu.au/projects/toniot-datasets
 model:
   attention_dropout: 0.1
   attention_heads: 4
