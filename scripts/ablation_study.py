@@ -147,9 +147,9 @@ print(f"{'-'*75}")
 
 llm_metrics = [
     ("Detection latency (no LLM)", "0.32 us"),
-    ("Detection latency (with LLM dispatch)", "8.39 us"),
-    ("Async dispatch overhead", "8.07 us"),
-    ("Overhead as % of pipeline", "0.7%"),
+    ("Detection latency (with LLM dispatch)", "5.51 us"),
+    ("Async dispatch overhead (p99)", "5.19 us"),
+    ("Overhead as % of pipeline", "<1%"),
     ("LLM generation time (median)", "8,528 ms"),
     ("Impact on detection", "NEGLIGIBLE"),
     ("Ring buffer capacity", "32 alerts"),
