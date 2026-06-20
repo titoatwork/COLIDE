@@ -64,6 +64,8 @@ print(f"\nKey insight: Block 3 (BiLSTM) accounts for 85.2% of custom CUDA")
 print(f"pipeline time. Blocks 1, 2, 4 achieve 3.2-6.6x speedups by fusing")
 print(f"multiple PyTorch kernel launches into single custom kernels.")
 print(f"Block 3 FP16 achieves 1.23x over PyTorch.")
+print(f"Block 4 FP16 achieves 1.16x over FP32 (20.9 -> 17.9 us), confirming")
+print(f"small kernels are launch-overhead-bound, not compute-bound.")
 print(f"FP16 pipeline total: 770.4 us (2.08x over PyTorch GPU)")
 
 # ================================================================
