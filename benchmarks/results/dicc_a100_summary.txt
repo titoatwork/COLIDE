@@ -1,0 +1,12 @@
+DICC A100-SXM4-80GB Benchmark Results (June 21, 2026)
+Job ID: 363047
+
+Block 1 FP32:     12.032 us   (validation PASSED)
+Block 2 FP32:     34.734 us   (validation PASSED)
+Block 3 FP32:   1130.07 us    (validation PASSED)
+Block 3 Graphs: 1117.84 us    (validation PASSED)
+Block 3 FP16:    548.368 us   (validation PASSED)
+Block 4 FP32:     10.195 us   (validation PASSED)
+Block 4 FP16:      6.617 us   (validation PASSED)
+Pipeline chained (1+2+4): 43.676 us
+Pipeline total (with B3 FP16): 592.044 us

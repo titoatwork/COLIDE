@@ -1,0 +1,12 @@
+DICC V100S-PCIE-32GB Benchmark Results (June 21, 2026)
+Job ID: 363046
+
+Block 1 FP32:     10.0114 us  (validation PASSED)
+Block 2 FP32:     29.1387 us  (validation PASSED)
+Block 3 FP32:    878.909 us   (validation PASSED)
+Block 3 Graphs:  773.274 us   (validation PASSED)
+Block 3 FP16:    511.852 us   (validation PASSED)
+Block 4 FP32:      8.298 us   (validation PASSED)
+Block 4 FP16:      5.243 us   (validation PASSED)
+Pipeline chained (1+2+4): 38.812 us
+Pipeline total (with B3 FP16): 550.664 us
