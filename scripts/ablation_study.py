@@ -31,9 +31,9 @@ for name, lat, vs_naive, vs_pytorch in b3_configs:
     pytorch_str = f"{vs_pytorch:.2f}x"
     print(f"{name:<45} {lat:>8.1f} us {naive_str:>10} {pytorch_str:>10}")
 
-print(f"\nKey insight: 82% of the improvement came from fixing memory")
-print(f"coalescing (transposing W_hh). Kernel launch overhead (CUDA Graphs)")
-print(f"contributed only 1.6%, confirming the kernel is compute-bound.")
+print(f"\nKey insight: Precomputing W_ih*X (54.9%) and transposing W_hh (37.2%)")
+print(f"together account for 92% of total improvement. CUDA Graphs")
+print(f"contributed only 0.7%, confirming the kernel is compute-bound.")
 
 # ================================================================
 # Table 2: Per-Block Speedup Summary
