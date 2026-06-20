@@ -192,27 +192,31 @@ print(f"RF achieves higher accuracy but cannot leverage GPU acceleration.")
 # Table 8: Cross-Hardware Comparison (RTX 3050 vs V100S)
 # ================================================================
 print(f"\n{'='*75}")
-print("TABLE H: Cross-Hardware CUDA Kernel Comparison")
+print("TABLE H: Cross-Hardware CUDA Kernel Comparison (3 GPUs)")
 print(f"{'='*75}")
-print(f"{'Block':<25} {'RTX 3050':>12} {'V100S 32GB':>12} {'V100S vs 3050':>14}")
+print(f"{'Block':<22} {'RTX 3050':>10} {'V100S 32GB':>10} {'A100 80GB':>10} {'Fastest':>10}")
 print(f"{'-'*75}")
 
 hw_data = [
-    ("Block 1 (Conv)", 61.7, 11.5, "5.4x faster"),
-    ("Block 2 (Conv)", 87.2, 31.2, "2.8x faster"),
-    ("Block 3 FP16 (BiLSTM)", 601.0, 650.8, "0.92x (slower)"),
-    ("Block 4 (Dense)", 20.1, 10.5, "1.9x faster"),
+    ("Block 1 (Conv)",     61.7,  10.0,  12.0, "V100S"),
+    ("Block 2 (Conv)",     87.2,  29.1,  34.7, "V100S"),
+    ("Block 3 FP32",      974.0, 773.3,1117.8, "V100S"),
+    ("Block 3 FP16",      601.0, 511.9, 548.4, "V100S"),
+    ("Block 4 FP32",       20.1,   8.3,  10.2, "V100S"),
+    ("Block 4 FP16",       17.9,   5.2,   6.6, "V100S"),
 ]
 
-for name, rtx, v100, ratio in hw_data:
-    print(f"{name:<25} {rtx:>10.1f} us {v100:>10.1f} us {ratio:>14}")
+for name, rtx, v100, a100, fastest in hw_data:
+    print(f"{name:<22} {rtx:>8.1f} us {v100:>8.1f} us {a100:>8.1f} us {fastest:>10}")
 
-print(f"\nKey insight: Blocks 1, 2, 4 are significantly faster on V100S")
-print(f"due to more SMs and higher memory bandwidth. However, Block 3")
-print(f"FP16 is slightly slower on V100S because RTX 3050 (Ampere) has")
-print(f"improved FP16 ALUs compared to V100S (Volta). This confirms our")
-print(f"half2 optimization specifically benefits from Ampere's enhanced")
-print(f"FP16 compute capabilities.")
+print(f"\nChained pipeline (FP16):")
+print(f"  RTX 3050:  674.2 us (2.76x vs PyTorch)")
+print(f"  V100S:     550.7 us (3.39x vs PyTorch)")
+print(f"  A100:      592.0 us (3.15x vs PyTorch)")
+print(f"\nKey insight: V100S achieves fastest BiLSTM FP16 (511.9 us)")
+print(f"despite being older Volta architecture. BiLSTM is sequential,")
+print(f"so clock speed matters more than SM count. A100 FP32 is slowest")
+print(f"(1117.8 us) but benefits most from FP16 (2.04x improvement).")
 
 print(f"\n{'='*75}")
 print("ABLATION STUDY COMPLETE")
