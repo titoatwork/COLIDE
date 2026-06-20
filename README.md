@@ -6,7 +6,7 @@
 
 ## Abstract
 
-COLIDE presents the first custom CUDA kernel implementation for CNN-BiLSTM-based IoT intrusion detection, achieving **2.42x end-to-end speedup** over PyTorch GPU inference. The system integrates an asynchronous LLM-based explainability module that generates human-readable security alerts with only **8 microseconds** dispatch overhead (0.7% of the detection pipeline). Evaluated on the BoT-IoT and ToN-IoT datasets, the system sustains **25,410 flows/sec** in streaming mode while maintaining a macro-F1 score of **0.9352**.
+COLIDE presents the first custom CUDA kernel implementation for CNN-BiLSTM-based IoT intrusion detection, achieving **2.76x end-to-end speedup** over PyTorch GPU inference. The system integrates an asynchronous LLM-based explainability module that generates human-readable security alerts with only **8 microseconds** dispatch overhead (0.7% of the detection pipeline). Evaluated on the BoT-IoT and ToN-IoT datasets, the system sustains **25,410 flows/sec** in streaming mode while maintaining a macro-F1 score of **0.9352**.
 
 ## Key Contributions
 
@@ -24,7 +24,8 @@ COLIDE presents the first custom CUDA kernel implementation for CNN-BiLSTM-based
 | PyTorch CPU | ~2,005 | 0.93x |
 | PyTorch GPU | ~1,864 | 1.00x |
 | Custom CUDA FP32 | 1,143 | 1.63x |
-| **Custom CUDA FP16** | **770** | **2.42x** |
+| Custom CUDA FP16 (separate) | 770 | 2.42x |
+| **Custom CUDA FP16 (chained)** | **674** | **2.76x** |
 | ORT CPU | ~397 | 4.70x |
 
 ### Per-Block Performance

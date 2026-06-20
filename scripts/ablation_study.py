@@ -66,7 +66,7 @@ print(f"multiple PyTorch kernel launches into single custom kernels.")
 print(f"Block 3 FP16 achieves 1.23x over PyTorch.")
 print(f"Block 4 FP16 achieves 1.16x over FP32 (20.9 -> 17.9 us), confirming")
 print(f"small kernels are launch-overhead-bound, not compute-bound.")
-print(f"FP16 pipeline total: 770.4 us (2.08x over PyTorch GPU)")
+print(f"FP16 pipeline total: 674.2 us chained (2.76x over PyTorch GPU)")
 
 # ================================================================
 # Table 3: Framework Comparison at Different Batch Sizes
