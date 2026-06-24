@@ -1,0 +1,15 @@
+{
+  "dicc_v100s": {
+    "cpu_sklearn_rf_flows_sec": 245063,
+    "cpu_sklearn_rf_f1": 0.9829,
+    "gpu_cuml_rf_flows_sec": 1667495,
+    "gpu_cuml_rf_f1": 0.9471
+  },
+  "local_laptop": {
+    "cpu_sklearn_rf_flows_sec": 305248,
+    "cpu_sklearn_rf_f1": 0.9864,
+    "custom_cuda_flows_sec": 25410,
+    "custom_cuda_f1": 0.9601
+  },
+  "finding": "RF is faster but GPU RF accuracy drops to 0.9471, below our 0.9601"
+}
