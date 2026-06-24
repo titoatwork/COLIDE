@@ -1,0 +1,8 @@
+{
+  "eager_us": 3686.3193879980827,
+  "compile_us": 1911.541704001138,
+  "custom_cuda_us": 674.0,
+  "compile_vs_eager": 1.93,
+  "custom_vs_compile": 2.84,
+  "custom_vs_eager": 5.47
+}
