@@ -1,0 +1,12 @@
+{
+  "dataset": "botiot",
+  "distillation": false,
+  "alpha_kd": null,
+  "focal_gamma": 2.0,
+  "macro_f1": 0.0010218424444893902,
+  "weighted_f1": 1.3265933499028286e-07,
+  "accuracy": 0.0001567387437730423,
+  "best_val_f1": 0.0011698529274881831,
+  "smote": false,
+  "sampling": "WeightedRandomSampler"
+}

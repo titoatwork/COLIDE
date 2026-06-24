@@ -1,0 +1,9 @@
+{
+  "dataset": "botiot",
+  "alpha": 0.7,
+  "temperature": 1.0,
+  "macro_f1": 0.9284490277061336,
+  "weighted_f1": 0.9769562007191646,
+  "accuracy": 0.9769403234269904,
+  "best_val_f1": 0.9598678022159038
+}

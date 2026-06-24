@@ -1,0 +1,9 @@
+{
+  "tensorrt_us": 3334.467017004499,
+  "eager_pytorch_us": 1930.6099300010828,
+  "custom_cuda_fp16_us": 674.0,
+  "custom_vs_tensorrt": 4.95,
+  "custom_vs_eager": 2.86,
+  "tensorrt_version": "11.1.0.106",
+  "hardware": "RTX 3050 Laptop GPU"
+}

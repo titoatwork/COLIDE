@@ -1,0 +1,8 @@
+{
+  "weight_integrity": true,
+  "reference_consistency": true,
+  "classification_accuracy": 0.968,
+  "num_weight_files": 34,
+  "num_reference_files": 60,
+  "samples_tested": 1000
+}

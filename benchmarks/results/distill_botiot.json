@@ -1,0 +1,9 @@
+{
+  "dataset": "botiot",
+  "method": "SMOTE + Distillation",
+  "alpha_kd": 0.5,
+  "macro_f1": 0.9481128622066717,
+  "weighted_f1": 0.98181189752933,
+  "accuracy": 0.9818033133207488,
+  "best_val_f1": 0.9702866084457449
+}

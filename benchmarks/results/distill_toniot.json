@@ -1,0 +1,9 @@
+{
+  "dataset": "toniot",
+  "method": "SMOTE + Distillation",
+  "alpha_kd": 0.5,
+  "macro_f1": 0.8061386557326262,
+  "weighted_f1": 0.8631459926808923,
+  "accuracy": 0.8592006444123291,
+  "best_val_f1": 0.8010736614424367
+}

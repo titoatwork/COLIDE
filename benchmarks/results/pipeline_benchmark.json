@@ -1,0 +1,38 @@
+{
+  "cuda_blocks": {
+    "block1_proj_conv_bn_relu": 61.7,
+    "block2_conv_bn_relu_pool": 87.2,
+    "block3_bilstm_transposed": 973.8,
+    "block3_bilstm_fp16_half2": 601.4,
+    "block3_bilstm_no_graphs": 1007.3,
+    "block4_dense_head": 20.1
+  },
+  "cuda_total_graphs": 1142.8,
+  "cuda_total_no_graphs": 1176.3,
+  "pytorch_blocks": {
+    "block1": {
+      "cpu": 173.59200001010322,
+      "gpu": 351.87299999961397
+    },
+    "block2": {
+      "cpu": 107.19000010794844,
+      "gpu": 367.8489997582801
+    },
+    "block3": {
+      "cpu": 1481.262000197603,
+      "gpu": 790.2920001470193
+    },
+    "block4": {
+      "cpu": 30.422000236285385,
+      "gpu": 186.38799974723952
+    }
+  },
+  "pytorch_full": {
+    "cpu": 2491.924999958428,
+    "gpu": 2115.685999797279
+  },
+  "pytorch_block_totals": {
+    "cpu": 1792.46600055194,
+    "gpu": 1696.4019996521529
+  }
+}

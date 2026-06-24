@@ -1,0 +1,8 @@
+{
+  "model": "RandomForest",
+  "dataset": "ToN-IoT",
+  "n_estimators": 100,
+  "macro_f1": 0.9396369689945695,
+  "weighted_f1": 0.9844168923235402,
+  "accuracy": 0.9827524935440309
+}
