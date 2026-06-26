@@ -1,0 +1,4 @@
+{
+  "method": "two_stage_finetune",
+  "macro_f1": 0.9638892562021631
+}

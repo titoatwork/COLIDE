@@ -1,0 +1,9 @@
+{
+  "dataset": "botiot",
+  "model": "MLP",
+  "alpha": 0.7,
+  "temperature": 5.0,
+  "focal_gamma": 2.0,
+  "macro_f1": 0.9623604184972688,
+  "best_val_f1": 0.9588704157121125
+}
