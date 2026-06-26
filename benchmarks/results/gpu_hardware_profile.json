@@ -1,0 +1,19 @@
+{
+  "gpu": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+  "sms": 20,
+  "max_threads_per_sm": 1536,
+  "warp_size": 32,
+  "shared_memory_per_sm_bytes": 102400,
+  "l2_cache_bytes": 1572864,
+  "memory_bandwidth_gbps": 131.7,
+  "clock_rate_mhz": 1177.0,
+  "fp32_peak_gflops": 6026.2,
+  "fp16_peak_gflops": 12052.5,
+  "theoretical_occupancy": {
+    "block1": "100% (256 threads, 6 blocks/SM)",
+    "block2": "100% (256 threads, 6 blocks/SM)",
+    "block3_lstm": "100% (128 threads, 12 blocks/SM)",
+    "block4": "100% (64 threads, 24 blocks/SM)"
+  },
+  "note": "Achieved occupancy could not be measured due to WSL2 GPU profiling restrictions. Nsight Compute requires native Linux or HPC access."
+}
