@@ -1,0 +1,13 @@
+{
+  "hardware": "NVIDIA A100-SXM4-80GB",
+  "cuml_rf_vram_mb": 444,
+  "cuml_rf_power_watts_avg": 99.8,
+  "cuml_rf_throughput_avg": 2065669,
+  "cuml_rf_energy_mj_per_flow": 0.048,
+  "cuml_rf_f1": 0.9471,
+  "cnn_bilstm_vram_mb": 2,
+  "cnn_bilstm_f1": 0.9639,
+  "vram_ratio": "222x less for CNN-BiLSTM",
+  "runs": 2,
+  "note": "CNN-BiLSTM energy (0.79 mJ/flow) measured on RTX 3050, not directly comparable to A100"
+}
