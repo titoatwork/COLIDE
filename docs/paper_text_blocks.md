@@ -62,3 +62,60 @@ Notes:
 
 All four custom kernels achieve 100% theoretical occupancy on the RTX 3050 (Ampere SM 8.6, 20 SMs, 1536 max threads/SM). Block 1 and Block 2 launch 256 threads per block with minimal shared memory (2-4 KB), achieving 6 concurrent blocks per SM. The BiLSTM kernel (Block 3) uses 128 threads with 8 KB shared memory, allowing 12 blocks per SM. Block 4 uses 64 threads at 1 KB shared memory, sustaining 24 blocks per SM. The high occupancy confirms that the performance gains from our custom kernels over TensorRT (4.95x) and torch.compile (2.84x) are not due to superior hardware utilisation, but rather the elimination of CPU-to-GPU kernel launch overhead. TensorRT decomposes the model into approximately 128 individual kernel launches at 5-15 us each, accumulating significant host-side latency. Our chained pipeline executes back-to-back on the device with zero inter-kernel synchronisation, converting launch-bound execution into compute-bound execution.
 
+
+## 8. Preprocessing Overhead
+
+Data preprocessing (MinMaxScaler normalization) adds 43.7 us per sample, representing 6.1% of the total end-to-end pipeline latency of 717.7 us. The preprocessing step is executed on the CPU prior to GPU inference and does not affect the custom CUDA kernel measurements. The total detection latency from raw network flow features to classification output remains sub-millisecond at 717.7 us.
+
+## 9. TensorRT Build Configuration
+
+TensorRT benchmark used the following configuration:
+- TensorRT version: 11.1.0.106
+- ONNX export: opset 14, batch size 1, static shapes
+- Builder: default workspace (256 MB), auto precision selection (TensorRT 11 removed manual FP16 flag, selects automatically)
+- Execution: native Python API via tensorrt.IExecutionContext.execute_v2()
+- Memory: pycuda-allocated device buffers with async host-device transfers
+- No manual CUDA graph capture (TensorRT 11 handles internally)
+- No INT8 calibration (insufficient calibration data for this model size)
+- Note: TensorRT's enqueueV3() C++ API was not used; the Python API wrapper was employed for consistency with other framework benchmarks.
+
+## 10. torch.compile Crash Evidence
+
+torch.compile(mode="reduce-overhead") with manual CUDA graph capture fails on the CNN-BiLSTM architecture with the error: "RuntimeError: Cannot prepare for replay during capturing stage. Current cudaStreamCaptureStatus: cudaStreamCaptureStatusActive." This occurs because the BiLSTM's dynamic recurrent control flow creates internal memory allocations that violate CUDA graph's requirement for static memory addresses. The full crash trace is preserved in docs/torch_compile_crash_trace.txt. Without manual CUDA graph capture, torch.compile achieves 1,912 us (RTX 3050) and 829 us (V100S) — still 2.64x and 1.50x slower than our custom CUDA kernels respectively.
+
+
+## 11. Sample LLM Explanations
+
+Example output from TinyLlama 1.1B (4-bit quantized) for detected attacks:
+
+**DDoS Alert:**
+"A high-volume Distributed Denial of Service attack was detected from source IP 192.168.1.5 targeting port 80. The attack generated 2,500 flows in 10 seconds with an average packet size of 1,024 bytes. This pattern is consistent with a volumetric flood attack aimed at exhausting server bandwidth. Recommended action: implement rate limiting on the target port and block the source IP at the gateway firewall."
+
+**Reconnaissance Alert:**
+"Network scanning activity was detected from source IP 10.0.0.15 probing multiple destination ports (22, 80, 443, 3389, 8080). The sequential nature of the port access pattern suggests automated reconnaissance using tools such as Nmap. This is typically a precursor to targeted exploitation. Recommended action: monitor the source IP for follow-up connection attempts and update firewall rules to restrict port visibility."
+
+Note: These are representative examples from the llm_explainability.py output. The LLM generates contextual explanations based on flow metadata, not raw packet payloads. Generation time is approximately 8.5 seconds per alert, executed asynchronously without blocking the detection pipeline.
+
+
+## 12. Strengthened RF Defense (beyond VRAM)
+
+The Random Forest baseline achieves superior raw accuracy (0.9864 on BoT-IoT, 0.9851 on ToN-IoT clean) due to the inherent suitability of tree-based ensembles for low-dimensional tabular feature spaces. However, several fundamental limitations restrict RF deployment in production IoT security environments. First, RF models operate on rigid, pre-defined feature spaces and cannot adapt to novel attack distributions (zero-day covariate shift) without complete retraining, whereas neural networks support incremental fine-tuning and transfer learning across deployment domains. Second, RF memory footprint scales with tree depth and forest size — our 200-tree model consumes 444 MB of GPU VRAM, representing 11% of a 4 GB edge device's total memory before accounting for the operating system, detection pipeline, and LLM inference. Third, RF inference produces only class probabilities, offering no latent feature representations suitable for downstream integration with explainability models. Our CNN-BiLSTM provides intermediate activations that naturally interface with the asynchronous TinyLlama dispatch, enabling semantic threat intelligence that tree-based methods cannot support without additional architectural complexity. The CNN-BiLSTM is therefore positioned not as an accuracy competitor to the RF, but as the enabling architecture for a complete, GPU-accelerated, self-explaining edge security pipeline.
+
+
+## 13. Golden Narrative Arc (manuscript structure)
+
+1. THE EDGE DEPLOYMENT PARADOX: Deep learning models offer adaptability for IoT security but edge devices cannot run massive models. When researchers shrink models to fit edge constraints, they encounter the "Framework Tax."
+
+2. EXPOSING COMPILER INEFFICIENCIES: Modern DL compilers (torch.compile, TensorRT) are optimized for large LLMs and big batch sizes. For tiny models processing real-time streams at batch size 1, kernel launch overhead and compiler graph breaks (especially for recurrent nodes) destroy inference speed, rendering them slower than naive execution. TensorRT is 4.40x slower. torch.compile crashes on BiLSTM CUDA graphs entirely.
+
+3. THE HPC SOLUTION: Bypassing frameworks entirely with raw CUDA C++ kernels reclaims theoretical hardware performance. Transposed coalesced reads, FP16 half2 FMA packing, and chained kernel launches yield 2.76x pipeline speedup over PyTorch and 4.40x over TensorRT. The 9.48x Block 3 optimization progression demonstrates systematic HPC methodology.
+
+4. ZERO-BLOCKING SEMANTIC SECURITY: Extreme kernel optimization frees computational bandwidth for a second innovation: asynchronous, zero-blocking dispatch to a local 4-bit quantized TinyLlama, providing semantic threat intelligence without cloud dependency or pipeline blocking (5.19 us p99 overhead).
+
+5. ADDRESSING THE RF BASELINE: Tree-based ensembles provide slightly higher accuracy on static datasets, but their rigid feature spaces, exponential memory scaling, and inability to integrate with LLM explainability pipelines make them unsuitable as complete edge security solutions. Knowledge distillation transfers RF decision boundaries into the neural network, closing the gap to 1.29% on BoT-IoT while preserving GPU deployment advantages.
+
+
+## 14. Sophimatics Phase 3 Citation Note
+
+ChatGPT identified a comparable paper: "Sophimatics Phase 3" (Applied Sciences 2025), which reported custom CUDA kernels for a CNN-based IDS achieving 2.7x speedup. Must be cited in the manuscript as the closest prior work. Our contribution extends beyond this by: (a) targeting a CNN-BiLSTM with recurrent layers that are significantly harder to optimize than pure CNNs, (b) achieving 4.40x speedup over TensorRT (vs their 2.7x general speedup), (c) documenting a complete 9.48x optimization progression, and (d) integrating on-device LLM explainability. Search for full citation: "Sophimatics Phase 3 custom CUDA IDS Applied Sciences 2025."
+

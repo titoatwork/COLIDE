@@ -1,0 +1,73 @@
+Traceback (most recent call last):
+  File "<string>", line 15, in <module>
+  File "/home/titoisalive/colide/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/titoisalive/colide/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/titoisalive/colide/.venv/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py", line 465, in _fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/titoisalive/colide/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/titoisalive/colide/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/titoisalive/colide/model/cnn_bilstm_v3_attention.py", line 235, in forward
+    def forward(self, x):
+  File "/home/titoisalive/colide/.venv/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py", line 632, in _fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/titoisalive/colide/.venv/lib/python3.12/site-packages/torch/_functorch/aot_autograd.py", line 1100, in forward
+    return compiled_fn(full_args)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/titoisalive/colide/.venv/lib/python3.12/site-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 321, in runtime_wrapper
+    all_outs = call_func_at_runtime_with_args(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/titoisalive/colide/.venv/lib/python3.12/site-packages/torch/_functorch/_aot_autograd/utils.py", line 124, in call_func_at_runtime_with_args
+    out = normalize_as_list(f(args))
+                            ^^^^^^^
+  File "/home/titoisalive/colide/.venv/lib/python3.12/site-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 667, in inner_fn
+    outs = compiled_fn(args)
+           ^^^^^^^^^^^^^^^^^
+  File "/home/titoisalive/colide/.venv/lib/python3.12/site-packages/torch/_functorch/_aot_autograd/runtime_wrappers.py", line 488, in wrapper
+    return compiled_fn(runtime_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/titoisalive/colide/.venv/lib/python3.12/site-packages/torch/_inductor/codecache.py", line 1478, in __call__
+    return self.current_callable(inputs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/titoisalive/colide/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py", line 1008, in run
+    return compiled_fn(new_inputs)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/titoisalive/colide/.venv/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py", line 382, in deferred_cudagraphify
+    return fn(inputs)
+           ^^^^^^^^^^
+  File "/home/titoisalive/colide/.venv/lib/python3.12/site-packages/torch/_inductor/utils.py", line 1977, in run
+    return model(new_inputs)
+           ^^^^^^^^^^^^^^^^^
+  File "/home/titoisalive/colide/.venv/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py", line 1919, in run
+    out = self._run(new_inputs, function_id)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/titoisalive/colide/.venv/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py", line 2056, in _run
+    return self.run(new_inputs, function_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/titoisalive/colide/.venv/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py", line 1919, in run
+    out = self._run(new_inputs, function_id)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/titoisalive/colide/.venv/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py", line 2038, in _run
+    return self.execute_node(child, new_inputs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/titoisalive/colide/.venv/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py", line 2149, in execute_node
+    return node.run(new_inputs)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/titoisalive/colide/.venv/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py", line 1044, in run
+    self.run_graph()
+  File "/home/titoisalive/colide/.venv/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py", line 1154, in run_graph
+    self.graph.replay()
+  File "/home/titoisalive/colide/.venv/lib/python3.12/site-packages/torch/cuda/graphs.py", line 88, in replay
+    super().replay()
+RuntimeError: Cannot prepare for replay during capturing stage. during CUDA graph capture. If you need this call to be captured, please file an issue. Current cudaStreamCaptureStatus: cudaStreamCaptureStatusActive
+=== CRASH TRACE ===
+=== END TRACE ===
