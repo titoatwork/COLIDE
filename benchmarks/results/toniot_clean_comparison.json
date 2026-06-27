@@ -1,0 +1,10 @@
+{
+  "rf_clean_f1": 0.9851,
+  "cnn_bilstm_clean_f1": 0.9526,
+  "gap_percent": 3.25,
+  "old_rf_f1": 0.9396,
+  "old_cnn_f1": 0.8254,
+  "old_gap_percent": 11.42,
+  "features_used": 26,
+  "features_dropped": 16
+}
