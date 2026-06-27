@@ -36,3 +36,5 @@ Thumbs.db
 *:Zone.Identifier
 v100_block*
 model/model.onnx
+*.nsys-rep
+*.sqlite
