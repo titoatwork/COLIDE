@@ -1,0 +1,10 @@
+{
+  "model": "MLP (distilled, 400K params)",
+  "hardware": "A100 (DICC) \u2014 update if different",
+  "avg_latency_us": 175.48,
+  "p50_us": 168.96,
+  "p95_us": 217.09,
+  "p99_us": 233.47,
+  "comparison_cnn_bilstm_us": 674,
+  "note": "Compare with custom CUDA CNN-BiLSTM latency on same GPU (e.g., A100 chained: 592 us)"
+}

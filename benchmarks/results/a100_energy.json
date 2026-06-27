@@ -1,0 +1,9 @@
+{
+  "hardware": "A100 (DICC)",
+  "model": "CNN-BiLSTM (distilled)",
+  "batch_size": 128,
+  "iterations": 500,
+  "energy_per_flow_mj": 1.088789,
+  "avg_batch_time_ms": 1.458,
+  "avg_power_watts": 95.62
+}
