@@ -27,6 +27,7 @@ def load(name):
 
 
 cuda_stats = load("cuda_kernel_stats_rtx3050.json")
+pytorch_block3_stats = load("pytorch_block3_stats_rtx3050.json")
 stat_sig = load("statistical_significance_v2.json")
 pipeline_bench = load("pipeline_benchmark.json")
 energy = load("energy_efficiency.json")
@@ -48,15 +49,18 @@ print(f"{'='*75}")
 print(f"{'Configuration':<70} {'Latency':>10} {'vs Naive':>10} {'vs PyTorch':>10}")
 print(f"{'-'*75}")
 
-# PyTorch cuDNN baseline for Block 3 alone. NOTE: an earlier one-off run
-# recorded 740.7us; a fresh full-pipeline benchmark_pipeline.py run
-# (pipeline_benchmark.json, pytorch_blocks.block3.gpu) measures the same
-# quantity notably higher. Both are single-run point estimates for this
-# specific sub-block (no N-trial version exists yet for a component this
-# small) -- flagged for a decision on which becomes canonical rather than
-# silently picking one, since it feeds the "beating cuDNN by Xx" headline.
-pytorch_cudnn_historical = 740.7
-pytorch_cudnn_fresh = pipeline_bench["pytorch_blocks"]["block3"]["gpu"] if pipeline_bench else None
+# PyTorch cuDNN baseline for Block 3 alone. RESOLVED 2026-07-01: two
+# single-run point estimates used to disagree (740.7us historical vs 943.6us
+# from a fresh benchmark_pipeline.py run) because both were one draw from a
+# noisy distribution -- benchmark_pytorch_block3_stats.py now runs 50
+# independent subprocess trials (mirroring the CUDA kernel statistical
+# harness) and gives a real mean/std: 784.1us +/- 88.6us (CV 11.3%,
+# n=50). That real mean sits between the two old single-run numbers, as
+# expected for a noisy quantity. This is now the canonical baseline.
+pytorch_cudnn_mean = (
+    pytorch_block3_stats["gpu_p50_us"]["mean"] if pytorch_block3_stats else 784.1
+)
+pytorch_cudnn_historical = pytorch_cudnn_mean  # kept as the variable name used below
 
 naive_mean = cuda_stats["fused_block3_naive"]["latency_us"]["mean"] if cuda_stats and "fused_block3_naive" in cuda_stats else 5698.0
 naive_source = "fresh, n=%d trials" % cuda_stats["fused_block3_naive"]["n_trials"] if cuda_stats and "fused_block3_naive" in cuda_stats else "historical (no surviving JSON)"
@@ -95,11 +99,20 @@ print(f"W_hh contributes {transpose_pct:.1f}%, CUDA Graphs {graphs_pct:.1f}%, FP
 print(f"of the total naive-to-optimized improvement ({naive_mean:.0f} -> {fp16_mean:.0f} us,")
 print(f"{naive_mean/fp16_mean:.2f}x). NOTE: with the fresh n=100-trial transpose/graphs")
 print(f"numbers these percentages differ from an earlier draft that used older,")
-print(f"lower-N single-run figures for those two steps -- see PyTorch cuDNN")
-_fresh_str = f"{pytorch_cudnn_fresh:.1f}" if pytorch_cudnn_fresh else "unavailable"
-print(f"baseline note above for a still-open number (740.7 historical vs")
-print(f"{_fresh_str} fresh from pipeline_benchmark.json) that the "
-      f"headline 'beating cuDNN by Nx' claim depends on.")
+print(f"lower-N single-run figures for those two steps.")
+print(f"\nPyTorch cuDNN baseline for Block 3 ({pytorch_cudnn_mean:.1f}us) is now a real")
+print(f"n=50-trial mean (std {pytorch_block3_stats['gpu_p50_us']['std']:.1f}us, CV "
+      f"{pytorch_block3_stats['gpu_p50_us']['cv_pct']:.1f}%), resolving the earlier")
+print(f"740.7-vs-943.6us single-run ambiguity -- see scripts/benchmark_pytorch_block3_stats.py."
+      if pytorch_block3_stats else
+      f"[no pytorch_block3_stats_rtx3050.json found -- run "
+      f"scripts/benchmark_pytorch_block3_stats.py to regenerate]")
+print(f"With this real baseline, only the FP16 step clearly beats cuDNN "
+      f"({pytorch_cudnn_mean/fp16_mean:.2f}x); the transposed-W_hh steps land at/below")
+print(f"parity ({pytorch_cudnn_mean/transposed_no_graphs:.2f}x no-graphs, "
+      f"{pytorch_cudnn_mean/transposed_with_graphs:.2f}x with-graphs) -- within noise of")
+print(f"breaking even with PyTorch, not a clear win, unlike what either single-run")
+print(f"number in isolation would have implied.")
 print(f"\nCaveat on the naive baseline: a 30-trial re-run of the fixed-tolerance")
 print(f"naive kernel showed real (not just threshold-related) FP32 divergence")
 print(f"from the PyTorch reference in a majority of trials (up to ~17% relative")

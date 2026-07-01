@@ -261,6 +261,19 @@ def build_claims():
             [f"{cuml_res['cuml_rf_throughput_avg']:,}"],
         )
 
+    # PyTorch cuDNN baseline for Block 3 alone -- fixed 2026-07-01, resolves
+    # the 740.7us-vs-943.6us single-run ambiguity with a real n=50-trial mean
+    # (scripts/benchmark_pytorch_block3_stats.py).
+    pytorch_block3_stats = load_json("pytorch_block3_stats_rtx3050.json")
+    if pytorch_block3_stats:
+        pt_b3_mean = pytorch_block3_stats["gpu_p50_us"]["mean"]
+        add(
+            "pytorch_block3_cudnn_baseline",
+            "PyTorch cuDNN baseline for Block 3 alone (fresh n=50-trial mean)",
+            "pytorch_block3_stats_rtx3050.json",
+            [f"{round(pt_b3_mean)}", f"{pt_b3_mean:.0f}"],
+        )
+
     # Block 3 optimization progression -- steps 2-4 are fresh n=100-trial
     # means (fixed 2026-07-01, were single-run historical figures before).
     cuda_stats = load_json("cuda_kernel_stats_rtx3050.json")
@@ -285,6 +298,13 @@ def build_claims():
             "cuda_kernel_stats_rtx3050.json",
             [fmt_ratio(naive / fp16, 2)],
         )
+        if pytorch_block3_stats:
+            add(
+                "block3_beats_cudnn_ratio",
+                "FP16 Block 3 vs PyTorch cuDNN (both sides real n>=50-trial means, fixed 2026-07-01)",
+                "pytorch_block3_stats_rtx3050.json + cuda_kernel_stats_rtx3050.json",
+                [fmt_ratio(pt_b3_mean / fp16, 2)],
+            )
 
     # Cross-hardware pipeline totals -- these ARE trustworthy (see dicc summary
     # txt files), unlike the "x over PyTorch GPU" ratios derived from them.
@@ -366,6 +386,7 @@ REGRESSION_GUARDS = [
     ("2.76x", "pipeline-vs-PyTorch ratio computed from an unsourced 1864.0 constant", "2026-07-01"),
     ("3.39x", "V100S vs-PyTorch ratio computed using the RTX3050 PyTorch baseline (cross-hardware mixing)", "2026-07-01"),
     ("3.15x", "A100 vs-PyTorch ratio computed using the RTX3050 PyTorch baseline (cross-hardware mixing)", "2026-07-01"),
+    ("beating cuDNN by 1.23x", "Block3-vs-cuDNN ratio computed from an ambiguous single-run baseline (740.7 vs 943.6us); superseded by a real n=50-trial mean (784us), giving 1.30x", "2026-07-01"),
 ]
 
 

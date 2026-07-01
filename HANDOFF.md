@@ -149,16 +149,23 @@ PYTHONPATH=. python scripts/benchmark_cuda_kernels_stats.py --kernels-dir infere
 
 ## Open items — decisions not yet made, flagged rather than silently resolved
 
-1. **PyTorch cuDNN baseline for Block 3 is inconsistent (740.7us historical single-run vs
-   943.6us from a fresh `benchmark_pipeline.py` run).** The headline "beating cuDNN by 1.23x"
-   and "9.47x optimization progression" claims depend on which is used (740.7 gives 1.23x;
-   943.6 would give 1.57x). This is flagged explicitly in README.md's "Block 3 Optimization
-   Progression" section but NOT resolved. It's RTX-3050-specific so the DICC re-run (Phase 3)
-   won't settle it. **Next session should either:** (a) run a proper n>=50 trial statistical
-   benchmark of just the PyTorch-GPU Block 3 sub-forward-pass (mirroring what was done for the
-   CUDA kernels) to get a real number, or (b) explicitly decide to standardize on the full-model
-   `statistical_significance_v2.json` "Eager PyTorch" number's implied per-block share instead
-   of a component-level benchmark. Recommend (a) — it's a small, contained piece of work.
+1. **RESOLVED 2026-07-01 (session 2).** PyTorch cuDNN baseline for Block 3 used to be
+   inconsistent (740.7us historical single-run vs 943.6us from a fresh `benchmark_pipeline.py`
+   run). Built `scripts/benchmark_pytorch_block3_stats.py` — mirrors the CUDA kernel statistical
+   harness's approach (N independent subprocess trials, not intra-process repeats, so it captures
+   the same cross-process/GPU-state jitter) — and ran n=50 trials locally. Real result:
+   **mean 784.1us, std 88.6us, CV 11.3%** (`benchmarks/results/pytorch_block3_stats_rtx3050.json`),
+   sitting between the two old single-run numbers as expected for a noisy quantity now properly
+   characterized. **This changed the actual finding, not just the provenance**: recomputed against
+   this real baseline, only the FP16 kernel clearly beats cuDNN (784.1/601.7 = **1.30x**, was
+   ambiguously reported as 1.23x); the transposed-W_hh steps (with/without CUDA Graphs) land at
+   0.98x/0.99x — i.e. at or just below parity with PyTorch, not a clear win as the 943.6us reading
+   would have implied, nor a small-but-real edge as the 740.7us reading implied. Propagated to
+   `scripts/ablation_study.py` (now loads the JSON and prints the resolution + per-step ratios),
+   `README.md` (Key Contributions #2, Per-Block Performance table, Block 3 Optimization
+   Progression section), and `scripts/verify_claims.py` (new `pytorch_block3_cudnn_baseline` and
+   `block3_beats_cudnn_ratio` manifest entries, new regression guard on the superseded "beating
+   cuDNN by 1.23x" string). `scripts/verify_claims.py` passes all 47 claims, 0 regressions.
 
 2. **The naive Block 3 kernel (`fused_block3_naive.cu`) has a real numerical-stability issue**,
    not just a validation-tolerance mismatch. Fixed one real bug already (its tolerance was 10x

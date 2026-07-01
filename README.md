@@ -11,7 +11,7 @@ COLIDE presents custom CUDA C++ inference kernels for a CNN-BiLSTM-based IoT int
 ## Key Contributions
 
 1. **Custom CUDA Beating All Frameworks**: Hand-written CUDA C++ kernels outperform TensorRT (4.40x), torch.compile (2.63x), eager PyTorch (3.33x), and ORT GPU (6.89x) — all statistically significant at p<0.001 across 20 trials
-2. **FP16 Half2 BiLSTM Beating cuDNN**: Native half-precision FMA instructions with documented **9.47x optimization progression** (5,698 to 602 us) **beating cuDNN by 1.23x** (cuDNN baseline provenance flagged — see "Block 3 Optimization Progression" below)
+2. **FP16 Half2 BiLSTM Beating cuDNN**: Native half-precision FMA instructions with documented **9.47x optimization progression** (5,698 to 602 us) **beating cuDNN by 1.30x** (cuDNN baseline is a real n=50-trial mean — see "Block 3 Optimization Progression" below)
 3. **Knowledge Distillation Closing the RF Gap**: RF-to-CNN-BiLSTM distillation with temperature scaling (T=5.0) and focal loss narrows accuracy gap from 5.12% to **2.25%** on BoT-IoT and 11.4% to **3.3%** on ToN-IoT
 4. **On-Device Air-Gapped LLM Explainability**: Async ring-buffer dispatch to local quantized TinyLlama 1.1B with **16.60 us p99 overhead** and zero cloud dependency — contrasting with Jamshidi et al. (2026) cloud API approach
 5. **Cross-Hardware Profiling**: 3 GPU architectures (RTX 3050, V100S, A100) revealing **V100S outperforms A100** for sequential LSTM — clock speed dominates SM count
@@ -61,7 +61,7 @@ comparison, so no ratio is reported here pending a real PyTorch-GPU benchmark ru
 |---|---|---|---|
 | 1: Proj+Conv1+BN+ReLU | 404 | 62 | 6.55x |
 | 2: Conv2+BN+ReLU+Pool | 282 | 87 | 3.24x |
-| 3: BiLSTM FP16 half2 | 741 | 601 | 1.23x |
+| 3: BiLSTM FP16 half2 | 784 | 602 | 1.30x |
 | 4: Dense Head | 122 | 20 | 6.07x |
 
 ### Block 3 Optimization Progression (9.47x)
@@ -71,10 +71,14 @@ remain historical single-run figures with no surviving re-runnable artifact (ste
 file was overwritten by later optimizations). Naive (step 0) has a disclosed caveat: it does not reliably
 pass numerical validation against the PyTorch reference at any reasonable tolerance (see
 `scripts/ablation_study.py`) — it is reported for latency comparison only, not as a verified-correct
-baseline. The PyTorch cuDNN reference used for per-step ratios elsewhere in this file (740.7us) is itself
-a single run; a fresh full-pipeline measurement of the same quantity gives 943.6us
-(`pipeline_benchmark.json`) — this is flagged, not yet resolved, and the "beating cuDNN by 1.23x" claim
-below depends on which is used.
+baseline. The PyTorch cuDNN reference used for per-step ratios elsewhere in this file is a real n=50-trial
+mean, **784us** (std 89us, CV 11.3%) from `benchmarks/results/pytorch_block3_stats_rtx3050.json`
+(`scripts/benchmark_pytorch_block3_stats.py`, 50 independent subprocess trials — mirrors the CUDA
+kernel statistical harness so both sides of the ratio are backed by a real distribution, not a single
+run). This resolves an earlier ambiguity between two single-run point estimates (740.7us vs 943.6us)
+that bracketed the true mean; with the real baseline, **only the FP16 step clearly beats cuDNN (1.30x)**
+— the transposed-W_hh steps (with or without CUDA Graphs) land at/just below parity with PyTorch
+(0.98x–0.99x), within noise of breaking even rather than a clear win.
 
 | Step | Configuration | Latency (us) | Cumulative |
 |---|---|---|---|
