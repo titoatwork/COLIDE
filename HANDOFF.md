@@ -210,23 +210,37 @@ PYTHONPATH=. python scripts/benchmark_cuda_kernels_stats.py --kernels-dir infere
    ToN-IoT). This is a real ML-improvement task (better KD recipe, more sweep points, different
    teacher ensemble, etc.), separate from and after the verification work above.
 
-## Uncommitted state — nothing has been committed this session
+## Git state — everything committed and pushed
 
-All fixes above are sitting in the working tree, uncommitted. `git status` currently shows ~100
-modified files (mostly `model/weights_bin/*.bin`, which are binary re-exports from Phase 2.6 —
-expected) plus these new files: `CLAUDE.md`, `scripts/verify_claims.py`,
-`scripts/benchmark_cuda_kernels_stats.py`. I did NOT commit anything since the user didn't ask —
-next session should check with the user about committing (probably as several logical commits
-matching the phases, or one big "manuscript verification pass" commit — ask which they prefer).
+Update (end of session, after this file was first written): all fixes above are committed as 9
+logical commits and pushed to `origin/master`. Working tree is clean. Commit range
+`9c8d86f..dedf158`, oldest to newest:
 
-Also note: I compiled and then deleted a bunch of scratch verification binaries
-(`fused_block1_official`, `fused_block3_naive_fixed`, etc.) during testing — these are cleaned
-up already, not left in the working tree. However, the *tracked* binaries
-`inference/kernels/fused_pipeline` and the source-only `fused_block3_naive.cu` (no tracked
+```
+9c8d86f tools: add claim verifier and CUDA kernel statistical benchmark harness
+09b509b fix: LLM dispatch overhead was fabricated, replace with real percentile benchmark
+a0ff1a8 fix: pipeline speedup ratio used an unsourced PyTorch baseline
+96dfc58 fix: weight export/validation scripts pointed at a stale pre-distillation checkpoint
+99b7f80 fix: significance tests were one-sample against a bare constant, not two-sample
+4e09ca1 feat: rebuild ablation_study.py to load from JSON instead of hardcoded literals
+9acbc15 chore: wire statistical CUDA kernel benchmark into DICC setup/run scripts
+e928d8e docs: correct fabricated/stale numbers across README and paper text blocks
+dedf158 docs: add CLAUDE.md architecture guide and session handoff
+```
+
+Each commit message has full detail on that phase's fix — read `git show <hash>` if you need the
+exact reasoning for a specific change instead of re-deriving it. `benchmarks/results/*.json` new
+files (e.g. `cuda_kernel_stats_rtx3050.json`) are NOT committed — that directory is gitignored
+for new files (existing tracked result JSONs still update fine; only new ones are blocked without
+`-f`). Consistent with this repo's stated policy ("keep plots, not raw data") — don't force-add
+new benchmark JSONs unless the user asks for that policy to change.
+
+**Still not done** (unrelated to the commit/push step, carried over from before): the *tracked*
+binary `inference/kernels/fused_pipeline` and the source-only `fused_block3_naive.cu` (no tracked
 binary exists for it) should probably be recompiled from their now-fixed `.cu` sources and
-committed, so the binary artifacts match the corrected source before final lock. Not done yet —
-small task for next session if this repo's convention of committing compiled binaries is to be
-kept consistent (check `git log` on `inference/kernels/` to confirm the convention, then decide).
+committed, so the binary artifacts match the corrected source before final lock. Check `git log`
+on `inference/kernels/` to confirm this repo's convention of committing compiled binaries, then
+decide.
 
 ## Quick orientation for a fresh session
 
