@@ -6,28 +6,33 @@
 
 ## Abstract
 
-COLIDE presents custom CUDA C++ inference kernels for a CNN-BiLSTM-based IoT intrusion detection system, achieving statistically significant speedups over all major deep learning inference frameworks: **4.40x over TensorRT** (p<0.001), **2.64x over torch.compile** (p<0.001), and **3.33x over eager PyTorch** (p<0.001), validated across 20 independent trials. The system integrates an on-device, air-gapped LLM explainability module (TinyLlama 1.1B, 4-bit quantized) with only **5.19 us p99** async dispatch overhead (<1% of the detection pipeline). Knowledge distillation from a Random Forest teacher combined with focal loss closes the accuracy gap to **1.29%** on BoT-IoT (**0.9639** macro-F1) and **3.3%** on ToN-IoT (**0.9526** macro-F1). The system sustains **25,410 flows/sec** in streaming mode on consumer-grade edge hardware.
+COLIDE presents custom CUDA C++ inference kernels for a CNN-BiLSTM-based IoT intrusion detection system, achieving statistically significant speedups over all major deep learning inference frameworks: **4.40x over TensorRT** (p<0.001), **2.63x over torch.compile** (p<0.001), and **3.33x over eager PyTorch** (p<0.001), validated across 20 independent trials. The system integrates an on-device, air-gapped LLM explainability module (TinyLlama 1.1B, 4-bit quantized) with only **16.60 us p99** async dispatch overhead (~2.5% of the detection pipeline). Knowledge distillation from a Random Forest teacher combined with focal loss closes the accuracy gap to **2.25%** on BoT-IoT (**0.9639** macro-F1) and **3.3%** on ToN-IoT (**0.9526** macro-F1). The system sustains **25,899 flows/sec** in streaming mode on consumer-grade edge hardware.
 
 ## Key Contributions
 
-1. **Custom CUDA Beating All Frameworks**: Hand-written CUDA C++ kernels outperform TensorRT (4.40x), torch.compile (2.64x), eager PyTorch (3.33x), and ORT GPU (6.90x) — all statistically significant at p<0.001 across 20 trials
-2. **FP16 Half2 BiLSTM Beating cuDNN**: Native half-precision FMA instructions with documented **9.48x optimization progression** (5,698 to 601 us) **beating cuDNN by 1.23x**
-3. **Knowledge Distillation Closing the RF Gap**: RF-to-CNN-BiLSTM distillation with temperature scaling (T=5.0) and focal loss narrows accuracy gap from 4.38% to **1.29%** on BoT-IoT and 11.4% to **3.3%** on ToN-IoT
-4. **On-Device Air-Gapped LLM Explainability**: Async ring-buffer dispatch to local quantized TinyLlama 1.1B with **5.19 us p99 overhead** and zero cloud dependency — contrasting with Jamshidi et al. (2026) cloud API approach
+1. **Custom CUDA Beating All Frameworks**: Hand-written CUDA C++ kernels outperform TensorRT (4.40x), torch.compile (2.63x), eager PyTorch (3.33x), and ORT GPU (6.89x) — all statistically significant at p<0.001 across 20 trials
+2. **FP16 Half2 BiLSTM Beating cuDNN**: Native half-precision FMA instructions with documented **9.47x optimization progression** (5,698 to 602 us) **beating cuDNN by 1.23x** (cuDNN baseline provenance flagged — see "Block 3 Optimization Progression" below)
+3. **Knowledge Distillation Closing the RF Gap**: RF-to-CNN-BiLSTM distillation with temperature scaling (T=5.0) and focal loss narrows accuracy gap from 5.12% to **2.25%** on BoT-IoT and 11.4% to **3.3%** on ToN-IoT
+4. **On-Device Air-Gapped LLM Explainability**: Async ring-buffer dispatch to local quantized TinyLlama 1.1B with **16.60 us p99 overhead** and zero cloud dependency — contrasting with Jamshidi et al. (2026) cloud API approach
 5. **Cross-Hardware Profiling**: 3 GPU architectures (RTX 3050, V100S, A100) revealing **V100S outperforms A100** for sequential LSTM — clock speed dominates SM count
 
 ## Results Summary
 
 ### Framework Comparison (RTX 3050, 20 Trials, Statistical Significance)
 
+Custom CUDA FP16 is derived from a real n=100-trial distribution (mean 674.7us, std 87.1us; see
+`benchmarks/results/cuda_kernel_stats_rtx3050.json`), not a fixed constant with no variance as in an
+earlier version of this table. Significance is a two-sample Welch's t-test (framework's 20 trials vs.
+Custom CUDA's 100 trials), not a one-sample test against a fixed point.
+
 | Method | Mean (us) | Std (us) | 95% CI | vs Custom CUDA | p-value |
 |---|---|---|---|---|---|
-| **Custom CUDA FP16** | **674** | **--** | **baseline** | **1.00x** | **--** |
-| ORT CPU | 699 | 144 | [636, 762] | 1.04x | 0.457 (ns) |
-| torch.compile | 1,777 | 152 | [1710, 1844] | 2.64x | 6.94e-18 *** |
-| Eager PyTorch | 2,247 | 279 | [2125, 2369] | 3.33x | 7.23e-16 *** |
-| TensorRT FP16 | 2,966 | 190 | [2882, 3049] | 4.40x | 5.04e-22 *** |
-| ORT GPU | 4,652 | 176 | [4575, 4729] | 6.90x | 3.21e-27 *** |
+| **Custom CUDA FP16** | **675** | **87** | **(n=100 trials)** | **1.00x** | **--** |
+| ORT CPU | 699 | 144 | [636, 762] | 1.04x | 0.483 (ns) |
+| torch.compile | 1,777 | 152 | [1710, 1844] | 2.63x | 3.55e-19 *** |
+| Eager PyTorch | 2,247 | 279 | [2125, 2369] | 3.33x | 3.51e-16 *** |
+| TensorRT FP16 | 2,966 | 190 | [2882, 3049] | 4.40x | 3.51e-23 *** |
+| ORT GPU | 4,652 | 176 | [4575, 4729] | 6.89x | 4.51e-29 *** |
 
 torch.compile with CUDA graph capture **crashes** on BiLSTM (dynamic recurrent control flow). TensorRT is slower than eager PyTorch for this sub-1M parameter model.
 
@@ -35,11 +40,20 @@ torch.compile with CUDA graph capture **crashes** on BiLSTM (dynamic recurrent c
 
 | GPU | Architecture | Pipeline (chained FP16) | vs PyTorch GPU |
 |---|---|---|---|
-| RTX 3050 6GB | Ampere (SM 8.6) | 674 us | 2.76x |
-| **V100S 32GB** | **Volta (SM 7.0)** | **551 us** | **3.39x** |
-| A100 80GB | Ampere (SM 8.0) | 592 us | 3.15x |
+| RTX 3050 6GB | Ampere (SM 8.6) | 674 us | 3.33x* |
+| **V100S 32GB** | **Volta (SM 7.0)** | **551 us** | n/a** |
+| A100 80GB | Ampere (SM 8.0) | 592 us | n/a** |
 
 V100S is fastest because BiLSTM sequential recurrence is clock-speed-bound, not SM-count-bound.
+
+\* Same comparison as "3.33x over eager PyTorch" above (20-trial, statistically validated) — the chained
+custom-CUDA pipeline and the eager-PyTorch full-model forward pass are the same computation on the same
+GPU, so this is not an independent number.
+\*\* No same-hardware PyTorch GPU baseline was captured during the DICC V100S/A100 runs (only the custom
+CUDA kernels were benchmarked there — see `dicc_v100_summary.txt` / `dicc_a100_summary.txt`). Reusing the
+RTX 3050 PyTorch baseline to compute a ratio for different hardware would not be a valid same-machine
+comparison, so no ratio is reported here pending a real PyTorch-GPU benchmark run on those machines
+(tracked for the Phase 3 re-verification pass).
 
 ### Per-Block Performance (RTX 3050)
 
@@ -50,15 +64,25 @@ V100S is fastest because BiLSTM sequential recurrence is clock-speed-bound, not 
 | 3: BiLSTM FP16 half2 | 741 | 601 | 1.23x |
 | 4: Dense Head | 122 | 20 | 6.07x |
 
-### Block 3 Optimization Progression (9.48x)
+### Block 3 Optimization Progression (9.47x)
+
+Steps 2-4 are fresh n=100-trial means (`benchmarks/results/cuda_kernel_stats_rtx3050.json`); steps 0-1
+remain historical single-run figures with no surviving re-runnable artifact (step 1's intermediate kernel
+file was overwritten by later optimizations). Naive (step 0) has a disclosed caveat: it does not reliably
+pass numerical validation against the PyTorch reference at any reasonable tolerance (see
+`scripts/ablation_study.py`) — it is reported for latency comparison only, not as a verified-correct
+baseline. The PyTorch cuDNN reference used for per-step ratios elsewhere in this file (740.7us) is itself
+a single run; a fresh full-pipeline measurement of the same quantity gives 943.6us
+(`pipeline_benchmark.json`) — this is flagged, not yet resolved, and the "beating cuDNN by 1.23x" claim
+below depends on which is used.
 
 | Step | Configuration | Latency (us) | Cumulative |
 |---|---|---|---|
 | 0 | Naive (1 thread/hidden) | 5,698 | 1.00x |
 | 1 | + Precomputed W_ih x X | 2,901 | 1.96x |
-| 2 | + Transposed W_hh (coalesced) | 1,007 | 5.66x |
-| 3 | + CUDA Graphs | 974 | 5.85x |
-| 4 | + FP16 half2 FMA gate packing | 601 | **9.48x** |
+| 2 | + Transposed W_hh (coalesced) | 804 | 7.09x |
+| 3 | + CUDA Graphs | 789 | 7.23x |
+| 4 | + FP16 half2 FMA gate packing | 602 | **9.47x** |
 
 ### Detection Accuracy — BoT-IoT (733,705 test samples)
 
@@ -73,7 +97,7 @@ V100S is fastest because BiLSTM sequential recurrence is clock-speed-bound, not 
 | Original V3 | 0.9352 | CE + SMOTE | 530,181 |
 | CPU RF (sklearn) | 0.9864 | 200 trees, CPU | -- |
 
-Gap to RF: **1.29%** (was 4.38%).
+Gap to RF: **2.25%** (was 5.12%).
 
 ### Detection Accuracy — ToN-IoT (42,209 test samples)
 
@@ -95,7 +119,7 @@ Dropping 16 sparse columns improved CNN-BiLSTM by +15.4% and RF by +4.9%.
 | 0.3 | 1.0 | -- | 0.9474 | 0.9421 |
 | 0.7 | 1.0 | -- | 0.9599 | 0.9284 |
 | 0.9 | 1.0 | -- | 0.9567 | 0.9284 |
-| 0.5 | 3.0 | -- | 0.9487 | 0.9341 |
+| 0.5 | 3.0 | -- | 0.9541 | 0.9341 |
 | 0.7 | 5.0 | -- | 0.9620 | 0.9547 |
 | **0.7** | **5.0** | **2.0** | **0.9728** | **0.9601** |
 
@@ -114,8 +138,14 @@ MLP is 3.4x faster but CNN-BiLSTM wins accuracy. The recurrent architecture's dy
 |---|---|---|
 | VRAM | 444 MB | ~2 MB |
 | F1 (GPU) | 0.9471 | 0.9639 |
-| Throughput | 2,065,669 f/s | 25,410 f/s |
+| Throughput | 2,065,669 f/s | 87,791 f/s |
 | Energy | 0.048 mJ/flow | 1.089 mJ/flow |
+
+Throughput and Energy are both measured on the A100 for both methods (an earlier version of this table
+mixed in the RTX 3050's 25,410 f/s streaming figure under an A100 header — fixed 2026-07-01). The
+CNN-BiLSTM's A100 throughput above is derived from `a100_energy.json`'s batch=128 timing
+(`128 / (avg_batch_time_ms / 1000)` = 128 / 1.458ms ≈ 87,791 flows/sec). The RTX 3050 streaming
+throughput (25,899 f/s) is reported separately above under "Streaming and Energy".
 
 CNN-BiLSTM uses **222x less VRAM** with **higher GPU accuracy**.
 
@@ -123,7 +153,7 @@ CNN-BiLSTM uses **222x less VRAM** with **higher GPU accuracy**.
 
 | Metric | Value |
 |---|---|
-| Streaming throughput | 25,410 flows/sec (batch=128) |
+| Streaming throughput | 25,899 flows/sec (batch=128) |
 | Energy (RTX 3050) | 0.79 mJ/flow |
 | Energy (A100) | 1.089 mJ/flow |
 | Preprocessing overhead | 43.7 us (6.1% of pipeline) |
@@ -133,7 +163,7 @@ CNN-BiLSTM uses **222x less VRAM** with **higher GPU accuracy**.
 
 | Metric | Value |
 |---|---|
-| Dispatch overhead | 5.19 us p99 (<1%) |
+| Dispatch overhead | 16.60 us p99 (~2.5%) |
 | Generation time | ~8.5 sec/alert (background) |
 | Model | TinyLlama 1.1B Q4 (0.77 GB) |
 | Alert aggregation | 25,000 DDoS alerts to 10 LLM calls |
@@ -171,13 +201,13 @@ Four fused kernels replacing PyTorch operators:
 ## Verified Research Gaps
 
 1. **Custom CUDA for CNN-BiLSTM IDS** — prior work (Sophimatics Phase 3, 2025) covers CNN only with 2.7x; we extend to BiLSTM with 4.40x over TensorRT
-2. **On-device LLM for IDS** — Jamshidi et al. (2026) used cloud APIs; we provide fully local with 5.19 us dispatch
+2. **On-device LLM for IDS** — Jamshidi et al. (2026) used cloud APIs; we provide fully local with 16.60 us p99 dispatch
 3. **TensorRT vs custom CUDA for sub-1M models** — no prior comparison; TensorRT is 4.40x slower
 4. **torch.compile crash on BiLSTM** — documented failure with CUDA graphs on recurrent control flow
 
 ## Limitations
 
-- **RF accuracy gap**: 0.9639 vs 0.9864 on BoT-IoT (1.29%)
+- **RF accuracy gap**: 0.9639 vs 0.9864 on BoT-IoT (2.25%)
 - **SMOTE dependency**: 52 Theft samples require synthetic augmentation
 - **Pseudo-sequence**: MLP ablation shows sequential bias is not essential; architecture retained for compiler stress-testing
 - **Energy**: cuML RF (0.048 mJ/flow) is more efficient than CNN-BiLSTM (1.089 mJ/flow) on same A100 hardware

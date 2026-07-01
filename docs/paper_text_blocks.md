@@ -2,7 +2,7 @@
 
 ## 1. LLM Claim Paragraph (replaces "first to measure" claim)
 
-Recent work by Jamshidi et al. (2026) demonstrated the integration of LLMs for IoT intrusion reasoning at edge gateways, dispatching alerts to cloud-hosted models (GPT-4-turbo, LLaMA 3.5) via API calls with latencies under 1.5 seconds and bandwidth overhead under 1.2 kB per prompt. However, their approach introduces external network dependencies, variable API latency, and potential data privacy risks inherent in transmitting security telemetry to third-party endpoints. Our approach differs fundamentally: we deploy a fully local, quantized TinyLlama 1.1B (4-bit, 0.77 GB VRAM) on the same GPU as the detection pipeline, using an asynchronous ring-buffer dispatch mechanism. The measured dispatch overhead is 5.19 us at p99 — less than 1% of the inference pipeline latency — with zero network dependency and complete data sovereignty. While the LLM generation itself takes approximately 8.5 seconds per alert, the asynchronous design ensures the detection pipeline is never blocked. To our knowledge, this represents the first fully on-device, air-gapped LLM explainability integration for real-time intrusion detection.
+Recent work by Jamshidi et al. (2026) demonstrated the integration of LLMs for IoT intrusion reasoning at edge gateways, dispatching alerts to cloud-hosted models (GPT-4-turbo, LLaMA 3.5) via API calls with latencies under 1.5 seconds and bandwidth overhead under 1.2 kB per prompt. However, their approach introduces external network dependencies, variable API latency, and potential data privacy risks inherent in transmitting security telemetry to third-party endpoints. Our approach differs fundamentally: we deploy a fully local, quantized TinyLlama 1.1B (4-bit, 0.77 GB VRAM) on the same GPU as the detection pipeline, using an asynchronous ring-buffer dispatch mechanism. The measured dispatch overhead is 16.60 us at p99 (over 5,000 trials of the classify-construct-push code path) — roughly 2.5% of the 674 us inference pipeline latency, and negligible next to the multi-second LLM generation time — with zero network dependency and complete data sovereignty. While the LLM generation itself takes approximately 7.4 seconds per alert on average, the asynchronous design ensures the detection pipeline is never blocked. To our knowledge, this represents the first fully on-device, air-gapped LLM explainability integration for real-time intrusion detection.
 
 
 ## 2. Alert Aggregation Paragraph (addresses DDoS queue overflow)
@@ -26,19 +26,21 @@ We do not claim that the CNN-BiLSTM is the optimal classifier for tabular flow d
 |--------|----------|-------------|----------------------|-------------------|----------|
 | CPU sklearn RF | 0.9864 | — | 305,248 | — | Laptop CPU |
 | GPU cuML RF | 0.9471 | — | 1,667,495 | — | V100S |
-| Eager PyTorch | 0.9639 | 2,235 | — | — | RTX 3050 |
-| torch.compile | 0.9639 | 1,912 | — | — | RTX 3050 |
-| TensorRT FP16 | 0.9639 | 3,334 | — | — | RTX 3050 |
-| ORT GPU | 0.9639 | 4,128 | — | — | RTX 3050 |
-| ORT CPU | 0.9639 | 723 | — | — | Laptop CPU |
-| **Custom CUDA FP16** | **0.9639** | **674** | **25,410** | **0.79** | **RTX 3050** |
+| Eager PyTorch | 0.9639 | 2,247 | — | — | RTX 3050 |
+| torch.compile | 0.9639 | 1,777 | — | — | RTX 3050 |
+| TensorRT FP16 | 0.9639 | 2,966 | — | — | RTX 3050 |
+| ORT GPU | 0.9639 | 4,652 | — | — | RTX 3050 |
+| ORT CPU | 0.9639 | 699 | — | — | Laptop CPU |
+| **Custom CUDA FP16** | **0.9639** | **674** | **25,899** | **0.79** | **RTX 3050** |
 | Custom CUDA FP16 | 0.9639 | 551 | — | — | V100S |
 | Custom CUDA FP16 | 0.9639 | 592 | — | — | A100 |
 
 Notes:
 - All DL methods use the same two-stage fine-tuned CNN-BiLSTM model (0.9639)
 - RF uses 200-tree sklearn/cuML RandomForestClassifier
-- Latency = single-sample inference
+- Latency = single-sample inference; RTX 3050 framework latencies are the 20-trial means from
+  `benchmarks/results/statistical_significance_v2.json` (the same source as the framework-comparison
+  table elsewhere in this doc/README) -- do not substitute other single-run numbers for these
 - Throughput = sustained streaming (batch=128)
 - Energy measured via nvidia-smi power draw integration
 
@@ -52,7 +54,7 @@ Notes:
 | KD 2 | 0.3 | 1.0 | — | 0.9474 | 0.9421 | Less teacher |
 | KD 3 | 0.7 | 1.0 | — | 0.9599 | 0.9284 | Overfit |
 | KD 4 | 0.9 | 1.0 | — | 0.9567 | 0.9284 | Overfit |
-| KD 5 | 0.5 | 3.0 | — | 0.9487 | 0.9341 | Temp hurt |
+| KD 5 | 0.5 | 3.0 | — | 0.9541 | 0.9341 | Temp hurt |
 | KD 6 | 0.7 | 5.0 | — | 0.9620 | 0.9547 | Best sweep |
 | KD 7 | 0.7 | 5.0 | 2.0 | 0.9728 | 0.9601 | Best KD+focal |
 | Two-stage | 0.7 | 5.0 | 2.0 | — | 0.9639 | Fine-tuned on real data |
@@ -60,7 +62,7 @@ Notes:
 
 ## 7. GPU Profiling Paragraph (hardware characterisation)
 
-All four custom kernels achieve 100% theoretical occupancy on the RTX 3050 (Ampere SM 8.6, 20 SMs, 1536 max threads/SM). Block 1 and Block 2 launch 256 threads per block with minimal shared memory (2-4 KB), achieving 6 concurrent blocks per SM. The BiLSTM kernel (Block 3) uses 128 threads with 8 KB shared memory, allowing 12 blocks per SM. Block 4 uses 64 threads at 1 KB shared memory, sustaining 24 blocks per SM. The high occupancy confirms that the performance gains from our custom kernels over TensorRT (4.95x) and torch.compile (2.84x) are not due to superior hardware utilisation, but rather the elimination of CPU-to-GPU kernel launch overhead. TensorRT decomposes the model into approximately 128 individual kernel launches at 5-15 us each, accumulating significant host-side latency. Our chained pipeline executes back-to-back on the device with zero inter-kernel synchronisation, converting launch-bound execution into compute-bound execution.
+All four custom kernels achieve 100% theoretical occupancy on the RTX 3050 (Ampere SM 8.6, 20 SMs, 1536 max threads/SM). Block 1 and Block 2 launch 256 threads per block with minimal shared memory (2-4 KB), achieving 6 concurrent blocks per SM. The BiLSTM kernel (Block 3) uses 128 threads with 8 KB shared memory, allowing 12 blocks per SM. Block 4 uses 64 threads at 1 KB shared memory, sustaining 24 blocks per SM. The high occupancy confirms that the performance gains from our custom kernels over TensorRT (4.40x) and torch.compile (2.63x) are not due to superior hardware utilisation, but rather the elimination of CPU-to-GPU kernel launch overhead. TensorRT decomposes the model into approximately 128 individual kernel launches at 5-15 us each, accumulating significant host-side latency. Our chained pipeline executes back-to-back on the device with zero inter-kernel synchronisation, converting launch-bound execution into compute-bound execution.
 
 
 ## 8. Preprocessing Overhead
@@ -81,7 +83,7 @@ TensorRT benchmark used the following configuration:
 
 ## 10. torch.compile Crash Evidence
 
-torch.compile(mode="reduce-overhead") with manual CUDA graph capture fails on the CNN-BiLSTM architecture with the error: "RuntimeError: Cannot prepare for replay during capturing stage. Current cudaStreamCaptureStatus: cudaStreamCaptureStatusActive." This occurs because the BiLSTM's dynamic recurrent control flow creates internal memory allocations that violate CUDA graph's requirement for static memory addresses. The full crash trace is preserved in docs/torch_compile_crash_trace.txt. Without manual CUDA graph capture, torch.compile achieves 1,912 us (RTX 3050) and 829 us (V100S) — still 2.64x and 1.50x slower than our custom CUDA kernels respectively.
+torch.compile(mode="reduce-overhead") with manual CUDA graph capture fails on the CNN-BiLSTM architecture with the error: "RuntimeError: Cannot prepare for replay during capturing stage. Current cudaStreamCaptureStatus: cudaStreamCaptureStatusActive." This occurs because the BiLSTM's dynamic recurrent control flow creates internal memory allocations that violate CUDA graph's requirement for static memory addresses. The full crash trace is preserved in docs/torch_compile_crash_trace.txt. Without manual CUDA graph capture, torch.compile achieves 1,912 us (RTX 3050) and 829 us (V100S) — still 2.83x and 1.51x slower than our custom CUDA kernels respectively (this is a distinct, slower torch.compile configuration than the 1,777 us CUDA-graph-mode figure used in the main framework-comparison table above; the two should not be conflated -- fixed 2026-07-01, was mislabeled as 2.64x/1.50x, the graph-mode ratio).
 
 
 ## 11. Sample LLM Explanations
@@ -94,7 +96,7 @@ Example output from TinyLlama 1.1B (4-bit quantized) for detected attacks:
 **Reconnaissance Alert:**
 "Network scanning activity was detected from source IP 10.0.0.15 probing multiple destination ports (22, 80, 443, 3389, 8080). The sequential nature of the port access pattern suggests automated reconnaissance using tools such as Nmap. This is typically a precursor to targeted exploitation. Recommended action: monitor the source IP for follow-up connection attempts and update firewall rules to restrict port visibility."
 
-Note: These are representative examples from the llm_explainability.py output. The LLM generates contextual explanations based on flow metadata, not raw packet payloads. Generation time is approximately 8.5 seconds per alert, executed asynchronously without blocking the detection pipeline.
+Note: These are representative examples from the llm_explainability.py output. The LLM generates contextual explanations based on flow metadata, not raw packet payloads. Generation time is approximately 7.4 seconds per alert on average (n=6 sample generations; range 6.1-9.8s), executed asynchronously without blocking the detection pipeline.
 
 
 ## 12. Strengthened RF Defense (beyond VRAM)
@@ -108,11 +110,11 @@ The Random Forest baseline achieves superior raw accuracy (0.9864 on BoT-IoT, 0.
 
 2. EXPOSING COMPILER INEFFICIENCIES: Modern DL compilers (torch.compile, TensorRT) are optimized for large LLMs and big batch sizes. For tiny models processing real-time streams at batch size 1, kernel launch overhead and compiler graph breaks (especially for recurrent nodes) destroy inference speed, rendering them slower than naive execution. TensorRT is 4.40x slower. torch.compile crashes on BiLSTM CUDA graphs entirely.
 
-3. THE HPC SOLUTION: Bypassing frameworks entirely with raw CUDA C++ kernels reclaims theoretical hardware performance. Transposed coalesced reads, FP16 half2 FMA packing, and chained kernel launches yield 2.76x pipeline speedup over PyTorch and 4.40x over TensorRT. The 9.48x Block 3 optimization progression demonstrates systematic HPC methodology.
+3. THE HPC SOLUTION: Bypassing frameworks entirely with raw CUDA C++ kernels reclaims theoretical hardware performance. Transposed coalesced reads, FP16 half2 FMA packing, and chained kernel launches yield 3.33x pipeline speedup over eager PyTorch and 4.40x over TensorRT. The 9.48x Block 3 optimization progression demonstrates systematic HPC methodology.
 
-4. ZERO-BLOCKING SEMANTIC SECURITY: Extreme kernel optimization frees computational bandwidth for a second innovation: asynchronous, zero-blocking dispatch to a local 4-bit quantized TinyLlama, providing semantic threat intelligence without cloud dependency or pipeline blocking (5.19 us p99 overhead).
+4. ZERO-BLOCKING SEMANTIC SECURITY: Extreme kernel optimization frees computational bandwidth for a second innovation: asynchronous, zero-blocking dispatch to a local 4-bit quantized TinyLlama, providing semantic threat intelligence without cloud dependency or pipeline blocking (16.60 us p99 overhead).
 
-5. ADDRESSING THE RF BASELINE: Tree-based ensembles provide slightly higher accuracy on static datasets, but their rigid feature spaces, exponential memory scaling, and inability to integrate with LLM explainability pipelines make them unsuitable as complete edge security solutions. Knowledge distillation transfers RF decision boundaries into the neural network, closing the gap to 1.29% on BoT-IoT while preserving GPU deployment advantages.
+5. ADDRESSING THE RF BASELINE: Tree-based ensembles provide slightly higher accuracy on static datasets, but their rigid feature spaces, exponential memory scaling, and inability to integrate with LLM explainability pipelines make them unsuitable as complete edge security solutions. Knowledge distillation transfers RF decision boundaries into the neural network, closing the gap to 2.25% on BoT-IoT while preserving GPU deployment advantages.
 
 
 ## 14. Sophimatics Phase 3 Citation Note
