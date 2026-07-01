@@ -110,7 +110,7 @@ The Random Forest baseline achieves superior raw accuracy (0.9864 on BoT-IoT, 0.
 
 2. EXPOSING COMPILER INEFFICIENCIES: Modern DL compilers (torch.compile, TensorRT) are optimized for large LLMs and big batch sizes. For tiny models processing real-time streams at batch size 1, kernel launch overhead and compiler graph breaks (especially for recurrent nodes) destroy inference speed, rendering them slower than naive execution. TensorRT is 4.40x slower. torch.compile crashes on BiLSTM CUDA graphs entirely.
 
-3. THE HPC SOLUTION: Bypassing frameworks entirely with raw CUDA C++ kernels reclaims theoretical hardware performance. Transposed coalesced reads, FP16 half2 FMA packing, and chained kernel launches yield 3.33x pipeline speedup over eager PyTorch and 4.40x over TensorRT. The 9.48x Block 3 optimization progression demonstrates systematic HPC methodology.
+3. THE HPC SOLUTION: Bypassing frameworks entirely with raw CUDA C++ kernels reclaims theoretical hardware performance. Transposed coalesced reads, FP16 half2 FMA packing, and chained kernel launches yield 3.33x pipeline speedup over eager PyTorch and 4.40x over TensorRT. The 8.39x-9.21x Block 3 optimization progression (range across two independent n=100-trial measurement sessions, see README's Measurement Stability note) demonstrates systematic HPC methodology.
 
 4. ZERO-BLOCKING SEMANTIC SECURITY: Extreme kernel optimization frees computational bandwidth for a second innovation: asynchronous, zero-blocking dispatch to a local 4-bit quantized TinyLlama, providing semantic threat intelligence without cloud dependency or pipeline blocking (16.60 us p99 overhead).
 
@@ -119,5 +119,5 @@ The Random Forest baseline achieves superior raw accuracy (0.9864 on BoT-IoT, 0.
 
 ## 14. Sophimatics Phase 3 Citation Note
 
-ChatGPT identified a comparable paper: "Sophimatics Phase 3" (Applied Sciences 2025), which reported custom CUDA kernels for a CNN-based IDS achieving 2.7x speedup. Must be cited in the manuscript as the closest prior work. Our contribution extends beyond this by: (a) targeting a CNN-BiLSTM with recurrent layers that are significantly harder to optimize than pure CNNs, (b) achieving 4.40x speedup over TensorRT (vs their 2.7x general speedup), (c) documenting a complete 9.48x optimization progression, and (d) integrating on-device LLM explainability. Search for full citation: "Sophimatics Phase 3 custom CUDA IDS Applied Sciences 2025."
+ChatGPT identified a comparable paper: "Sophimatics Phase 3" (Applied Sciences 2025), which reported custom CUDA kernels for a CNN-based IDS achieving 2.7x speedup. Must be cited in the manuscript as the closest prior work. Our contribution extends beyond this by: (a) targeting a CNN-BiLSTM with recurrent layers that are significantly harder to optimize than pure CNNs, (b) achieving 4.40x speedup over TensorRT (vs their 2.7x general speedup), (c) documenting a complete 8.39x-9.21x optimization progression, and (d) integrating on-device LLM explainability. Search for full citation: "Sophimatics Phase 3 custom CUDA IDS Applied Sciences 2025."
 

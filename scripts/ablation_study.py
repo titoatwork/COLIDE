@@ -60,67 +60,128 @@ print(f"{'-'*75}")
 pytorch_cudnn_mean = (
     pytorch_block3_stats["gpu_p50_us"]["mean"] if pytorch_block3_stats else 784.1
 )
-pytorch_cudnn_historical = pytorch_cudnn_mean  # kept as the variable name used below
 
+# Naive kernel: RACE CONDITION FIXED 2026-07-01. compute-sanitizer racecheck
+# found a genuine shared-memory hazard (write of the per-timestep hidden
+# state racing with the next timestep's read of it, despite a __syncthreads()
+# between them) -- confirmed independently by the kernel producing different
+# output across repeated runs with an identical, fixed host-side RNG seed
+# (impossible from pure FP32 summation-order rounding, which is
+# deterministic). Fixed via double-buffering the hidden state in
+# fused_block3_naive.cu so a timestep's read and write never target the same
+# shared array. Verified: 0 hazards under racecheck (was reporting thousands
+# before), 100/100 runs pass at the standard 1e-2 tolerance (was ~6/30), and
+# 20/20 pass even at a much tighter 1e-5 tolerance -- i.e. it's not just
+# "passing at a loose threshold," it's genuinely close to the CPU reference
+# now. naive_mean below is therefore a real n=100-trial mean of the FIXED
+# kernel, not a historical pre-fix single run.
 naive_mean = cuda_stats["fused_block3_naive"]["latency_us"]["mean"] if cuda_stats and "fused_block3_naive" in cuda_stats else 5698.0
-naive_source = "fresh, n=%d trials" % cuda_stats["fused_block3_naive"]["n_trials"] if cuda_stats and "fused_block3_naive" in cuda_stats else "historical (no surviving JSON)"
+naive_source = ("fresh, n=%d trials, race-condition FIXED and reverified"
+                 % cuda_stats["fused_block3_naive"]["n_trials"]
+                 if cuda_stats and "fused_block3_naive" in cuda_stats
+                 else "historical, pre-fix single run")
 
 # No standalone binary exists for this intermediate optimization step (the
 # kernel file was overwritten by the next step) -- historical constant only.
 precomputed_historical = 2901.0
 
-transposed_no_graphs = cuda_stats["fused_block3"]["no_graphs_us"]["mean"] if cuda_stats else 1007.3
-transposed_with_graphs = cuda_stats["fused_block3"]["with_graphs_us"]["mean"] if cuda_stats else 973.8
-fp16_mean = cuda_stats["fused_block3_fp16"]["latency_us"]["mean"] if cuda_stats else 601.4
+# MEASUREMENT STABILITY FINDING (2026-07-01): re-running the full n=100-trial
+# CUDA kernel harness later the same day (needed to safely add the
+# newly-fixed naive kernel's stats without clobbering the file with a
+# partial run) gave meaningfully different means for these three configs
+# than the SAME harness gave earlier that day (session 1) -- despite each
+# individual session's own internal CV looking tight (6.8%-24.4%). The
+# within-session CV therefore understates true measurement uncertainty on
+# this WSL2 dev box: there is real session-to-session drift (thermal state /
+# background load / WSL2 scheduler) that one n=100 run, however tight its own
+# std, does not capture. Reporting BOTH sessions' means as an explicit range
+# rather than silently picking one -- see README.md's "Measurement
+# Stability" note. (Recommendation for the DICC re-run: repeat the same
+# n-trial harness across >=2 separate sbatch submissions on different days
+# and check for the same drift there.)
+SESSION1_TRANSPOSED_NO_GRAPHS = 803.91257
+SESSION1_TRANSPOSED_WITH_GRAPHS = 788.51646
+SESSION1_FP16 = 601.65285
 
-b3_configs = [
-    ("PyTorch GPU (cuDNN baseline)", pytorch_cudnn_historical, None, 1.0),
-    (f"Naive custom (1 thread/hidden, global W_hh) [{naive_source}]", naive_mean, 1.0, pytorch_cudnn_historical / naive_mean),
-    ("+ Precomputed input projection (W_ih*X) [historical, no live source]", precomputed_historical, naive_mean / precomputed_historical, pytorch_cudnn_historical / precomputed_historical),
-    ("+ Transposed W_hh (coalesced reads) [fresh, n=100 trials]", transposed_no_graphs, naive_mean / transposed_no_graphs, pytorch_cudnn_historical / transposed_no_graphs),
-    ("+ CUDA Graphs [fresh, n=100 trials]", transposed_with_graphs, naive_mean / transposed_with_graphs, pytorch_cudnn_historical / transposed_with_graphs),
-    ("+ FP16 native half2 FMA [fresh, n=100 trials]", fp16_mean, naive_mean / fp16_mean, pytorch_cudnn_historical / fp16_mean),
+transposed_no_graphs_s2 = cuda_stats["fused_block3"]["no_graphs_us"]["mean"] if cuda_stats else 1007.3
+transposed_with_graphs_s2 = cuda_stats["fused_block3"]["with_graphs_us"]["mean"] if cuda_stats else 973.8
+fp16_s2 = cuda_stats["fused_block3_fp16"]["latency_us"]["mean"] if cuda_stats else 601.4
+
+no_graphs_lo, no_graphs_hi = sorted([SESSION1_TRANSPOSED_NO_GRAPHS, transposed_no_graphs_s2])
+with_graphs_lo, with_graphs_hi = sorted([SESSION1_TRANSPOSED_WITH_GRAPHS, transposed_with_graphs_s2])
+fp16_lo, fp16_hi = sorted([SESSION1_FP16, fp16_s2])
+
+# Downstream tables (B, H) need one representative number, not a range --
+# use the latest (session 2) measurement for those; Table A above/below
+# carries the full range disclosure.
+transposed_with_graphs = transposed_with_graphs_s2
+fp16_mean = fp16_s2
+
+def _rng(lo, hi, decimals=2, suffix="x"):
+    return f"{lo:.{decimals}f}{suffix}" if abs(hi - lo) < 1e-9 else f"{lo:.{decimals}f}-{hi:.{decimals}f}{suffix}"
+
+rows = [
+    ("PyTorch GPU (cuDNN baseline)", f"{pytorch_cudnn_mean:.1f} us", "---", "1.00x"),
+    (f"Naive custom (1 thread/hidden, global W_hh) [{naive_source}]",
+     f"{naive_mean:.1f} us", "1.00x", f"{pytorch_cudnn_mean / naive_mean:.2f}x"),
+    ("+ Precomputed input projection (W_ih*X) [historical, no live source]",
+     f"{precomputed_historical:.1f} us", f"{naive_mean / precomputed_historical:.2f}x",
+     f"{pytorch_cudnn_mean / precomputed_historical:.2f}x"),
+    ("+ Transposed W_hh (coalesced reads) [range: 2 independent n=100 sessions]",
+     f"{no_graphs_lo:.1f}-{no_graphs_hi:.1f} us",
+     _rng(naive_mean / no_graphs_hi, naive_mean / no_graphs_lo),
+     _rng(pytorch_cudnn_mean / no_graphs_hi, pytorch_cudnn_mean / no_graphs_lo)),
+    ("+ CUDA Graphs [range: 2 independent n=100 sessions]",
+     f"{with_graphs_lo:.1f}-{with_graphs_hi:.1f} us",
+     _rng(naive_mean / with_graphs_hi, naive_mean / with_graphs_lo),
+     _rng(pytorch_cudnn_mean / with_graphs_hi, pytorch_cudnn_mean / with_graphs_lo)),
+    ("+ FP16 native half2 FMA [range: 2 independent n=100 sessions]",
+     f"{fp16_lo:.1f}-{fp16_hi:.1f} us",
+     _rng(naive_mean / fp16_hi, naive_mean / fp16_lo),
+     _rng(pytorch_cudnn_mean / fp16_hi, pytorch_cudnn_mean / fp16_lo)),
 ]
 
-for name, lat, vs_naive, vs_pytorch in b3_configs:
-    naive_str = f"{vs_naive:.2f}x" if vs_naive else "---"
-    pytorch_str = f"{vs_pytorch:.2f}x"
-    print(f"{name:<70} {lat:>8.1f} us {naive_str:>10} {pytorch_str:>10}")
+for name, lat, vs_naive, vs_pytorch in rows:
+    print(f"{name:<74} {lat:>14} {vs_naive:>12} {vs_pytorch:>12}")
 
-total_improvement = naive_mean - fp16_mean
-precompute_pct = (naive_mean - precomputed_historical) / total_improvement * 100
-transpose_pct = (precomputed_historical - transposed_no_graphs) / total_improvement * 100
-graphs_pct = (transposed_no_graphs - transposed_with_graphs) / total_improvement * 100
-fp16_pct = (transposed_with_graphs - fp16_mean) / total_improvement * 100
+# Percentage-contribution breakdown, computed from session 2 (latest) means.
+# Shown alongside the session 1 breakdown to make the instability concrete:
+# these percentages are NOT stable across sessions either.
+def _contrib_pct(no_graphs, with_graphs, fp16):
+    total = naive_mean - fp16
+    return (
+        (naive_mean - precomputed_historical) / total * 100,
+        (precomputed_historical - no_graphs) / total * 100,
+        (no_graphs - with_graphs) / total * 100,
+        (with_graphs - fp16) / total * 100,
+    )
 
-print(f"\nKey insight (recomputed from the numbers above, not restated from a")
-print(f"prior draft): precompute W_ih*X contributes {precompute_pct:.1f}%, transpose")
-print(f"W_hh contributes {transpose_pct:.1f}%, CUDA Graphs {graphs_pct:.1f}%, FP16 {fp16_pct:.1f}%")
-print(f"of the total naive-to-optimized improvement ({naive_mean:.0f} -> {fp16_mean:.0f} us,")
-print(f"{naive_mean/fp16_mean:.2f}x). NOTE: with the fresh n=100-trial transpose/graphs")
-print(f"numbers these percentages differ from an earlier draft that used older,")
-print(f"lower-N single-run figures for those two steps.")
-print(f"\nPyTorch cuDNN baseline for Block 3 ({pytorch_cudnn_mean:.1f}us) is now a real")
-print(f"n=50-trial mean (std {pytorch_block3_stats['gpu_p50_us']['std']:.1f}us, CV "
-      f"{pytorch_block3_stats['gpu_p50_us']['cv_pct']:.1f}%), resolving the earlier")
-print(f"740.7-vs-943.6us single-run ambiguity -- see scripts/benchmark_pytorch_block3_stats.py."
-      if pytorch_block3_stats else
-      f"[no pytorch_block3_stats_rtx3050.json found -- run "
-      f"scripts/benchmark_pytorch_block3_stats.py to regenerate]")
-print(f"With this real baseline, only the FP16 step clearly beats cuDNN "
-      f"({pytorch_cudnn_mean/fp16_mean:.2f}x); the transposed-W_hh steps land at/below")
-print(f"parity ({pytorch_cudnn_mean/transposed_no_graphs:.2f}x no-graphs, "
-      f"{pytorch_cudnn_mean/transposed_with_graphs:.2f}x with-graphs) -- within noise of")
-print(f"breaking even with PyTorch, not a clear win, unlike what either single-run")
-print(f"number in isolation would have implied.")
-print(f"\nCaveat on the naive baseline: a 30-trial re-run of the fixed-tolerance")
-print(f"naive kernel showed real (not just threshold-related) FP32 divergence")
-print(f"from the PyTorch reference in a majority of trials (up to ~17% relative")
-print(f"error on individual hidden units, consistent with accumulated rounding")
-print(f"error over its unoptimized sequential summation order). The naive")
-print(f"kernel is reported here for LATENCY comparison only; unlike the")
-print(f"optimized variants it has not been verified to produce classification-")
-print(f"equivalent output end-to-end.")
+s2_pct = _contrib_pct(transposed_no_graphs_s2, transposed_with_graphs_s2, fp16_s2)
+s1_pct = _contrib_pct(SESSION1_TRANSPOSED_NO_GRAPHS, SESSION1_TRANSPOSED_WITH_GRAPHS, SESSION1_FP16)
+
+print(f"\nContribution breakdown of naive-to-FP16 improvement (precompute / transpose")
+print(f"/ graphs / fp16), computed two ways to make the session-to-session drift")
+print(f"concrete rather than picking one silently:")
+print(f"  Session 1 (n=100): {s1_pct[0]:.1f}% / {s1_pct[1]:.1f}% / {s1_pct[2]:.1f}% / {s1_pct[3]:.1f}%")
+print(f"  Session 2 (n=100): {s2_pct[0]:.1f}% / {s2_pct[1]:.1f}% / {s2_pct[2]:.1f}% / {s2_pct[3]:.1f}%")
+print(f"Naive-to-FP16 total ratio range: {naive_mean/fp16_hi:.2f}x-{naive_mean/fp16_lo:.2f}x")
+print(f"({naive_mean:.0f} -> {fp16_lo:.0f}-{fp16_hi:.0f} us).")
+
+if pytorch_block3_stats:
+    print(f"\nPyTorch cuDNN baseline for Block 3 ({pytorch_cudnn_mean:.1f}us) is a real")
+    print(f"n=50-trial mean (std {pytorch_block3_stats['gpu_p50_us']['std']:.1f}us, CV "
+          f"{pytorch_block3_stats['gpu_p50_us']['cv_pct']:.1f}%), resolving the earlier")
+    print(f"740.7-vs-943.6us single-run ambiguity -- see scripts/benchmark_pytorch_block3_stats.py.")
+else:
+    print(f"\n[no pytorch_block3_stats_rtx3050.json found -- run "
+          f"scripts/benchmark_pytorch_block3_stats.py to regenerate]")
+print(f"With this real baseline, the FP16 step beats cuDNN across both measurement")
+print(f"sessions ({pytorch_cudnn_mean/fp16_hi:.2f}x-{pytorch_cudnn_mean/fp16_lo:.2f}x); the transposed-W_hh")
+print(f"steps land at/below parity in BOTH sessions "
+      f"({pytorch_cudnn_mean/no_graphs_hi:.2f}-{pytorch_cudnn_mean/no_graphs_lo:.2f}x no-graphs, "
+      f"{pytorch_cudnn_mean/with_graphs_hi:.2f}-{pytorch_cudnn_mean/with_graphs_lo:.2f}x with-graphs) --")
+print(f"that specific conclusion (transposed steps don't clearly beat cuDNN) is robust")
+print(f"across the session-to-session drift, even though the exact ratios aren't.")
 
 # ================================================================
 # Table B: Per-Block Speedup Summary
@@ -170,9 +231,23 @@ print(f"pipeline_benchmark.json), not restated from an earlier draft.")
 pipeline_total = cuda_stats.get("derived_pipeline_total_us") if cuda_stats else 674.2
 eager_mean = stat_sig["Eager PyTorch"]["mean_us"] if stat_sig else None
 if eager_mean:
-    print(f"FP16 pipeline total: {pipeline_total:.1f} us chained "
-          f"({eager_mean/pipeline_total:.2f}x over eager PyTorch GPU -- same")
-    print(f"comparison as the framework-comparison table, not an independent number)")
+    # NOTE (corrected 2026-07-01): this "pipeline_total" is an ADDITIVE
+    # reconstruction (mean b124_chained + mean block3_fp16, both from
+    # cuda_kernel_stats_rtx3050.json) -- a DIFFERENT measurement methodology
+    # than statistical_significance_v2.json's directly-measured "Custom CUDA
+    # FP16" total (674.7us), which is what README's official "3.33x over
+    # eager PyTorch" headline actually uses. An earlier version of this
+    # comment incorrectly claimed these were "the same comparison" -- they
+    # are conceptually the same quantity but measured two different ways,
+    # and the Measurement Stability finding (see README) shows the additive
+    # reconstruction drifting session-to-session, so don't treat this ratio
+    # as validating or replacing the headline one.
+    print(f"FP16 pipeline total (additive reconstruction, NOT the headline number): "
+          f"{pipeline_total:.1f} us chained")
+    print(f"({eager_mean/pipeline_total:.2f}x over eager PyTorch GPU) -- README's official "
+          f"3.33x uses statistical_significance_v2.json's")
+    print(f"directly-measured 674.7us total instead; the two can diverge, see "
+          f"Measurement Stability note.")
 
 # ================================================================
 # Table C: Framework Comparison at Different Batch Sizes
@@ -347,7 +422,9 @@ for name, rtx, v100, a100, fastest in hw_data:
     print(f"{name:<22} {rtx:>8.1f} us {v100:>8.1f} us {a100:>8.1f} us {fastest:>10}")
 
 print(f"\nChained pipeline (FP16):")
-print(f"  RTX 3050:  {pipeline_total:.1f} us ({eager_mean/pipeline_total:.2f}x vs eager PyTorch, same-hardware baseline)" if eager_mean else f"  RTX 3050:  {pipeline_total:.1f} us")
+print(f"  RTX 3050:  {pipeline_total:.1f} us (additive reconstruction, see note above -- README's"
+      f" official headline uses the 674.7us directly-measured total, not this figure)"
+      if eager_mean else f"  RTX 3050:  {pipeline_total:.1f} us")
 print(f"  V100S:     550.7 us (vs PyTorch: not reported -- no same-hardware")
 print(f"             PyTorch GPU baseline was captured on this machine yet;")
 print(f"             see dicc_v100_summary.txt)")

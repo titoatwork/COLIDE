@@ -274,36 +274,81 @@ def build_claims():
             [f"{round(pt_b3_mean)}", f"{pt_b3_mean:.0f}"],
         )
 
-    # Block 3 optimization progression -- steps 2-4 are fresh n=100-trial
-    # means (fixed 2026-07-01, were single-run historical figures before).
+    # Block 3 optimization progression. MEASUREMENT STABILITY finding
+    # (2026-07-01): re-running the full n=100-trial harness later the same
+    # day (needed to safely add the newly-fixed naive kernel without
+    # clobbering the file) gave meaningfully different means for these
+    # three configs than the SAME harness gave earlier that day. Rather than
+    # picking one, these are RANGE claims -- both session's rounded bounds
+    # must appear together in doc text, hyphenated as written in README.
+    # Session 1 values captured before the file was regenerated in session 2.
+    SESSION1_TRANSPOSED_NO_GRAPHS = 803.91257
+    SESSION1_TRANSPOSED_WITH_GRAPHS = 788.51646
+    SESSION1_FP16 = 601.65285
+
+    def fmt_range(lo, hi, decimals=0, suffix="", thousands=False):
+        if thousands:
+            return f"{round(lo):,}–{round(hi):,}{suffix}"
+        if decimals == 0:
+            return f"{round(lo)}–{round(hi)}{suffix}"
+        return f"{lo:.{decimals}f}{suffix}–{hi:.{decimals}f}{suffix}"
+
     cuda_stats = load_json("cuda_kernel_stats_rtx3050.json")
     if cuda_stats:
+        no_graphs_lo, no_graphs_hi = sorted([
+            SESSION1_TRANSPOSED_NO_GRAPHS,
+            cuda_stats["fused_block3"]["no_graphs_us"]["mean"],
+        ])
+        with_graphs_lo, with_graphs_hi = sorted([
+            SESSION1_TRANSPOSED_WITH_GRAPHS,
+            cuda_stats["fused_block3"]["with_graphs_us"]["mean"],
+        ])
+        fp16_lo, fp16_hi = sorted([
+            SESSION1_FP16,
+            cuda_stats["fused_block3_fp16"]["latency_us"]["mean"],
+        ])
         add(
             "block3_transposed_no_graphs",
-            "Block 3 transposed W_hh, no graphs (fresh n=100 mean)",
-            "cuda_kernel_stats_rtx3050.json",
-            [f"{round(cuda_stats['fused_block3']['no_graphs_us']['mean'])}"],
+            "Block 3 transposed W_hh, no graphs (range across 2 independent n=100 sessions)",
+            "cuda_kernel_stats_rtx3050.json (2 sessions)",
+            [fmt_range(no_graphs_lo, no_graphs_hi, thousands=True)],
         )
         add(
             "block3_transposed_with_graphs",
-            "Block 3 transposed W_hh + CUDA graphs (fresh n=100 mean)",
-            "cuda_kernel_stats_rtx3050.json",
-            [f"{round(cuda_stats['fused_block3']['with_graphs_us']['mean'])}"],
+            "Block 3 transposed W_hh + CUDA graphs (range across 2 independent n=100 sessions)",
+            "cuda_kernel_stats_rtx3050.json (2 sessions)",
+            [fmt_range(with_graphs_lo, with_graphs_hi)],
         )
-        naive = 5698.0  # historical, no surviving JSON for a like-for-like N-trial figure
-        fp16 = cuda_stats['fused_block3_fp16']['latency_us']['mean']
+        add(
+            "block3_fp16_range",
+            "Block 3 FP16 half2 (range across 2 independent n=100 sessions)",
+            "cuda_kernel_stats_rtx3050.json (2 sessions)",
+            [fmt_range(fp16_lo, fp16_hi)],
+        )
+        naive = (
+            cuda_stats["fused_block3_naive"]["latency_us"]["mean"]
+            if "fused_block3_naive" in cuda_stats else 5698.0
+        )
+        if "fused_block3_naive" in cuda_stats:
+            add(
+                "block3_naive_latency",
+                "Block 3 naive kernel latency, race-condition FIXED and reverified "
+                "(real n=100-trial mean, replaces the old 5,698us historical single run)",
+                "cuda_kernel_stats_rtx3050.json",
+                [f"{round(naive):,}"],
+            )
         add(
             "block3_progression_total_ratio",
-            "Naive-to-FP16 total progression ratio (naive historical / fp16 fresh mean)",
+            "Naive-to-FP16 total progression ratio range (naive n=100 mean / fp16 range)",
             "cuda_kernel_stats_rtx3050.json",
-            [fmt_ratio(naive / fp16, 2)],
+            [fmt_range(naive / fp16_hi, naive / fp16_lo, decimals=2, suffix="x")],
         )
         if pytorch_block3_stats:
             add(
                 "block3_beats_cudnn_ratio",
-                "FP16 Block 3 vs PyTorch cuDNN (both sides real n>=50-trial means, fixed 2026-07-01)",
-                "pytorch_block3_stats_rtx3050.json + cuda_kernel_stats_rtx3050.json",
-                [fmt_ratio(pt_b3_mean / fp16, 2)],
+                "FP16 Block 3 vs PyTorch cuDNN, range across 2 sessions (fixed 2026-07-01)",
+                "pytorch_block3_stats_rtx3050.json + cuda_kernel_stats_rtx3050.json (2 sessions)",
+                [fmt_range(pt_b3_mean / fp16_hi, pt_b3_mean / fp16_lo, decimals=2, suffix="x")],
             )
 
     # Cross-hardware pipeline totals -- these ARE trustworthy (see dicc summary
@@ -387,6 +432,8 @@ REGRESSION_GUARDS = [
     ("3.39x", "V100S vs-PyTorch ratio computed using the RTX3050 PyTorch baseline (cross-hardware mixing)", "2026-07-01"),
     ("3.15x", "A100 vs-PyTorch ratio computed using the RTX3050 PyTorch baseline (cross-hardware mixing)", "2026-07-01"),
     ("beating cuDNN by 1.23x", "Block3-vs-cuDNN ratio computed from an ambiguous single-run baseline (740.7 vs 943.6us); superseded by a real n=50-trial mean (784us), giving 1.30x", "2026-07-01"),
+    ("5,698", "naive Block3 kernel latency: historical single-run figure from a pre-fix (racy) binary, superseded by a real n=100-trial mean of the race-condition-fixed kernel (5,050us)", "2026-07-01"),
+    ("9.47x", "naive-to-FP16 progression ratio computed from the old 5,698us naive figure and a single-session FP16 mean; superseded by a range (8.39x-9.21x) reflecting both the naive-kernel fix and the measurement-stability finding", "2026-07-01"),
 ]
 
 

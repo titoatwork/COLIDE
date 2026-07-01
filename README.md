@@ -11,7 +11,7 @@ COLIDE presents custom CUDA C++ inference kernels for a CNN-BiLSTM-based IoT int
 ## Key Contributions
 
 1. **Custom CUDA Beating All Frameworks**: Hand-written CUDA C++ kernels outperform TensorRT (4.40x), torch.compile (2.63x), eager PyTorch (3.33x), and ORT GPU (6.89x) — all statistically significant at p<0.001 across 20 trials
-2. **FP16 Half2 BiLSTM Beating cuDNN**: Native half-precision FMA instructions with documented **9.47x optimization progression** (5,698 to 602 us) **beating cuDNN by 1.30x** (cuDNN baseline is a real n=50-trial mean — see "Block 3 Optimization Progression" below)
+2. **FP16 Half2 BiLSTM Beating cuDNN**: Native half-precision FMA instructions with documented **8.39x–9.21x optimization progression** (5,050 to 548–602 us) **beating cuDNN by 1.30x–1.43x** (both the cuDNN baseline and the FP16 kernel are real n=50/n=100-trial means; the range reflects genuine session-to-session measurement drift on this dev box, not an unresolved ambiguity — see "Block 3 Optimization Progression" below)
 3. **Knowledge Distillation Closing the RF Gap**: RF-to-CNN-BiLSTM distillation with temperature scaling (T=5.0) and focal loss narrows accuracy gap from 5.12% to **2.25%** on BoT-IoT and 11.4% to **3.3%** on ToN-IoT
 4. **On-Device Air-Gapped LLM Explainability**: Async ring-buffer dispatch to local quantized TinyLlama 1.1B with **16.60 us p99 overhead** and zero cloud dependency — contrasting with Jamshidi et al. (2026) cloud API approach
 5. **Cross-Hardware Profiling**: 3 GPU architectures (RTX 3050, V100S, A100) revealing **V100S outperforms A100** for sequential LSTM — clock speed dominates SM count
@@ -61,32 +61,71 @@ comparison, so no ratio is reported here pending a real PyTorch-GPU benchmark ru
 |---|---|---|---|
 | 1: Proj+Conv1+BN+ReLU | 404 | 62 | 6.55x |
 | 2: Conv2+BN+ReLU+Pool | 282 | 87 | 3.24x |
-| 3: BiLSTM FP16 half2 | 784 | 602 | 1.30x |
+| 3: BiLSTM FP16 half2 | 784 | 548–602* | 1.30x–1.43x* |
 | 4: Dense Head | 122 | 20 | 6.07x |
 
-### Block 3 Optimization Progression (9.47x)
+\* Range across two independent n=100-trial measurement sessions on this dev box, not a lingering
+ambiguity — see "Measurement Stability" below.
 
-Steps 2-4 are fresh n=100-trial means (`benchmarks/results/cuda_kernel_stats_rtx3050.json`); steps 0-1
-remain historical single-run figures with no surviving re-runnable artifact (step 1's intermediate kernel
-file was overwritten by later optimizations). Naive (step 0) has a disclosed caveat: it does not reliably
-pass numerical validation against the PyTorch reference at any reasonable tolerance (see
-`scripts/ablation_study.py`) — it is reported for latency comparison only, not as a verified-correct
-baseline. The PyTorch cuDNN reference used for per-step ratios elsewhere in this file is a real n=50-trial
-mean, **784us** (std 89us, CV 11.3%) from `benchmarks/results/pytorch_block3_stats_rtx3050.json`
-(`scripts/benchmark_pytorch_block3_stats.py`, 50 independent subprocess trials — mirrors the CUDA
-kernel statistical harness so both sides of the ratio are backed by a real distribution, not a single
-run). This resolves an earlier ambiguity between two single-run point estimates (740.7us vs 943.6us)
-that bracketed the true mean; with the real baseline, **only the FP16 step clearly beats cuDNN (1.30x)**
-— the transposed-W_hh steps (with or without CUDA Graphs) land at/just below parity with PyTorch
-(0.98x–0.99x), within noise of breaking even rather than a clear win.
+### Block 3 Optimization Progression (8.39x–9.21x)
+
+Step 0 (naive) is now a real n=100-trial mean of the **fixed** kernel (see "Naive Kernel Fix" below);
+step 1 remains a historical single-run figure with no surviving re-runnable artifact (its kernel file was
+overwritten by later optimizations). Steps 2-4 are each backed by **two independent n=100-trial
+measurement sessions** the same day (`benchmarks/results/cuda_kernel_stats_rtx3050.json`, regenerated
+between sessions — see "Measurement Stability" below) rather than one. The PyTorch cuDNN reference used
+for per-step ratios is a real n=50-trial mean, **784us** (std 89us, CV 11.3%) from
+`benchmarks/results/pytorch_block3_stats_rtx3050.json` (`scripts/benchmark_pytorch_block3_stats.py`, 50
+independent subprocess trials — mirrors the CUDA kernel statistical harness so both sides of the ratio are
+backed by a real distribution). This resolves an earlier ambiguity between two single-run point estimates
+(740.7us vs 943.6us) that bracketed the true mean. With the real baseline, **the FP16 step beats cuDNN in
+both sessions (1.30x–1.43x)**; the transposed-W_hh steps (with or without CUDA Graphs) land at/below
+parity with PyTorch in both sessions (0.77x–0.99x) — that conclusion (transposed steps don't clearly beat
+cuDNN) is robust across the session-to-session drift, even though the exact ratios aren't.
 
 | Step | Configuration | Latency (us) | Cumulative |
 |---|---|---|---|
-| 0 | Naive (1 thread/hidden) | 5,698 | 1.00x |
-| 1 | + Precomputed W_ih x X | 2,901 | 1.96x |
-| 2 | + Transposed W_hh (coalesced) | 804 | 7.09x |
-| 3 | + CUDA Graphs | 789 | 7.23x |
-| 4 | + FP16 half2 FMA gate packing | 602 | **9.47x** |
+| 0 | Naive (1 thread/hidden), race-fixed | 5,050 | 1.00x |
+| 1 | + Precomputed W_ih x X | 2,901 | 1.74x |
+| 2 | + Transposed W_hh (coalesced) | 804–1,023 | 4.94x–6.28x |
+| 3 | + CUDA Graphs | 789–905 | 5.58x–6.40x |
+| 4 | + FP16 half2 FMA gate packing | 548–602 | **8.39x–9.21x** |
+
+#### Naive Kernel Fix (was a disclosed limitation, now resolved)
+
+The naive kernel (step 0) previously carried a disclosed caveat: it failed numerical validation against
+the PyTorch reference in a majority of repeated runs (~6/30 passing), attributed to "accumulated FP32
+rounding error over its unoptimized summation order." That attribution was wrong — re-running the SAME
+seeded input through the SAME binary produced *different* GPU output each time, which pure rounding-order
+error cannot do (that would be deterministic). `compute-sanitizer --tool racecheck` confirmed a genuine
+shared-memory data race: the per-timestep hidden-state write and the next timestep's read of it raced
+despite an intervening `__syncthreads()`. Fixed by double-buffering the hidden state in
+`fused_block3_naive.cu` so a timestep's read and write never target the same shared array. Verified:
+**0 hazards under racecheck** (was reporting thousands), **100/100 runs pass** at the standard 1e-2
+tolerance (was ~6/30), and **20/20 pass even at a 1e-5 tolerance** — i.e. genuinely close to the CPU
+reference, not just passing a loose threshold. The naive kernel's latency figure above is now a real
+n=100-trial mean of this fixed, verified kernel.
+
+#### Measurement Stability (new finding, 2026-07-01)
+
+Re-running the full n=100-trial CUDA kernel statistical harness later the same day (needed to safely add
+the newly-fixed naive kernel's stats without overwriting the file with a partial run) produced
+meaningfully different means for the transposed-W_hh and FP16 configs than the same harness gave earlier
+that day — despite each individual session's own internal CV looking tight (6.8%–24.4%):
+
+| Config | Session 1 mean | Session 2 mean | Delta |
+|---|---|---|---|
+| Transposed W_hh, no graphs | 804 us | 1,023 us | +27% |
+| Transposed W_hh + CUDA Graphs | 789 us | 905 us | +15% |
+| FP16 half2 | 602 us | 548 us | −9% |
+
+This means within-session CV understates true measurement uncertainty on this WSL2 dev box: there is real
+session-to-session drift (thermal state / background load / WSL2 scheduler) that one n=100 run, however
+tight its own std, does not capture. Rather than silently picking one session's numbers, this README
+reports both as an explicit range. **Recommendation for the DICC re-run (Phase 3):** repeat the same
+n-trial harness across at least two separate `sbatch` submissions on different days and check for the
+same drift there — if DICC (native Linux, no WSL2 passthrough) is stable across sessions, that's good
+evidence this variance is a WSL2-specific artifact rather than a fundamental limit of the methodology.
 
 ### Detection Accuracy — BoT-IoT (733,705 test samples)
 

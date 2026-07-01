@@ -44,8 +44,24 @@ __global__ void lstm_kernel(
     int reverse
 ) {
     extern __shared__ float shmem[];
-    float* s_in     = shmem;
-    float* s_h_prev = &shmem[input_size * seq_len];
+    float* s_in = shmem;
+    // Double-buffered hidden state: reads for timestep t always come from a
+    // DIFFERENT shared array than the one this timestep writes into, so a
+    // read and a write can never touch the same location within one sync
+    // epoch. Fixed 2026-07-01: the single-buffer version (read s_h_prev[j]
+    // for all j, then write own s_h_prev[h], gated only by one
+    // __syncthreads() per iteration) was verified by compute-sanitizer
+    // racecheck to have a genuine hazard between the line-103-equivalent
+    // write and the hidden-to-hidden read loop -- confirmed independently by
+    // the naive kernel producing different output across repeated runs with
+    // an identical fixed host-side RNG seed (non-determinism that pure FP32
+    // summation-order error cannot produce). synccheck found no barrier
+    // misuse, so the fix is structural (separate read/write buffers), not a
+    // missing sync.
+    float* s_h_prev[2] = {
+        &shmem[input_size * seq_len],
+        &shmem[input_size * seq_len + hidden_size],
+    };
 
     int h = threadIdx.x;
     if (h >= hidden_size) return;
@@ -59,12 +75,16 @@ __global__ void lstm_kernel(
     float c = 0.0f;
     float h_val = 0.0f;
 
-    // *** FIX: initialize previous hidden state to zero ***
-    s_h_prev[h] = 0.0f;
+    // initialize previous hidden state to zero (both buffers, so whichever
+    // one t=0 reads from is valid)
+    s_h_prev[0][h] = 0.0f;
+    s_h_prev[1][h] = 0.0f;
     __syncthreads();
 
     for (int t = 0; t < seq_len; ++t) {
         int pos = reverse ? (seq_len - 1 - t) : t;
+        float* read_buf = s_h_prev[t % 2];
+        float* write_buf = s_h_prev[(t + 1) % 2];
 
         // gate biases
         float i_gate = b_ih[h] + b_hh[h];
@@ -83,7 +103,7 @@ __global__ void lstm_kernel(
 
         // hidden-to-hidden
         for (int j = 0; j < hidden_size; ++j) {
-            float prev_h = s_h_prev[j];
+            float prev_h = read_buf[j];
             i_gate += w_hh[h * hidden_size + j] * prev_h;
             f_gate += w_hh[(hidden_size + h) * hidden_size + j] * prev_h;
             g_gate += w_hh[(2 * hidden_size + h) * hidden_size + j] * prev_h;
@@ -100,7 +120,7 @@ __global__ void lstm_kernel(
 
         out_h[h * seq_len + t] = h_val;
 
-        s_h_prev[h] = h_val;
+        write_buf[h] = h_val;
         __syncthreads();
     }
 }
@@ -284,14 +304,14 @@ int main() {
 
     // GPU pipeline
     auto full_launch = [&]() {
-        int smem1 = (IN_CH * SEQ + H1) * sizeof(float);
+        int smem1 = (IN_CH * SEQ + 2 * H1) * sizeof(float);  // +2*H1: double-buffered hidden state
         lstm_kernel<<<1, H1, smem1>>>(d_input, d_h1_fw, d_w_ih1_f, d_w_hh1_f, d_b_ih1_f, d_b_hh1_f, IN_CH, H1, SEQ, 0);
         lstm_kernel<<<1, H1, smem1>>>(d_input, d_h1_rev, d_w_ih1_r, d_w_hh1_r, d_b_ih1_r, d_b_hh1_r, IN_CH, H1, SEQ, 1);
 
         int comb_blocks = (H1x2 * SEQ + 255) / 256;
         combine_kernel<<<comb_blocks, 256>>>(d_h1_fw, d_h1_rev, d_in2, H1, SEQ);
 
-        int smem2 = (H1x2 * SEQ + H2) * sizeof(float);
+        int smem2 = (H1x2 * SEQ + 2 * H2) * sizeof(float);  // +2*H2: double-buffered hidden state
         lstm_kernel<<<1, H2, smem2>>>(d_in2, d_h2_fw, d_w_ih2_f, d_w_hh2_f, d_b_ih2_f, d_b_hh2_f, H1x2, H2, SEQ, 0);
         lstm_kernel<<<1, H2, smem2>>>(d_in2, d_h2_rev, d_w_ih2_r, d_w_hh2_r, d_b_ih2_r, d_b_hh2_r, H1x2, H2, SEQ, 1);
 
@@ -330,7 +350,7 @@ int main() {
     }
     std::cout << (pass ? "✅ FP32 validation PASSED\n" : "❌ FP32 validation FAILED\n");
     std::cout << "⏱️  Block3 (BiLSTM) time: " << avg_us << " µs\n";
-    std::cout << "   PyTorch GPU target: 740.7 µs\n";
+    std::cout << "   PyTorch GPU target: 784.1 µs (n=50-trial mean, see benchmark_pytorch_block3_stats.py)\n";
 
     // Cleanup
     cudaFree(d_input); cudaFree(d_h1_fw); cudaFree(d_h1_rev); cudaFree(d_in2);

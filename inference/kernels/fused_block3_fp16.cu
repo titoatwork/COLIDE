@@ -396,7 +396,7 @@ int main() {
     std::cout << "⏱️  Block3 FP16 half2:    " << fp16_us << " µs\n";
     std::cout << "   Block3 FP32:          1007.3 µs\n";
     std::cout << "   Speedup FP16/FP32:    " << 1007.3/fp16_us << "x\n";
-    std::cout << "   PyTorch GPU target:   740.7 µs\n";
+    std::cout << "   PyTorch GPU target:   784.1 µs (n=50-trial mean, see benchmark_pytorch_block3_stats.py)\n";
 
     // Cleanup
     cudaStreamDestroy(stream);

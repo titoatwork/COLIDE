@@ -156,30 +156,66 @@ PYTHONPATH=. python scripts/benchmark_cuda_kernels_stats.py --kernels-dir infere
    the same cross-process/GPU-state jitter) — and ran n=50 trials locally. Real result:
    **mean 784.1us, std 88.6us, CV 11.3%** (`benchmarks/results/pytorch_block3_stats_rtx3050.json`),
    sitting between the two old single-run numbers as expected for a noisy quantity now properly
-   characterized. **This changed the actual finding, not just the provenance**: recomputed against
-   this real baseline, only the FP16 kernel clearly beats cuDNN (784.1/601.7 = **1.30x**, was
-   ambiguously reported as 1.23x); the transposed-W_hh steps (with/without CUDA Graphs) land at
-   0.98x/0.99x — i.e. at or just below parity with PyTorch, not a clear win as the 943.6us reading
-   would have implied, nor a small-but-real edge as the 740.7us reading implied. Propagated to
-   `scripts/ablation_study.py` (now loads the JSON and prints the resolution + per-step ratios),
-   `README.md` (Key Contributions #2, Per-Block Performance table, Block 3 Optimization
-   Progression section), and `scripts/verify_claims.py` (new `pytorch_block3_cudnn_baseline` and
-   `block3_beats_cudnn_ratio` manifest entries, new regression guard on the superseded "beating
-   cuDNN by 1.23x" string). `scripts/verify_claims.py` passes all 47 claims, 0 regressions.
+   characterized. This is the stable half of the ratio; see item 2 below for how the OTHER half
+   (the CUDA kernel side) turned out to need a range, not a point estimate.
 
-2. **The naive Block 3 kernel (`fused_block3_naive.cu`) has a real numerical-stability issue**,
-   not just a validation-tolerance mismatch. Fixed one real bug already (its tolerance was 10x
-   stricter than sibling kernels, `1e-3` vs `1e-2`), but even after that fix it still fails
-   validation 24/30 times at a larger sample, with real divergence up to ~17% relative error on
-   some hidden units — consistent with accumulated FP32 rounding error over its unoptimized
-   sequential summation order. It's disclosed honestly in both `README.md` and
-   `scripts/ablation_study.py` (reported for latency comparison only, not claimed as
-   classification-verified). **This is exactly the kind of micro-gain the user wants pursued
-   given "we have a lot of time"**: worth eventually either (a) fixing the naive kernel's
-   accumulation order so it passes cleanly (would need to not change its "naive-ness" for the
-   optimization story to still make sense), or (b) wiring its Block 3 output through Block 4 and
-   checking whether the divergence ever actually flips a classification decision (would
-   strengthen the disclosure from "unverified" to "verified harmless"). Not started.
+2. **RESOLVED 2026-07-01 (session 2) — the naive Block 3 kernel's failure was a genuine data
+   race, not FP32 rounding, and it's now fixed.** The original diagnosis ("accumulated FP32
+   rounding error over its unoptimized summation order") was wrong: re-running the SAME
+   `srand(42)`-seeded binary repeatedly produced *different* GPU output each time (e.g. index 3
+   read -0.0502, -0.0847, and -0.0774 across three separate runs) — impossible for deterministic
+   rounding-order error, only possible with an actual race. `compute-sanitizer --tool racecheck`
+   confirmed it: the per-timestep hidden-state write (`s_h_prev[h] = h_val`) raced against the next
+   timestep's read of it (`s_h_prev[j]`), despite an intervening `__syncthreads()` — thousands of
+   hazards reported. `synccheck` found no barrier misuse (so it wasn't a missing-sync bug); fixed
+   by double-buffering the hidden state in `fused_block3_naive.cu` (alternate shared arrays by
+   `t%2` so a timestep's read and write never target the same location). Verified: **0 hazards
+   under racecheck** (was thousands), **100/100 runs pass** at the standard 1e-2 tolerance (was
+   ~6/30), and **20/20 pass at a much tighter 1e-5 tolerance** — genuinely close to the CPU
+   reference, not just clearing a loose bar. The naive kernel's latency is now a real n=100-trial
+   mean of the fixed kernel (**5,050us**, replacing the old 5,698us historical single-run figure).
+   Recompiled and **committed the tracked binary** for it for the first time (previously
+   source-only, kept unbuilt because it was known-broken; now built like the other 6 kernels).
+   Propagated to `README.md` ("Naive Kernel Fix" subsection, was a disclosed limitation, now
+   marked resolved), `scripts/ablation_study.py`, and `scripts/verify_claims.py` (new
+   `block3_naive_latency` claim, regression guards on the superseded `5,698` and `9.47x` figures).
+
+   **Getting this required a full re-run of `benchmark_cuda_kernels_stats.py` for ALL 7 kernels**
+   (not just the naive one) — otherwise re-running with only the naive binary present would have
+   silently overwritten `cuda_kernel_stats_rtx3050.json` and lost the other 6 kernels' data. That
+   fresh n=100 run surfaced a bigger, unplanned finding:
+
+   **NEW — Measurement Stability finding.** The fresh re-run's means for the transposed-W_hh and
+   FP16 configs disagreed meaningfully with the SAME n=100-trial harness run earlier the SAME day
+   (session 1) — despite each individual session's own internal CV looking tight (6.8%-24.4%):
+   Block3 FP16 601.65us -> 548.34us (-9%), transposed no-graphs 803.91us -> 1022.62us (+27%),
+   transposed with-graphs 788.52us -> 904.92us (+15%). This means within-session CV understates
+   true measurement uncertainty on this WSL2 dev box — there's real session-to-session drift
+   (thermal state / background load / WSL2 scheduler) that no single n=100 run captures, however
+   tight its own std looks. **Decision (user, 2026-07-01): report both sessions' means as an
+   explicit range rather than picking one.** Done throughout `README.md` (Key Contributions #2,
+   Per-Block Performance table, Block 3 Optimization Progression section — now
+   **8.39x-9.21x** progression, **1.30x-1.43x** beating cuDNN, was a single "9.47x"/"1.30x"),
+   `docs/paper_text_blocks.md` (same range, was a stale "9.48x" that had already drifted from
+   README's old "9.47x" even before this finding), `CLAUDE.md`, `scripts/ablation_study.py` (prints
+   both sessions' contribution-percentage breakdowns side by side to make the instability
+   concrete), and `scripts/verify_claims.py` (range-based manifest claims, regression guards on
+   the superseded point estimates). Also fixed a related latent bug this surfaced:
+   `ablation_study.py`'s Table B/H printed an "FP16 pipeline total... same comparison as the
+   framework-comparison table" claim that was **not actually the same comparison** (it's an
+   additive reconstruction — mean b124_chained + mean block3_fp16 — vs. README's directly-measured
+   674.7us total from `statistical_significance_v2.json`; these are two different measurement
+   methodologies for conceptually the same quantity and can diverge, confirmed this session:
+   614.5us derived vs. 674.7us directly-measured). README's official 674.7us/3.33x headline was
+   NOT affected (it never used the derived total), but the script's comment was corrected so it
+   doesn't mislead a future reader into thinking the two numbers are interchangeable.
+   `scripts/verify_claims.py` passes all 49 claims, 0 regressions.
+
+   **Open follow-on question, not investigated this session:** is `statistical_significance_v2.json`'s
+   674.7us full-pipeline figure (the one actually backing README's "3.33x over eager PyTorch"
+   headline) ALSO subject to this same session-to-session drift? It wasn't re-measured this
+   session (only the per-block breakdown was), so there's no evidence either way — flagging as an
+   open question rather than assuming it's fine or assuming it's broken.
 
 3. **Phase 3 (DICC re-run) needs the user to actually execute it** — no SSH/cluster access from
    this dev environment. `dicc_scripts/01_setup.sh`, `02_benchmark_v100.sh`, and
@@ -196,6 +232,14 @@ PYTHONPATH=. python scripts/benchmark_cuda_kernels_stats.py --kernels-dir infere
      RTX 3050 result — **this is what will finally give V100S/A100 a real same-hardware
      PyTorch-GPU baseline**, resolving the Phase 1.2 "n/a**" footnote in README's cross-hardware
      table.
+   - **NEW instruction from the user (2026-07-01), given the local Measurement Stability finding
+     above:** don't run the DICC n-trial harness as a single sitting. Submit the same benchmark
+     via `sbatch` across **at least two separate submissions on different days** and compare —
+     check whether V100S/A100 show the same kind of session-to-session drift found locally on
+     this WSL2 box. If DICC (native Linux, no WSL2 passthrough) is stable across sessions, that's
+     good evidence the local variance is a WSL2-specific artifact rather than a fundamental limit
+     of the methodology — worth stating explicitly in the paper either way. If DICC shows the same
+     instability, that's an even bigger methodology finding deserving its own disclosure section.
    - **Next session, once the user has run these on DICC:** pull the resulting JSON files back
      into `benchmarks/results/`, add manifest entries to `verify_claims.py` for the V100S/A100
      PyTorch baselines, compute the real "vs PyTorch" ratios for those platforms, update
@@ -209,7 +253,10 @@ PYTHONPATH=. python scripts/benchmark_cuda_kernels_stats.py --kernels-dir infere
    discloses no INT8 calibration / no manual CUDA graph capture), a numerical-fidelity table
    (max abs/relative error per block vs. PyTorch reference, pairs with item 2 above), narrative
    reframing to lead with the torch.compile crash finding rather than raw speedups, and a
-   threats-to-validity section.
+   threats-to-validity section. **The Measurement Stability finding in item 2 above is a
+   ready-made, concrete candidate for that threats-to-validity section** — it's a real,
+   quantified (6-27% session-to-session drift) hardware/environment limitation, not a
+   hypothetical one.
 
 5. **NEW (not part of the original plan, mentioned by the user this session as future work,
    not started):** substantively improve weak numbers, not just report them accurately —

@@ -321,7 +321,7 @@ int main() {
 
     std::cout<<"⏱️  With CUDA Graphs:    "<<graph_us<<" µs\n";
     std::cout<<"   Speedup from graphs:  "<<no_graph_us/graph_us<<"x\n";
-    std::cout<<"   PyTorch GPU target:   740.7 µs\n";
+    std::cout<<"   PyTorch GPU target:   784.1 µs (n=50-trial mean, see benchmark_pytorch_block3_stats.py)\n";
 
     cudaGraphExecDestroy(graphExec);
     cudaGraphDestroy(graph);

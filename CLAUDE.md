@@ -105,9 +105,14 @@ block numbering is used consistently across code, benchmarks, and README:
 - Block 1 = input projection + reshape + Conv1D + BatchNorm + ReLU (`fused_block1.cu`)
 - Block 2 = Conv1D + BatchNorm + ReLU + MaxPool (`fused_block2.cu`)
 - Block 3 = 2-layer BiLSTM (`fused_block3.cu` FP32, `fused_block3_fp16.cu` uses `__hfma2` half2-packed
-  gates — this is the kernel with the documented 9.48x optimization progression from naive to fp16;
-  `fused_block3_naive.cu` is that progression's starting point, kept for the paper's ablation table, not
-  a discard candidate)
+  gates — this is the kernel with the documented 8.39x-9.21x optimization progression from naive to fp16
+  (range across two independent n=100-trial measurement sessions on the dev box — see README's
+  "Measurement Stability" note; this dev machine has real session-to-session latency drift beyond
+  within-session variance, so don't cite a single point value for this progression without checking
+  which session it came from); `fused_block3_naive.cu` is that progression's starting point. It had a
+  genuine data race (not just FP32 rounding) fixed 2026-07-01 via double-buffering the hidden state —
+  see the fix comment at the top of `lstm_kernel` in that file — and now passes validation reliably; it's
+  kept for the paper's ablation table, not a discard candidate)
 - Block 4 = Dense + ReLU + Dense output head (`fused_block4.cu`)
 `fused_pipeline.cu` chains all four blocks. Weights are exported from the trained PyTorch model via
 `CNNBiLSTM.export_weights()` in `model/cnn_bilstm.py` (dumps every parameter as both `_fp32.npy` and
