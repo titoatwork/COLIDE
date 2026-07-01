@@ -258,11 +258,35 @@ PYTHONPATH=. python scripts/benchmark_cuda_kernels_stats.py --kernels-dir infere
    quantified (6-27% session-to-session drift) hardware/environment limitation, not a
    hypothetical one.
 
-5. **NEW (not part of the original plan, mentioned by the user this session as future work,
-   not started):** substantively improve weak numbers, not just report them accurately —
-   specifically the accuracy gap vs. Random Forest (currently 2.25% on BoT-IoT, 3.3% on
-   ToN-IoT). This is a real ML-improvement task (better KD recipe, more sweep points, different
-   teacher ensemble, etc.), separate from and after the verification work above.
+5. **IN PROGRESS 2026-07-01 (session 2): substantively improve the RF accuracy gap** (not just
+   report it accurately). Before starting the actual KD-recipe work, found and fixed a real
+   provenance gap in the number the whole task is framed around:
+
+   **RESOLVED — README's 0.9864 RF figure had no traceable source.** It's the "CPU RF (sklearn),
+   200 trees" headline used for the "2.25% gap" claim. Checked `DAILY_LOG.md` (no mention),
+   `scripts/rf_baseline.py` as-is (100 trees, independent undersample+SMOTE recipe -> 0.9768 test,
+   which IS the well-documented Day-3 windowing-decision number, just a different RF than the
+   0.9864 one), a 200-tree variant of that same recipe (-> 0.9730 test, *lower* — ruled out "just
+   add more trees"), and `train_distill.py`'s inline 200-tree RF teacher with full-SMOTE (-> 0.9750
+   validation). None matched. Git history showed 0.9864 present since the line was first added,
+   never explained, only the gap arithmetic around it later corrected (1.29%->2.25%) without ever
+   verifying the source value itself. **User supplied the original ad-hoc terminal command**: a
+   200-tree RF trained/evaluated directly on `data/processed/*.npy` — i.e. the SAME preprocessed
+   splits (268,627 train / 293,482 val / 733,705 test) the CNN-BiLSTM itself trains and evaluates
+   on, which is actually the methodologically correct "gap" comparison (apples-to-apples same
+   data), unlike the other two scripts' independent resampling. Reproduced byte-for-byte: **0.9864
+   exactly**. Saved as a permanent, reproducible script — `scripts/rf_baseline_processed.py` ->
+   `benchmarks/results/rf_baseline_processed.json` — instead of leaving it as an unrepeatable
+   terminal one-liner. Added `verify_claims.py` manifest entries (`rf_baseline_processed_test_f1`,
+   and rewired `rf_gap_botiot_final`/`rf_gap_botiot_baseline` to load from this JSON instead of a
+   hardcoded `0.9864` literal). Added a footnote to README's Detection Accuracy table explaining
+   why this number differs from the other two (legitimate, differently-configured) RF baselines
+   in the repo. `scripts/verify_claims.py` passes all 51 claims, 0 regressions.
+
+   **Not yet started:** the actual accuracy-gap-closing work (better KD recipe, finer
+   alpha/temperature sweep, different teacher ensemble, etc.). A quick timing probe found ~204-212s
+   per CNN-BiLSTM epoch (up to 50 epochs, patience=10) plus one-time RF-teacher training per run —
+   worth factoring into how many new sweep points are feasible before proposing a concrete plan.
 
 ## Git state — everything committed and pushed
 

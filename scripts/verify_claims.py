@@ -135,18 +135,36 @@ def build_claims():
             [f"{llm['overhead_p99_us']:.2f}"],
         )
 
-    # RF accuracy gap
+    # RF accuracy gap. 0.9864 had NO traceable source anywhere in the repo
+    # until 2026-07-01 (not in DAILY_LOG.md, not reproduced by
+    # scripts/rf_baseline.py's 100-tree/independent-resampling recipe [gives
+    # 0.9768], not by a 200-tree variant of that recipe [0.9730], not by
+    # train_distill.py's inline 200-tree RF teacher [~0.975 val]). Traced to
+    # its actual source: a 200-tree RF trained/evaluated directly on
+    # data/processed/*.npy -- the SAME preprocessed splits the CNN-BiLSTM
+    # itself uses (apples-to-apples), now saved as a reproducible script
+    # (scripts/rf_baseline_processed.py) instead of an ad-hoc terminal
+    # command. Confirmed byte-for-byte reproducible: 0.9864 exactly.
+    rf_processed = load_json("rf_baseline_processed.json")
+    rf_ceiling = rf_processed["test_macro_f1"] if rf_processed else 0.9864
+    if rf_processed:
+        add(
+            "rf_baseline_processed_test_f1",
+            "RF baseline test macro-F1, trained/evaluated on data/processed/*.npy (apples-to-apples with CNN-BiLSTM)",
+            "rf_baseline_processed.json",
+            [fmt(rf_ceiling, 4)],
+        )
     add(
         "rf_gap_botiot_final",
-        "RF gap: 0.9864 (CPU RF) - 0.9639 (two-stage CNN-BiLSTM)",
-        "arithmetic on README's own two headline numbers",
-        [fmt_pct(0.9864 - 0.9639, 2)],
+        "RF gap: 0.9864 (CPU RF, data/processed/*.npy) - 0.9639 (two-stage CNN-BiLSTM)",
+        "rf_baseline_processed.json + README's own headline number",
+        [fmt_pct(rf_ceiling - 0.9639, 2)],
     )
     add(
         "rf_gap_botiot_baseline",
         "RF gap before distillation: 0.9864 - 0.9352 (Original V3)",
-        "arithmetic on README's own two headline numbers",
-        [fmt_pct(0.9864 - 0.9352, 2)],
+        "rf_baseline_processed.json + README's own headline number",
+        [fmt_pct(rf_ceiling - 0.9352, 2)],
     )
 
     # KD sweep table

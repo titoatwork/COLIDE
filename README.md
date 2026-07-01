@@ -138,9 +138,16 @@ evidence this variance is a WSL2-specific artifact rather than a fundamental lim
 | Ensemble KD | 0.9529 | RF+XGB+LGB teacher | 530,181 |
 | GPU RF (cuML) | 0.9471 | 200 trees, GPU | -- |
 | Original V3 | 0.9352 | CE + SMOTE | 530,181 |
-| CPU RF (sklearn) | 0.9864 | 200 trees, CPU | -- |
+| CPU RF (sklearn) | 0.9864* | 200 trees, CPU | -- |
 
 Gap to RF: **2.25%** (was 5.12%).
+
+\* Trained/evaluated on the exact same preprocessed splits (`data/processed/*.npy`) the CNN-BiLSTM
+itself uses — the apples-to-apples comparison. `scripts/rf_baseline.py` and `train_distill.py`'s
+inline RF teacher each apply their own independent resampling straight from the raw CSVs and give
+different (also legitimate, but not directly comparable) numbers — 0.9768 and ~0.975 respectively;
+see `scripts/rf_baseline_processed.py` (`benchmarks/results/rf_baseline_processed.json`) for this
+figure's source, confirmed reproducible byte-for-byte 2026-07-01.
 
 ### Detection Accuracy — ToN-IoT (42,209 test samples)
 
