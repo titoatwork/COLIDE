@@ -4,6 +4,7 @@ Runs PyTorch baselines and collects custom CUDA block times.
 Produces paper-ready comparison tables and saves to JSON.
 """
 
+import re
 import sys
 import time
 import json
@@ -13,6 +14,13 @@ import yaml
 import torch
 
 sys.path.insert(0, '.')
+
+# Hardware tag so this script's output survives being run on multiple GPUs
+# (RTX 3050 locally, V100S/A100 via DICC) without one run silently
+# overwriting another's results at the same fixed path -- this is why no
+# per-hardware PyTorch GPU baseline existed for V100S/A100 previously.
+_gpu_name = torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'cpu'
+GPU_TAG = re.sub(r'[^A-Za-z0-9]+', '_', _gpu_name).strip('_').lower()
 
 from model.cnn_bilstm_v3_attention import CNNBiLSTMAttention as CNNBiLSTM
 
@@ -227,6 +235,7 @@ for name, lat in methods:
 # Save results to JSON
 # ================================================================
 results = {
+    'hardware': _gpu_name,
     'cuda_blocks': cuda_blocks,
     'cuda_total_graphs': cuda_total_graphs,
     'cuda_total_no_graphs': cuda_total_no_graphs,
@@ -235,6 +244,16 @@ results = {
     'pytorch_block_totals': {'cpu': pt_cpu_total, 'gpu': pt_gpu_total},
 }
 
+# Hardware-tagged path: permanent per-GPU record, never clobbered by a run
+# on different hardware.
+tagged_path = f'benchmarks/results/pipeline_benchmark_{GPU_TAG}.json'
+with open(tagged_path, 'w') as f:
+    json.dump(results, f, indent=2)
+print(f"\nResults saved to {tagged_path}")
+
+# Legacy fixed path: kept for backward compatibility with anything still
+# reading the untagged filename -- always reflects the MOST RECENT run,
+# so don't treat it as hardware-specific.
 out_path = 'benchmarks/results/pipeline_benchmark.json'
 with open(out_path, 'w') as f:
     json.dump(results, f, indent=2)

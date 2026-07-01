@@ -356,17 +356,33 @@ int main() {
     double b124_us = std::chrono::duration<double, std::micro>(t2 - t1).count() / iters;
 
     // ---- Results ----
-    std::cout << "\n⏱️  Blocks 1+2+4 chained:     " << b124_us << " µs\n";
-    std::cout << "   Block 3 FP16 (measured):    601.4 µs\n";
+    // NOTE ON METHODOLOGY: this binary measures Blocks 1+2+4 chained on the
+    // device (b124_us, above). Block 3's contribution below is NOT measured
+    // in this run -- it is the FP16 half2 result from the separate
+    // fused_block3_fp16 binary (see benchmarks/results/pipeline_benchmark.json
+    // and dicc_v100_summary.txt / dicc_a100_summary.txt, which use the same
+    // additive convention: total = measured(1+2+4) + measured(3), from two
+    // separate kernel launches, not one atomic end-to-end measurement).
+    std::cout << "\n⏱️  Blocks 1+2+4 chained (measured this run): " << b124_us << " µs\n";
+    std::cout << "   Block 3 FP16 (measured separately, fused_block3_fp16): 601.4 µs\n";
     std::cout << "   ─────────────────────────────────\n";
 
     double total_chained = b124_us + 601.4;
     double total_separate = 61.7 + 87.2 + 601.4 + 20.1;
-    double pytorch_gpu = 1864.0;
+    // PyTorch GPU baseline: full model.forward() eager, batch=1, RTX 3050,
+    // 20-trial mean from benchmarks/results/statistical_significance_v2.json
+    // ("Eager PyTorch"). This is the SAME comparison as the "3.33x over eager
+    // PyTorch" framework-comparison headline -- our chained CUDA pipeline and
+    // PyTorch's eager forward pass are the same computation on the same GPU,
+    // so this ratio is not an independent number from that one. Previously
+    // this was a hardcoded, unsourced constant (1864.0) that did not match
+    // any other PyTorch-GPU measurement recorded in this repo -- fixed
+    // 2026-07-01.
+    double pytorch_gpu = 2246.755;
 
     std::cout << "   Pipeline chained total:     " << total_chained << " µs\n";
     std::cout << "   Pipeline separate total:    " << total_separate << " µs\n";
-    std::cout << "   PyTorch GPU baseline:       " << pytorch_gpu << " µs\n";
+    std::cout << "   PyTorch GPU baseline:       " << pytorch_gpu << " µs (eager, 20-trial mean)\n";
     std::cout << "   ─────────────────────────────────\n";
     std::cout << "   Chained speedup vs PyTorch: " << pytorch_gpu / total_chained << "x\n";
     std::cout << "   Separate speedup vs PyTorch:" << pytorch_gpu / total_separate << "x\n";
