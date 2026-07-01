@@ -30,8 +30,10 @@ print("=" * 60)
 with open('config/config.yaml') as f:
     config = yaml.safe_load(f)
 
+# Final published model (two-stage KD+focal+real-data fine-tune, 0.9639 macro-F1)
+# -- fixed 2026-07-01, was pointed at the stale pre-distillation checkpoint.
 model = CNNBiLSTM(config)
-model.load_state_dict(torch.load('model/best_model.pth', map_location='cpu', weights_only=True))
+model.load_state_dict(torch.load('model/best_model_botiot_twostage.pth', map_location='cpu', weights_only=True))
 model.eval()
 
 # Load test data

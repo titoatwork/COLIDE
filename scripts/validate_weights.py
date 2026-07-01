@@ -20,8 +20,12 @@ from model.cnn_bilstm_v3_attention import CNNBiLSTMAttention as CNNBiLSTM
 with open('config/config.yaml') as f:
     config = yaml.safe_load(f)
 
+# Final published model (two-stage KD+focal+real-data fine-tune, 0.9639 macro-F1).
+# Previously pointed at model/best_model.pth, the pre-distillation "Original V3"
+# checkpoint (0.9352) -- fixed 2026-07-01 so the exported weights used for CUDA
+# kernel correctness validation match the model actually being reported.
 model = CNNBiLSTM(config)
-model.load_state_dict(torch.load('model/best_model.pth', map_location='cpu', weights_only=True))
+model.load_state_dict(torch.load('model/best_model_botiot_twostage.pth', map_location='cpu', weights_only=True))
 model.eval()
 
 print("=" * 60)
