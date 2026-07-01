@@ -157,8 +157,24 @@ except Exception as e:
     print(f"  TensorRT failed: {e}")
     results['TensorRT'] = None
 
-# Custom CUDA reference
-custom_cuda_us = 674.0
+# Custom CUDA reference -- previously a bare constant (674.0) with no
+# variance, forcing every significance test below to be a one-sample test
+# against a fixed point rather than a real two-sample comparison. Fixed
+# 2026-07-01: load the actual n=100-trial distribution for the chained
+# pipeline (benchmarks/results/cuda_kernel_stats_rtx3050.json), derived as
+# fused_pipeline's b124_chained + fused_block3_fp16's latency (independent
+# binaries, summed the same additive way as the headline pipeline total).
+# For two independent random variables, mean(A+B) = mean(A) + mean(B) and
+# std(A+B) = sqrt(std(A)^2 + std(B)^2); n = min(n_A, n_B) is used as a
+# conservative degrees-of-freedom estimate for the two-sample test below.
+with open('benchmarks/results/cuda_kernel_stats_rtx3050.json') as f:
+    cuda_stats = json.load(f)
+_b124 = cuda_stats['fused_pipeline']['b124_chained_us']
+_b3fp16 = cuda_stats['fused_block3_fp16']['latency_us']
+custom_cuda_us = _b124['mean'] + _b3fp16['mean']
+custom_cuda_std = float(np.sqrt(_b124['std'] ** 2 + _b3fp16['std'] ** 2))
+custom_cuda_n = min(cuda_stats['fused_pipeline']['n_trials'],
+                     cuda_stats['fused_block3_fp16']['n_trials'])
 
 # Report
 print(f"\n{'='*70}")
@@ -178,15 +194,23 @@ for name, trials in results.items():
     speedup = mean / custom_cuda_us
     print(f"{name:<20} {mean:>7.1f}  {std:>7.1f}  [{ci_low:>7.1f}, {ci_high:>7.1f}]  {speedup:>7.2f}x")
 
-print(f"{'Custom CUDA FP16':<20} {custom_cuda_us:>7.1f}  {'--':>7}  {'baseline':>20}  {'1.00x':>10}")
+print(f"{'Custom CUDA FP16':<20} {custom_cuda_us:>7.1f}  {custom_cuda_std:>7.1f}  "
+      f"{'(n=' + str(custom_cuda_n) + ' trials)':>20}  {'1.00x':>10}")
 
 print(f"\n{'='*70}")
-print("PAIRED T-TESTS (H0: framework mean = Custom CUDA 674 us)")
+print("TWO-SAMPLE WELCH'S T-TESTS (H0: framework mean = Custom CUDA mean)")
+print("Previously a one-sample test against a fixed constant with no")
+print("variance -- fixed 2026-07-01 now that Custom CUDA has its own")
+print("real n=100-trial distribution instead of a bare point value.")
 print(f"{'='*70}")
 for name, trials in results.items():
     if trials is None:
         continue
-    t_stat, p_val = stats.ttest_1samp(trials, custom_cuda_us)
+    t_stat, p_val = stats.ttest_ind_from_stats(
+        mean1=trials.mean(), std1=trials.std(ddof=1), nobs1=len(trials),
+        mean2=custom_cuda_us, std2=custom_cuda_std, nobs2=custom_cuda_n,
+        equal_var=False,
+    )
     sig = "***" if p_val < 0.001 else "**" if p_val < 0.01 else "*" if p_val < 0.05 else "ns"
     print(f"{name:<20} t={t_stat:>8.2f}  p={p_val:.2e}  {sig}")
 
@@ -204,6 +228,14 @@ for name, trials in results.items():
         'n_iters': N_ITERS,
         'trials': [float(x) for x in trials],
     }
-output['Custom CUDA FP16'] = {'mean_us': 674.0, 'note': 'from compiled kernel benchmark'}
+output['Custom CUDA FP16'] = {
+    'mean_us': custom_cuda_us,
+    'std_us': custom_cuda_std,
+    'n_trials': custom_cuda_n,
+    'note': ('Derived from benchmarks/results/cuda_kernel_stats_rtx3050.json: '
+             'fused_pipeline b124_chained_us + fused_block3_fp16 latency_us '
+             '(independent binaries, summed mean/variance). Was a bare '
+             'constant with no variance until 2026-07-01.'),
+}
 json.dump(output, open('benchmarks/results/statistical_significance_v2.json', 'w'), indent=2)
 print(f"\nSaved to benchmarks/results/statistical_significance_v2.json")

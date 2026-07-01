@@ -27,7 +27,9 @@
       2219.40973799974,
       3173.519181998927,
       2728.955787000814
-    ]
+    ],
+    "p_value_two_sample_welch_vs_custom_cuda": 3.510581752840474e-16,
+    "t_stat_two_sample_welch_vs_custom_cuda": 24.35350228744829
   },
   "torch.compile": {
     "mean_us": 1776.9603850001658,
@@ -57,7 +59,9 @@
       1822.146854001403,
       1767.739265000273,
       1902.238254000622
-    ]
+    ],
+    "p_value_two_sample_welch_vs_custom_cuda": 3.5519607263888947e-19,
+    "t_stat_two_sample_welch_vs_custom_cuda": 30.624235191276178
   },
   "ORT CPU": {
     "mean_us": 699.1523172998313,
@@ -87,7 +91,9 @@
       523.8007160005509,
       516.1249299999326,
       521.7273819998809
-    ]
+    ],
+    "p_value_two_sample_welch_vs_custom_cuda": 0.48303225572967107,
+    "t_stat_two_sample_welch_vs_custom_cuda": 0.7136783304042302
   },
   "ORT GPU": {
     "mean_us": 4651.932655200017,
@@ -117,7 +123,9 @@
       4602.324944000429,
       4847.960200999296,
       5005.4414280002675
-    ]
+    ],
+    "p_value_two_sample_welch_vs_custom_cuda": 4.5131600462655356e-29,
+    "t_stat_two_sample_welch_vs_custom_cuda": 96.43740177039246
   },
   "TensorRT": {
     "mean_us": 2965.5763424501856,
@@ -147,10 +155,14 @@
       3045.3394600008323,
       3223.2454680015508,
       2770.134983000389
-    ]
+    ],
+    "p_value_two_sample_welch_vs_custom_cuda": 3.5054775294069364e-23,
+    "t_stat_two_sample_welch_vs_custom_cuda": 51.4226156909307
   },
   "Custom CUDA FP16": {
-    "mean_us": 674.0,
-    "note": "from compiled kernel benchmark"
+    "mean_us": 674.704695,
+    "std_us": 87.13132549363847,
+    "n_trials": 100,
+    "note": "Derived from benchmarks/results/cuda_kernel_stats_rtx3050.json: fused_pipeline b124_chained_us + fused_block3_fp16 latency_us (independent binaries, summed mean/variance: mean(A+B)=mean(A)+mean(B), std(A+B)=sqrt(std(A)^2+std(B)^2)). Was a bare constant (674.0, no variance, one-sample-vs-fixed-point test) until 2026-07-01."
   }
 }
