@@ -26,13 +26,18 @@ nvidia-smi
 nvcc --version
 
 # Compile kernels for V100 (sm_70) and A100 (sm_80)
+# NOTE: no extra -O flags -- must match the Dockerfile's build command
+# exactly, since -O3 was found (2026-07-01) to change host-side timing-loop
+# behavior enough to skew measured kernel latency on the local RTX 3050 test.
 echo "=== Compiling for V100 (sm_70) ==="
 mkdir -p inference/kernels/v100
 nvcc -arch=sm_70 -o inference/kernels/v100/fused_block1 inference/kernels/fused_block1.cu
 nvcc -arch=sm_70 -o inference/kernels/v100/fused_block2 inference/kernels/fused_block2.cu
 nvcc -arch=sm_70 -o inference/kernels/v100/fused_block3 inference/kernels/fused_block3.cu
 nvcc -arch=sm_70 -o inference/kernels/v100/fused_block3_fp16 inference/kernels/fused_block3_fp16.cu
+nvcc -arch=sm_70 -o inference/kernels/v100/fused_block3_naive inference/kernels/fused_block3_naive.cu
 nvcc -arch=sm_70 -o inference/kernels/v100/fused_block4 inference/kernels/fused_block4.cu
+nvcc -arch=sm_70 -o inference/kernels/v100/fused_pipeline inference/kernels/fused_pipeline.cu
 
 echo "=== Compiling for A100 (sm_80) ==="
 mkdir -p inference/kernels/a100
@@ -40,7 +45,9 @@ nvcc -arch=sm_80 -o inference/kernels/a100/fused_block1 inference/kernels/fused_
 nvcc -arch=sm_80 -o inference/kernels/a100/fused_block2 inference/kernels/fused_block2.cu
 nvcc -arch=sm_80 -o inference/kernels/a100/fused_block3 inference/kernels/fused_block3.cu
 nvcc -arch=sm_80 -o inference/kernels/a100/fused_block3_fp16 inference/kernels/fused_block3_fp16.cu
+nvcc -arch=sm_80 -o inference/kernels/a100/fused_block3_naive inference/kernels/fused_block3_naive.cu
 nvcc -arch=sm_80 -o inference/kernels/a100/fused_block4 inference/kernels/fused_block4.cu
+nvcc -arch=sm_80 -o inference/kernels/a100/fused_pipeline inference/kernels/fused_pipeline.cu
 
 echo "=== Setup Complete ==="
 echo "Run: sbatch 02_benchmark_v100.sh"

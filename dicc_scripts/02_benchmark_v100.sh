@@ -18,7 +18,7 @@ conda activate colide
 export PYTHONPATH=.
 
 echo ""
-echo "=== CUDA Kernel Benchmarks (V100) ==="
+echo "=== CUDA Kernel Benchmarks (V100), single-run sanity check ==="
 ./inference/kernels/v100/fused_block1
 echo "---"
 ./inference/kernels/v100/fused_block2
@@ -28,6 +28,11 @@ echo "---"
 ./inference/kernels/v100/fused_block3_fp16
 echo "---"
 ./inference/kernels/v100/fused_block4
+
+echo ""
+echo "=== CUDA Kernel Statistical Benchmark (V100), n=20 trials -- THIS is the ==="
+echo "=== number that should go in the paper, not the single-run numbers above ==="
+python scripts/benchmark_cuda_kernels_stats.py --kernels-dir inference/kernels/v100 --suffix "" --tag v100s
 
 echo ""
 echo "=== Python Benchmarks ==="
