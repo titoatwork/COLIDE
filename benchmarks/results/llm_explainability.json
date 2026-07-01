@@ -1,84 +1,64 @@
 {
-  "detection_latency_no_llm_us": 0.42814999687834643,
-  "detection_latency_with_llm_us": 132.79369993597356,
-  "overhead_us": 132.36554993909522,
-  "llm_generation_mean_ms": 9087.377542933398,
-  "llm_generation_median_ms": 8551.612797000416,
-  "alerts_dispatched": 20,
-  "alerts_processed": 15,
-  "alerts_dropped": 0,
+  "methodology": "Dispatch overhead measured over 5000 trials of classify+construct+push, decoupled from LLM generation which runs on a separate thread/timescale (seconds vs microseconds). Ring buffer saturates and operates in drop-oldest mode almost immediately under this load -- expected steady-state behavior, not a benchmark artifact.",
+  "dispatch_trials": 5000,
+  "baseline_p50_us": 0.11800057109212503,
+  "baseline_p95_us": 0.14800025383010507,
+  "baseline_p99_us": 0.22699987312080339,
+  "baseline_mean_us": 0.12040200654155342,
+  "dispatch_p50_us": 4.435000846569892,
+  "dispatch_p95_us": 8.29845048428979,
+  "dispatch_p99_us": 16.717170128686167,
+  "dispatch_mean_us": 8.22405780218105,
+  "overhead_p99_us": 16.599169557594042,
+  "alerts_dispatched": 5000,
+  "alerts_dropped": 4967,
+  "sample_explanations_generated": 6,
+  "llm_generation_mean_ms": 7400.471511333308,
+  "llm_generation_median_ms": 7291.644102999726,
   "model": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
   "quantization": "4-bit",
   "sample_explanations": [
     {
-      "flow_id": 0,
-      "class": "DDoS",
-      "confidence": 0.9999996423721313,
-      "explanation": "The SOC analyst should investigate the DDoS attack and take the following actions:\n\n1. Identify the source of the attack: The first step is to identify the source of the attack. This can be done by analyzing the IP addresses and ports used in the DDoS attack.\n\n2. Determine the severity of the attack: The severity of the attack can be determined based on the number of connections, the bandwidth used, and the duration",
-      "generation_time_ms": 13346.77828399981
-    },
-    {
-      "flow_id": 1,
-      "class": "DDoS",
-      "confidence": 0.9996053576469421,
-      "explanation": "The alert indicates a DDoS attack detected with a confirmed source IP address of 192.168.1.1. The SOC analyst should take the following actions:\n\n1. Review the flow features to identify the source IP address, N_IN_Conn_P_SrcIP, and drate, which are the maximum and minimum values, respectively.\n\n2. Check the N_IN_Conn_P_DstIP",
-      "generation_time_ms": 7703.629806000208
-    },
-    {
-      "flow_id": 2,
-      "class": "DoS",
-      "confidence": 0.8690558671951294,
-      "explanation": "The SOC analyst should investigate the DoS attack and determine the cause of the attack. The attack was detected by the IDS, indicating that a DoS attack was attempted. The attack was detected with a confidence of 86.91%, indicating that the attack was likely to have occurred. The attack was detected with features such as \"N_IN_Conn_P_DstIP\" and \"N_IN_Conn_P_SrcIP\", which",
-      "generation_time_ms": 8469.391543000256
-    },
-    {
-      "flow_id": 3,
-      "class": "DoS",
-      "confidence": 1.0,
-      "explanation": "The SOC analyst should investigate the DoS attack detected by the IDS. The alert provides a brief, actionable explanation in 2-3 sentences. The features of the alert include N_IN_Conn_P_DstIP (1.0), N_IN_Conn_P_SrcIP (1.0), drate (0.0), max (0.9419608116149902",
-      "generation_time_ms": 8551.612797000416
-    },
-    {
-      "flow_id": 4,
-      "class": "DoS",
-      "confidence": 0.7899901866912842,
-      "explanation": "The alert indicates a DoS (Denial of Service) attack detected. The attack is detected by the network security system due to a flow feature that measures the number of packets that have been sent to or received from a specific IP address. The alert features a confidence of 79.00%, indicating a high probability of an attack.\n\nThe SOC analyst should take the following actions:\n\n1. Review the flow features to identify any anomalies or unusual behavior that",
-      "generation_time_ms": 7305.379694999829
-    },
-    {
-      "flow_id": 5,
+      "flow_id": 865,
       "class": "DoS",
       "confidence": 0.9982091188430786,
       "explanation": "The alert indicates a DoS (Denial of Service) attack detected by the network security system. The attack is detected based on the features of the flow, including the number of connections (N_IN_Conn_P_DstIP and N_IN_Conn_P_SrcIP), the maximum rate of connections (drate), the mean rate of connections (mean), the minimum rate of connections (min), the sequence number (seq), the standard deviation of connections",
-      "generation_time_ms": 7927.037880000171
+      "generation_time_ms": 9829.137964000438
     },
     {
-      "flow_id": 6,
-      "class": "DoS",
-      "confidence": 0.9999874830245972,
-      "explanation": "The SOC analyst should investigate the DoS attack and determine the severity of the attack. The alert indicates a DoS attack with a maximum flow rate of 0.7149983644485474, which is higher than the minimum flow rate of 0.7022018432617188. The SOC analyst should investigate the cause of the attack and determine the impact on the",
-      "generation_time_ms": 8219.38771799978
-    },
-    {
-      "flow_id": 7,
-      "class": "DDoS",
-      "confidence": 0.9999918937683105,
-      "explanation": "The SOC analyst should investigate the DDoS attack and determine the source and destination IP addresses, as well as the source and destination ports. The attack was detected by the IDS, indicating that it was a DDoS attack. The SOC analyst should also check the network traffic to identify any suspicious activity or anomalies. This will help them identify the source of the attack and take appropriate action to mitigate the damage.",
-      "generation_time_ms": 7489.8923300002025
-    },
-    {
-      "flow_id": 8,
+      "flow_id": 4968,
       "class": "DoS",
       "confidence": 0.9997701048851013,
       "explanation": "The SOC analyst should investigate the DoS attack and determine the cause of the attack. The attack was detected by the IDS, indicating that a DoS attack was detected. The attack was detected with a confidence of 99.98%, indicating that the attack was likely a DoS attack. The attack was detected by a feature that measures the number of connections to the affected IP address, with a confidence of 99.98%. The feature detected a DoS attack",
-      "generation_time_ms": 12477.563991999887
+      "generation_time_ms": 7673.11417000019
     },
     {
-      "flow_id": 9,
+      "flow_id": 4969,
       "class": "DoS",
       "confidence": 0.9999997615814209,
       "explanation": "The SOC analyst should investigate the DoS attack and determine the severity of the attack. The alert indicates a DoS attack with a confidence of 100%, which means that the attack is likely to cause significant damage. The attack was detected by the IDS (Intrusion Detection System) and features a DoS attack with a N_IN_Conn_P_DstIP of 0.62626260519",
-      "generation_time_ms": 10543.236731999968
+      "generation_time_ms": 7625.774902999183
+    },
+    {
+      "flow_id": 4970,
+      "class": "DDoS",
+      "confidence": 1.0,
+      "explanation": "The SOC analyst should investigate the DDoS attack and take the following actions:\n\n1. Identify the source of the attack: The first step is to identify the source of the attack. This can be done by analyzing the IP addresses and ports used in the DDoS attack.\n\n2. Determine the severity of the attack: The severity of the attack can be determined based on the number of connections, the bandwidth used, and the duration",
+      "generation_time_ms": 6957.513303000269
+    },
+    {
+      "flow_id": 4971,
+      "class": "DDoS",
+      "confidence": 0.9999998807907104,
+      "explanation": "The SOC analyst should investigate the DDoS attack and determine the source and destination IP addresses, as well as the source and destination ports. The attack was detected by the IDS, indicating that it was a DDoS attack. The SOC analyst should also check the network traffic to identify any suspicious activity or anomalies. This will help them identify the source of the attack and take appropriate action to mitigate the damage.",
+      "generation_time_ms": 6063.9394789996
+    },
+    {
+      "flow_id": 4972,
+      "class": "DDoS",
+      "confidence": 0.9999998807907104,
+      "explanation": "The SOC analyst should investigate the DDoS attack and determine the source and destination IP addresses, as well as the source and destination ports. The attack was detected by the IDS, indicating that it was a DDoS attack. The SOC analyst should also check the network traffic to identify any suspicious activity or anomalies. This will help them identify the source of the attack and take appropriate action to mitigate the damage.",
+      "generation_time_ms": 6253.349249000166
     }
   ]
 }

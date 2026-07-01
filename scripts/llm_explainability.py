@@ -154,7 +154,7 @@ def simulate_detection(num_flows=20):
     flows = []
     # Pick a mix of indices that include attacks
     np.random.seed(42)
-    indices = np.random.choice(len(X_test), num_flows, replace=False)
+    indices = np.random.choice(len(X_test), num_flows, replace=(num_flows > len(X_test)))
 
     for idx in indices:
         x = X_test[idx]
@@ -174,6 +174,57 @@ def simulate_detection(num_flows=20):
         })
 
     return flows
+
+# ================================================================
+# Dispatch overhead micro-benchmark
+#
+# This measures the ONE thing the paper claims a number for: the cost
+# the async ring-buffer dispatch adds to the detection thread's critical
+# path. It is deliberately decoupled from LLM generation latency (which
+# lives on a completely different timescale, seconds vs microseconds,
+# and is measured separately below via real generation calls).
+#
+# Percentiles need enough samples to be meaningful -- 20 single-shot
+# alerts (the old approach) cannot support a p99 claim. This runs
+# DISPATCH_TRIALS iterations of "classify -> construct Alert -> push",
+# cycling through a small pool of real, pre-classified flows so the
+# model/data loading cost isn't re-paid per trial.
+# ================================================================
+DISPATCH_TRIALS = 5000
+
+
+def benchmark_dispatch_overhead(flows, ring_buffer, n_trials=DISPATCH_TRIALS):
+    baseline_times_us = np.empty(n_trials)
+    dispatch_times_us = np.empty(n_trials)
+    n_flows = len(flows)
+
+    # Baseline: cost of reading the classification result with no dispatch.
+    for i in range(n_trials):
+        flow = flows[i % n_flows]
+        start = time.perf_counter()
+        _ = flow['predicted_class']
+        baseline_times_us[i] = (time.perf_counter() - start) * 1e6
+
+    # Dispatch: cost of constructing an Alert and pushing it onto the
+    # ring buffer -- the actual code path inserted into detection by
+    # the async LLM explainability feature.
+    for i in range(n_trials):
+        flow = flows[i % n_flows]
+        start = time.perf_counter()
+        pred = flow['predicted_class']
+        if pred != 'Normal':
+            alert = Alert(
+                flow_id=i,
+                predicted_class=pred,
+                confidence=flow['confidence'],
+                features=flow['features'],
+                timestamp=time.time(),
+            )
+            ring_buffer.push(alert)  # non-blocking; drops oldest if full
+        dispatch_times_us[i] = (time.perf_counter() - start) * 1e6
+
+    return baseline_times_us, dispatch_times_us
+
 
 # ================================================================
 # Main benchmark
@@ -202,55 +253,32 @@ def main():
     flows = simulate_detection(num_flows=20)
 
     # ============================================================
-    # Benchmark 1: Detection latency WITHOUT LLM dispatch
+    # Benchmark 1: Dispatch overhead, real percentiles over many trials
     # ============================================================
-    print("\n--- Benchmark 1: Detection Only (no LLM) ---")
-    detection_times_no_llm = []
-    for flow in flows:
-        start = time.perf_counter()
-        # Simulate classification (already done, just measure overhead)
-        _ = flow['predicted_class']
-        elapsed = (time.perf_counter() - start) * 1e6
-        detection_times_no_llm.append(elapsed)
+    print(f"\n--- Dispatch overhead benchmark ({DISPATCH_TRIALS} trials) ---")
+    print("[Note] The ring buffer (capacity=32) saturates almost immediately")
+    print("       under this load and operates in drop-oldest steady state,")
+    print("       which is the realistic sustained-load condition for this")
+    print("       system -- push() stays O(1) regardless.")
+    baseline_us, dispatch_us = benchmark_dispatch_overhead(flows, ring_buffer)
 
-    # ============================================================
-    # Benchmark 2: Detection latency WITH LLM dispatch
-    # ============================================================
-    print("--- Benchmark 2: Detection + Async LLM Dispatch ---")
-    detection_times_with_llm = []
-    alerts_dispatched = 0
+    alerts_dispatched = sum(1 for f in (flows[i % len(flows)] for i in range(DISPATCH_TRIALS))
+                             if f['predicted_class'] != 'Normal')
+    print(f"[Detection] {alerts_dispatched} alerts dispatched to LLM thread "
+          f"over {DISPATCH_TRIALS} trials")
+    print(f"[Detection] Ring buffer dropped: {ring_buffer.dropped}")
 
-    for i, flow in enumerate(flows):
-        start = time.perf_counter()
-
-        # Classification result (already computed)
-        pred = flow['predicted_class']
-
-        # Only dispatch alerts for attacks (not Normal)
-        if pred != 'Normal':
-            alert = Alert(
-                flow_id=i,
-                predicted_class=pred,
-                confidence=flow['confidence'],
-                features=flow['features'],
-                timestamp=time.time()
-            )
-            ring_buffer.push(alert)  # Non-blocking push
-            alerts_dispatched += 1
-
-        elapsed = (time.perf_counter() - start) * 1e6
-        detection_times_with_llm.append(elapsed)
-
-    print(f"[Detection] {alerts_dispatched} alerts dispatched to LLM thread")
-    print(f"[Detection] Ring buffer size: {ring_buffer.size()}")
-
-    # Wait for LLM to process all alerts
-    print("\n[LLM] Processing alerts...")
-    timeout = 120  # max wait seconds
+    # Wait for a handful of alerts to be processed, for qualitative sample
+    # explanations only -- NOT part of the latency claim. Most dispatched
+    # alerts are expected to be dropped by design (see note above); we only
+    # need a few real generations to demonstrate the explanation quality.
+    print("\n[LLM] Waiting for a few sample explanations to generate "
+          "(background, does not block detection)...")
+    timeout = 120
+    target_samples = 5
     start_wait = time.time()
-    while len(results) < alerts_dispatched and (time.time() - start_wait) < timeout:
-        processed = len(results)
-        print(f"  Processed {processed}/{alerts_dispatched}...", end='\r')
+    while len(results) < target_samples and (time.time() - start_wait) < timeout:
+        print(f"  Processed {len(results)}/{target_samples} samples...", end='\r')
         time.sleep(2)
 
     stop_event.set()
@@ -263,19 +291,23 @@ def main():
     print("RESULTS")
     print(f"{'='*70}")
 
-    # Detection latency comparison
-    avg_no_llm = np.mean(detection_times_no_llm)
-    avg_with_llm = np.mean(detection_times_with_llm)
-    print(f"\nDetection latency (avg, us):")
-    print(f"  Without LLM dispatch: {avg_no_llm:.2f} us")
-    print(f"  With LLM dispatch:    {avg_with_llm:.2f} us")
-    print(f"  Overhead:             {avg_with_llm - avg_no_llm:.2f} us")
-    print(f"  Impact:               {'NEGLIGIBLE' if (avg_with_llm - avg_no_llm) < 10 else 'SIGNIFICANT'}")
+    baseline_p50, baseline_p95, baseline_p99 = np.percentile(baseline_us, [50, 95, 99])
+    dispatch_p50, dispatch_p95, dispatch_p99 = np.percentile(dispatch_us, [50, 95, 99])
 
-    # LLM generation stats
+    print(f"\nBaseline (no dispatch) latency, us [n={DISPATCH_TRIALS}]:")
+    print(f"  p50: {baseline_p50:.3f}  p95: {baseline_p95:.3f}  p99: {baseline_p99:.3f}")
+    print(f"\nDispatch (classify + construct Alert + push) latency, us "
+          f"[n={DISPATCH_TRIALS}]:")
+    print(f"  p50: {dispatch_p50:.3f}  p95: {dispatch_p95:.3f}  p99: {dispatch_p99:.3f}")
+    print(f"\nAsync dispatch overhead (p99 dispatch - p50 baseline): "
+          f"{dispatch_p99 - baseline_p50:.3f} us")
+    overhead_p99 = float(dispatch_p99 - baseline_p50)
+    print(f"  Impact: {'NEGLIGIBLE' if overhead_p99 < 10 else 'SIGNIFICANT'}")
+
+    # LLM generation stats (qualitative demo, separate timescale from dispatch)
     if results:
         gen_times = [r.explanation_time_ms for r in results if r.explanation_time_ms]
-        print(f"\nLLM generation time (ms):")
+        print(f"\nLLM generation time (ms) [n={len(gen_times)} sample generations]:")
         print(f"  Mean:   {np.mean(gen_times):.1f} ms")
         print(f"  Median: {np.median(gen_times):.1f} ms")
         print(f"  Min:    {np.min(gen_times):.1f} ms")
@@ -284,7 +316,8 @@ def main():
     print(f"\nRing buffer stats:")
     print(f"  Capacity:  {ring_buffer.capacity}")
     print(f"  Dropped:   {ring_buffer.dropped}")
-    print(f"  Processed: {len(results)}/{alerts_dispatched}")
+    print(f"  Processed: {len(results)} (sample explanations only, not all "
+          f"dispatched alerts -- see note above)")
 
     # Sample explanations
     print(f"\n{'='*70}")
@@ -297,14 +330,29 @@ def main():
     # Save results
     out_path = 'benchmarks/results/llm_explainability.json'
     save_data = {
-        'detection_latency_no_llm_us': avg_no_llm,
-        'detection_latency_with_llm_us': avg_with_llm,
-        'overhead_us': avg_with_llm - avg_no_llm,
+        'methodology': (
+            f'Dispatch overhead measured over {DISPATCH_TRIALS} trials of '
+            'classify+construct+push, decoupled from LLM generation which '
+            'runs on a separate thread/timescale (seconds vs microseconds). '
+            'Ring buffer saturates and operates in drop-oldest mode almost '
+            'immediately under this load -- expected steady-state behavior, '
+            'not a benchmark artifact.'
+        ),
+        'dispatch_trials': DISPATCH_TRIALS,
+        'baseline_p50_us': float(baseline_p50),
+        'baseline_p95_us': float(baseline_p95),
+        'baseline_p99_us': float(baseline_p99),
+        'baseline_mean_us': float(np.mean(baseline_us)),
+        'dispatch_p50_us': float(dispatch_p50),
+        'dispatch_p95_us': float(dispatch_p95),
+        'dispatch_p99_us': float(dispatch_p99),
+        'dispatch_mean_us': float(np.mean(dispatch_us)),
+        'overhead_p99_us': overhead_p99,
+        'alerts_dispatched': alerts_dispatched,
+        'alerts_dropped': ring_buffer.dropped,
+        'sample_explanations_generated': len(results),
         'llm_generation_mean_ms': float(np.mean(gen_times)) if results else 0,
         'llm_generation_median_ms': float(np.median(gen_times)) if results else 0,
-        'alerts_dispatched': alerts_dispatched,
-        'alerts_processed': len(results),
-        'alerts_dropped': ring_buffer.dropped,
         'model': 'TinyLlama/TinyLlama-1.1B-Chat-v1.0',
         'quantization': '4-bit',
         'sample_explanations': [
