@@ -385,16 +385,24 @@ PYTHONPATH=. python scripts/benchmark_cuda_kernels_stats.py --kernels-dir infere
 
 ## Git state — session 2 committed locally, NOT pushed yet
 
-Session 1 ended at `4dad75f` (committed and pushed). Session 2 added 4 more commits on top,
-**committed locally but not yet pushed to `origin/master`** — push is a user decision, not made
-automatically. Working tree is clean. Commit range `4dad75f..f98bf33`, oldest to newest:
+Session 1 ended at `4dad75f` (committed and pushed). Session 2 added 6 more commits on top,
+**committed locally but not yet pushed to `origin/master`** (user explicitly held the push at
+end of session) — push is a user decision, not made automatically. Working tree is clean.
+Commit range `4dad75f..547e895`, oldest to newest:
 
 ```
 d85271c fix: resolve ambiguous PyTorch cuDNN baseline for Block 3 with real n=50-trial benchmark
 3eb773a fix: naive Block3 kernel had a genuine data race, not FP32 rounding error
 acdcba5 fix: trace README's uncorroborated 0.9864 RF figure to a real, reproducible script
 f98bf33 feat: extend KD temperature sweep, cut RF accuracy gap from 2.25% to 0.74%
+f5d090f docs: update HANDOFF.md for session 2 close-out
+547e895 fix: update stale 0.9639/0.9601 comparison strings, fix pre-existing syntax error
 ```
+
+(`547e895` also fixed three unrelated, pre-existing syntax errors in
+`scripts/benchmark_cuml_rf_native.py` — literal unescaped newlines inside string literals that
+would have crashed the script immediately on any run, predating this session; found during a
+final repo-wide `py_compile` sweep of every script in `scripts/`, `preprocessing/`, and `model/`.)
 
 Each commit message has full detail on that piece of work — read `git show <hash>` if you need
 the exact reasoning instead of re-deriving it. Session 1's note about `benchmarks/results/*.json`
