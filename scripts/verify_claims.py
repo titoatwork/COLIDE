@@ -94,11 +94,22 @@ def build_claims():
         "Eager PyTorch": 2050.4, "torch.compile": 1518.9, "ORT CPU": 487.1,
         "ORT GPU": 3861.5, "TensorRT": 2427.1, "Custom CUDA FP16": 652.4,
     }
+    # Custom CUDA FP16 (== derived pipeline total) has MORE independent
+    # measurements than the framework side, because it's re-derived every
+    # time cuda_kernel_stats_rtx3050.json is regenerated for the Block 1-4
+    # re-checks, not just when benchmark_stats_v2.py itself is re-run. Found
+    # 2026-07-02 while re-verifying all 4 blocks: the "3-session" range above
+    # only used HIST/3A/live-file and silently missed two known intermediate
+    # derived totals (614.5, 594.0) sitting in already-captured backups --
+    # widening the true range from the previously-reported 652-675 to 594-675.
+    CUSTOM_CUDA_EXTRA_TOTALS = [614.5, 594.0]
 
     stats = load_json("statistical_significance_v2.json")
     if stats:
         def latency_range(name):
             vals = [HIST_LATENCY[name], SESSION3A_LATENCY[name], stats[name]["mean_us"]]
+            if name == "Custom CUDA FP16":
+                vals += CUSTOM_CUDA_EXTRA_TOTALS
             return min(vals), max(vals)
 
         cc_lo, cc_hi = latency_range("Custom CUDA FP16")
@@ -371,41 +382,59 @@ def build_claims():
     SESSION2_TRANSPOSED_WITH_GRAPHS = 904.91548
     SESSION2_FP16 = 548.34398
     SESSION2_NAIVE = 5050.103
+    # Sessions B/C (2026-07-02): two more independent n=100 runs captured
+    # while re-verifying all 4 blocks from a fresh recompile -- previously
+    # missed here (this section only ever compared session1/session2 vs
+    # "whatever's live now", same class of bug as the framework-comparison
+    # one above, same fix: widen to a true min/max over every known session).
+    SESSION_B_NO_GRAPHS = 781.4228
+    SESSION_B_WITH_GRAPHS = 817.6772
+    SESSION_B_FP16 = 580.56564
+    SESSION_C_NO_GRAPHS = 732.06563
+    SESSION_C_WITH_GRAPHS = 724.37511
+    SESSION_C_FP16 = 531.96116
+    SESSION_C_NAIVE = 4544.1591
 
     cuda_stats = load_json("cuda_kernel_stats_rtx3050.json")
     if cuda_stats:
         no_graphs_lo, no_graphs_hi = (
             min(SESSION1_TRANSPOSED_NO_GRAPHS, SESSION2_TRANSPOSED_NO_GRAPHS,
+                SESSION_B_NO_GRAPHS, SESSION_C_NO_GRAPHS,
                 cuda_stats["fused_block3"]["no_graphs_us"]["mean"]),
             max(SESSION1_TRANSPOSED_NO_GRAPHS, SESSION2_TRANSPOSED_NO_GRAPHS,
+                SESSION_B_NO_GRAPHS, SESSION_C_NO_GRAPHS,
                 cuda_stats["fused_block3"]["no_graphs_us"]["mean"]),
         )
         with_graphs_lo, with_graphs_hi = (
             min(SESSION1_TRANSPOSED_WITH_GRAPHS, SESSION2_TRANSPOSED_WITH_GRAPHS,
+                SESSION_B_WITH_GRAPHS, SESSION_C_WITH_GRAPHS,
                 cuda_stats["fused_block3"]["with_graphs_us"]["mean"]),
             max(SESSION1_TRANSPOSED_WITH_GRAPHS, SESSION2_TRANSPOSED_WITH_GRAPHS,
+                SESSION_B_WITH_GRAPHS, SESSION_C_WITH_GRAPHS,
                 cuda_stats["fused_block3"]["with_graphs_us"]["mean"]),
         )
         fp16_lo, fp16_hi = (
-            min(SESSION1_FP16, SESSION2_FP16, cuda_stats["fused_block3_fp16"]["latency_us"]["mean"]),
-            max(SESSION1_FP16, SESSION2_FP16, cuda_stats["fused_block3_fp16"]["latency_us"]["mean"]),
+            min(SESSION1_FP16, SESSION2_FP16, SESSION_B_FP16, SESSION_C_FP16,
+                cuda_stats["fused_block3_fp16"]["latency_us"]["mean"]),
+            max(SESSION1_FP16, SESSION2_FP16, SESSION_B_FP16, SESSION_C_FP16,
+                cuda_stats["fused_block3_fp16"]["latency_us"]["mean"]),
         )
         add(
             "block3_transposed_no_graphs",
-            "Block 3 transposed W_hh, no graphs (range across 3 independent n=100 sessions)",
-            "cuda_kernel_stats_rtx3050.json (3 sessions)",
+            "Block 3 transposed W_hh, no graphs (range across 5 independent n=100 sessions)",
+            "cuda_kernel_stats_rtx3050.json (5 sessions)",
             [fmt_range(no_graphs_lo, no_graphs_hi, thousands=True)],
         )
         add(
             "block3_transposed_with_graphs",
-            "Block 3 transposed W_hh + CUDA graphs (range across 3 independent n=100 sessions)",
-            "cuda_kernel_stats_rtx3050.json (3 sessions)",
+            "Block 3 transposed W_hh + CUDA graphs (range across 5 independent n=100 sessions)",
+            "cuda_kernel_stats_rtx3050.json (5 sessions)",
             [fmt_range(with_graphs_lo, with_graphs_hi)],
         )
         add(
             "block3_fp16_range",
-            "Block 3 FP16 half2 (range across 3 independent n=100 sessions)",
-            "cuda_kernel_stats_rtx3050.json (3 sessions)",
+            "Block 3 FP16 half2 (range across 5 independent n=100 sessions)",
+            "cuda_kernel_stats_rtx3050.json (5 sessions)",
             [fmt_range(fp16_lo, fp16_hi)],
         )
         naive = (
@@ -413,14 +442,17 @@ def build_claims():
             if "fused_block3_naive" in cuda_stats else 5698.0
         )
         if "fused_block3_naive" in cuda_stats:
-            naive_lo, naive_hi = sorted([SESSION2_NAIVE, naive])
+            naive_lo, naive_hi = (
+                min(SESSION2_NAIVE, SESSION_C_NAIVE, naive),
+                max(SESSION2_NAIVE, SESSION_C_NAIVE, naive),
+            )
             add(
                 "block3_naive_latency",
                 "Block 3 naive kernel latency, race-condition FIXED and reverified "
-                "(range across 2 independent n=100 sessions -- the fix landed in "
+                "(range across 3 independent n=100 sessions -- the fix landed in "
                 "session 2, so no session-1 measurement of the fixed kernel exists; "
                 "replaces the old 5,698us pre-fix historical single run)",
-                "cuda_kernel_stats_rtx3050.json (2 sessions)",
+                "cuda_kernel_stats_rtx3050.json (3 sessions)",
                 [fmt_range(naive_lo, naive_hi, thousands=True)],
             )
         add(
@@ -528,7 +560,14 @@ REGRESSION_GUARDS = [
     ("2.63x over torch.compile", "single-point framework-comparison headline; superseded by a 2.25x-2.72x range (same session-to-session drift finding as the TensorRT/eager-PyTorch ratios)", "2026-07-02"),
     ("3.33x over eager PyTorch", "single-point framework-comparison headline; superseded by a 3.04x-3.44x range (same session-to-session drift finding)", "2026-07-02"),
     ("ORT GPU (6.89x)", "single-point framework-comparison headline; superseded by a 5.72x-7.13x range (same session-to-session drift finding)", "2026-07-02"),
-    ("mean 674.7us, std 87.1us", "single-session Custom CUDA FP16 pipeline-total figure treated as fixed; superseded by a 652-675us range across 3 independent sessions", "2026-07-02"),
+    ("mean 674.7us, std 87.1us", "single-session Custom CUDA FP16 pipeline-total figure treated as fixed; superseded by a 594-675us range across 5 independent sessions", "2026-07-02"),
+    ("3.60x–4.55x", "intermediate framework-ratio range (2 sessions' worth of Custom CUDA data); superseded by 3.60x-4.99x once 2 more Custom CUDA sessions (594, 614.5us) were folded in during the full 4-block re-verification pass", "2026-07-02"),
+    ("2.25x–2.72x", "intermediate framework-ratio range; superseded by 2.25x-2.99x, same widening", "2026-07-02"),
+    ("3.04x–3.44x", "intermediate framework-ratio range; superseded by 3.04x-3.78x, same widening", "2026-07-02"),
+    ("5.72x–7.13x", "intermediate framework-ratio range; superseded by 5.72x-7.83x, same widening", "2026-07-02"),
+    ("652–675", "intermediate Custom CUDA FP16 range (only used Historical+2 back-to-back framework runs, missed 2 already-captured intermediate derived-total measurements); superseded by 594-675", "2026-07-02"),
+    ("8.08x–9.21x", "intermediate Block 3 progression range (3 sessions); superseded by 7.55x-9.50x once 2 more sessions were folded in", "2026-07-02"),
+    ("4,860–5,050", "intermediate Block 3 naive-kernel range (2 sessions); superseded by 4,544-5,050 (3 sessions)", "2026-07-02"),
 ]
 
 

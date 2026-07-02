@@ -2,7 +2,7 @@
 
 ## 1. LLM Claim Paragraph (replaces "first to measure" claim)
 
-Recent work by Jamshidi et al. (2026) demonstrated the integration of LLMs for IoT intrusion reasoning at edge gateways, dispatching alerts to cloud-hosted models (GPT-4-turbo, LLaMA 3.5) via API calls with latencies under 1.5 seconds and bandwidth overhead under 1.2 kB per prompt. However, their approach introduces external network dependencies, variable API latency, and potential data privacy risks inherent in transmitting security telemetry to third-party endpoints. Our approach differs fundamentally: we deploy a fully local, quantized TinyLlama 1.1B (4-bit, 0.77 GB VRAM) on the same GPU as the detection pipeline, using an asynchronous ring-buffer dispatch mechanism. The measured dispatch overhead is 16.60 us at p99 (over 5,000 trials of the classify-construct-push code path) — roughly 2.5% of the 652-675 us inference pipeline latency (range across 3 independent measurement sessions), and negligible next to the multi-second LLM generation time — with zero network dependency and complete data sovereignty. While the LLM generation itself takes approximately 7.4 seconds per alert on average, the asynchronous design ensures the detection pipeline is never blocked. To our knowledge, this represents the first fully on-device, air-gapped LLM explainability integration for real-time intrusion detection.
+Recent work by Jamshidi et al. (2026) demonstrated the integration of LLMs for IoT intrusion reasoning at edge gateways, dispatching alerts to cloud-hosted models (GPT-4-turbo, LLaMA 3.5) via API calls with latencies under 1.5 seconds and bandwidth overhead under 1.2 kB per prompt. However, their approach introduces external network dependencies, variable API latency, and potential data privacy risks inherent in transmitting security telemetry to third-party endpoints. Our approach differs fundamentally: we deploy a fully local, quantized TinyLlama 1.1B (4-bit, 0.77 GB VRAM) on the same GPU as the detection pipeline, using an asynchronous ring-buffer dispatch mechanism. The measured dispatch overhead is 16.60 us at p99 (over 5,000 trials of the classify-construct-push code path) — roughly 2.5% of the 594-675 us inference pipeline latency (range combining 3 framework-side and 5 Custom CUDA measurement sessions), and negligible next to the multi-second LLM generation time — with zero network dependency and complete data sovereignty. While the LLM generation itself takes approximately 7.4 seconds per alert on average, the asynchronous design ensures the detection pipeline is never blocked. To our knowledge, this represents the first fully on-device, air-gapped LLM explainability integration for real-time intrusion detection.
 
 
 ## 2. Alert Aggregation Paragraph (addresses DDoS queue overflow)
@@ -31,7 +31,7 @@ We do not claim that the CNN-BiLSTM is the optimal classifier for tabular flow d
 | TensorRT FP16 | 0.9790 | 2,966 | — | — | RTX 3050 |
 | ORT GPU | 0.9790 | 4,652 | — | — | RTX 3050 |
 | ORT CPU | 0.9790 | 699 | — | — | Laptop CPU |
-| **Custom CUDA FP16** | **0.9790** | **674** | **25,899** | **0.79** | **RTX 3050** |
+| **Custom CUDA FP16** | **0.9790** | **594–675** | **25,899** | **0.79** | **RTX 3050** |
 | Custom CUDA FP16 | 0.9790 | 551 | — | — | V100S |
 | Custom CUDA FP16 | 0.9790 | 592 | — | — | A100 |
 
@@ -69,7 +69,7 @@ Notes:
 
 ## 7. GPU Profiling Paragraph (hardware characterisation)
 
-All four custom kernels achieve 100% theoretical occupancy on the RTX 3050 (Ampere SM 8.6, 20 SMs, 1536 max threads/SM). Block 1 and Block 2 launch 256 threads per block with minimal shared memory (2-4 KB), achieving 6 concurrent blocks per SM. The BiLSTM kernel (Block 3) uses 128 threads with 8 KB shared memory, allowing 12 blocks per SM. Block 4 uses 64 threads at 1 KB shared memory, sustaining 24 blocks per SM. The high occupancy confirms that the performance gains from our custom kernels over TensorRT (3.60x-4.55x) and torch.compile (2.25x-2.72x) are not due to superior hardware utilisation, but rather the elimination of CPU-to-GPU kernel launch overhead. TensorRT decomposes the model into approximately 128 individual kernel launches at 5-15 us each, accumulating significant host-side latency. Our chained pipeline executes back-to-back on the device with zero inter-kernel synchronisation, converting launch-bound execution into compute-bound execution.
+All four custom kernels achieve 100% theoretical occupancy on the RTX 3050 (Ampere SM 8.6, 20 SMs, 1536 max threads/SM). Block 1 and Block 2 launch 256 threads per block with minimal shared memory (2-4 KB), achieving 6 concurrent blocks per SM. The BiLSTM kernel (Block 3) uses 128 threads with 8 KB shared memory, allowing 12 blocks per SM. Block 4 uses 64 threads at 1 KB shared memory, sustaining 24 blocks per SM. The high occupancy confirms that the performance gains from our custom kernels over TensorRT (3.60x-4.99x) and torch.compile (2.25x-2.99x) are not due to superior hardware utilisation, but rather the elimination of CPU-to-GPU kernel launch overhead. TensorRT decomposes the model into approximately 128 individual kernel launches at 5-15 us each, accumulating significant host-side latency. Our chained pipeline executes back-to-back on the device with zero inter-kernel synchronisation, converting launch-bound execution into compute-bound execution.
 
 
 ## 8. Preprocessing Overhead
@@ -115,9 +115,9 @@ The Random Forest baseline achieves superior raw accuracy (0.9864 on BoT-IoT, 0.
 
 1. THE EDGE DEPLOYMENT PARADOX: Deep learning models offer adaptability for IoT security but edge devices cannot run massive models. When researchers shrink models to fit edge constraints, they encounter the "Framework Tax."
 
-2. EXPOSING COMPILER INEFFICIENCIES: Modern DL compilers (torch.compile, TensorRT) are optimized for large LLMs and big batch sizes. For tiny models processing real-time streams at batch size 1, kernel launch overhead and compiler graph breaks (especially for recurrent nodes) destroy inference speed, rendering them slower than naive execution. TensorRT is 3.60x-4.55x slower. torch.compile crashes on BiLSTM CUDA graphs entirely.
+2. EXPOSING COMPILER INEFFICIENCIES: Modern DL compilers (torch.compile, TensorRT) are optimized for large LLMs and big batch sizes. For tiny models processing real-time streams at batch size 1, kernel launch overhead and compiler graph breaks (especially for recurrent nodes) destroy inference speed, rendering them slower than naive execution. TensorRT is 3.60x-4.99x slower. torch.compile crashes on BiLSTM CUDA graphs entirely.
 
-3. THE HPC SOLUTION: Bypassing frameworks entirely with raw CUDA C++ kernels reclaims theoretical hardware performance. Transposed coalesced reads, FP16 half2 FMA packing, and chained kernel launches yield 3.04x-3.44x pipeline speedup over eager PyTorch and 3.60x-4.55x over TensorRT (ranges across 3 independent measurement sessions). The 8.08x-9.21x Block 3 optimization progression (range across three independent n=100-trial measurement sessions, see README's Measurement Stability note) demonstrates systematic HPC methodology.
+3. THE HPC SOLUTION: Bypassing frameworks entirely with raw CUDA C++ kernels reclaims theoretical hardware performance. Transposed coalesced reads, FP16 half2 FMA packing, and chained kernel launches yield 3.04x-3.78x pipeline speedup over eager PyTorch and 3.60x-4.99x over TensorRT (ranges combining 3 framework-side and 5 Custom CUDA measurement sessions). The 7.55x-9.50x Block 3 optimization progression (range across five independent n=100-trial measurement sessions, see README's Measurement Stability note) demonstrates systematic HPC methodology.
 
 4. ZERO-BLOCKING SEMANTIC SECURITY: Extreme kernel optimization frees computational bandwidth for a second innovation: asynchronous, zero-blocking dispatch to a local 4-bit quantized TinyLlama, providing semantic threat intelligence without cloud dependency or pipeline blocking (16.60 us p99 overhead).
 
@@ -133,8 +133,8 @@ sparse representation, memory coalescing, and shared memory, they report a 1.22x
 over a CPU baseline. Our work targets a different architectural challenge — a CNN-BiLSTM with
 recurrent control flow that resists standard graph-compilation optimizations (see our
 torch.compile crash finding) — and benchmarks against production ML inference frameworks (PyTorch
-eager, torch.compile, TensorRT, ONNX Runtime) rather than a CPU baseline, achieving 3.04x-3.44x over
-eager PyTorch and 3.60x-4.55x over TensorRT (ranges across 3 independent measurement sessions). To our knowledge, no prior work benchmarks hand-written CUDA
+eager, torch.compile, TensorRT, ONNX Runtime) rather than a CPU baseline, achieving 3.04x-3.78x over
+eager PyTorch and 3.60x-4.99x over TensorRT (ranges combining 3 framework-side and 5 Custom CUDA measurement sessions). To our knowledge, no prior work benchmarks hand-written CUDA
 kernels for a recurrent DL-based IDS against production inference frameworks; Ibrahim et al.
 establish the closest precedent for GPU-kernel-level optimization applied to intrusion detection
 generally, differing from our work in both target architecture (GNN vs. recurrent CNN-BiLSTM) and

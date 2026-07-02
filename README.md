@@ -6,12 +6,12 @@
 
 ## Abstract
 
-COLIDE presents custom CUDA C++ inference kernels for a CNN-BiLSTM-based IoT intrusion detection system, achieving statistically significant speedups over all major deep learning inference frameworks: **3.60x–4.55x over TensorRT** (p<0.001), **2.25x–2.72x over torch.compile** (p<0.001), and **3.04x–3.44x over eager PyTorch** (p<0.001) — ranges across 3 independent measurement sessions, each validated across 20 independent trials (see "Measurement Stability"). The system integrates an on-device, air-gapped LLM explainability module (TinyLlama 1.1B, 4-bit quantized) with only **16.60 us p99** async dispatch overhead (~2.5% of the detection pipeline). Knowledge distillation from a Random Forest teacher combined with focal loss closes the accuracy gap to **0.74%** on BoT-IoT (**0.9790** macro-F1) and **3.3%** on ToN-IoT (**0.9526** macro-F1). The system sustains **25,899 flows/sec** in streaming mode on consumer-grade edge hardware.
+COLIDE presents custom CUDA C++ inference kernels for a CNN-BiLSTM-based IoT intrusion detection system, achieving statistically significant speedups over all major deep learning inference frameworks: **3.60x–4.99x over TensorRT** (p<0.001), **2.25x–2.99x over torch.compile** (p<0.001), and **3.04x–3.78x over eager PyTorch** (p<0.001) — ranges combining 3 independent framework-side measurement sessions (20 trials each) with 5 independent Custom CUDA measurement sessions (see "Measurement Stability"). The system integrates an on-device, air-gapped LLM explainability module (TinyLlama 1.1B, 4-bit quantized) with only **16.60 us p99** async dispatch overhead (~2.5% of the detection pipeline). Knowledge distillation from a Random Forest teacher combined with focal loss closes the accuracy gap to **0.74%** on BoT-IoT (**0.9790** macro-F1) and **3.3%** on ToN-IoT (**0.9526** macro-F1). The system sustains **25,899 flows/sec** in streaming mode on consumer-grade edge hardware.
 
 ## Key Contributions
 
-1. **Custom CUDA Beating All Frameworks**: Hand-written CUDA C++ kernels outperform TensorRT (3.60x–4.55x), torch.compile (2.25x–2.72x), eager PyTorch (3.04x–3.44x), and ORT GPU (5.72x–7.13x) — ranges across 3 independent sessions, each statistically significant at p<0.001 across 20 trials (see "Measurement Stability"); ORT CPU is a separate, unstable case — not significantly different from Custom CUDA in one session, but significantly faster in two others
-2. **FP16 Half2 BiLSTM Beating cuDNN**: Native half-precision FMA instructions with documented **8.08x–9.21x optimization progression** (4,860–5,050 to 548–602 us) **beating cuDNN by 1.30x–1.43x** (both the cuDNN baseline and the FP16 kernel are real n=50/n=100-trial means; the range reflects genuine session-to-session measurement drift on this dev box, not an unresolved ambiguity — see "Block 3 Optimization Progression" below)
+1. **Custom CUDA Beating All Frameworks**: Hand-written CUDA C++ kernels outperform TensorRT (3.60x–4.99x), torch.compile (2.25x–2.99x), eager PyTorch (3.04x–3.78x), and ORT GPU (5.72x–7.83x) — ranges combining 3 independent framework-side sessions (20 trials each, all statistically significant at p<0.001) with 5 independent Custom CUDA measurement sessions (see "Measurement Stability"); ORT CPU is a separate, unstable case — not significantly different from Custom CUDA in one session, but significantly faster in two others
+2. **FP16 Half2 BiLSTM Beating cuDNN**: Native half-precision FMA instructions with documented **7.55x–9.50x optimization progression** (4,544–5,050 to 532–602 us) **beating cuDNN by 1.30x–1.47x** (both the cuDNN baseline and the FP16 kernel are real n=50/n=100-trial means; the range reflects genuine session-to-session measurement drift on this dev box, not an unresolved ambiguity — see "Block 3 Optimization Progression" below)
 3. **Knowledge Distillation Closing the RF Gap**: RF-to-CNN-BiLSTM distillation with temperature scaling (T=10.0) and focal loss narrows accuracy gap from 5.12% to **0.74%** on BoT-IoT and 11.4% to **3.3%** on ToN-IoT
 4. **On-Device Air-Gapped LLM Explainability**: Async ring-buffer dispatch to local quantized TinyLlama 1.1B with **16.60 us p99 overhead** and zero cloud dependency — contrasting with Jamshidi et al. (2026) cloud API approach
 5. **Cross-Hardware Profiling**: 3 GPU architectures (RTX 3050, V100S, A100) revealing **V100S outperforms A100** for sequential LSTM — clock speed dominates SM count
@@ -24,29 +24,32 @@ COLIDE presents custom CUDA C++ inference kernels for a CNN-BiLSTM-based IoT int
 back-to-back, minutes apart in the same sitting — gave meaningfully different framework latencies
 (torch.compile and TensorRT both swung 14-17% run to run). This is the same phenomenon already
 documented for Block 3 alone, now confirmed to affect the headline framework-comparison numbers too.
-The table below reports the **range across 3 independent sessions** (an original measurement plus two
-fresh 2026-07-02 re-runs) rather than a single point. Custom CUDA FP16 is derived from a real
-n=100-trial distribution each session (see `benchmarks/results/cuda_kernel_stats_rtx3050.json`), not a
-fixed constant with no variance as in an earlier version of this table. Significance is a two-sample
-Welch's t-test (framework's 20 trials vs. Custom CUDA's 100 trials), not a one-sample test against a
-fixed point; the exact CI/p-value shown is from the most recent session — see below for which
-comparisons are robust across sessions and which aren't.
+The table below reports the **range across every independent session measured so far**: 3 for the
+framework side (an original measurement plus two fresh 2026-07-02 re-runs, 20 trials each) and 5 for
+the Custom CUDA side (the Custom CUDA FP16 figure is re-derived every time the Block 1-4 kernels are
+re-checked, not just when the framework side is re-run, so it has more independent data points).
+Custom CUDA FP16 is derived from a real n=100-trial distribution each session (see
+`benchmarks/results/cuda_kernel_stats_rtx3050.json`), not a fixed constant with no variance as in an
+earlier version of this table. Significance is a two-sample Welch's t-test (framework's 20 trials vs.
+Custom CUDA's 100 trials), not a one-sample test against a fixed point; the exact CI/p-value shown is
+from the most recent session — see below for which comparisons are robust across sessions and which
+aren't.
 
 | Method | Mean (us) range | vs Custom CUDA (range) |
 |---|---|---|
-| **Custom CUDA FP16** | **652–675** | **1.00x** |
-| ORT CPU | 487–699 | 0.72x–1.07x |
-| torch.compile | 1,519–1,777 | 2.25x–2.72x |
-| Eager PyTorch | 2,050–2,247 | 3.04x–3.44x |
-| TensorRT FP16 | 2,427–2,966 | 3.60x–4.55x |
-| ORT GPU | 3,862–4,652 | 5.72x–7.13x |
+| **Custom CUDA FP16** | **594–675** | **1.00x** |
+| ORT CPU | 487–699 | 0.72x–1.18x |
+| torch.compile | 1,519–1,777 | 2.25x–2.99x |
+| Eager PyTorch | 2,050–2,247 | 3.04x–3.78x |
+| TensorRT FP16 | 2,427–2,966 | 3.60x–4.99x |
+| ORT GPU | 3,862–4,652 | 5.72x–7.83x |
 
 **Significance robustness differs by comparison.** Eager PyTorch, torch.compile, TensorRT, and ORT GPU
-are all p<0.001 significant in **all three** independently measured sessions — the "Custom CUDA is
-faster" conclusion is robust even though the exact ratio isn't. **ORT CPU is not robust**: not
-significantly different from Custom CUDA in the original session (p=0.483, ns), but significantly
-*faster* than Custom CUDA in both fresh 2026-07-02 sessions (p<0.001) — its ratio range (0.72x–1.07x)
-genuinely straddles parity, unlike the other four frameworks.
+are all p<0.001 significant in **all three** independently measured framework-side sessions — the
+"Custom CUDA is faster" conclusion is robust even though the exact ratio isn't. **ORT CPU is not consistently
+significant**: not significantly different from Custom CUDA in the original session (p=0.483, ns), but
+significantly *faster* than Custom CUDA in both fresh 2026-07-02 sessions (p<0.001) — its ratio range
+(0.72x–1.18x) genuinely straddles parity, unlike the other four frameworks.
 
 torch.compile with CUDA graph capture **crashes** on BiLSTM (dynamic recurrent control flow). TensorRT is slower than eager PyTorch for this sub-1M parameter model.
 
@@ -54,13 +57,13 @@ torch.compile with CUDA graph capture **crashes** on BiLSTM (dynamic recurrent c
 
 | GPU | Architecture | Pipeline (chained FP16) | vs PyTorch GPU |
 |---|---|---|---|
-| RTX 3050 6GB | Ampere (SM 8.6) | 652–675 us | 3.04x–3.44x* |
+| RTX 3050 6GB | Ampere (SM 8.6) | 594–675 us | 3.04x–3.78x* |
 | **V100S 32GB** | **Volta (SM 7.0)** | **551 us** | n/a** |
 | A100 80GB | Ampere (SM 8.0) | 592 us | n/a** |
 
 V100S is fastest because BiLSTM sequential recurrence is clock-speed-bound, not SM-count-bound.
 
-\* Same comparison as "3.04x–3.44x over eager PyTorch" above (20-trial, statistically validated) — the chained
+\* Same comparison as "3.04x–3.78x over eager PyTorch" above (20-trial, statistically validated) — the chained
 custom-CUDA pipeline and the eager-PyTorch full-model forward pass are the same computation on the same
 GPU, so this is not an independent number.
 \*\* No same-hardware PyTorch GPU baseline was captured during the DICC V100S/A100 runs (only the custom
@@ -75,18 +78,18 @@ comparison, so no ratio is reported here pending a real PyTorch-GPU benchmark ru
 |---|---|---|---|
 | 1: Proj+Conv1+BN+ReLU | 404 | 62 | 6.55x |
 | 2: Conv2+BN+ReLU+Pool | 282 | 87 | 3.24x |
-| 3: BiLSTM FP16 half2 | 784 | 548–602* | 1.30x–1.43x* |
+| 3: BiLSTM FP16 half2 | 784 | 532–602* | 1.30x–1.47x* |
 | 4: Dense Head | 122 | 20 | 6.07x |
 
-\* Range across two independent n=100-trial measurement sessions on this dev box, not a lingering
+\* Range across five independent n=100-trial measurement sessions on this dev box, not a lingering
 ambiguity — see "Measurement Stability" below.
 
-### Block 3 Optimization Progression (8.08x–9.21x)
+### Block 3 Optimization Progression (7.55x–9.50x)
 
-Step 0 (naive) is now backed by **two independent n=100-trial sessions** of the **fixed** kernel (see
+Step 0 (naive) is now backed by **three independent n=100-trial sessions** of the **fixed** kernel (see
 "Naive Kernel Fix" below) — the race-condition fix landed mid-session-2, so no session-1 measurement of
 the fixed kernel exists. Step 1 remains a historical single-run figure with no surviving re-runnable
-artifact (its kernel file was overwritten by later optimizations). Steps 2-4 are each backed by **three
+artifact (its kernel file was overwritten by later optimizations). Steps 2-4 are each backed by **five
 independent n=100-trial measurement sessions** (`benchmarks/results/cuda_kernel_stats_rtx3050.json`,
 regenerated across sessions — see "Measurement Stability" below) rather than one. The PyTorch cuDNN
 reference used for per-step ratios is a real n=50-trial mean, **784us** (std 89us, CV 11.3%) from
@@ -94,17 +97,18 @@ reference used for per-step ratios is a real n=50-trial mean, **784us** (std 89u
 independent subprocess trials — mirrors the CUDA kernel statistical harness so both sides of the ratio are
 backed by a real distribution). This resolves an earlier ambiguity between two single-run point estimates
 (740.7us vs 943.6us) that bracketed the true mean. With the real baseline, **the FP16 step beats cuDNN in
-all three sessions (1.30x–1.43x)**; the transposed-W_hh steps (with or without CUDA Graphs) land at/below
-parity with PyTorch across all three sessions (0.77x–1.00x) — that conclusion (transposed steps don't
-clearly beat cuDNN) is robust across the session-to-session drift, even though the exact ratios aren't.
+all five sessions (1.30x–1.47x)**; the transposed-W_hh steps (with or without CUDA Graphs) land at/around
+parity with PyTorch across all five sessions (0.77x–1.08x, occasionally edging past parity) — that
+conclusion (transposed steps don't clearly beat cuDNN) is robust across the session-to-session drift, even
+though the exact ratios aren't.
 
 | Step | Configuration | Latency (us) | Cumulative |
 |---|---|---|---|
-| 0 | Naive (1 thread/hidden), race-fixed | 4,860–5,050 | 1.00x |
-| 1 | + Precomputed W_ih x X | 2,901 | 1.68x–1.74x |
-| 2 | + Transposed W_hh (coalesced) | 781–1,023 | 4.75x–6.46x |
-| 3 | + CUDA Graphs | 789–905 | 5.37x–6.40x |
-| 4 | + FP16 half2 FMA gate packing | 548–602 | **8.08x–9.21x** |
+| 0 | Naive (1 thread/hidden), race-fixed | 4,544–5,050 | 1.00x |
+| 1 | + Precomputed W_ih x X | 2,901 | 1.57x–1.74x |
+| 2 | + Transposed W_hh (coalesced) | 732–1,023 | 4.44x–6.90x |
+| 3 | + CUDA Graphs | 724–905 | 5.02x–6.97x |
+| 4 | + FP16 half2 FMA gate packing | 532–602 | **7.55x–9.50x** |
 
 #### Naive Kernel Fix (was a disclosed limitation, now resolved)
 
@@ -278,9 +282,9 @@ Four fused kernels replacing PyTorch operators:
 
 ## Verified Research Gaps
 
-1. **Custom CUDA for CNN-BiLSTM IDS** — closest prior work (Ibrahim et al., *Computer Networks*, 2026) applies custom CUDA kernels to a GNN-based IDS vs. a CPU baseline only (1.22x-1.48x); we target a recurrent CNN-BiLSTM benchmarked against production ML frameworks (PyTorch eager/compile, TensorRT, ONNX Runtime), achieving 3.60x–4.55x over TensorRT
+1. **Custom CUDA for CNN-BiLSTM IDS** — closest prior work (Ibrahim et al., *Computer Networks*, 2026) applies custom CUDA kernels to a GNN-based IDS vs. a CPU baseline only (1.22x-1.48x); we target a recurrent CNN-BiLSTM benchmarked against production ML frameworks (PyTorch eager/compile, TensorRT, ONNX Runtime), achieving 3.60x–4.99x over TensorRT
 2. **On-device LLM for IDS** — Jamshidi et al. (2026) used cloud APIs; we provide fully local with 16.60 us p99 dispatch
-3. **TensorRT vs custom CUDA for sub-1M models** — no prior comparison; TensorRT is 3.60x–4.55x slower
+3. **TensorRT vs custom CUDA for sub-1M models** — no prior comparison; TensorRT is 3.60x–4.99x slower
 4. **torch.compile crash on BiLSTM** — documented failure with CUDA graphs on recurrent control flow
 
 ## Limitations

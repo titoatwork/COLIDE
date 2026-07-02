@@ -105,8 +105,8 @@ block numbering is used consistently across code, benchmarks, and README:
 - Block 1 = input projection + reshape + Conv1D + BatchNorm + ReLU (`fused_block1.cu`)
 - Block 2 = Conv1D + BatchNorm + ReLU + MaxPool (`fused_block2.cu`)
 - Block 3 = 2-layer BiLSTM (`fused_block3.cu` FP32, `fused_block3_fp16.cu` uses `__hfma2` half2-packed
-  gates — this is the kernel with the documented 8.08x-9.21x optimization progression from naive to fp16
-  (range across three independent n=100-trial measurement sessions on the dev box — see README's
+  gates — this is the kernel with the documented 7.55x-9.50x optimization progression from naive to fp16
+  (range across five independent n=100-trial measurement sessions on the dev box — see README's
   "Measurement Stability" note; this dev machine has real session-to-session latency drift beyond
   within-session variance, so don't cite a single point value for this progression without checking
   which session it came from); `fused_block3_naive.cu` is that progression's starting point. It had a

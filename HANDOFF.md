@@ -107,9 +107,36 @@ untuned).
    ranges the same way as the Block 3 fix, added 5 new regression guards on the superseded point
    values). `scripts/verify_claims.py` passes all claims, 0 regressions, after this change.
 
-   **Not yet done:** a 4th/5th confirmatory session would further tighten these ranges, but this
-   wasn't treated as blocking — 3 independent sessions is the same evidentiary bar Block 3's range
-   already established as sufficient in this codebase.
+**4th/5th session re-verification — done, and found a real correction, not just confirmation.**
+User asked to fully re-verify all 4 CUDA kernel blocks: recompiled every kernel from source
+(`nvcc -arch=sm_86`, matching this GPU's compute capability 8.6 exactly, confirmed via
+`nvidia-smi`), ran each standalone binary once (all validations PASSED), then ran the full n=100
+statistical suite. Result: nothing regressed, but re-checking the numbers surfaced a real gap in
+the range-computation from the item above: **the Custom CUDA FP16 / derived-pipeline-total range
+only ever used Historical + the two back-to-back framework-side re-runs — it silently missed two
+already-captured intermediate derived-total measurements (614.5us, 594.0us) sitting in backup
+files from earlier the same session.** True range is **594-675us**, not 652-675us. This widens
+every downstream ratio (a lower Custom CUDA denominator means higher speedups):
+- vs Eager PyTorch: 3.04x-3.44x -> **3.04x-3.78x**
+- vs torch.compile: 2.25x-2.72x -> **2.25x-2.99x**
+- vs TensorRT: 3.60x-4.55x -> **3.60x-4.99x**
+- vs ORT GPU: 5.72x-7.13x -> **5.72x-7.83x**
+
+Also folded 2 more sessions into the Block 3 progression range (same missed-intermediate-data
+bug, same fix): **7.55x-9.50x** (was 8.08x-9.21x), naive latency **4,544-5,050us** (was
+4,860-5,050), FP16 **532-602us** (was 548-602). Propagated everywhere again (README, docs,
+CLAUDE.md, `verify_claims.py` -- both the framework-comparison AND Block-3-progression range
+mechanisms now fold in every known session's data, not just 2 hardcoded + 1 live). 8 more
+regression guards added for the now-superseded intermediate ranges (they'd already been committed
+once, so this matters). All 7 kernel binaries recompiled from source and committed (functionally
+unchanged, just rebuilt for full traceability). `scripts/verify_claims.py` passes all claims, 0
+regressions.
+
+**Lesson for future sessions:** when a "range across N sessions" claim is extended, audit for
+*every* already-known data point sitting in backup files or prior JSON snapshots before computing
+the new range -- it's easy to widen using only the newest 1-2 points and silently drop an
+intermediate one that was captured but never folded in. This happened twice in one session before
+being caught.
 
 **End-of-session status:** see the final message of this session for a full inventory of every
 verified number and what's still left to reverify before final submission.
