@@ -1,9 +1,35 @@
 # COLIDE — Session Handoff
 
-**Last session:** 2026-07-01/02 (Claude Sonnet 5, session 2). **Read this whole file before doing
-anything else** — it has the full context needed to continue without re-deriving what's already
-been established. **Session 3 should start with open item #0 below (fabricated citation) — it's
-the highest-severity unresolved finding in this file.**
+**Last session:** 2026-07-02 (Claude Sonnet 5, session 3, in progress). **Read this whole file
+before doing anything else** — it has the full context needed to continue without re-deriving
+what's already been established. **Open item #0 (fabricated Sophimatics citation) is now RESOLVED
+— see "Session 3 progress" below before assuming it's still open.**
+
+## Session 3 progress (2026-07-02)
+
+**Open item #0 — fabricated Sophimatics citation — RESOLVED.** Removed the false claim from
+`README.md` and `docs/paper_text_blocks.md` §14 immediately (before searching for a replacement,
+so the repo was never left citing something known-false). Searched for a real closest-prior-work
+replacement (8 WebSearch queries covering CNN-LSTM-IDS, FPGA-IDS, and general CUDA-vs-framework
+angles) and found one: **Ibrahim, Paolini, Cugini, Paolucci, "From packets to predictions on GPU:
+Accelerated graph-based intrusion detection system," *Computer Networks*, vol. 275, 2026, DOI
+`10.1016/j.comnet.2025.111954`.** Verified two ways this time (unlike the original, which was
+never checked at all): metadata confirmed via the Crossref API and cross-checked by resolving the
+DOI to the same ScienceDirect article ID (`S1389128625009193`) found independently via topical
+search; content (custom CUDA kernels for GNN graph construction/inference, memory coalescing,
+shared memory, 1.22x-1.48x vs. a CPU baseline) corroborated by two independent search queries.
+**Caveat, flagged in the manuscript text itself:** the actual abstract PDF could not be fetched
+(ScienceDirect blocks automated retrieval, 403), so this rests on corroborated secondary
+characterization, not a verbatim primary-source quote — worth a manual read of the real PDF before
+final submission if full certainty is wanted. The citation is honestly differentiated from our
+work rather than oversold: it's GNN (not CNN-BiLSTM) and benchmarks vs. CPU (not production
+frameworks) — see `docs/paper_text_blocks.md` §14 and README's Verified Research Gaps #1 for the
+exact framing used. Added a `verify_claims.py` regression guard on the fabricated claim's exact
+phrasing so it can't silently reappear. `scripts/verify_claims.py` passes all 63 claims, 0
+regressions, after this change.
+
+**Next up in this session:** working through the remaining open items (below) one by one with the
+user, in whatever order they prioritize.
 
 ## Mandate (set by Ibteshamul, applies to all future sessions)
 
@@ -451,8 +477,8 @@ now fixed and verified) — this item from session 1 is now fully resolved, no l
 
 - Read `CLAUDE.md` first (architecture overview, mostly still accurate — updated this session for
   the Block 3 naive-kernel fix and the measurement-stability range finding).
-- **Start with open item #0 (fabricated Sophimatics citation) — highest severity, explicitly
-  deferred to this session by the user, not skipped.** Everything else below is lower priority.
+- **Open item #0 (fabricated Sophimatics citation) is RESOLVED as of session 3** — see "Session 3
+  progress" near the top of this file. Move on to the remaining open items below (1-5).
 - The audit findings and all fixes are described in full above — you shouldn't need to re-audit
   from scratch. If in doubt about a specific number, run `scripts/verify_claims.py` rather than
   manually re-deriving.

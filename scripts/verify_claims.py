@@ -475,6 +475,8 @@ REGRESSION_GUARDS = [
     ("9.47x", "naive-to-FP16 progression ratio computed from the old 5,698us naive figure and a single-session FP16 mean; superseded by a range (8.39x-9.21x) reflecting both the naive-kernel fix and the measurement-stability finding", "2026-07-01"),
     ("0.9639 vs 0.9864", "RF gap headline computed against the round-1 KD recipe (a=0.7,T=5.0); superseded by round-2's a=0.6,T=10.0 recipe reaching 0.9790, gap now 0.74% not 2.25%", "2026-07-01"),
     ("closes the accuracy gap to **2.25%** on BoT-IoT (**0.9639**", "abstract's old headline gap/accuracy figures for BoT-IoT, superseded by the round-2 KD sweep (0.74% / 0.9790)", "2026-07-01"),
+    ("covers CNN only with 2.7x", "fabricated closest-prior-work claim attributing a 2.7x CUDA speedup to 'Sophimatics Phase 3' (DOI 10.3390/app152211876), a paper that actually has no CUDA/CNN/speedup content; retracted pending a real replacement", "2026-07-02"),
+    ("Must be cited in the manuscript as the closest prior work", "instruction text from the same fabricated Sophimatics citation note, never independently verified before being written into the manuscript text blocks", "2026-07-02"),
 ]
 
 

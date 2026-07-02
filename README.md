@@ -263,7 +263,7 @@ Four fused kernels replacing PyTorch operators:
 
 ## Verified Research Gaps
 
-1. **Custom CUDA for CNN-BiLSTM IDS** — prior work (Sophimatics Phase 3, 2025) covers CNN only with 2.7x; we extend to BiLSTM with 4.40x over TensorRT
+1. **Custom CUDA for CNN-BiLSTM IDS** — closest prior work (Ibrahim et al., *Computer Networks*, 2026) applies custom CUDA kernels to a GNN-based IDS vs. a CPU baseline only (1.22x-1.48x); we target a recurrent CNN-BiLSTM benchmarked against production ML frameworks (PyTorch eager/compile, TensorRT, ONNX Runtime), achieving 4.40x over TensorRT
 2. **On-device LLM for IDS** — Jamshidi et al. (2026) used cloud APIs; we provide fully local with 16.60 us p99 dispatch
 3. **TensorRT vs custom CUDA for sub-1M models** — no prior comparison; TensorRT is 4.40x slower
 4. **torch.compile crash on BiLSTM** — documented failure with CUDA graphs on recurrent control flow

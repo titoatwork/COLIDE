@@ -124,7 +124,32 @@ The Random Forest baseline achieves superior raw accuracy (0.9864 on BoT-IoT, 0.
 5. ADDRESSING THE RF BASELINE: Tree-based ensembles provide slightly higher accuracy on static datasets, but their rigid feature spaces, exponential memory scaling, and inability to integrate with LLM explainability pipelines make them unsuitable as complete edge security solutions. Knowledge distillation transfers RF decision boundaries into the neural network, closing the gap to 0.74% on BoT-IoT while preserving GPU deployment advantages.
 
 
-## 14. Sophimatics Phase 3 Citation Note
+## 14. Closest Prior Work Citation (CUDA Kernel Optimization for GPU-Based IDS)
 
-ChatGPT identified a comparable paper: "Sophimatics Phase 3" (Applied Sciences 2025), which reported custom CUDA kernels for a CNN-based IDS achieving 2.7x speedup. Must be cited in the manuscript as the closest prior work. Our contribution extends beyond this by: (a) targeting a CNN-BiLSTM with recurrent layers that are significantly harder to optimize than pure CNNs, (b) achieving 4.40x speedup over TensorRT (vs their 2.7x general speedup), (c) documenting a complete 8.39x-9.21x optimization progression, and (d) integrating on-device LLM explainability. Search for full citation: "Sophimatics Phase 3 custom CUDA IDS Applied Sciences 2025."
+Prior work by Ibrahim et al. (*Computer Networks*, vol. 275, 2026; DOI `10.1016/j.comnet.2025.111954`)
+applied custom CUDA kernels to a GNN-based intrusion detection system, redesigning graph
+construction and node aggregation as GPU kernels to eliminate host-device copy overhead; using COO
+sparse representation, memory coalescing, and shared memory, they report a 1.22x-1.48x speedup
+over a CPU baseline. Our work targets a different architectural challenge — a CNN-BiLSTM with
+recurrent control flow that resists standard graph-compilation optimizations (see our
+torch.compile crash finding) — and benchmarks against production ML inference frameworks (PyTorch
+eager, torch.compile, TensorRT, ONNX Runtime) rather than a CPU baseline, achieving 3.33x over
+eager PyTorch and 4.40x over TensorRT. To our knowledge, no prior work benchmarks hand-written CUDA
+kernels for a recurrent DL-based IDS against production inference frameworks; Ibrahim et al.
+establish the closest precedent for GPU-kernel-level optimization applied to intrusion detection
+generally, differing from our work in both target architecture (GNN vs. recurrent CNN-BiLSTM) and
+comparison baseline (CPU vs. production frameworks).
+
+**Provenance note (session 3, 2026-07-02):** this replaces a fabricated citation ("Sophimatics
+Phase 3," Applied Sciences 2025, DOI `10.3390/app152211876`) that misattributed unrelated
+philosophical-AI-architecture content to a "2.7x CUDA speedup for CNN-based IDS" claim never
+actually verified before being written into this file — see `HANDOFF.md` for the full history.
+This replacement citation was verified two ways before use: metadata (title/authors/journal/DOI)
+confirmed via the Crossref API and cross-checked by resolving the DOI to the same ScienceDirect
+article ID found via topical search; content (CUDA kernels for graph construction/inference,
+memory coalescing, shared memory, reported speedup vs. CPU baseline) corroborated by two
+independent search queries. The abstract itself could not be fetched directly (ScienceDirect
+blocks automated retrieval), so this rests on corroborated secondary characterization, not a
+verbatim-quoted primary source — flag for a manual read of the actual PDF before final submission
+if full certainty is needed.
 
