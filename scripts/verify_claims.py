@@ -268,6 +268,14 @@ def build_claims():
             "toniot_clean_comparison.json",
             [f"{toniot_clean['gap_percent']:.1f}", f"{toniot_clean['gap_percent']:.2f}"],
         )
+        add(
+            "toniot_clean_cnn_bilstm_f1",
+            "CNN-BiLSTM (clean, 26-feature) ToN-IoT macro-F1 -- was only checked "
+            "indirectly via the derived gap_percent claim above; added directly "
+            "2026-07-02 (session 3)",
+            "toniot_clean_comparison.json",
+            [fmt(toniot_clean["cnn_bilstm_clean_f1"], 4)],
+        )
     distill_v2 = load_json("distill_toniot_v2.json")
     if distill_v2:
         add(
