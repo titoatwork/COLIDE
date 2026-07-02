@@ -1,9 +1,10 @@
 # COLIDE — Session Handoff
 
-**Last session:** 2026-07-02 (Claude Sonnet 5, session 3, in progress). **Read this whole file
-before doing anything else** — it has the full context needed to continue without re-deriving
-what's already been established. **Open item #0 (fabricated Sophimatics citation) is now RESOLVED
-— see "Session 3 progress" below before assuming it's still open.**
+**Last session:** 2026-07-02 (Claude Sonnet 5, session 3, CLOSED). **Read this whole file before
+doing anything else** — it has the full context needed to continue without re-deriving what's
+already been established. **Session 3 is done and pushed — see "Session 3 progress" below for the
+full list of what changed, then "Session 4 starting point" near the end of this file for exactly
+where to pick up.**
 
 ## Session 3 progress (2026-07-02)
 
@@ -286,8 +287,9 @@ PYTHONPATH=. python scripts/benchmark_cuda_kernels_stats.py --kernels-dir infere
 
 ## Open items — decisions not yet made, flagged rather than silently resolved
 
-0. **CRITICAL, NOT YET FIXED — a citation in the manuscript text blocks describes a real paper's
-   content as completely fabricated.** `docs/paper_text_blocks.md` §14 ("Sophimatics Phase 3
+0. **RESOLVED 2026-07-02 (session 3) — see "Session 3 progress" near the top of this file for the
+   fix.** Originally: a citation in the manuscript text blocks described a real paper's content as
+   completely fabricated. `docs/paper_text_blocks.md` §14 ("Sophimatics Phase 3
    Citation Note") and README.md's "Verified Research Gaps" §1 cite "Sophimatics Phase 3"
    (Applied Sciences 2025) as prior work claiming "custom CUDA kernels for a CNN-based IDS
    achieving 2.7x speedup," used as the closest-prior-work comparator (4.40x vs their claimed
@@ -374,11 +376,10 @@ PYTHONPATH=. python scripts/benchmark_cuda_kernels_stats.py --kernels-dir infere
    doesn't mislead a future reader into thinking the two numbers are interchangeable.
    `scripts/verify_claims.py` passes all 49 claims, 0 regressions.
 
-   **Open follow-on question, not investigated this session:** is `statistical_significance_v2.json`'s
-   674.7us full-pipeline figure (the one actually backing README's "3.33x over eager PyTorch"
-   headline) ALSO subject to this same session-to-session drift? It wasn't re-measured this
-   session (only the per-block breakdown was), so there's no evidence either way — flagging as an
-   open question rather than assuming it's fine or assuming it's broken.
+   **RESOLVED 2026-07-02 (session 3) — see "Session 3 progress" near the top of this file.** Yes,
+   it drifts, and by more than expected: the true range is 594-675us (not a single 674.7us point),
+   and the headline ratios widened to 3.04x-3.78x / 2.25x-2.99x / 3.60x-4.99x / 5.72x-7.83x
+   (Eager/torch.compile/TensorRT/ORT-GPU). Propagated everywhere.
 
 3. **Phase 3 (DICC re-run) needs the user to actually execute it** — no SSH/cluster access from
    this dev environment. `dicc_scripts/01_setup.sh`, `02_benchmark_v100.sh`, and
@@ -545,67 +546,66 @@ PYTHONPATH=. python scripts/benchmark_cuda_kernels_stats.py --kernels-dir infere
      (T=12, 15?) given the trend wasn't obviously plateauing, balanced against the a=0.7/T=10.0
      outlier showing this region isn't uniformly safe either.
 
-## Git state — session 2 committed locally, NOT pushed yet
+## Git state — session 3 CLOSED, all 6 commits pushed to origin/master
 
-Session 1 ended at `4dad75f` (committed and pushed). Session 2 added 6 more commits on top,
-**committed locally but not yet pushed to `origin/master`** (user explicitly held the push at
-end of session) — push is a user decision, not made automatically. Working tree is clean.
-Commit range `4dad75f..547e895`, oldest to newest:
+Session 1 ended at `4dad75f` (pushed). Session 2 added 6 commits (`d85271c..2560348`), pushed at
+the start of session 3. Session 3 added 6 more commits on top, **all pushed to `origin/master`
+at session close** — working tree is clean, nothing pending. Commit range `2560348..d9e1f79`,
+oldest to newest:
 
 ```
-d85271c fix: resolve ambiguous PyTorch cuDNN baseline for Block 3 with real n=50-trial benchmark
-3eb773a fix: naive Block3 kernel had a genuine data race, not FP32 rounding error
-acdcba5 fix: trace README's uncorroborated 0.9864 RF figure to a real, reproducible script
-f98bf33 feat: extend KD temperature sweep, cut RF accuracy gap from 2.25% to 0.74%
-f5d090f docs: update HANDOFF.md for session 2 close-out
-547e895 fix: update stale 0.9639/0.9601 comparison strings, fix pre-existing syntax error
+df958f1 fix: replace fabricated Sophimatics citation with a verified closest-prior-work paper
+c27ac2a fix: re-export stale CUDA kernel weights against the current 0.9790 checkpoint
+bd3777e fix: extend headline framework-comparison numbers to session-verified ranges
+38b1ea6 feat: focal-gamma sweep (1.0, 3.0, 4.0) -- negative result, champion unchanged
+241bacb chore: add direct manifest claim for ToN-IoT clean CNN-BiLSTM macro-F1
+d9e1f79 fix: widen CUDA kernel/framework ranges after full 4-block re-verification
 ```
-
-(`547e895` also fixed three unrelated, pre-existing syntax errors in
-`scripts/benchmark_cuml_rf_native.py` — literal unescaped newlines inside string literals that
-would have crashed the script immediately on any run, predating this session; found during a
-final repo-wide `py_compile` sweep of every script in `scripts/`, `preprocessing/`, and `model/`.)
 
 Each commit message has full detail on that piece of work — read `git show <hash>` if you need
-the exact reasoning instead of re-deriving it. Session 1's note about `benchmarks/results/*.json`
-still applies: new result JSONs (e.g. `cuda_kernel_stats_rtx3050.json`, `twostage_botiot.json`,
-the 6 new `distill_botiot_a*_focal2.json` sweep results) are NOT committed — gitignored by policy
-("keep plots, not raw data"). **Model checkpoints (`model/*.pth`) ARE tracked and were
-committed** in `f98bf33` (7 new/changed `.pth` files, ~15 MB) — this repo's established
-convention, consistent with all prior checkpoint commits.
+the exact reasoning instead of re-deriving it. `benchmarks/results/*.json` result files are still
+NOT committed (gitignored by policy, "keep plots, not raw data") except a handful of legacy files
+tracked from before that policy existed (`statistical_significance_v2.json`,
+`real_weight_validation.json` — both updated again this session, still tracked). **Model
+checkpoints (`model/*.pth`) ARE tracked**: 3 new focal-gamma sweep checkpoints committed in
+`38b1ea6` (no production checkpoint changed). **CUDA kernel binaries (`inference/kernels/*`) ARE
+tracked**: all 7 recompiled from source (`nvcc -arch=sm_86`) and committed in `d9e1f79`,
+functionally unchanged, rebuilt for full traceability during the 4-block re-verification pass.
 
-**Next session should ask the user whether to push** these 4 commits (and any new ones) before
-or after fixing open item #0 (Sophimatics citation) — the user's call, not a default action.
+## Session 4 starting point
 
-**Carried over from session 1, still not done:** the *tracked* binary `inference/kernels/fused_pipeline`
-was already recompiled+committed in session 2's `d85271c`/`3eb773a` work along with
-`fused_block3`/`fused_block3_fp16` (all three needed recompiling after their `.cu` sources
-changed) and a new tracked binary was added for `fused_block3_naive` (previously source-only,
-now fixed and verified) — this item from session 1 is now fully resolved, no longer carried over.
-
-## Quick orientation for a fresh session
-
-- Read `CLAUDE.md` first (architecture overview, mostly still accurate — updated this session for
-  the Block 3 naive-kernel fix and the measurement-stability range finding).
-- **Open item #0 (fabricated Sophimatics citation) is RESOLVED as of session 3** — see "Session 3
-  progress" near the top of this file. Move on to the remaining open items below (1-5).
-- The audit findings and all fixes are described in full above — you shouldn't need to re-audit
-  from scratch. If in doubt about a specific number, run `scripts/verify_claims.py` rather than
-  manually re-deriving.
-- Model checkpoints: **`model/best_model_botiot_twostage.pth` is the final, correct model
-  (0.9790 macro-F1, updated session 2 — was 0.9639)**. The pre-session-2 version is preserved at
-  `model/best_model_botiot_twostage_BACKUP_0.9639.pth` if ever needed for comparison.
-  `model/best_model.pth` is a stale pre-distillation checkpoint (0.9352) — don't use it for
-  anything claiming to represent "the" model; several scripts still default to it for pure
-  latency benchmarking (harmless, latency is shape- not weight-dependent) but any
-  correctness/accuracy claim must use the twostage checkpoint. **`train_twostage.py` has no
-  suffix flag and will silently overwrite `model/best_model_botiot_twostage.pth` on every run —
-  back up the current best before running it again.**
-- **CUDA kernel weight exports are now stale** relative to the new 0.9790 checkpoint (they still
-  reflect the old 0.9639 one) — re-run `scripts/validate_weights.py`/`validate_real_weights.py`
-  before any claim ties CUDA kernel correctness to "the" model's accuracy. Not done this session
-  (out of scope for the RF-gap work, but flagged so it isn't missed).
-- To resume beyond item #0: (a) open item #5's "Next steps for further improvement" list
-  (minority-class targeting, stronger RF teacher, ensemble re-tuning), (b) wait for the user to
-  run the DICC jobs (open item #3) and pick up there, or (c) ask the user which they'd like to
-  prioritize given "we have a lot of time" — all are legitimate, none blocks the others.
+- Read `CLAUDE.md` first (architecture overview — updated this session for the widened Block 3
+  progression range, 7.55x-9.50x).
+- **`scripts/verify_claims.py` passes all claims, 0 regressions, as of the last commit.** Run it
+  first thing to confirm nothing drifted between sessions before trusting this file's claims.
+- **Every open item from session 3's "Open items" list below is either RESOLVED or has a clear
+  next step** — see the numbered list further down for the authoritative status of items #1-#5.
+  Items #0 (Sophimatics), the stale-weight-export loose end, and the RTX3050
+  measurement-stability follow-through (items #1/#2) are all fully closed out as of this session.
+- **What's realistically next, roughly in priority order:**
+  1. **Item #3 (DICC cross-hardware)** — the single biggest remaining gap. V100S/A100 only have
+     single unreplicated runs, no statistical trials, no same-hardware PyTorch baseline. Entirely
+     blocked on the user running `sbatch` jobs across >=2 separate days — no cluster access from
+     here. The scripts are ready and were fixed this session (see item #2's writeup above for the
+     relative-path bug that would have crashed them on first submission).
+  2. **Item #5's remaining sub-tasks** — RF teacher strengthening (more trees, `class_weight=
+     'balanced'`, depth tuning) or fixing+retuning the ensemble teacher (`train_ensemble_distill.py`
+     has a diagnostic-only bug at ~line 105, and underperforms solo RF untuned). The focal-gamma
+     sweep (this session) was a clean negative result — gamma=2.0 remains the champion.
+  3. **Item #4 (ceiling-raisers)** — numerical-fidelity table, batch-size sweep, threats-to-validity
+     section (this session's measurement-stability findings are ready-made source material for
+     that section). No urgency.
+- **Model checkpoints:** `model/best_model_botiot_twostage.pth` is the final, correct model
+  (0.9790 macro-F1). `model/best_model.pth` is a stale pre-distillation checkpoint (0.9352) —
+  don't use it for anything claiming to represent "the" model. **`train_twostage.py` has no
+  suffix flag and will silently overwrite the production checkpoint on every run — back up the
+  current best before running it again** (this bit session 3 once already, see item #5's loose-end
+  writeup above).
+- **CUDA kernel weight exports are current** as of this session (`model/weights/`,
+  `model/weights_bin/`), matching the 0.9790 checkpoint — re-export again only if the model gets
+  retrained.
+- **A pattern worth internalizing before extending any more "range across N sessions" claims:**
+  this session caught itself making the same mistake twice — computing a new range using only the
+  newest 1-2 data points and silently dropping an already-known intermediate one sitting in a
+  backup file. Before extending any range claim, explicitly enumerate every session's data point
+  first, don't just diff against "whatever's live now."
