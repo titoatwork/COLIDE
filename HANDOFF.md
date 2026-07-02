@@ -365,6 +365,24 @@ PYTHONPATH=. python scripts/benchmark_cuda_kernels_stats.py --kernels-dir infere
    `model/best_model_botiot_twostage.pth` before any future claim ties CUDA kernel correctness to
    "the" model's accuracy.
 
+   **Reproducibility check (user-requested, in progress / check on resume):** to address a fair
+   question raised at end of session ("is this result stable, or could it drift like the CUDA
+   latency numbers did?") — `train_distill.py` has `cudnn.deterministic=True`,
+   `cudnn.benchmark=False`, and full seeding (`random`/`numpy`/`torch`/`cuda`, all `SEED=42`),
+   which is a materially different reliability story than the CUDA kernels' wall-clock timing
+   (no seed controls a physical clock/OS scheduler; a deterministic, seeded training computation
+   should reproduce). Re-ran the winning config (`--alpha 0.6 --temperature 10.0 --focal-gamma
+   2.0 --suffix a0.6_T10.0_focal2_repro`, new suffix so it doesn't clobber the original) to verify
+   this empirically rather than just asserting it. **If this session ended before that run
+   finished**, check `benchmarks/results/distill_botiot_a0.6_T10.0_focal2_repro.json` against the
+   original `distill_botiot_a0.6_T10.0_focal2.json` (best_val_f1 0.9757, macro_f1 0.9763) — close
+   agreement confirms reproducibility; a large discrepancy would be a real, concerning finding
+   worth its own investigation. **This check does NOT cover Phase B (two-stage fine-tuning)
+   reproducibility** — `train_twostage.py` has the same determinism flags so it's *likely*
+   similarly reproducible, but that specific claim hasn't been tested; re-running it (with a
+   backup of whatever's current in `model/best_model_botiot_twostage.pth` first, see above) would
+   close that gap if it matters before submission.
+
    **Next steps for further improvement (not started, Phase C in the plan file), roughly in order
    of expected payoff:**
    - **Target the minority classes directly**, since the outlier run proved the gap concentrates
