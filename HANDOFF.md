@@ -383,37 +383,35 @@ PYTHONPATH=. python scripts/benchmark_cuda_kernels_stats.py --kernels-dir infere
      (T=12, 15?) given the trend wasn't obviously plateauing, balanced against the a=0.7/T=10.0
      outlier showing this region isn't uniformly safe either.
 
-## Git state — everything committed and pushed
+## Git state — session 2 committed locally, NOT pushed yet
 
-Update (end of session, after this file was first written): all fixes above are committed as 9
-logical commits and pushed to `origin/master`. Working tree is clean. Commit range
-`9c8d86f..dedf158`, oldest to newest:
+Session 1 ended at `4dad75f` (committed and pushed). Session 2 added 4 more commits on top,
+**committed locally but not yet pushed to `origin/master`** — push is a user decision, not made
+automatically. Working tree is clean. Commit range `4dad75f..f98bf33`, oldest to newest:
 
 ```
-9c8d86f tools: add claim verifier and CUDA kernel statistical benchmark harness
-09b509b fix: LLM dispatch overhead was fabricated, replace with real percentile benchmark
-a0ff1a8 fix: pipeline speedup ratio used an unsourced PyTorch baseline
-96dfc58 fix: weight export/validation scripts pointed at a stale pre-distillation checkpoint
-99b7f80 fix: significance tests were one-sample against a bare constant, not two-sample
-4e09ca1 feat: rebuild ablation_study.py to load from JSON instead of hardcoded literals
-9acbc15 chore: wire statistical CUDA kernel benchmark into DICC setup/run scripts
-e928d8e docs: correct fabricated/stale numbers across README and paper text blocks
-dedf158 docs: add CLAUDE.md architecture guide and session handoff
+d85271c fix: resolve ambiguous PyTorch cuDNN baseline for Block 3 with real n=50-trial benchmark
+3eb773a fix: naive Block3 kernel had a genuine data race, not FP32 rounding error
+acdcba5 fix: trace README's uncorroborated 0.9864 RF figure to a real, reproducible script
+f98bf33 feat: extend KD temperature sweep, cut RF accuracy gap from 2.25% to 0.74%
 ```
 
-Each commit message has full detail on that phase's fix — read `git show <hash>` if you need the
-exact reasoning for a specific change instead of re-deriving it. `benchmarks/results/*.json` new
-files (e.g. `cuda_kernel_stats_rtx3050.json`) are NOT committed — that directory is gitignored
-for new files (existing tracked result JSONs still update fine; only new ones are blocked without
-`-f`). Consistent with this repo's stated policy ("keep plots, not raw data") — don't force-add
-new benchmark JSONs unless the user asks for that policy to change.
+Each commit message has full detail on that piece of work — read `git show <hash>` if you need
+the exact reasoning instead of re-deriving it. Session 1's note about `benchmarks/results/*.json`
+still applies: new result JSONs (e.g. `cuda_kernel_stats_rtx3050.json`, `twostage_botiot.json`,
+the 6 new `distill_botiot_a*_focal2.json` sweep results) are NOT committed — gitignored by policy
+("keep plots, not raw data"). **Model checkpoints (`model/*.pth`) ARE tracked and were
+committed** in `f98bf33` (7 new/changed `.pth` files, ~15 MB) — this repo's established
+convention, consistent with all prior checkpoint commits.
 
-**Still not done** (unrelated to the commit/push step, carried over from before): the *tracked*
-binary `inference/kernels/fused_pipeline` and the source-only `fused_block3_naive.cu` (no tracked
-binary exists for it) should probably be recompiled from their now-fixed `.cu` sources and
-committed, so the binary artifacts match the corrected source before final lock. Check `git log`
-on `inference/kernels/` to confirm this repo's convention of committing compiled binaries, then
-decide.
+**Next session should ask the user whether to push** these 4 commits (and any new ones) before
+or after fixing open item #0 (Sophimatics citation) — the user's call, not a default action.
+
+**Carried over from session 1, still not done:** the *tracked* binary `inference/kernels/fused_pipeline`
+was already recompiled+committed in session 2's `d85271c`/`3eb773a` work along with
+`fused_block3`/`fused_block3_fp16` (all three needed recompiling after their `.cu` sources
+changed) and a new tracked binary was added for `fused_block3_naive` (previously source-only,
+now fixed and verified) — this item from session 1 is now fully resolved, no longer carried over.
 
 ## Quick orientation for a fresh session
 
