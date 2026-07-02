@@ -30,8 +30,12 @@ print("=" * 60)
 with open('config/config.yaml') as f:
     config = yaml.safe_load(f)
 
-# Final published model (two-stage KD+focal+real-data fine-tune, 0.9639 macro-F1)
-# -- fixed 2026-07-01, was pointed at the stale pre-distillation checkpoint.
+# Final published model (two-stage KD+focal+real-data fine-tune, 0.9790 macro-F1
+# as of 2026-07-02's extended KD sweep; was 0.9639 before that) -- fixed
+# 2026-07-01, was pointed at the stale pre-distillation checkpoint.
+# NOTE: this script's own exported weights/validation numbers still reflect the
+# OLD 0.9639 checkpoint as of 2026-07-02 -- re-run after the model change before
+# trusting any CUDA-kernel-correctness claim (see HANDOFF.md open item #5).
 model = CNNBiLSTM(config)
 model.load_state_dict(torch.load('model/best_model_botiot_twostage.pth', map_location='cpu', weights_only=True))
 model.eval()

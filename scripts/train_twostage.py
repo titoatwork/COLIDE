@@ -140,7 +140,7 @@ def main():
     macro_f1 = f1_score(all_targets, all_preds, average='macro')
     weighted_f1 = f1_score(all_targets, all_preds, average='weighted')
     acc = (torch.tensor(all_preds) == torch.tensor(all_targets)).float().mean().item()
-    print(f"Two‑Stage Test Macro-F1: {macro_f1:.4f} | Best: 0.9624 (MLP), 0.9601 (CNN-BiLSTM)")
+    print(f"Two‑Stage Test Macro-F1: {macro_f1:.4f} | Best: 0.9624 (MLP), 0.9790 (CNN-BiLSTM)")
 
     # Previously this final headline number was never saved to a JSON --
     # verify_claims.py had it as a hand-typed literal, same class of

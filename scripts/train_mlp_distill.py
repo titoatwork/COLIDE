@@ -250,7 +250,7 @@ def main():
 
     print(classification_report(all_targets, all_preds, target_names=class_names, digits=4, zero_division=0))
     macro_f1 = f1_score(all_targets, all_preds, average='macro')
-    print(f"MLP Macro-F1: {macro_f1:.4f}  |  CNN-BiLSTM (best): 0.9601")
+    print(f"MLP Macro-F1: {macro_f1:.4f}  |  CNN-BiLSTM (best): 0.9790")
     results = {'dataset': 'botiot', 'model': 'MLP', 'alpha': args.alpha, 'temperature': args.temperature,
                'focal_gamma': args.focal_gamma, 'macro_f1': float(macro_f1), 'best_val_f1': float(best_f1)}
     with open(f"benchmarks/results/ablation_mlp.json", 'w') as f:

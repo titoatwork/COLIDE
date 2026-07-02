@@ -212,7 +212,7 @@ def main():
             all_targets.extend(targets.numpy())
     print(classification_report(all_targets, all_preds, target_names=class_names, digits=4, zero_division=0))
     macro_f1 = f1_score(all_targets, all_preds, average='macro')
-    print(f"Ensemble Teacher Test Macro-F1: {macro_f1:.4f} | Best: 0.9624 (MLP), 0.9601 (CNN-BiLSTM)")
+    print(f"Ensemble Teacher Test Macro-F1: {macro_f1:.4f} | Best: 0.9624 (MLP), 0.9790 (CNN-BiLSTM)")
 
 if __name__ == '__main__':
     main()
