@@ -28,8 +28,23 @@ exact framing used. Added a `verify_claims.py` regression guard on the fabricate
 phrasing so it can't silently reappear. `scripts/verify_claims.py` passes all 63 claims, 0
 regressions, after this change.
 
-**Next up in this session:** working through the remaining open items (below) one by one with the
-user, in whatever order they prioritize.
+**Item #5 loose end — stale CUDA kernel weight exports — RESOLVED.** `model/weights_bin/` (via
+`scripts/validate_weights.py`) and `model/weights/` (gitignored `.npy` fp32/fp16 export, via
+`CNNBiLSTM.export_weights()` — not called by either validate script, has to be invoked directly)
+both still reflected the OLD 0.9639 checkpoint, because Phase 2.6's export (2026-07-01 05:11,
+session 2) happened *before* item #5's Phase B fine-tuning run later that same session
+(2026-07-02 02:50) overwrote `model/best_model_botiot_twostage.pth` in place with the new 0.9790
+weights — confirmed via file mtimes, not just assumed. Re-ran both exports against the current
+checkpoint and re-ran `scripts/validate_real_weights.py`: all 4 tests pass (weight integrity,
+reference consistency, block-by-block, classification accuracy 0.9800 on 1000 samples). Also fixed
+an untraced hardcoded comparison value in `validate_real_weights.py` (Test 4 compared against
+"~0.9697" with no stated source) — now compares against 0.9823, the real full-test-set accuracy
+from `benchmarks/results/twostage_botiot.json`. `scripts/verify_claims.py` still passes all 63
+claims, 0 regressions, after this change.
+
+**Next up in this session:** open item #5's "Next steps for further improvement" — starting with a
+focal-gamma sweep (1.0, 3.0, 4.0) targeting the minority classes (Normal, Theft) that the KD sweep
+outlier showed the RF gap concentrates in.
 
 ## Mandate (set by Ibteshamul, applies to all future sessions)
 

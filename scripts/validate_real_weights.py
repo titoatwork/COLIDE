@@ -33,9 +33,7 @@ with open('config/config.yaml') as f:
 # Final published model (two-stage KD+focal+real-data fine-tune, 0.9790 macro-F1
 # as of 2026-07-02's extended KD sweep; was 0.9639 before that) -- fixed
 # 2026-07-01, was pointed at the stale pre-distillation checkpoint.
-# NOTE: this script's own exported weights/validation numbers still reflect the
-# OLD 0.9639 checkpoint as of 2026-07-02 -- re-run after the model change before
-# trusting any CUDA-kernel-correctness claim (see HANDOFF.md open item #5).
+# Re-validated 2026-07-02 (session 3) against the current 0.9790 checkpoint.
 model = CNNBiLSTM(config)
 model.load_state_dict(torch.load('model/best_model_botiot_twostage.pth', map_location='cpu', weights_only=True))
 model.eval()
@@ -181,9 +179,13 @@ with torch.no_grad():
         total += 1
 
 accuracy = correct / total
+# Full-test-set accuracy from benchmarks/results/twostage_botiot.json (current
+# checkpoint, 733,705 samples): 0.9823. This script samples 1000 at random, so
+# some sampling noise vs. the full-set figure is expected.
+EXPECTED_ACCURACY = 0.9823
 print(f"  Accuracy on 1000 random test samples: {accuracy:.4f}")
-print(f"  Expected (from training): ~0.9697")
-print(f"  {'✅ CONSISTENT' if abs(accuracy - 0.9697) < 0.02 else '⚠️  DEVIATION DETECTED'}")
+print(f"  Expected (from twostage_botiot.json, full test set): {EXPECTED_ACCURACY}")
+print(f"  {'✅ CONSISTENT' if abs(accuracy - EXPECTED_ACCURACY) < 0.02 else '⚠️  DEVIATION DETECTED'}")
 
 # ================================================================
 # Summary

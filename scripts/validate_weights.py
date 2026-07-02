@@ -25,9 +25,7 @@ with open('config/config.yaml') as f:
 # Previously pointed at model/best_model.pth, the pre-distillation "Original V3"
 # checkpoint (0.9352) -- fixed 2026-07-01 so the exported weights used for CUDA
 # kernel correctness validation match the model actually being reported.
-# NOTE: this script's own exported weights/validation numbers still reflect the
-# OLD 0.9639 checkpoint as of 2026-07-02 -- re-run after the model change before
-# trusting any CUDA-kernel-correctness claim (see HANDOFF.md open item #5).
+# Re-exported 2026-07-02 (session 3) against the current 0.9790 checkpoint.
 model = CNNBiLSTM(config)
 model.load_state_dict(torch.load('model/best_model_botiot_twostage.pth', map_location='cpu', weights_only=True))
 model.eval()
