@@ -138,7 +138,27 @@ def main():
             all_targets.extend(targets.cpu().numpy())
     print(classification_report(all_targets, all_preds, target_names=class_names, digits=4, zero_division=0))
     macro_f1 = f1_score(all_targets, all_preds, average='macro')
+    weighted_f1 = f1_score(all_targets, all_preds, average='weighted')
+    acc = (torch.tensor(all_preds) == torch.tensor(all_targets)).float().mean().item()
     print(f"Two‑Stage Test Macro-F1: {macro_f1:.4f} | Best: 0.9624 (MLP), 0.9601 (CNN-BiLSTM)")
+
+    # Previously this final headline number was never saved to a JSON --
+    # verify_claims.py had it as a hand-typed literal, same class of
+    # provenance gap as every other fix this session. Fixed 2026-07-01.
+    results = {
+        'checkpoint': args.checkpoint,
+        'focal_gamma': args.focal_gamma,
+        'epochs_requested': args.epochs,
+        'lr': args.lr,
+        'macro_f1': float(macro_f1),
+        'weighted_f1': float(weighted_f1),
+        'accuracy': float(acc),
+        'best_val_f1': float(best_f1),
+    }
+    results_path = 'benchmarks/results/twostage_botiot.json'
+    with open(results_path, 'w') as f:
+        json.dump(results, f, indent=2)
+    print(f"Results saved to {results_path}")
 
 if __name__ == '__main__':
     main()

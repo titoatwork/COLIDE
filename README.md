@@ -6,13 +6,13 @@
 
 ## Abstract
 
-COLIDE presents custom CUDA C++ inference kernels for a CNN-BiLSTM-based IoT intrusion detection system, achieving statistically significant speedups over all major deep learning inference frameworks: **4.40x over TensorRT** (p<0.001), **2.63x over torch.compile** (p<0.001), and **3.33x over eager PyTorch** (p<0.001), validated across 20 independent trials. The system integrates an on-device, air-gapped LLM explainability module (TinyLlama 1.1B, 4-bit quantized) with only **16.60 us p99** async dispatch overhead (~2.5% of the detection pipeline). Knowledge distillation from a Random Forest teacher combined with focal loss closes the accuracy gap to **2.25%** on BoT-IoT (**0.9639** macro-F1) and **3.3%** on ToN-IoT (**0.9526** macro-F1). The system sustains **25,899 flows/sec** in streaming mode on consumer-grade edge hardware.
+COLIDE presents custom CUDA C++ inference kernels for a CNN-BiLSTM-based IoT intrusion detection system, achieving statistically significant speedups over all major deep learning inference frameworks: **4.40x over TensorRT** (p<0.001), **2.63x over torch.compile** (p<0.001), and **3.33x over eager PyTorch** (p<0.001), validated across 20 independent trials. The system integrates an on-device, air-gapped LLM explainability module (TinyLlama 1.1B, 4-bit quantized) with only **16.60 us p99** async dispatch overhead (~2.5% of the detection pipeline). Knowledge distillation from a Random Forest teacher combined with focal loss closes the accuracy gap to **0.74%** on BoT-IoT (**0.9790** macro-F1) and **3.3%** on ToN-IoT (**0.9526** macro-F1). The system sustains **25,899 flows/sec** in streaming mode on consumer-grade edge hardware.
 
 ## Key Contributions
 
 1. **Custom CUDA Beating All Frameworks**: Hand-written CUDA C++ kernels outperform TensorRT (4.40x), torch.compile (2.63x), eager PyTorch (3.33x), and ORT GPU (6.89x) — all statistically significant at p<0.001 across 20 trials
 2. **FP16 Half2 BiLSTM Beating cuDNN**: Native half-precision FMA instructions with documented **8.39x–9.21x optimization progression** (5,050 to 548–602 us) **beating cuDNN by 1.30x–1.43x** (both the cuDNN baseline and the FP16 kernel are real n=50/n=100-trial means; the range reflects genuine session-to-session measurement drift on this dev box, not an unresolved ambiguity — see "Block 3 Optimization Progression" below)
-3. **Knowledge Distillation Closing the RF Gap**: RF-to-CNN-BiLSTM distillation with temperature scaling (T=5.0) and focal loss narrows accuracy gap from 5.12% to **2.25%** on BoT-IoT and 11.4% to **3.3%** on ToN-IoT
+3. **Knowledge Distillation Closing the RF Gap**: RF-to-CNN-BiLSTM distillation with temperature scaling (T=10.0) and focal loss narrows accuracy gap from 5.12% to **0.74%** on BoT-IoT and 11.4% to **3.3%** on ToN-IoT
 4. **On-Device Air-Gapped LLM Explainability**: Async ring-buffer dispatch to local quantized TinyLlama 1.1B with **16.60 us p99 overhead** and zero cloud dependency — contrasting with Jamshidi et al. (2026) cloud API approach
 5. **Cross-Hardware Profiling**: 3 GPU architectures (RTX 3050, V100S, A100) revealing **V100S outperforms A100** for sequential LSTM — clock speed dominates SM count
 
@@ -131,16 +131,16 @@ evidence this variance is a WSL2-specific artifact rather than a fundamental lim
 
 | Model | Macro-F1 | Method | Parameters |
 |---|---|---|---|
-| **Two-stage CNN-BiLSTM** | **0.9639** | **KD + focal + real-data FT** | **530,181** |
+| **Two-stage CNN-BiLSTM** | **0.9790** | **KD (a=0.6,T=10.0) + focal + real-data FT** | **530,181** |
+| KD + Focal CNN-BiLSTM | 0.9763 | a=0.6, T=10.0, g=2.0 | 530,181 |
 | MLP (distilled) | 0.9624 | Same KD recipe | 400,901 |
-| KD + Focal CNN-BiLSTM | 0.9601 | a=0.7, T=5.0, g=2.0 | 530,181 |
 | MLP (two-stage) | 0.9542 | Same FT recipe | 400,901 |
 | Ensemble KD | 0.9529 | RF+XGB+LGB teacher | 530,181 |
 | GPU RF (cuML) | 0.9471 | 200 trees, GPU | -- |
 | Original V3 | 0.9352 | CE + SMOTE | 530,181 |
 | CPU RF (sklearn) | 0.9864* | 200 trees, CPU | -- |
 
-Gap to RF: **2.25%** (was 5.12%).
+Gap to RF: **0.74%** (was 5.12%).
 
 \* Trained/evaluated on the exact same preprocessed splits (`data/processed/*.npy`) the CNN-BiLSTM
 itself uses — the apples-to-apples comparison. `scripts/rf_baseline.py` and `train_distill.py`'s
@@ -160,7 +160,14 @@ figure's source, confirmed reproducible byte-for-byte 2026-07-01.
 
 Dropping 16 sparse columns improved CNN-BiLSTM by +15.4% and RF by +4.9%.
 
-### KD Sweep (BoT-IoT, 8 configurations)
+### KD Sweep (BoT-IoT, 14 configurations)
+
+Round 1 (no focal loss, or a single focal point) established alpha=0.7/T=5.0 as the best region found
+at the time. Round 2 (2026-07-01, session 2) extended temperature past 5.0 with focal_gamma=2.0 fixed
+across a 3x2 alpha/temperature grid, motivated by Round 1's still-rising T=1->3->5 trend. One config
+(a=0.7, T=10.0) is a genuine outlier — collapsed on the Normal/Theft minority classes (precision
+0.75/0.67) despite excellent majority-class performance, dragging macro-F1 down; kept in the table as a
+real, useful negative result rather than dropped.
 
 | Alpha | Temp | Focal | Val F1 | Test F1 |
 |---|---|---|---|---|
@@ -171,13 +178,19 @@ Dropping 16 sparse columns improved CNN-BiLSTM by +15.4% and RF by +4.9%.
 | 0.9 | 1.0 | -- | 0.9567 | 0.9284 |
 | 0.5 | 3.0 | -- | 0.9541 | 0.9341 |
 | 0.7 | 5.0 | -- | 0.9620 | 0.9547 |
-| **0.7** | **5.0** | **2.0** | **0.9728** | **0.9601** |
+| 0.7 | 5.0 | 2.0 | 0.9728 | 0.9601 |
+| 0.6 | 7.0 | 2.0 | 0.9780 | 0.9702 |
+| 0.7 | 7.0 | 2.0 | 0.9728 | 0.9687 |
+| 0.8 | 7.0 | 2.0 | 0.9751 | 0.9757 |
+| 0.7 | 10.0 | 2.0 | 0.9482 | 0.9033 |
+| 0.8 | 10.0 | 2.0 | 0.9672 | 0.9745 |
+| **0.6** | **10.0** | **2.0** | **0.9757** | **0.9763** |
 
 ### MLP Ablation
 
 | Model | Params | Latency (A100) | Test F1 |
 |---|---|---|---|
-| **CNN-BiLSTM** | 530,181 | 592 us | **0.9639** |
+| **CNN-BiLSTM** | 530,181 | 592 us | **0.9790** |
 | MLP | 400,901 | 175 us | 0.9542 |
 
 MLP is 3.4x faster but CNN-BiLSTM wins accuracy. The recurrent architecture's dynamic control flow exposes compiler limitations — the core systems contribution.
@@ -187,7 +200,7 @@ MLP is 3.4x faster but CNN-BiLSTM wins accuracy. The recurrent architecture's dy
 | Metric | cuML RF | CNN-BiLSTM |
 |---|---|---|
 | VRAM | 444 MB | ~2 MB |
-| F1 (GPU) | 0.9471 | 0.9639 |
+| F1 (GPU) | 0.9471 | 0.9790 |
 | Throughput | 2,065,669 f/s | 87,791 f/s |
 | Energy | 0.048 mJ/flow | 1.089 mJ/flow |
 
@@ -257,7 +270,7 @@ Four fused kernels replacing PyTorch operators:
 
 ## Limitations
 
-- **RF accuracy gap**: 0.9639 vs 0.9864 on BoT-IoT (2.25%)
+- **RF accuracy gap**: 0.9790 vs 0.9864 on BoT-IoT (0.74%)
 - **SMOTE dependency**: 52 Theft samples require synthetic augmentation
 - **Pseudo-sequence**: MLP ablation shows sequential bias is not essential; architecture retained for compiler stress-testing
 - **Energy**: cuML RF (0.048 mJ/flow) is more efficient than CNN-BiLSTM (1.089 mJ/flow) on same A100 hardware

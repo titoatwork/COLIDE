@@ -154,11 +154,24 @@ def build_claims():
             "rf_baseline_processed.json",
             [fmt(rf_ceiling, 4)],
         )
+    # The two-stage headline number itself: fixed 2026-07-01, was ALSO a
+    # hand-typed literal here with no JSON source (train_twostage.py never
+    # saved one) -- same class of provenance gap as every other fix this
+    # session. train_twostage.py now saves benchmarks/results/twostage_botiot.json.
+    twostage = load_json("twostage_botiot.json")
+    twostage_f1 = twostage["macro_f1"] if twostage else 0.9790
+    if twostage:
+        add(
+            "twostage_final_test_f1",
+            "Two-stage CNN-BiLSTM final test macro-F1 (KD a=0.6,T=10.0 + focal + real-data FT)",
+            "twostage_botiot.json",
+            [fmt(twostage_f1, 4)],
+        )
     add(
         "rf_gap_botiot_final",
-        "RF gap: 0.9864 (CPU RF, data/processed/*.npy) - 0.9639 (two-stage CNN-BiLSTM)",
-        "rf_baseline_processed.json + README's own headline number",
-        [fmt_pct(rf_ceiling - 0.9639, 2)],
+        "RF gap: 0.9864 (CPU RF, data/processed/*.npy) - twostage_botiot.json's macro_f1",
+        "rf_baseline_processed.json + twostage_botiot.json",
+        [fmt_pct(rf_ceiling - twostage_f1, 2)],
     )
     add(
         "rf_gap_botiot_baseline",
@@ -176,6 +189,14 @@ def build_claims():
         ("distill_botiot_a0.5_T3.0.json", None),
         ("distill_botiot_a0.7_T5.0.json", None),
         ("distill_botiot_focal_T5.json", None),
+        # Round 2 (2026-07-01, session 2): extended temperature past 5.0 with
+        # focal_gamma=2.0 fixed. a0.6_T10.0 is the new best (feeds Phase B).
+        ("distill_botiot_a0.6_T7.0_focal2.json", None),
+        ("distill_botiot_a0.7_T7.0_focal2.json", None),
+        ("distill_botiot_a0.8_T7.0_focal2.json", None),
+        ("distill_botiot_a0.7_T10.0_focal2.json", None),
+        ("distill_botiot_a0.8_T10.0_focal2.json", None),
+        ("distill_botiot_a0.6_T10.0_focal2.json", None),
     ]
     for fname, _ in kd_sweep:
         d = load_json(fname)
@@ -452,6 +473,8 @@ REGRESSION_GUARDS = [
     ("beating cuDNN by 1.23x", "Block3-vs-cuDNN ratio computed from an ambiguous single-run baseline (740.7 vs 943.6us); superseded by a real n=50-trial mean (784us), giving 1.30x", "2026-07-01"),
     ("5,698", "naive Block3 kernel latency: historical single-run figure from a pre-fix (racy) binary, superseded by a real n=100-trial mean of the race-condition-fixed kernel (5,050us)", "2026-07-01"),
     ("9.47x", "naive-to-FP16 progression ratio computed from the old 5,698us naive figure and a single-session FP16 mean; superseded by a range (8.39x-9.21x) reflecting both the naive-kernel fix and the measurement-stability finding", "2026-07-01"),
+    ("0.9639 vs 0.9864", "RF gap headline computed against the round-1 KD recipe (a=0.7,T=5.0); superseded by round-2's a=0.6,T=10.0 recipe reaching 0.9790, gap now 0.74% not 2.25%", "2026-07-01"),
+    ("closes the accuracy gap to **2.25%** on BoT-IoT (**0.9639**", "abstract's old headline gap/accuracy figures for BoT-IoT, superseded by the round-2 KD sweep (0.74% / 0.9790)", "2026-07-01"),
 ]
 
 

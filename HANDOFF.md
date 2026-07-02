@@ -1,8 +1,9 @@
 # COLIDE — Session Handoff
 
-**Last session:** 2026-07-01 (Claude Sonnet 5, high effort). **Read this whole file before doing
+**Last session:** 2026-07-01/02 (Claude Sonnet 5, session 2). **Read this whole file before doing
 anything else** — it has the full context needed to continue without re-deriving what's already
-been established.
+been established. **Session 3 should start with open item #0 below (fabricated citation) — it's
+the highest-severity unresolved finding in this file.**
 
 ## Mandate (set by Ibteshamul, applies to all future sessions)
 
@@ -16,9 +17,9 @@ been established.
   reproducible measurement. Don't restate a number because it "looks right" — check it against
   `benchmarks/results/*.json` or run `scripts/verify_claims.py`.
 - **Future sessions will also try to improve substantively weak numbers**, not just verify
-  existing ones — e.g. the accuracy gap vs the Random Forest baseline (currently 2.25% on
-  BoT-IoT) is a candidate for actual improvement (better distillation recipe, more KD sweep
-  points, etc.), not just accurate reporting. That work has not started yet.
+  existing ones — e.g. the accuracy gap vs the Random Forest baseline (was 2.25% on BoT-IoT,
+  session 2 got it to 0.74% — see open item #5) is a candidate for actual improvement (better
+  distillation recipe, more KD sweep points, etc.), not just accurate reporting.
 - **Check in with the user after each phase/major fix**, don't run long stretches silently —
   this was explicitly requested and worked well last session.
 
@@ -50,9 +51,9 @@ scripts:
 ```
 source .venv/bin/activate && PYTHONPATH=. python3 scripts/verify_claims.py
 ```
-Current status: **all tracked claims pass, 0 regressions.** It also prints "orphan numbers"
-(bolded figures in README not yet covered by a manifest entry) — currently: `0.7, 0.9526,
-0.9639, 1.00x, 2.0, 3.3%, 5.0, 675, 87`. These aren't necessarily wrong, just not yet
+Current status (end of session 2): **all 63 tracked claims pass, 0 regressions.** It also prints
+"orphan numbers" (bolded figures in README not yet covered by a manifest entry) — currently:
+`0.6, 0.9526, 1.00x, 10.0, 2.0, 3.3%, 675, 87`. These aren't necessarily wrong, just not yet
 cross-checked; add manifest entries for them opportunistically.
 
 **Phase 1.1 — Fixed the fabricated LLM dispatch overhead.**
@@ -148,6 +149,32 @@ PYTHONPATH=. python scripts/benchmark_cuda_kernels_stats.py --kernels-dir infere
 ```
 
 ## Open items — decisions not yet made, flagged rather than silently resolved
+
+0. **CRITICAL, NOT YET FIXED — a citation in the manuscript text blocks describes a real paper's
+   content as completely fabricated.** `docs/paper_text_blocks.md` §14 ("Sophimatics Phase 3
+   Citation Note") and README.md's "Verified Research Gaps" §1 cite "Sophimatics Phase 3"
+   (Applied Sciences 2025) as prior work claiming "custom CUDA kernels for a CNN-based IDS
+   achieving 2.7x speedup," used as the closest-prior-work comparator (4.40x vs their claimed
+   2.7x, etc.). **Verified via WebSearch + WebFetch this session: the paper is real and correctly
+   titled/dated (DOI `10.3390/app152211876`), but it has NOTHING to do with CUDA, CNNs, or
+   speedup benchmarking.** The actual paper — "Super Time-Cognitive Neural Networks (Phase 3 of
+   Sophimatics): Temporal-Philosophical Reasoning for Security-Critical AI Applications" — is
+   about a philosophical/temporal-cognitive AI architecture (complex-valued "time" representing
+   memory/present/imagination), evaluated across five unrelated security domains using
+   detection-rate/false-positive metrics (96.3% detection, 2.1% FP for its IDS use case specifically
+   — no latency, no CUDA, no CNN). The citation note's own text says "ChatGPT identified a
+   comparable paper... Search for full citation" — meaning this was **never actually verified**,
+   just carried forward as fact. This is more severe than any numeric provenance issue fixed this
+   session: a reviewer who looks up this citation (trivial, it's a real indexed paper) would find
+   it describes something unrelated, which reads as fabrication or serious carelessness either way.
+   **User explicitly deferred fixing this to session 3** (to avoid overloading session 2's context
+   window with a tangential fix while the KD sweep was running) — **not skipped, just deferred.**
+   Three options were on the table, undecided: (a) remove the comparison now, find a real
+   closest-prior-work citation later; (b) do a proper literature search now for an actual paper
+   about custom CUDA kernels for CNN/RNN-based IDS; (c) remove entirely, no replacement — the
+   paper's contribution (statistically validated speedups, torch.compile crash finding) stands on
+   its own without a named comparator. Recommend starting session 3 with a decision on this, then
+   executing it — it blocks manuscript submission regardless of which option is chosen.
 
 1. **RESOLVED 2026-07-01 (session 2).** PyTorch cuDNN baseline for Block 3 used to be
    inconsistent (740.7us historical single-run vs 943.6us from a fresh `benchmark_pipeline.py`
@@ -258,35 +285,103 @@ PYTHONPATH=. python scripts/benchmark_cuda_kernels_stats.py --kernels-dir infere
    quantified (6-27% session-to-session drift) hardware/environment limitation, not a
    hypothetical one.
 
-5. **IN PROGRESS 2026-07-01 (session 2): substantively improve the RF accuracy gap** (not just
-   report it accurately). Before starting the actual KD-recipe work, found and fixed a real
-   provenance gap in the number the whole task is framed around:
+5. **SUBSTANTIAL PROGRESS 2026-07-01/02 (session 2): RF accuracy gap cut from 2.25% to 0.74%.**
+   Plan file (approved, followed): `/home/titoisalive/.claude/plans/nested-dancing-kazoo.md`.
 
-   **RESOLVED — README's 0.9864 RF figure had no traceable source.** It's the "CPU RF (sklearn),
-   200 trees" headline used for the "2.25% gap" claim. Checked `DAILY_LOG.md` (no mention),
-   `scripts/rf_baseline.py` as-is (100 trees, independent undersample+SMOTE recipe -> 0.9768 test,
-   which IS the well-documented Day-3 windowing-decision number, just a different RF than the
-   0.9864 one), a 200-tree variant of that same recipe (-> 0.9730 test, *lower* — ruled out "just
-   add more trees"), and `train_distill.py`'s inline 200-tree RF teacher with full-SMOTE (-> 0.9750
-   validation). None matched. Git history showed 0.9864 present since the line was first added,
-   never explained, only the gap arithmetic around it later corrected (1.29%->2.25%) without ever
-   verifying the source value itself. **User supplied the original ad-hoc terminal command**: a
-   200-tree RF trained/evaluated directly on `data/processed/*.npy` — i.e. the SAME preprocessed
-   splits (268,627 train / 293,482 val / 733,705 test) the CNN-BiLSTM itself trains and evaluates
-   on, which is actually the methodologically correct "gap" comparison (apples-to-apples same
-   data), unlike the other two scripts' independent resampling. Reproduced byte-for-byte: **0.9864
-   exactly**. Saved as a permanent, reproducible script — `scripts/rf_baseline_processed.py` ->
-   `benchmarks/results/rf_baseline_processed.json` — instead of leaving it as an unrepeatable
-   terminal one-liner. Added `verify_claims.py` manifest entries (`rf_baseline_processed_test_f1`,
-   and rewired `rf_gap_botiot_final`/`rf_gap_botiot_baseline` to load from this JSON instead of a
-   hardcoded `0.9864` literal). Added a footnote to README's Detection Accuracy table explaining
-   why this number differs from the other two (legitimate, differently-configured) RF baselines
-   in the repo. `scripts/verify_claims.py` passes all 51 claims, 0 regressions.
+   **Step 1 — fixed two provenance gaps in the numbers the whole task is framed around, before
+   touching the actual ML work** (found while double-checking the "apples-to-apples with RF"
+   framing at the user's prompting):
+   - **README's 0.9864 RF figure had no traceable source.** Checked `DAILY_LOG.md` (no mention),
+     `scripts/rf_baseline.py` as-is (100 trees, independent undersample+SMOTE recipe -> 0.9768
+     test, which IS the well-documented Day-3 windowing-decision number, just a different RF), a
+     200-tree variant of that recipe (-> 0.9730, *lower* — ruled out "just add more trees"), and
+     `train_distill.py`'s inline 200-tree RF teacher with full-SMOTE (-> 0.9750 validation). None
+     matched. **User supplied the original ad-hoc terminal command**: a 200-tree RF
+     trained/evaluated directly on `data/processed/*.npy` — the SAME preprocessed splits the
+     CNN-BiLSTM itself trains/evaluates on (the methodologically correct apples-to-apples
+     comparison, unlike the other two scripts' independent resampling). Reproduced byte-for-byte:
+     0.9864 exactly. Saved permanently as `scripts/rf_baseline_processed.py` ->
+     `benchmarks/results/rf_baseline_processed.json` (was an unrepeatable terminal one-liner).
+   - **The final two-stage headline number (then 0.9639) ALSO had no JSON source** —
+     `train_twostage.py` never saved one, `verify_claims.py` had it as a second hand-typed
+     literal. Fixed: `train_twostage.py` now saves `benchmarks/results/twostage_botiot.json`;
+     `verify_claims.py`'s `rf_gap_botiot_final` claim now loads both sides from JSON instead of
+     two hardcoded numbers.
+   - **Verified the apples-to-apples framing itself is sound** (user asked directly, "is there a
+     catch hiding?"): confirmed RF and CNN-BiLSTM are scored on byte-identical test rows (same
+     733,705-row CSV, zero NaN/inf, no filtering differences) with near-identical MinMax scaling
+     (compared the two scalers' actual fitted min/max directly — differences are noise-level, e.g.
+     "mean" feature 4.9804 vs 4.9819, ~0.03%, from undersampling removing a handful of rows before
+     fitting). The gap is real, not a measurement artifact.
 
-   **Not yet started:** the actual accuracy-gap-closing work (better KD recipe, finer
-   alpha/temperature sweep, different teacher ensemble, etc.). A quick timing probe found ~204-212s
-   per CNN-BiLSTM epoch (up to 50 epochs, patience=10) plus one-time RF-teacher training per run —
-   worth factoring into how many new sweep points are feasible before proposing a concrete plan.
+   **Step 2 — Phase A: extended the KD temperature/alpha sweep.** Round 1 (existing, sparse: 6
+   points) had shown T=1->3->5 monotonically helping at alpha=0.7, never pushed past T=5. Ran 6
+   new configs (`scripts/train_distill.py --focal-gamma 2.0`, suffix per config), T in {7.0,
+   10.0} x alpha in {0.6, 0.7, 0.8}, sequentially in the background (~35-70 min each: RF teacher
+   +~204-212s/epoch, up to 50 epochs with patience=10):
+
+   | Config | Val F1 | Test F1 | Note |
+   |---|---|---|---|
+   | a=0.6, T=7.0 | 0.9780 | 0.9702 | |
+   | a=0.7, T=7.0 | 0.9728 | 0.9687 | |
+   | a=0.8, T=7.0 | 0.9751 | 0.9757 | |
+   | a=0.7, T=10.0 | 0.9482 | **0.9033** | Outlier — Normal/Theft precision collapsed (0.75/0.67) despite DDoS/DoS/Recon all >=0.97 F1. Real finding, not noise: macro-F1 weights all 5 classes equally, so 2 tiny classes (107 + 14 test samples) can swing the average 6-7 points even when 99%+ of traffic is classified excellently. Kept in the sweep table as a useful negative result. |
+   | a=0.8, T=10.0 | 0.9672 | 0.9745 | |
+   | **a=0.6, T=10.0** | **0.9757** | **0.9763** | **Winner — fed into Phase B** |
+
+   All 6 result JSONs saved to `benchmarks/results/distill_botiot_a<X>_T<Y>_focal2.json`, all 6
+   checkpoints saved to `model/best_model_botiot_distill_a<X>_T<Y>_focal2.pth` (both committed).
+
+   **Step 3 — Phase B: two-stage fine-tuned the winner.** `scripts/train_twostage.py
+   --checkpoint model/best_model_botiot_distill_a0.6_T10.0_focal2.pth` (same recipe as before:
+   real data, no SMOTE, focal_gamma=2.0, up to 10 epochs, patience=3). Result: **early stopped at
+   epoch 6 (best val F1 0.9780 at epoch 3), final test macro-F1 = 0.9790**
+   (`benchmarks/results/twostage_botiot.json`). Per-class: DDoS 0.9832, DoS 0.9805, Normal 0.9358,
+   Reconnaissance 0.9955, **Theft 1.0000** (was the weakest class before, now perfect).
+
+   **IMPORTANT — `train_twostage.py` hardcodes its save path to
+   `model/best_model_botiot_twostage.pth` (no suffix flag)**, i.e. it overwrites the production
+   checkpoint on every run. Backed up the pre-session champion before running Phase B:
+   `model/best_model_botiot_twostage_BACKUP_0.9639.pth` (verified byte-identical via md5sum before
+   the overwrite, and confirmed it still loads as a valid state dict). **If a future session runs
+   `train_twostage.py` again, back up the current best first** — this script will silently
+   clobber whatever's there.
+
+   **Result: RF gap 2.25% -> 0.74%** (0.9864 - 0.9790), a 67% relative reduction. Propagated
+   everywhere: README.md (abstract, Key Contributions #3, Detection Accuracy table, KD Sweep
+   table — now 14 configs, MLP Ablation table, cuML comparison table, Limitations),
+   `docs/paper_text_blocks.md` (MLP ablation para, Summary Table x8 rows, KD Sweep Documentation
+   table — now 14 rows, RF Defense para), `scripts/verify_claims.py` (new `twostage_final_test_f1`
+   claim + 6 new `kd_sweep_*` claims for the round-2 configs, regression guards on the superseded
+   "0.9639 vs 0.9864" and old abstract phrasing). `scripts/verify_claims.py` passes all 63 claims,
+   0 regressions.
+
+   **Not yet re-run after the model change (do this before citing anything CUDA-kernel-accuracy
+   related):** `model/weights/` and `model/weights_bin/` (exported via
+   `CNNBiLSTM.export_weights()`) and the validation numbers in Phase 2.6 above (0.979 accuracy on
+   1000 samples) all still reflect the OLD 0.9639 checkpoint. Per this repo's own established rule
+   ("if you retrain the model, re-export weights before re-benchmarking the kernels"), re-run
+   `scripts/validate_weights.py`/`scripts/validate_real_weights.py` against the new
+   `model/best_model_botiot_twostage.pth` before any future claim ties CUDA kernel correctness to
+   "the" model's accuracy.
+
+   **Next steps for further improvement (not started, Phase C in the plan file), roughly in order
+   of expected payoff:**
+   - **Target the minority classes directly**, since the outlier run proved the gap concentrates
+     there, not in majority-class performance. Try focal_gamma sweep (1.0, 3.0, 4.0 — only 2.0 has
+     been tried), or explicit per-class loss weighting.
+   - **Strengthen the RF teacher on the same training-data pipeline** (more trees — currently only
+     200, untuned; `class_weight='balanced'`; depth tuning) so the student distills from better
+     soft labels, without confounding the ablation by also changing the data pipeline.
+   - **Fix and re-tune the ensemble teacher.** `train_ensemble_distill.py` has a diagnostic-only
+     bug (line ~105: compares `len(probs)` — the *training*-set size — against `len(y_val)`, so
+     the printed "Ensemble teacher Val F1" is actually solo-RF's score, not the ensemble's;
+     harmless to the actual KD loop, which correctly uses train-set probs, but misleading to read).
+     The ensemble (RF+XGB+LGB, equal 1/3 weighting) underperformed the single RF teacher (0.9529
+     vs 0.9601 in round 1) — untuned, worth a weighted-combination retry favoring RF.
+   - Consider whether Round 2's winning region (T=10.0, alpha~0.6) should be swept *further*
+     (T=12, 15?) given the trend wasn't obviously plateauing, balanced against the a=0.7/T=10.0
+     outlier showing this region isn't uniformly safe either.
 
 ## Git state — everything committed and pushed
 
@@ -322,17 +417,27 @@ decide.
 
 ## Quick orientation for a fresh session
 
-- Read `CLAUDE.md` first (architecture overview, written this session, should already be
-  accurate).
+- Read `CLAUDE.md` first (architecture overview, mostly still accurate — updated this session for
+  the Block 3 naive-kernel fix and the measurement-stability range finding).
+- **Start with open item #0 (fabricated Sophimatics citation) — highest severity, explicitly
+  deferred to this session by the user, not skipped.** Everything else below is lower priority.
 - The audit findings and all fixes are described in full above — you shouldn't need to re-audit
   from scratch. If in doubt about a specific number, run `scripts/verify_claims.py` rather than
   manually re-deriving.
 - Model checkpoints: **`model/best_model_botiot_twostage.pth` is the final, correct model
-  (0.9639 macro-F1)**. `model/best_model.pth` is a stale pre-distillation checkpoint (0.9352) —
-  don't use it for anything claiming to represent "the" model going forward; several scripts
-  still default to it for pure latency benchmarking (harmless, since latency is shape- not
-  weight-dependent) but any correctness/accuracy claim must use the twostage checkpoint.
-- To resume: either (a) address open item #1 (cuDNN baseline) or #2 (naive kernel) as
-  self-contained local tasks, or (b) wait for the user to run the DICC jobs (open item #3) and
-  pick up there, or (c) ask the user which they'd like to prioritize given "we have a lot of
-  time" — all three are legitimate next steps, none is blocking the others.
+  (0.9790 macro-F1, updated session 2 — was 0.9639)**. The pre-session-2 version is preserved at
+  `model/best_model_botiot_twostage_BACKUP_0.9639.pth` if ever needed for comparison.
+  `model/best_model.pth` is a stale pre-distillation checkpoint (0.9352) — don't use it for
+  anything claiming to represent "the" model; several scripts still default to it for pure
+  latency benchmarking (harmless, latency is shape- not weight-dependent) but any
+  correctness/accuracy claim must use the twostage checkpoint. **`train_twostage.py` has no
+  suffix flag and will silently overwrite `model/best_model_botiot_twostage.pth` on every run —
+  back up the current best before running it again.**
+- **CUDA kernel weight exports are now stale** relative to the new 0.9790 checkpoint (they still
+  reflect the old 0.9639 one) — re-run `scripts/validate_weights.py`/`validate_real_weights.py`
+  before any claim ties CUDA kernel correctness to "the" model's accuracy. Not done this session
+  (out of scope for the RF-gap work, but flagged so it isn't missed).
+- To resume beyond item #0: (a) open item #5's "Next steps for further improvement" list
+  (minority-class targeting, stronger RF teacher, ensemble re-tuning), (b) wait for the user to
+  run the DICC jobs (open item #3) and pick up there, or (c) ask the user which they'd like to
+  prioritize given "we have a lot of time" — all are legitimate, none blocks the others.
