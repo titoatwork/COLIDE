@@ -13,8 +13,11 @@ tail. Every kernel latency treated as a fixed constant elsewhere in this
 repo should be backed by a distribution like this, not one run.
 
 Usage:
-    # Local dev sanity check (binaries suffixed _official, no extra -O flags):
-    PYTHONPATH=. python scripts/benchmark_cuda_kernels_stats.py
+    # Local dev (binaries are unsuffixed in inference/kernels/, matching the
+    # Dockerfile's build command exactly -- the --suffix "_official" default
+    # below describes a convention that was never actually adopted; confirmed
+    # 2026-07-02, session 3, those binaries don't exist on disk):
+    PYTHONPATH=. python scripts/benchmark_cuda_kernels_stats.py --suffix "" --tag rtx3050
 
     # DICC (binaries compiled by dicc_scripts/01_setup.sh into
     # inference/kernels/v100/ or inference/kernels/a100/, unsuffixed):
@@ -24,7 +27,7 @@ Usage:
 Binaries must be compiled matching the Dockerfile's build command (no extra
 -O flags -- confirmed 2026-07-01 that adding -O3 measurably changes the
 timing-loop behavior, not just device-code optimization):
-    nvcc -arch=sm_86 -o inference/kernels/fused_block1_official inference/kernels/fused_block1.cu
+    nvcc -arch=sm_86 -o inference/kernels/fused_block1 inference/kernels/fused_block1.cu
     (repeat for block2, block3, block3_fp16, block4, pipeline)
 """
 
@@ -74,8 +77,14 @@ def run_trials(binary_path, patterns, n=N_TRIALS_DEFAULT):
 
     collected = {key: [] for key in patterns}
     failures = 0
+    # Must be an absolute path: cwd= below re-resolves a relative binary_path
+    # against the *new* cwd (binary_path.parent), not the original cwd -- a
+    # relative --kernels-dir would otherwise silently look for
+    # "<kernels-dir>/<kernels-dir>/<binary>" and crash with FileNotFoundError
+    # (hit this 2026-07-02, session 3, re-running the RTX3050 stability check).
+    resolved_path = binary_path.resolve()
     for _ in range(n):
-        result = subprocess.run([str(binary_path)], capture_output=True, text=True, cwd=binary_path.parent)
+        result = subprocess.run([str(resolved_path)], capture_output=True, text=True, cwd=binary_path.parent)
         stdout = result.stdout
         if "FAILED" in stdout:
             failures += 1
@@ -105,8 +114,11 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--kernels-dir", default=str(PROJECT_ROOT / "inference" / "kernels"),
                          help="Directory containing compiled kernel binaries")
-    parser.add_argument("--suffix", default="_official",
-                         help='Binary name suffix (e.g. "_official" locally, "" on DICC)')
+    parser.add_argument("--suffix", default="",
+                         help='Binary name suffix. Empty by default -- matches the actual '
+                              'unsuffixed binaries in inference/kernels/ (local and DICC); '
+                              'the "_official" convention this used to default to was never '
+                              'actually adopted (confirmed 2026-07-02, session 3).')
     parser.add_argument("--tag", default="rtx3050_local",
                          help="Hardware tag used in the output filename, e.g. v100s, a100")
     parser.add_argument("--n-trials", type=int, default=N_TRIALS_DEFAULT,

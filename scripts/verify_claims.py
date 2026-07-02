@@ -68,61 +68,93 @@ def build_claims():
             "variants": [v for v in variants if v],
         })
 
+    def fmt_range(lo, hi, decimals=0, suffix="", thousands=False):
+        if thousands:
+            return f"{round(lo):,}–{round(hi):,}{suffix}"
+        if decimals == 0:
+            return f"{round(lo)}–{round(hi)}{suffix}"
+        return f"{lo:.{decimals}f}{suffix}–{hi:.{decimals}f}{suffix}"
+
+    # Framework comparison. MEASUREMENT STABILITY finding, extended
+    # 2026-07-02 (session 3): re-running benchmark_stats_v2.py -- even
+    # TWICE, back-to-back, minutes apart, same session -- gave meaningfully
+    # different framework latencies (torch.compile and TensorRT both swung
+    # 14-17% run to run). This is the same phenomenon already documented for
+    # Block 3 alone, now shown to affect the headline framework-comparison
+    # ratios too. Historical and session-3a values are hardcoded (captured
+    # before the file was regenerated again); the live statistical_
+    # significance_v2.json provides the latest session, so the range widens
+    # automatically as more sessions are measured instead of silently
+    # dropping older ones when the file is overwritten.
+    HIST_LATENCY = {
+        "Eager PyTorch": 2246.8, "torch.compile": 1777.0, "ORT CPU": 699.2,
+        "ORT GPU": 4651.9, "TensorRT": 2965.6, "Custom CUDA FP16": 674.7,
+    }
+    SESSION3A_LATENCY = {
+        "Eager PyTorch": 2050.4, "torch.compile": 1518.9, "ORT CPU": 487.1,
+        "ORT GPU": 3861.5, "TensorRT": 2427.1, "Custom CUDA FP16": 652.4,
+    }
+
     stats = load_json("statistical_significance_v2.json")
     if stats:
-        custom = stats["Custom CUDA FP16"]["mean_us"]
+        def latency_range(name):
+            vals = [HIST_LATENCY[name], SESSION3A_LATENCY[name], stats[name]["mean_us"]]
+            return min(vals), max(vals)
+
+        cc_lo, cc_hi = latency_range("Custom CUDA FP16")
         for name, key in [
             ("TensorRT", "vs_tensorrt"),
             ("torch.compile", "vs_compile"),
             ("Eager PyTorch", "vs_eager"),
         ]:
-            mean = stats[name]["mean_us"]
-            ratio = mean / custom
+            fw_lo, fw_hi = latency_range(name)
             add(
                 f"framework_speedup_{key}",
-                f"Custom CUDA speedup vs {name} (statistical_significance_v2.json)",
-                "statistical_significance_v2.json",
-                [fmt_ratio(ratio, 2)],
+                f"Custom CUDA speedup vs {name} (range across 3 independent n=20/n=100 sessions)",
+                "statistical_significance_v2.json (3 sessions)",
+                [fmt_range(fw_lo / cc_hi, fw_hi / cc_lo, decimals=2, suffix="x")],
             )
-        # Raw per-framework latencies (20-trial means) -- these should be the
-        # ONLY RTX3050 framework-latency numbers quoted anywhere in the
-        # manuscript. Any other single-run number for these frameworks
-        # (there were several superseded ones in git history) is stale.
+        # Raw per-framework latencies -- these should be the ONLY RTX3050
+        # framework-latency numbers quoted anywhere in the manuscript. Any
+        # other single-run number for these frameworks (there were several
+        # superseded ones in git history) is stale.
         for name in ["Eager PyTorch", "torch.compile", "TensorRT", "ORT GPU", "ORT CPU"]:
-            mean = stats[name]["mean_us"]
+            lo, hi = latency_range(name)
             add(
                 f"framework_latency_{name.replace(' ', '_').replace('.', '')}",
-                f"{name} 20-trial mean latency (statistical_significance_v2.json)",
-                "statistical_significance_v2.json",
-                [f"{round(mean):,}", f"{mean:.0f}"],
+                f"{name} latency (range across 3 independent sessions)",
+                "statistical_significance_v2.json (3 sessions)",
+                [fmt_range(lo, hi, thousands=True)],
             )
         # The chained-pipeline "vs PyTorch GPU" ratio IS the eager-PyTorch
         # speedup ratio -- they're the same comparison. Track it explicitly
         # so it can't silently drift back to an unsourced constant.
-        custom = stats["Custom CUDA FP16"]["mean_us"]  # now ~674.7, n=100-trial derived
-        pipeline_ratio = stats["Eager PyTorch"]["mean_us"] / custom
+        eager_lo, eager_hi = latency_range("Eager PyTorch")
         add(
             "pipeline_speedup_vs_pytorch_rtx3050",
             "Chained pipeline speedup vs eager PyTorch -- must equal "
             "framework_speedup_vs_eager, not an independently-sourced number",
             "statistical_significance_v2.json (Custom CUDA now n=100-trial "
-            "derived, see cuda_kernel_stats_rtx3050.json)",
-            [fmt_ratio(pipeline_ratio, 2)],
+            "derived, see cuda_kernel_stats_rtx3050.json; 3 sessions)",
+            [fmt_range(eager_lo / cc_hi, eager_hi / cc_lo, decimals=2, suffix="x")],
         )
-        # Two-sample Welch's p-values (fixed 2026-07-01, was one-sample vs a
-        # bare constant). Track a couple of the exact values so they can't
-        # silently drift back to the old one-sample numbers.
-        for name, expected_p in [
-            ("torch.compile", "3.55e-19"),
-            ("ORT CPU", "0.483"),
-        ]:
-            add(
-                f"two_sample_pvalue_{name.replace(' ', '_').replace('.', '')}",
-                f"{name} two-sample Welch p-value vs Custom CUDA "
-                "(statistical_significance_v2.json)",
-                "statistical_significance_v2.json",
-                [expected_p],
-            )
+        # Two-sample Welch's significance (fixed 2026-07-01, was one-sample
+        # vs a bare constant). The four headline frameworks (Eager PyTorch,
+        # torch.compile, TensorRT, ORT GPU) are p<0.001 significant in ALL
+        # THREE independently measured sessions -- a robust finding, unlike
+        # the exact ratios. ORT CPU is NOT robust: p=0.483 (not significant)
+        # historically, but p<0.001 (highly significant, ORT CPU faster) in
+        # both fresh 2026-07-02 sessions -- tracked as its own claim rather
+        # than pinning one session's now-unrepresentative exact p-value.
+        add(
+            "two_sample_pvalue_ORT_CPU_unstable",
+            "ORT CPU vs Custom CUDA significance is NOT stable across "
+            "sessions (not significant historically, highly significant in "
+            "both fresh 2026-07-02 sessions) -- a separate, real finding "
+            "from the ratio-range instability",
+            "statistical_significance_v2.json (3 sessions)",
+            ["not consistently", "is not robust"],
+        )
 
     # LLM dispatch overhead -- fixed 2026-07-01 (Phase 1.1). Real p99 over
     # 5,000 trials of the classify+construct+push code path.
@@ -314,54 +346,58 @@ def build_claims():
         )
 
     # Block 3 optimization progression. MEASUREMENT STABILITY finding
-    # (2026-07-01): re-running the full n=100-trial harness later the same
-    # day (needed to safely add the newly-fixed naive kernel without
-    # clobbering the file) gave meaningfully different means for these
-    # three configs than the SAME harness gave earlier that day. Rather than
-    # picking one, these are RANGE claims -- both session's rounded bounds
-    # must appear together in doc text, hyphenated as written in README.
-    # Session 1 values captured before the file was regenerated in session 2.
+    # (2026-07-01, extended 2026-07-02): re-running the full n=100-trial
+    # harness across separate sessions gives meaningfully different means
+    # for these configs each time. Rather than picking one, these are RANGE
+    # claims -- the full min/max across ALL sessions measured so far must
+    # appear together in doc text, hyphenated as written in README. Session
+    # 1/2 values are hardcoded (files were overwritten before being frozen
+    # here); session 3 (2026-07-02) and beyond read live from the current
+    # cuda_kernel_stats_rtx3050.json, so the range widens automatically as
+    # more sessions are measured instead of a fixed 2-point comparison
+    # silently dropping older sessions when the file is regenerated again.
     SESSION1_TRANSPOSED_NO_GRAPHS = 803.91257
     SESSION1_TRANSPOSED_WITH_GRAPHS = 788.51646
     SESSION1_FP16 = 601.65285
-
-    def fmt_range(lo, hi, decimals=0, suffix="", thousands=False):
-        if thousands:
-            return f"{round(lo):,}–{round(hi):,}{suffix}"
-        if decimals == 0:
-            return f"{round(lo)}–{round(hi)}{suffix}"
-        return f"{lo:.{decimals}f}{suffix}–{hi:.{decimals}f}{suffix}"
+    SESSION2_TRANSPOSED_NO_GRAPHS = 1022.61992
+    SESSION2_TRANSPOSED_WITH_GRAPHS = 904.91548
+    SESSION2_FP16 = 548.34398
+    SESSION2_NAIVE = 5050.103
 
     cuda_stats = load_json("cuda_kernel_stats_rtx3050.json")
     if cuda_stats:
-        no_graphs_lo, no_graphs_hi = sorted([
-            SESSION1_TRANSPOSED_NO_GRAPHS,
-            cuda_stats["fused_block3"]["no_graphs_us"]["mean"],
-        ])
-        with_graphs_lo, with_graphs_hi = sorted([
-            SESSION1_TRANSPOSED_WITH_GRAPHS,
-            cuda_stats["fused_block3"]["with_graphs_us"]["mean"],
-        ])
-        fp16_lo, fp16_hi = sorted([
-            SESSION1_FP16,
-            cuda_stats["fused_block3_fp16"]["latency_us"]["mean"],
-        ])
+        no_graphs_lo, no_graphs_hi = (
+            min(SESSION1_TRANSPOSED_NO_GRAPHS, SESSION2_TRANSPOSED_NO_GRAPHS,
+                cuda_stats["fused_block3"]["no_graphs_us"]["mean"]),
+            max(SESSION1_TRANSPOSED_NO_GRAPHS, SESSION2_TRANSPOSED_NO_GRAPHS,
+                cuda_stats["fused_block3"]["no_graphs_us"]["mean"]),
+        )
+        with_graphs_lo, with_graphs_hi = (
+            min(SESSION1_TRANSPOSED_WITH_GRAPHS, SESSION2_TRANSPOSED_WITH_GRAPHS,
+                cuda_stats["fused_block3"]["with_graphs_us"]["mean"]),
+            max(SESSION1_TRANSPOSED_WITH_GRAPHS, SESSION2_TRANSPOSED_WITH_GRAPHS,
+                cuda_stats["fused_block3"]["with_graphs_us"]["mean"]),
+        )
+        fp16_lo, fp16_hi = (
+            min(SESSION1_FP16, SESSION2_FP16, cuda_stats["fused_block3_fp16"]["latency_us"]["mean"]),
+            max(SESSION1_FP16, SESSION2_FP16, cuda_stats["fused_block3_fp16"]["latency_us"]["mean"]),
+        )
         add(
             "block3_transposed_no_graphs",
-            "Block 3 transposed W_hh, no graphs (range across 2 independent n=100 sessions)",
-            "cuda_kernel_stats_rtx3050.json (2 sessions)",
+            "Block 3 transposed W_hh, no graphs (range across 3 independent n=100 sessions)",
+            "cuda_kernel_stats_rtx3050.json (3 sessions)",
             [fmt_range(no_graphs_lo, no_graphs_hi, thousands=True)],
         )
         add(
             "block3_transposed_with_graphs",
-            "Block 3 transposed W_hh + CUDA graphs (range across 2 independent n=100 sessions)",
-            "cuda_kernel_stats_rtx3050.json (2 sessions)",
+            "Block 3 transposed W_hh + CUDA graphs (range across 3 independent n=100 sessions)",
+            "cuda_kernel_stats_rtx3050.json (3 sessions)",
             [fmt_range(with_graphs_lo, with_graphs_hi)],
         )
         add(
             "block3_fp16_range",
-            "Block 3 FP16 half2 (range across 2 independent n=100 sessions)",
-            "cuda_kernel_stats_rtx3050.json (2 sessions)",
+            "Block 3 FP16 half2 (range across 3 independent n=100 sessions)",
+            "cuda_kernel_stats_rtx3050.json (3 sessions)",
             [fmt_range(fp16_lo, fp16_hi)],
         )
         naive = (
@@ -369,24 +405,27 @@ def build_claims():
             if "fused_block3_naive" in cuda_stats else 5698.0
         )
         if "fused_block3_naive" in cuda_stats:
+            naive_lo, naive_hi = sorted([SESSION2_NAIVE, naive])
             add(
                 "block3_naive_latency",
                 "Block 3 naive kernel latency, race-condition FIXED and reverified "
-                "(real n=100-trial mean, replaces the old 5,698us historical single run)",
-                "cuda_kernel_stats_rtx3050.json",
-                [f"{round(naive):,}"],
+                "(range across 2 independent n=100 sessions -- the fix landed in "
+                "session 2, so no session-1 measurement of the fixed kernel exists; "
+                "replaces the old 5,698us pre-fix historical single run)",
+                "cuda_kernel_stats_rtx3050.json (2 sessions)",
+                [fmt_range(naive_lo, naive_hi, thousands=True)],
             )
         add(
             "block3_progression_total_ratio",
-            "Naive-to-FP16 total progression ratio range (naive n=100 mean / fp16 range)",
+            "Naive-to-FP16 total progression ratio range (naive range / fp16 range)",
             "cuda_kernel_stats_rtx3050.json",
-            [fmt_range(naive / fp16_hi, naive / fp16_lo, decimals=2, suffix="x")],
+            [fmt_range(naive_lo / fp16_hi, naive_hi / fp16_lo, decimals=2, suffix="x")],
         )
         if pytorch_block3_stats:
             add(
                 "block3_beats_cudnn_ratio",
-                "FP16 Block 3 vs PyTorch cuDNN, range across 2 sessions (fixed 2026-07-01)",
-                "pytorch_block3_stats_rtx3050.json + cuda_kernel_stats_rtx3050.json (2 sessions)",
+                "FP16 Block 3 vs PyTorch cuDNN, range across 3 sessions (fixed 2026-07-01)",
+                "pytorch_block3_stats_rtx3050.json + cuda_kernel_stats_rtx3050.json (3 sessions)",
                 [fmt_range(pt_b3_mean / fp16_hi, pt_b3_mean / fp16_lo, decimals=2, suffix="x")],
             )
 
@@ -477,6 +516,11 @@ REGRESSION_GUARDS = [
     ("closes the accuracy gap to **2.25%** on BoT-IoT (**0.9639**", "abstract's old headline gap/accuracy figures for BoT-IoT, superseded by the round-2 KD sweep (0.74% / 0.9790)", "2026-07-01"),
     ("covers CNN only with 2.7x", "fabricated closest-prior-work claim attributing a 2.7x CUDA speedup to 'Sophimatics Phase 3' (DOI 10.3390/app152211876), a paper that actually has no CUDA/CNN/speedup content; retracted pending a real replacement", "2026-07-02"),
     ("Must be cited in the manuscript as the closest prior work", "instruction text from the same fabricated Sophimatics citation note, never independently verified before being written into the manuscript text blocks", "2026-07-02"),
+    ("4.40x over TensorRT", "single-point framework-comparison headline; superseded by a 3.60x-4.55x range once a 2nd and 3rd measurement session showed the original 674.7us/4.40x figure was near the favorable end, not representative", "2026-07-02"),
+    ("2.63x over torch.compile", "single-point framework-comparison headline; superseded by a 2.25x-2.72x range (same session-to-session drift finding as the TensorRT/eager-PyTorch ratios)", "2026-07-02"),
+    ("3.33x over eager PyTorch", "single-point framework-comparison headline; superseded by a 3.04x-3.44x range (same session-to-session drift finding)", "2026-07-02"),
+    ("ORT GPU (6.89x)", "single-point framework-comparison headline; superseded by a 5.72x-7.13x range (same session-to-session drift finding)", "2026-07-02"),
+    ("mean 674.7us, std 87.1us", "single-session Custom CUDA FP16 pipeline-total figure treated as fixed; superseded by a 652-675us range across 3 independent sessions", "2026-07-02"),
 ]
 
 

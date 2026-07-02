@@ -42,9 +42,77 @@ an untraced hardcoded comparison value in `validate_real_weights.py` (Test 4 com
 from `benchmarks/results/twostage_botiot.json`. `scripts/verify_claims.py` still passes all 63
 claims, 0 regressions, after this change.
 
-**Next up in this session:** open item #5's "Next steps for further improvement" — starting with a
-focal-gamma sweep (1.0, 3.0, 4.0) targeting the minority classes (Normal, Theft) that the KD sweep
-outlier showed the RF gap concentrates in.
+**Focal-gamma sweep (item #5) — done, negative result, champion unchanged.** Ran alpha=0.6/T=10.0
+with focal_gamma in {1.0, 3.0, 4.0} (gamma=2.0, the existing champion, was already known). None beat
+gamma=2.0's test macro-F1 of 0.9763: gamma=1.0 -> 0.9426, gamma=3.0 -> 0.9504, gamma=4.0 -> 0.9693
+(gamma=4.0 had the *highest val F1* of the whole sweep, 0.9768, but a lower test F1 than the
+champion — a real val/test divergence worth knowing about, not just noise). Conclusion: gamma=2.0
+is a genuine local optimum in this region, not an accident. Checkpoints saved
+(`model/best_model_botiot_distill_a0.6_T10.0_focal{1,3,4}.pth`, committed) but no production
+checkpoint changed. Next unstarted item #5 sub-tasks per the original plan: strengthen the RF
+teacher (more trees, `class_weight='balanced'`, depth tuning) or fix+retune the ensemble teacher
+(`train_ensemble_distill.py` has a diagnostic-only bug at ~line 105, and underperforms solo RF
+untuned).
+
+**RTX3050 stability re-check (item #2's follow-on question) — done, two real findings.**
+
+1. **Found and fixed a bug that would have broken the actual DICC cluster run.**
+   `benchmark_cuda_kernels_stats.py`'s `run_trials()` did
+   `subprocess.run([str(binary_path)], cwd=binary_path.parent)` — passing a *relative* binary path
+   while also reassigning `cwd`, so Python re-resolves the relative path against the *new* cwd,
+   looking for `<kernels-dir>/<kernels-dir>/<binary>`. Both `dicc_scripts/02_benchmark_v100.sh` and
+   `03_benchmark_a100.sh` pass a relative `--kernels-dir` after `cd`-ing into the cluster path, so
+   they would have hit this exact crash on the very first kernel once submitted. Fixed the root
+   cause (resolve to an absolute path before the subprocess call, regardless of how the flag was
+   passed) rather than just working around it locally. Also fixed the script's docstring/default
+   `--suffix`, which described an `_official`-suffixed local-binary convention that was never
+   actually adopted (confirmed those binaries don't exist) — default suffix is now `""`, matching
+   the real unsuffixed binaries used everywhere (local and DICC).
+
+2. **Blocks 1, 2, 4 got their first-ever second-session comparison — confirmed the drift
+   phenomenon isn't Block-3-specific.** Previously only Block 3 had cross-session data. Fresh
+   n=100-trial run vs. the existing session-2 data: Block 1 +0.4% (stable), **Block 2 -9.8%**,
+   **Block 4 +24.7%**, Block 3 naive -3.8% (relatively stable). Folded this 3rd session into Block
+   3's range mechanism properly — previously `verify_claims.py` only ever compared a hardcoded
+   "session 1" constant against "whatever's in the file right now," which would have *silently
+   dropped session 2's contribution* the moment the file got overwritten again (caught this while
+   implementing the fix, not after). Now computes a true min/max across all 3 known sessions.
+   Updated range: Block 3 progression **8.08x-9.21x** (was 8.39x-9.21x), naive latency
+   **4,860-5,050** (was a single 5,050 point), propagated to README.md, `paper_text_blocks.md`,
+   `CLAUDE.md`, `verify_claims.py`.
+
+3. **Bigger finding: the paper's own headline ratios (the abstract's "4.40x over TensorRT" etc.)
+   also drift session-to-session — not just Block 3.** Discovered while re-running
+   `benchmark_stats_v2.py` for the Block 1/2/4 check: it derives its "Custom CUDA FP16" reference
+   from the *same* `cuda_kernel_stats_rtx3050.json` used above, so a stale/fresh mismatch there
+   silently broke 9 `verify_claims.py` checks the first time (caught immediately, reverted before
+   anything landed). Ran it twice more, cleanly: even two back-to-back runs (minutes apart, same
+   sitting) showed real variance — torch.compile and TensorRT swung 14-17% run to run. Combined
+   with the original historical measurement, all three data points give real ranges:
+   - vs Eager PyTorch: 3.33x point -> **3.04x-3.44x** range
+   - vs torch.compile: 2.63x point -> **2.25x-2.72x** range
+   - vs TensorRT: 4.40x point -> **3.60x-4.55x** range
+   - vs ORT GPU: 6.89x point -> **5.72x-7.13x** range
+
+   The old point values all sit near the *upper* (favorable) end of their real ranges — not
+   fabricated, just a somewhat lucky historical measurement rather than a representative one, the
+   same pattern Block 3 already showed. **Separately, ORT CPU's significance is NOT robust**:
+   not significantly different from Custom CUDA in the original session (p=0.483, ns), but
+   significantly *faster* in both fresh sessions (p<0.001) — its ratio range (0.72x-1.07x) genuinely
+   straddles parity, unlike the other four frameworks which stay p<0.001 significant in all 3
+   sessions. Propagated the range treatment everywhere the point values appeared: README.md
+   (abstract, Key Contributions #1, Framework Comparison table + new Measurement Stability note,
+   Cross-Hardware Pipeline table, Verified Research Gaps #1/#3), `paper_text_blocks.md` (5
+   locations), `verify_claims.py` (rewrote the framework-comparison claims to compute true 3-session
+   ranges the same way as the Block 3 fix, added 5 new regression guards on the superseded point
+   values). `scripts/verify_claims.py` passes all claims, 0 regressions, after this change.
+
+   **Not yet done:** a 4th/5th confirmatory session would further tighten these ranges, but this
+   wasn't treated as blocking — 3 independent sessions is the same evidentiary bar Block 3's range
+   already established as sufficient in this codebase.
+
+**End-of-session status:** see the final message of this session for a full inventory of every
+verified number and what's still left to reverify before final submission.
 
 ## Mandate (set by Ibteshamul, applies to all future sessions)
 
