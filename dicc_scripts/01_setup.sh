@@ -6,18 +6,29 @@ set -e
 
 echo "=== COLIDE DICC SETUP ==="
 
-# Clone repo to scratch (fast storage)
+# Clone repo to scratch (fast storage) -- idempotent: if this was already run
+# in a prior session (it was, at least once -- dicc_v100_summary.txt/
+# dicc_a100_summary.txt already exist from that run), pull the latest instead
+# of erroring out on an existing directory. This matters now because the
+# 02/03 sbatch scripts were just changed (job-id-tagged output filenames) and
+# DICC needs the updated versions before submitting.
 cd /scr/$USER
-git clone https://github.com/titoatwork/COLIDE.git colide
-cd colide
+if [ -d colide/.git ]; then
+    echo "=== /scr/$USER/colide already exists, pulling latest instead of re-cloning ==="
+    cd colide
+    git pull
+else
+    git clone https://github.com/titoatwork/COLIDE.git colide
+    cd colide
+fi
 
 # Load modules (adjust based on 'module avail' output)
 module load cuda/12.1 2>/dev/null || echo "CUDA module not found, checking nvcc..."
 which nvcc || echo "ERROR: nvcc not found. Run 'module avail' and load CUDA manually."
 
-# Setup Python environment
+# Setup Python environment -- idempotent: don't fail if the env already exists
 module load miniconda 2>/dev/null || echo "Miniconda module not found"
-conda create -n colide python=3.12 -y
+conda create -n colide python=3.12 -y 2>/dev/null || echo "conda env 'colide' already exists, skipping create"
 conda activate colide
 pip install torch numpy pyyaml scikit-learn scipy onnx onnxruntime-gpu
 
