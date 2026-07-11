@@ -1,66 +1,24 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #SBATCH --job-name=colide_v100
-#SBATCH --output=benchmarks/results/dicc_v100_%j.log
-#SBATCH --error=benchmarks/results/dicc_v100_%j.err
 #SBATCH --nodelist=gpu05
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=32G
-#SBATCH --time=01:00:00
+#SBATCH --time=02:00:00
+# Thin SBATCH resource wrapper. All logic lives in lib/run_benchmark.sh.
+# Output/error paths and --chdir are injected by submit_session.sh so
+# relative log paths cannot resolve against a wrong CWD.
+set -Eeuo pipefail
 
-echo "=== COLIDE V100 Benchmark ==="
-echo "Node: $(hostname)"
-nvidia-smi
-date
+if [[ -z "${COLIDE_ROOT:-}" ]]; then
+  echo "ERROR: COLIDE_ROOT must be exported (use submit_session.sh)" >&2
+  exit 1
+fi
 
-cd /scr/$USER/colide
-conda activate colide
-export PYTHONPATH=.
+export COLIDE_GPU_LABEL="${COLIDE_GPU_LABEL:-v100s}"
+export COLIDE_GPU_NAME_RE="${COLIDE_GPU_NAME_RE:-V100}"
+export COLIDE_GPU_CC="${COLIDE_GPU_CC:-7.0}"
+export COLIDE_GPU_MIN_MEM="${COLIDE_GPU_MIN_MEM:-30000}"
+export COLIDE_KERNELS_SUBDIR="${COLIDE_KERNELS_SUBDIR:-v100}"
 
-# HW+job-id tag: every output file from this run gets this suffix so that
-# submitting this same script again (e.g. the required second-day drift-check
-# run) or a concurrent A100 job on shared storage can never silently
-# overwrite this run's results -- see HANDOFF.md "Session 4" for why this
-# matters (this exact overwrite class of bug already bit the RTX 3050 local
-# runs once).
-HW=v100s
-RUNTAG="${HW}_${SLURM_JOB_ID}"
-
-echo ""
-echo "=== CUDA Kernel Benchmarks (V100), single-run sanity check ==="
-./inference/kernels/v100/fused_block1
-echo "---"
-./inference/kernels/v100/fused_block2
-echo "---"
-./inference/kernels/v100/fused_block3
-echo "---"
-./inference/kernels/v100/fused_block3_fp16
-echo "---"
-./inference/kernels/v100/fused_block4
-
-echo ""
-echo "=== CUDA Kernel Statistical Benchmark (V100), n=20 trials -- THIS is the ==="
-echo "=== number that should go in the paper, not the single-run numbers above ==="
-python scripts/benchmark_cuda_kernels_stats.py --kernels-dir inference/kernels/v100 --suffix "" --tag "$RUNTAG"
-
-echo ""
-echo "=== Python Benchmarks ==="
-python scripts/benchmark_pipeline.py
-for f in benchmarks/results/pipeline_benchmark*.json; do
-    [ -f "$f" ] && cp -v "$f" "benchmarks/results/$(basename "${f%.json}")_${RUNTAG}.json"
-done
-echo "---"
-python scripts/benchmark_batch.py
-echo "---"
-python scripts/benchmark_ort.py
-echo "---"
-python scripts/benchmark_energy.py
-[ -f benchmarks/results/energy_efficiency.json ] && cp -v benchmarks/results/energy_efficiency.json "benchmarks/results/energy_efficiency_${RUNTAG}.json"
-echo "---"
-python scripts/benchmark_stats.py
-[ -f benchmarks/results/statistical_confidence.json ] && cp -v benchmarks/results/statistical_confidence.json "benchmarks/results/statistical_confidence_${RUNTAG}.json"
-
-echo ""
-echo "=== V100 Benchmark Complete (tag: ${RUNTAG}) ==="
-echo "=== Pull back every benchmarks/results/*${RUNTAG}* file, plus this log, before running the day-2 resubmission ==="
-date
+exec bash "${COLIDE_ROOT}/dicc_scripts/lib/run_benchmark.sh"
