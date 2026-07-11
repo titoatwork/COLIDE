@@ -73,22 +73,16 @@ This assumes the CUDA kernels are already compiled in `inference/kernels/`. Indi
 scripts in `scripts/benchmark_*.py` can be run standalone for iterating on one measurement at a time
 (e.g. `python scripts/benchmark_stats.py` for the statistical-significance trial runs).
 
-**Cluster campaigns (SLURM, any site):** portable multi-day workflow under `dicc_scripts/`.
-**No hardcoded `/scr` paths or host nodelists.** Prefer `dicc_scripts/README.md`.
+**Cluster campaigns (SLURM, any site):** one entrypoint — auto-detects partitions,
+GRES, nvcc, and Python. Prefer `dicc_scripts/README.md`.
 
 ```bash
-# Inside any COLIDE checkout on the login node (no GPU required for compile)
 cd /path/to/COLIDE
-export COLIDE_ROOT="$PWD"   # optional; defaults to this tree
-bash dicc_scripts/01_setup.sh
-# or single arch: bash dicc_scripts/01_setup.sh --targets sm_70:v100
+bash dicc_scripts/run_campaign.sh            # Day 1 end-to-end
+bash dicc_scripts/run_campaign.sh --day 2    # Day 2 (later UTC day; no reinstall)
+bash dicc_scripts/run_campaign.sh --wait     # also poll until jobs finish
 
-# Submit (pass YOUR partition/account; omit if defaults work)
-bash dicc_scripts/submit_session.sh --targets v100,a100 --campaign core \
-  --date $(date -u +%Y%m%d) --partition YOUR_PARTITION --account YOUR_ACCOUNT
-# Optional Nsight: add --with-nsight
-
-# After Day 1 and Day 2 both have SUCCESS (same git SHA + same binaries):
+# After two SUCCESS days:
 PYTHONPATH=. python scripts/compare_dicc_sessions.py --gpu v100s --date-a D1 --date-b D2
 PYTHONPATH=. python scripts/compare_dicc_sessions.py --gpu a100  --date-a D1 --date-b D2
 ```
