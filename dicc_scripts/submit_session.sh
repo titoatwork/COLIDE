@@ -60,6 +60,7 @@ Usage: submit_session.sh [options]
   --cpus N             sbatch -c (default: 4)
   --mem SIZE           sbatch --mem (default: 32G)
   --extra "FLAGS..."   extra sbatch flags (quoted)
+  --allow-dirty        allow submit with a dirty git tree (site tweaks)
   --dry-run            print sbatch commands without submitting
   -h, --help           show help
 
@@ -67,6 +68,8 @@ COLIDE_ROOT defaults to the parent of dicc_scripts/ (this checkout). Export it
 only if you intentionally run against another tree.
 EOF
 }
+
+ALLOW_DIRTY="${COLIDE_ALLOW_DIRTY:-0}"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -84,6 +87,7 @@ while [[ $# -gt 0 ]]; do
     --cpus) SBATCH_CPUS="${2:?}"; shift 2 ;;
     --mem) SBATCH_MEM="${2:?}"; shift 2 ;;
     --extra) SBATCH_EXTRA="${2:?}"; shift 2 ;;
+    --allow-dirty) ALLOW_DIRTY=1; shift ;;
     --dry-run) DRY_RUN=1; shift ;;
     -h|--help) usage; exit 0 ;;
     *) die "Unknown argument: $1" ;;
@@ -99,10 +103,11 @@ require_colide_root
 
 GIT_SHA="$(git -C "${COLIDE_ROOT}" rev-parse HEAD 2>/dev/null || echo unknown)"
 if git -C "${COLIDE_ROOT}" status --porcelain 2>/dev/null | grep -q .; then
-  if [[ "${DRY_RUN}" == "1" ]]; then
-    log "WARN: working tree dirty under ${COLIDE_ROOT} (allowed for --dry-run only)"
+  if [[ "${DRY_RUN}" == "1" || "${ALLOW_DIRTY}" == "1" ]]; then
+    log "WARN: working tree dirty under ${COLIDE_ROOT} (allowed via --dry-run/--allow-dirty)"
+    log "WARN: git status:"; git -C "${COLIDE_ROOT}" status --porcelain | head -20 >&2 || true
   else
-    die "Working tree dirty under ${COLIDE_ROOT}; clean/commit before submitting so provenance is tight"
+    die "Working tree dirty under ${COLIDE_ROOT}. git restore site edits, commit them, or pass --allow-dirty"
   fi
 fi
 

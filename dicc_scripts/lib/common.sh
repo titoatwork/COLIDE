@@ -89,10 +89,75 @@ init_conda() {
   fi
 }
 
+# Activate Python for benchmarks. Prefer (1) conda env colide, (2) repo venv
+# (.venv-cluster or .venv), (3) already-working system/module python.
 activate_colide_env() {
-  init_conda
-  conda activate colide || die "Failed to activate conda env 'colide'. Run 01_setup.sh first."
-  command -v python >/dev/null 2>&1 || die "python not available after conda activate colide"
+  local root="${COLIDE_ROOT:-$(resolve_colide_root)}"
+  local venv_dir="${COLIDE_VENV:-${root}/.venv-cluster}"
+
+  if [[ -f "${venv_dir}/bin/activate" ]]; then
+    # shellcheck source=/dev/null
+    source "${venv_dir}/bin/activate"
+    log "Using venv: ${venv_dir}"
+  elif command -v conda >/dev/null 2>&1 || [[ "${COLIDE_FORCE_CONDA:-0}" == "1" ]]; then
+    init_conda
+    conda activate colide || die "Failed to activate conda env 'colide'. Run 01_setup.sh first."
+    log "Using conda env: colide"
+  elif [[ -f "${root}/.venv/bin/activate" ]]; then
+    # shellcheck source=/dev/null
+    source "${root}/.venv/bin/activate"
+    log "Using venv: ${root}/.venv"
+  else
+    log "WARN: no colide conda env or .venv-cluster; using python on PATH"
+  fi
+
+  command -v python >/dev/null 2>&1 || die "python not available after env activation"
+  python - <<'PY' || die "python missing numpy/torch — re-run 01_setup.sh on a node with pip/network"
+import numpy, yaml
+try:
+    import torch
+except Exception as e:
+    raise SystemExit(f"torch import failed: {e}")
+print("python_ok", __import__("sys").executable)
+PY
+}
+
+# Locate nvcc without requiring a module named "cuda" (many sites only ship
+# the toolkit on GPU images or under /usr/local/cuda*).
+find_nvcc() {
+  if command -v nvcc >/dev/null 2>&1; then
+    command -v nvcc
+    return 0
+  fi
+  local candidate
+  for candidate in \
+    /usr/local/cuda/bin/nvcc \
+    /usr/local/cuda-12.4/bin/nvcc \
+    /usr/local/cuda-12.3/bin/nvcc \
+    /usr/local/cuda-12.2/bin/nvcc \
+    /usr/local/cuda-12.1/bin/nvcc \
+    /usr/local/cuda-12.0/bin/nvcc \
+    /usr/local/cuda-11.8/bin/nvcc \
+    /usr/local/cuda-11.7/bin/nvcc \
+    /opt/cuda/bin/nvcc \
+    /opt/nvidia/hpc_sdk/*/compilers/bin/nvcc; do
+    # shellcheck disable=SC2086
+    for c in ${candidate}; do
+      if [[ -x "${c}" ]]; then
+        echo "${c}"
+        return 0
+      fi
+    done
+  done
+  # Last resort: filesystem search limited to common roots (fast-fail if missing)
+  if command -v find >/dev/null 2>&1; then
+    candidate="$(find /usr/local /opt -name nvcc -type f 2>/dev/null | head -1 || true)"
+    if [[ -n "${candidate}" && -x "${candidate}" ]]; then
+      echo "${candidate}"
+      return 0
+    fi
+  fi
+  return 1
 }
 
 # ---------------------------------------------------------------------------
