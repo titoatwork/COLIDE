@@ -7,35 +7,22 @@ hardcoded hostnames**. Works on DICC, LSU Rostam, laptops, or any SLURM site.
 
 ```bash
 cd /path/to/COLIDE
+bash dicc_scripts/run_campaign.sh --full
+```
+
+That **one line** does Day 1 → wait → Day 2 → wait → cross-day compare (as far as the
+site allows): setup Python, detect partitions/GRES, compile kernels, submit both
+GPU classes, then compare SUCCESS runs. Day-2 date label is `<day>_d2` so it works
+even on the same calendar day.
+
+```bash
+# Day 1 only / Day 2 only / options:
 bash dicc_scripts/run_campaign.sh
-```
-
-That single script will, as far as the site allows:
-
-1. Create `.venv-cluster` and install torch (cu121 — V100 + A100 compatible)
-2. Detect SLURM partitions (`cuda-V100`, `cuda-A100`, `gpu`, …)
-3. Auto-omit `--gres` when `sinfo` reports GRES=(null) (Rostam pattern)
-4. Compile kernels (on a GPU node via sbatch if login has no `nvcc`)
-5. Submit Day‑1 V100/A100 (or detected) benchmark jobs
-
-```bash
-# After Day 1 SUCCESS markers, on a later UTC day (same checkout, no reinstall):
 bash dicc_scripts/run_campaign.sh --day 2
-
-# Optional:
-bash dicc_scripts/run_campaign.sh --wait          # poll until jobs finish
-bash dicc_scripts/run_campaign.sh --targets v100  # one GPU class only
-bash dicc_scripts/run_campaign.sh --local         # run on this node (needs GPU)
+bash dicc_scripts/run_campaign.sh --wait
+bash dicc_scripts/run_campaign.sh --targets v100
+bash dicc_scripts/run_campaign.sh --local
 bash dicc_scripts/run_campaign.sh --dry-run
-```
-
-Compare after two successful days:
-
-```bash
-source .venv-cluster/bin/activate
-export PYTHONPATH=.
-python scripts/compare_dicc_sessions.py --gpu v100s --date-a YYYYMMDD --date-b YYYYMMDD
-python scripts/compare_dicc_sessions.py --gpu a100  --date-a YYYYMMDD --date-b YYYYMMDD
 ```
 
 Overrides when auto-detect is wrong:

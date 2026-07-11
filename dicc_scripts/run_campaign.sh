@@ -3,18 +3,11 @@
 # COLIDE — one-command cluster campaign
 #
 # Usage (any machine / any SLURM site):
-#   cd /path/to/COLIDE
-#   bash dicc_scripts/run_campaign.sh
-#
-# Optional:
-#   bash dicc_scripts/run_campaign.sh --day 1
+#   bash dicc_scripts/run_campaign.sh --full     # Day1 + wait + Day2 + wait + compare
+#   bash dicc_scripts/run_campaign.sh            # Day 1 only
 #   bash dicc_scripts/run_campaign.sh --day 2
-#   bash dicc_scripts/run_campaign.sh --targets v100
-#   bash dicc_scripts/run_campaign.sh --local          # no sbatch; run on this node
-#   bash dicc_scripts/run_campaign.sh --dry-run
 #
-# Auto-detects: repo root, Python venv, nvcc, SLURM partitions, whether GRES
-# is usable, and compiles kernels on GPU nodes when the login node has no CUDA.
+# Auto-detects: repo root, Python venv, nvcc, SLURM partitions, GRES, compile path.
 # =============================================================================
 set -Eeuo pipefail
 
@@ -32,6 +25,7 @@ DRY_RUN=0
 FORCE_LOCAL=0
 SKIP_SETUP=0
 WAIT=0
+FULL=0
 N_TRIALS_CUDA="${COLIDE_N_TRIALS_CUDA:-100}"
 N_TRIALS_PT="${COLIDE_N_TRIALS_PYTORCH:-20}"
 
@@ -39,12 +33,16 @@ usage() {
   cat <<'EOF'
 COLIDE one-command campaign runner
 
-  bash dicc_scripts/run_campaign.sh              # Day 1, auto-detect everything
-  bash dicc_scripts/run_campaign.sh --day 2      # Day 2 (same binaries; new UTC date)
-  bash dicc_scripts/run_campaign.sh --local      # run here (needs GPU+nvcc on this node)
+  bash dicc_scripts/run_campaign.sh --full       # ★ Day1 + Day2 + compare (one shot)
+  bash dicc_scripts/run_campaign.sh              # Day 1 only
+  bash dicc_scripts/run_campaign.sh --day 2      # Day 2 only
+  bash dicc_scripts/run_campaign.sh --local
   bash dicc_scripts/run_campaign.sh --targets v100,a100
-  bash dicc_scripts/run_campaign.sh --wait       # sbatch then poll until jobs finish
+  bash dicc_scripts/run_campaign.sh --wait
   bash dicc_scripts/run_campaign.sh --dry-run
+
+--full always waits for SLURM jobs between days and runs compare at the end.
+Day-2 date label is <UTCDAY>_d2 so it works even on the same calendar day.
 
 Environment overrides (optional):
   COLIDE_V100_PARTITION  COLIDE_A100_PARTITION
@@ -56,6 +54,7 @@ EOF
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
+    --full) FULL=1; WAIT=1; DAY=1; shift ;;
     --day) DAY="${2:?}"; shift 2 ;;
     --targets) TARGETS="${2:?}"; shift 2 ;;
     --local) FORCE_LOCAL=1; shift ;;
@@ -71,7 +70,7 @@ done
 
 log "=== COLIDE run_campaign ==="
 log "COLIDE_ROOT=${COLIDE_ROOT}"
-log "host=$(hostname) day=${DAY}"
+log "host=$(hostname) day=${DAY} full=${FULL}"
 
 # ---------------------------------------------------------------------------
 # Site auto-detection
@@ -165,24 +164,26 @@ export COLIDE_N_TRIALS_PYTORCH="${N_TRIALS_PT}"
 export COLIDE_ALLOW_DIRTY=1
 export TORCH_INDEX_URL="${TORCH_INDEX_URL:-https://download.pytorch.org/whl/cu121}"
 
-DATE_LABEL="$(date -u +%Y%m%d)"
-if [[ "${DAY}" == "2" ]]; then
-  # Ensure Day 2 date differs from any Day 1 label if same calendar day
-  if [[ -f benchmarks/results/dicc/DAY1_LABEL.txt ]]; then
-    d1="$(awk -F= '/^DAY1=/{print $2; exit}' benchmarks/results/dicc/DAY1_LABEL.txt || true)"
-    if [[ -n "${d1}" && "${d1}" == "${DATE_LABEL}" ]]; then
-      log "WARN: Day 2 UTC date equals Day 1 (${d1}). Cross-day compare needs distinct dates."
-      log "WARN: Prefer waiting until the next UTC day, or set COLIDE_DATE_LABEL manually."
-    fi
+UTC_DAY="$(date -u +%Y%m%d)"
+mkdir -p benchmarks/results/dicc
+if [[ -n "${COLIDE_DATE_LABEL:-}" ]]; then
+  DATE_LABEL="${COLIDE_DATE_LABEL}"
+elif [[ "${DAY}" == "2" ]]; then
+  # Distinct from Day 1 even on the same calendar day (required by compare_dicc_sessions).
+  d1="$(awk -F= '/^DAY1=/{print $2; exit}' benchmarks/results/dicc/DAY1_LABEL.txt 2>/dev/null || true)"
+  if [[ -n "${d1}" ]]; then
+    DATE_LABEL="${d1}_d2"
+  else
+    DATE_LABEL="${UTC_DAY}_d2"
   fi
   echo "DAY2=${DATE_LABEL}" | tee benchmarks/results/dicc/DAY2_LABEL.txt >/dev/null
   echo "GIT_SHA=$(git rev-parse HEAD 2>/dev/null || echo unknown)" | tee -a benchmarks/results/dicc/DAY2_LABEL.txt >/dev/null
 else
-  mkdir -p benchmarks/results/dicc
+  DATE_LABEL="${UTC_DAY}"
   echo "DAY1=${DATE_LABEL}" | tee benchmarks/results/dicc/DAY1_LABEL.txt >/dev/null
   echo "GIT_SHA=$(git rev-parse HEAD 2>/dev/null || echo unknown)" | tee -a benchmarks/results/dicc/DAY1_LABEL.txt >/dev/null
 fi
-export COLIDE_DATE_LABEL="${COLIDE_DATE_LABEL:-${DATE_LABEL}}"
+export COLIDE_DATE_LABEL="${DATE_LABEL}"
 export COLIDE_CAMPAIGN="${COLIDE_CAMPAIGN:-core}"
 
 # ---------------------------------------------------------------------------
@@ -397,20 +398,70 @@ log "=== campaign submit/run finished (day=${DAY} date=${COLIDE_DATE_LABEL}) ===
 log "Results root: ${COLIDE_ROOT}/benchmarks/results/dicc/${COLIDE_CAMPAIGN}/"
 log "Check SUCCESS: find ${COLIDE_ROOT}/benchmarks/results/dicc -name SUCCESS | sort"
 
-if [[ "${WAIT}" == "1" && "${have_slurm}" == "1" && "${FORCE_LOCAL}" != "1" && "${DRY_RUN}" != "1" ]]; then
-  log "waiting for your jobs to leave the queue…"
-  while squeue -u "${USER}" -h -o '%j' 2>/dev/null | grep -q '^colide_'; do
+wait_for_colide_jobs() {
+  if [[ "${have_slurm}" != "1" || "${FORCE_LOCAL}" == "1" || "${DRY_RUN}" == "1" ]]; then
+    return 0
+  fi
+  log "waiting for colide_* jobs to leave the queue…"
+  while squeue -u "${USER}" -h -o '%j' 2>/dev/null | grep -qE '^colide_'; do
     squeue -u "${USER}" | head -20 || true
     sleep 60
   done
   log "queue clear for colide_* jobs"
   find "${COLIDE_ROOT}/benchmarks/results/dicc" -name SUCCESS | sort || true
+}
+
+if [[ "${WAIT}" == "1" ]]; then
+  wait_for_colide_jobs
 fi
 
-if [[ "${DAY}" == "1" ]]; then
-  log "Day 1 complete when SUCCESS markers exist."
-  log "Later, for Day 2 (same machine, do not reinstall/recompile):"
-  log "  bash dicc_scripts/run_campaign.sh --day 2"
-  log "Then compare:"
-  log "  PYTHONPATH=. python scripts/compare_dicc_sessions.py --gpu v100s --date-a ${COLIDE_DATE_LABEL} --date-b <DAY2>"
+# --full: after Day 1 completes, immediately run Day 2 (distinct date label) + compare
+if [[ "${FULL}" == "1" && "${DAY}" == "1" ]]; then
+  log "=== FULL mode: starting Day 2 ==="
+  d1_label="${COLIDE_DATE_LABEL}"
+  export COLIDE_DATE_LABEL="${d1_label}_d2"
+  echo "DAY2=${COLIDE_DATE_LABEL}" | tee benchmarks/results/dicc/DAY2_LABEL.txt >/dev/null
+  echo "GIT_SHA=$(git rev-parse HEAD 2>/dev/null || echo unknown)" | tee -a benchmarks/results/dicc/DAY2_LABEL.txt >/dev/null
+  SKIP_SETUP=1
+  # Re-submit only (kernels/python already ready)
+  if [[ "${FORCE_LOCAL}" == "1" || "${have_slurm}" != "1" ]]; then
+    for raw in "${target_arr[@]}"; do
+      t="$(echo "${raw}" | tr -d ' ')"
+      [[ -n "${t}" ]] || continue
+      run_local_target "${t}"
+    done
+  else
+    for raw in "${target_arr[@]}"; do
+      t="$(echo "${raw}" | tr -d ' ')"
+      [[ -n "${t}" ]] || continue
+      submit_target "${t}"
+    done
+    wait_for_colide_jobs
+  fi
+
+  log "=== FULL mode: cross-day compare ==="
+  if [[ "${DRY_RUN}" == "1" ]]; then
+    log "DRY-RUN: would compare ${d1_label} vs ${COLIDE_DATE_LABEL}"
+  else
+    if [[ -f "${COLIDE_ROOT}/.venv-cluster/bin/activate" ]]; then
+      # shellcheck source=/dev/null
+      source "${COLIDE_ROOT}/.venv-cluster/bin/activate"
+    fi
+    export PYTHONPATH="${COLIDE_ROOT}${PYTHONPATH:+:${PYTHONPATH}}"
+    for g in v100s a100; do
+      if compgen -G "${COLIDE_ROOT}/benchmarks/results/dicc/${COLIDE_CAMPAIGN}/${g}/${d1_label}_job*/SUCCESS" >/dev/null \
+        && compgen -G "${COLIDE_ROOT}/benchmarks/results/dicc/${COLIDE_CAMPAIGN}/${g}/${COLIDE_DATE_LABEL}_job*/SUCCESS" >/dev/null; then
+        log "compare gpu=${g} ${d1_label} vs ${COLIDE_DATE_LABEL}"
+        python "${COLIDE_ROOT}/scripts/compare_dicc_sessions.py" \
+          --campaign "${COLIDE_CAMPAIGN}" \
+          --gpu "${g}" \
+          --date-a "${d1_label}" \
+          --date-b "${COLIDE_DATE_LABEL}" \
+          || log "WARN: compare failed for ${g} (check SUCCESS + provenance)"
+      else
+        log "WARN: skip compare for ${g} — missing SUCCESS on one or both days"
+      fi
+    done
+  fi
+  log "=== FULL campaign complete ==="
 fi

@@ -79,17 +79,14 @@ Operator guide: `dicc_scripts/README.md`. Branch for this stack: `final-polish` 
 
 ```bash
 cd /path/to/COLIDE
-bash dicc_scripts/run_campaign.sh            # Day 1: setup + compile + submit (auto-detect)
-bash dicc_scripts/run_campaign.sh --day 2    # Day 2: later UTC day; same binaries; no reinstall
-bash dicc_scripts/run_campaign.sh --wait     # also poll until colide_* jobs finish
-bash dicc_scripts/run_campaign.sh --dry-run
-bash dicc_scripts/run_campaign.sh --local    # no sbatch; needs GPU on this node
+# ★ Single line: Day1 + wait + Day2 + wait + compare
+bash dicc_scripts/run_campaign.sh --full
 
-# After two SUCCESS days (distinct dates, same git SHA + kernel SHA256):
-source .venv-cluster/bin/activate   # or conda activate colide
-export PYTHONPATH=.
-python scripts/compare_dicc_sessions.py --campaign core --gpu v100s --date-a D1 --date-b D2
-python scripts/compare_dicc_sessions.py --campaign core --gpu a100  --date-a D1 --date-b D2
+# Piecemeal (optional):
+bash dicc_scripts/run_campaign.sh              # Day 1 only
+bash dicc_scripts/run_campaign.sh --day 2      # Day 2 only (<day>_d2 label)
+bash dicc_scripts/run_campaign.sh --local      # no sbatch
+bash dicc_scripts/run_campaign.sh --dry-run
 ```
 
 `run_campaign.sh` auto-detects: repo root, Python (`.venv-cluster` + torch **cu121** for V100+A100),
