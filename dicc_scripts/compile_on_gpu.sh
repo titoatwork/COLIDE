@@ -1,11 +1,17 @@
 #!/usr/bin/env bash
-# Submit (or run under srun) kernel compilation on a GPU partition where nvcc
-# usually lives when the login node has no CUDA module (Rostam pattern).
+# Submit kernel compilation on a GPU partition (login nodes often lack nvcc).
+#
+# Rostam note: sinfo often shows GRES=(null). Requesting --gres=gpu:1 can then
+# fail with "Requested node configuration is not available". Override with:
+#   COLIDE_SBATCH_GRES=           # omit gres
+#   COLIDE_SBATCH_GRES=gpu:1      # classic
+#   COLIDE_SBATCH_GPUS=1          # use --gpus=1 instead of --gres
 #
 # Usage:
 #   bash dicc_scripts/compile_on_gpu.sh v100
 #   bash dicc_scripts/compile_on_gpu.sh a100
 #   bash dicc_scripts/compile_on_gpu.sh both
+#   COLIDE_SBATCH_GRES= bash dicc_scripts/compile_on_gpu.sh both
 set -Eeuo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -16,27 +22,58 @@ TARGET="${1:-both}"
 ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 export COLIDE_ROOT="${COLIDE_ROOT:-${ROOT}}"
 
+# Defaults tuned for Rostam-like sites: no forced gres unless user sets it.
+# Empty COLIDE_SBATCH_GRES => do not pass --gres.
+USE_GRES="${COLIDE_SBATCH_GRES-}"
+USE_GPUS="${COLIDE_SBATCH_GPUS-}"
+MEM="${COLIDE_SBATCH_MEM:-8G}"
+CPUS="${COLIDE_SBATCH_CPUS:-2}"
+TIME="${COLIDE_SBATCH_TIME:-01:00:00}"
+
 submit_compile() {
   local profile="$1"
   local partition="$2"
   local nvcc_arch="$3"
   local subdir="$4"
-  local out="${COLIDE_ROOT}/benchmarks/results/dicc/compile_${profile}_%j.out"
-  local err="${COLIDE_ROOT}/benchmarks/results/dicc/compile_${profile}_%j.err"
   mkdir -p "${COLIDE_ROOT}/benchmarks/results/dicc"
 
-  log "Submitting compile job: profile=${profile} partition=${partition} arch=${nvcc_arch}"
-  sbatch --parsable \
-    --job-name="colide_compile_${profile}" \
-    --partition="${partition}" \
-    --gres=gpu:1 \
-    --cpus-per-task=4 \
-    --mem=16G \
-    --time=01:00:00 \
-    --chdir="${COLIDE_ROOT}" \
-    --output="${out}" \
-    --error="${err}" \
-    --wrap="set -Eeuo pipefail; cd '${COLIDE_ROOT}'; export COLIDE_ROOT='${COLIDE_ROOT}'; bash dicc_scripts/01_setup.sh --kernels-only --allow-dirty --targets ${nvcc_arch}:${subdir}"
+  local -a cmd=(
+    sbatch
+    --parsable
+    --job-name="colide_compile_${profile}"
+    --partition="${partition}"
+    --nodes=1
+    --ntasks=1
+    --cpus-per-task="${CPUS}"
+    --mem="${MEM}"
+    --time="${TIME}"
+    --chdir="${COLIDE_ROOT}"
+    --output="${COLIDE_ROOT}/benchmarks/results/dicc/compile_${profile}_%j.out"
+    --error="${COLIDE_ROOT}/benchmarks/results/dicc/compile_${profile}_%j.err"
+  )
+
+  if [[ -n "${USE_GPUS}" ]]; then
+    cmd+=(--gpus="${USE_GPUS}")
+  elif [[ -n "${USE_GRES}" ]]; then
+    cmd+=(--gres="${USE_GRES}")
+  fi
+
+  cmd+=(
+    --wrap="set -Eeuo pipefail; cd '${COLIDE_ROOT}'; export COLIDE_ROOT='${COLIDE_ROOT}'; hostname; command -v nvcc || true; find /usr/local /opt -name nvcc 2>/dev/null | head -5; bash dicc_scripts/01_setup.sh --kernels-only --allow-dirty --targets ${nvcc_arch}:${subdir}"
+  )
+
+  log "Submitting: profile=${profile} partition=${partition} arch=${nvcc_arch} gres='${USE_GRES}' gpus='${USE_GPUS}'"
+  {
+    printf 'CMD:'
+    printf ' %q' "${cmd[@]}"
+    printf '\n'
+  } >&2
+
+  local jid
+  jid="$("${cmd[@]}")"
+  jid="${jid%%;*}"
+  log "Submitted compile job ${jid} (${profile})"
+  echo "${jid}"
 }
 
 case "${TARGET}" in
@@ -55,5 +92,5 @@ case "${TARGET}" in
     ;;
 esac
 
-log "Watch with: squeue -u ${USER}"
-log "When done: ls -la ${COLIDE_ROOT}/inference/kernels/v100 ${COLIDE_ROOT}/inference/kernels/a100 2>/dev/null || true"
+log "Watch: squeue -u ${USER}"
+log "When done: ls inference/kernels/v100 inference/kernels/a100"
