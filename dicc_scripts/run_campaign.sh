@@ -376,7 +376,9 @@ JOB_IDS=()
 if [[ "${FORCE_LOCAL}" == "1" || "${have_slurm}" != "1" ]]; then
   log "mode=local"
   ensure_nvcc_on_path || log "WARN: nvcc missing (ok if kernels prebuilt)"
-  command -v nvidia-smi >/dev/null 2>&1 || die "local mode needs a GPU (nvidia-smi)"
+  if [[ "${DRY_RUN}" != "1" ]]; then
+    command -v nvidia-smi >/dev/null 2>&1 || die "local mode needs a GPU (nvidia-smi)"
+  fi
   for raw in "${target_arr[@]}"; do
     t="$(echo "${raw}" | tr -d ' ')"
     [[ -n "${t}" ]] || continue
