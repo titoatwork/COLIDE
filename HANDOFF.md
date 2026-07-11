@@ -49,10 +49,16 @@ benchmarks/results/dicc/<campaign>/<gpu>/<date>_job<id>/
 Docs updated in the same follow-up commit as this handoff: `CLAUDE.md`, `AGENTS.md`,
 `environment.md`, README Phase-3 operator note (numbers unchanged until cross-day artifacts exist).
 
-**Still blocked on the human:** actually SSH to DICC, run Day 1 + Day 2 on the **same** commit
-(`ba6e0cb` or later on `final-polish`) and **same** compiled binaries (do **not** re-run
-`01_setup.sh` between days), then `compare_dicc_sessions.py`. Only after both GPUs accept, update
-README cross-hardware table / paper blocks / `verify_claims.py` from those artifacts.
+**Still blocked on the human:** actually run Day 1 + Day 2 on a SLURM cluster on the **same**
+commit and **same** compiled binaries (do **not** re-run `01_setup.sh` between days), then
+`compare_dicc_sessions.py`. Only after both GPUs accept, update README cross-hardware table /
+paper blocks / `verify_claims.py` from those artifacts.
+
+**Portability fix (same session, follow-up):** first cluster attempt on LSU Rostam failed because
+the operator paste hard-coded `COLIDE_ROOT=/scr/$USER/colide` and `mkdir /scr`. Scripts no longer
+depend on DICC paths or `gpu05`/`gpu06` nodelists. `COLIDE_ROOT` defaults to the checkout
+containing `dicc_scripts/`; resources are passed as `submit_session.sh --partition/--account/
+--gres/...` or via `site.env`. See `dicc_scripts/README.md` “Quick start (any cluster)”.
 
 ## Session 3 progress (2026-07-02)
 

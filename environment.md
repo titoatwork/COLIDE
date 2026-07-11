@@ -23,26 +23,28 @@ python -c "import torch; print(torch.__version__, torch.version.cuda)"
 python -c "import torch; print(torch.cuda.get_device_properties(0))"
 ```
 
-## DICC Cluster (Universiti Malaya)
-- **Queue system:** SLURM
-- **Repo checkout (scratch):** `/scr/$USER/colide` (`COLIDE_ROOT`)
-- **Operator guide:** `dicc_scripts/README.md`
-- **Branch for hardened campaign:** `final-polish` (from `ba6e0cb` onward)
-- **V100 job:** `dicc_scripts/02_benchmark_v100.sh` — `#SBATCH --nodelist=gpu05`, label `v100s`,
-  kernels `inference/kernels/v100/` (`sm_70`), expect name matching `V100`, CC `7.0`
-- **A100 job:** `dicc_scripts/03_benchmark_a100.sh` — `#SBATCH --nodelist=gpu06`, label `a100`,
-  kernels `inference/kernels/a100/` (`sm_80`), expect name matching `A100`, CC `8.0`
-- **Submit entrypoint:** `dicc_scripts/submit_session.sh` (not raw `sbatch 02` alone)
-- **Setup:** `dicc_scripts/01_setup.sh` (login/build node; **does not require** `nvidia-smi`)
-- **Conda env name:** `colide` (minimal: torch, numpy, scipy, pyyaml, scikit-learn)
-- **Production checkpoint used by harness:** `model/best_model_botiot_twostage.pth`
-- **Results root:** `benchmarks/results/dicc/<campaign>/<gpu>/<date>_job<id>/`
-- **Cross-day compare:** `scripts/compare_dicc_sessions.py`
-- **Nsight:** opt-in via `submit_session.sh --with-nsight` (depends on A100 `afterok`)
-- **CUDA toolkit module (setup default):** `cuda/12.1` if available (override via `module load`)
-- **Internet on compute nodes:** TBC — setup assumes packages installable on login node
-- **Fill after first successful run:** paste `nvidia-smi` / driver / exact GPU product names from
-  each run’s `environment.txt` into this section so paper hardware tables stay honest.
+## Any SLURM cluster (portable)
+
+Scripts under `dicc_scripts/` are **site-agnostic**:
+- `COLIDE_ROOT` defaults to the checkout that contains `dicc_scripts/` (no `/scr` hardcode)
+- No fixed `--nodelist` (gpu05/gpu06 removed)
+- Resources via `submit_session.sh --partition/--account/--gres/--constraint` or `site.env`
+- GPU profiles in `dicc_scripts/profiles/{v100,a100}.env`
+
+| Item | Value |
+|------|--------|
+| Operator guide | `dicc_scripts/README.md` |
+| Setup | `bash dicc_scripts/01_setup.sh` (login node; no nvidia-smi required) |
+| Submit | `bash dicc_scripts/submit_session.sh --targets v100,a100 …` |
+| Kernels | `inference/kernels/<profile>/` via `--targets sm_70:v100,sm_80:a100` |
+| Results | `benchmarks/results/dicc/<campaign>/<gpu>/<date>_job<id>/` |
+| Compare | `scripts/compare_dicc_sessions.py` |
+| Checkpoint | `model/best_model_botiot_twostage.pth` |
+| Conda env | `colide` |
+
+**Historical DICC (UM) note:** older runs used `/scr/$USER/colide` and nodelists gpu05/gpu06.
+New campaigns must not depend on those paths. Fill exact product names/driver from each run’s
+`environment.txt` after the first success on a given site.
 
 ## Reproducibility
 - All training/eval experiments seeded: seed=42 (`config/config.yaml` global default)

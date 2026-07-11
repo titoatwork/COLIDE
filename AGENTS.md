@@ -73,19 +73,22 @@ This assumes the CUDA kernels are already compiled in `inference/kernels/`. Indi
 scripts in `scripts/benchmark_*.py` can be run standalone for iterating on one measurement at a time
 (e.g. `python scripts/benchmark_stats.py` for the statistical-significance trial runs).
 
-**DICC cluster (SLURM):** hardened multi-day campaign workflow (branch `final-polish`, commit
-`ba6e0cb` and later). Prefer `dicc_scripts/README.md` for the full operator guide.
+**Cluster campaigns (SLURM, any site):** portable multi-day workflow under `dicc_scripts/`.
+**No hardcoded `/scr` paths or host nodelists.** Prefer `dicc_scripts/README.md`.
 
 ```bash
-# Login node (no GPU required for compile)
-bash dicc_scripts/01_setup.sh          # ff-only pull, conda, atomic V100/A100 compile + SHA256
-export COLIDE_ROOT=/scr/$USER/colide
+# Inside any COLIDE checkout on the login node (no GPU required for compile)
+cd /path/to/COLIDE
+export COLIDE_ROOT="$PWD"   # optional; defaults to this tree
+bash dicc_scripts/01_setup.sh
+# or single arch: bash dicc_scripts/01_setup.sh --targets sm_70:v100
 
-# Submit core V100+A100 jobs (absolute logs, --chdir, isolated result dirs)
-bash dicc_scripts/submit_session.sh --campaign core --date $(date -u +%Y%m%d)
-# Optional Nsight (A100 only, afterok dependency): add --with-nsight
+# Submit (pass YOUR partition/account; omit if defaults work)
+bash dicc_scripts/submit_session.sh --targets v100,a100 --campaign core \
+  --date $(date -u +%Y%m%d) --partition YOUR_PARTITION --account YOUR_ACCOUNT
+# Optional Nsight: add --with-nsight
 
-# After Day 1 and Day 2 both have SUCCESS markers (same git SHA + same binaries):
+# After Day 1 and Day 2 both have SUCCESS (same git SHA + same binaries):
 PYTHONPATH=. python scripts/compare_dicc_sessions.py --gpu v100s --date-a D1 --date-b D2
 PYTHONPATH=. python scripts/compare_dicc_sessions.py --gpu a100  --date-a D1 --date-b D2
 ```

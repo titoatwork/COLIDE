@@ -20,10 +20,10 @@ resolve_colide_root() {
 }
 
 # Require COLIDE_ROOT to already be set and to look like the COLIDE repo.
+# If unset, resolve from this file's location (…/dicc_scripts/lib → repo root).
 require_colide_root() {
   if [[ -z "${COLIDE_ROOT:-}" ]]; then
-    echo "ERROR: COLIDE_ROOT is not set. Export it before running DICC jobs." >&2
-    return 1
+    COLIDE_ROOT="$(resolve_colide_root)"
   fi
   if [[ ! -d "${COLIDE_ROOT}/dicc_scripts" ]] || [[ ! -d "${COLIDE_ROOT}/inference/kernels" ]]; then
     echo "ERROR: COLIDE_ROOT=${COLIDE_ROOT} does not look like the COLIDE repository." >&2
@@ -39,7 +39,9 @@ die() {
 }
 
 log() {
-  echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] $*"
+  # Always stderr so command substitutions (e.g. job_id="$(submit_profile …)")
+  # never capture log lines as fake output.
+  echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] $*" >&2
 }
 
 # ---------------------------------------------------------------------------
@@ -117,8 +119,11 @@ assert_gpu() {
   local name
   name="$(nvidia-smi --query-gpu=name --format=csv,noheader 2>/dev/null | head -1 | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
   [[ -n "${name}" ]] || die "Unable to query GPU name"
-  if ! [[ "${name}" =~ ${name_regex} ]]; then
-    die "GPU name '${name}' does not match expected pattern /${name_regex}/ for ${label}"
+  # name_regex of "." or ".*" matches anything (portable / unknown product strings).
+  if [[ "${name_regex}" != "." && "${name_regex}" != ".*" ]]; then
+    if ! [[ "${name}" =~ ${name_regex} ]]; then
+      die "GPU name '${name}' does not match expected pattern /${name_regex}/ for ${label}"
+    fi
   fi
 
   # MIG: if MIG mode is enabled or nvidia-smi reports MIG devices, refuse.
@@ -142,7 +147,8 @@ assert_gpu() {
   local cc
   cc="$(nvidia-smi --query-gpu=compute_cap --format=csv,noheader 2>/dev/null | head -1 | tr -d ' ' || true)"
   if [[ -n "${cc}" && "${cc}" != "[N/A]" ]]; then
-    if [[ "${cc}" != "${expect_cc}" ]]; then
+    # Allow expect_cc=0.0 or "any" to skip strict CC check (portable debugging).
+    if [[ "${expect_cc}" != "0.0" && "${expect_cc}" != "any" && "${cc}" != "${expect_cc}" ]]; then
       die "Compute capability ${cc} != expected ${expect_cc} for ${label}"
     fi
   else

@@ -1,25 +1,34 @@
 #!/usr/bin/env bash
+# Opt-in Nsight profiling. Prefer submit_session.sh --with-nsight.
+# No site-specific nodelist — inject partition/gres via submit_session.
 #SBATCH --job-name=colide_nsight
-#SBATCH --nodelist=gpu06
-#SBATCH --gres=gpu:1
-#SBATCH --cpus-per-task=4
-#SBATCH --mem=32G
 #SBATCH --time=00:45:00
-# Opt-in Nsight profiling on A100. Prefer submit_session.sh --with-nsight
-# which sets COLIDE_ROOT, chdir, log paths, and afterok dependency on A100.
 set -Eeuo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=lib/common.sh
 source "${SCRIPT_DIR}/lib/common.sh"
 
+if [[ -z "${COLIDE_ROOT:-}" ]]; then
+  COLIDE_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+  export COLIDE_ROOT
+fi
 require_colide_root
 cd "${COLIDE_ROOT}"
+
+# Default to a100 profile if not already set by submit_session
+if [[ -z "${COLIDE_KERNELS_SUBDIR:-}" ]]; then
+  # shellcheck source=profiles/a100.env
+  source "${COLIDE_ROOT}/dicc_scripts/profiles/a100.env"
+fi
 
 export COLIDE_CAMPAIGN="${COLIDE_CAMPAIGN:-nsight}"
 export COLIDE_DATE_LABEL="${COLIDE_DATE_LABEL:-$(date -u +%Y%m%d)}"
 export COLIDE_GPU_LABEL="${COLIDE_GPU_LABEL:-a100}"
-export COLIDE_KERNELS_DIR="${COLIDE_ROOT}/inference/kernels/a100"
+export COLIDE_GPU_NAME_RE="${COLIDE_GPU_NAME_RE:-A100}"
+export COLIDE_GPU_CC="${COLIDE_GPU_CC:-8.0}"
+export COLIDE_GPU_MIN_MEM="${COLIDE_GPU_MIN_MEM:-30000}"
+export COLIDE_KERNELS_DIR="${COLIDE_ROOT}/inference/kernels/${COLIDE_KERNELS_SUBDIR:-a100}"
 
 JOB_ID="${SLURM_JOB_ID:-local}"
 RUN_DIR="$(make_run_dir "${COLIDE_CAMPAIGN}" "${COLIDE_GPU_LABEL}" "${COLIDE_DATE_LABEL}" "${JOB_ID}")"
@@ -40,7 +49,7 @@ trap on_exit EXIT
 log "=== COLIDE Nsight Compute Profiling ==="
 log "Node=$(hostname) RUN_DIR=${RUN_DIR}"
 
-assert_gpu a100 'A100' 8.0 30000
+assert_gpu "${COLIDE_GPU_LABEL}" "${COLIDE_GPU_NAME_RE}" "${COLIDE_GPU_CC}" "${COLIDE_GPU_MIN_MEM}"
 command -v ncu >/dev/null 2>&1 || die "ncu (Nsight Compute) not found on PATH"
 
 write_manifest "${RUN_DIR}"
@@ -62,11 +71,11 @@ profile_one() {
   )
 }
 
-profile_one block1_a100 fused_block1
-profile_one block2_a100 fused_block2
-profile_one block3_fp32_a100 fused_block3
-profile_one block3_fp16_a100 fused_block3_fp16
-profile_one block4_a100 fused_block4
+profile_one "block1_${COLIDE_GPU_LABEL}" fused_block1
+profile_one "block2_${COLIDE_GPU_LABEL}" fused_block2
+profile_one "block3_fp32_${COLIDE_GPU_LABEL}" fused_block3
+profile_one "block3_fp16_${COLIDE_GPU_LABEL}" fused_block3_fp16
+profile_one "block4_${COLIDE_GPU_LABEL}" fused_block4
 
 log "=== Nsight Profiling Complete ==="
 log "Reports under ${NSIGHT_DIR}"

@@ -1,13 +1,8 @@
 #!/usr/bin/env bash
+# Back-compat thin wrapper. Prefer: submit_session.sh --targets a100
+# No site-specific nodelist/partition — resources come from sbatch CLI.
 #SBATCH --job-name=colide_a100
-#SBATCH --nodelist=gpu06
-#SBATCH --gres=gpu:1
-#SBATCH --cpus-per-task=4
-#SBATCH --mem=32G
 #SBATCH --time=02:00:00
-# Thin SBATCH resource wrapper. All logic lives in lib/run_benchmark.sh.
-# Output/error paths and --chdir are injected by submit_session.sh so
-# relative log paths cannot resolve against a wrong CWD.
 set -Eeuo pipefail
 
 if [[ -z "${COLIDE_ROOT:-}" ]]; then
@@ -15,10 +10,8 @@ if [[ -z "${COLIDE_ROOT:-}" ]]; then
   exit 1
 fi
 
-export COLIDE_GPU_LABEL="${COLIDE_GPU_LABEL:-a100}"
-export COLIDE_GPU_NAME_RE="${COLIDE_GPU_NAME_RE:-A100}"
-export COLIDE_GPU_CC="${COLIDE_GPU_CC:-8.0}"
-export COLIDE_GPU_MIN_MEM="${COLIDE_GPU_MIN_MEM:-30000}"
-export COLIDE_KERNELS_SUBDIR="${COLIDE_KERNELS_SUBDIR:-a100}"
+# shellcheck source=profiles/a100.env
+source "${COLIDE_ROOT}/dicc_scripts/profiles/a100.env"
+export COLIDE_GPU_LABEL COLIDE_GPU_NAME_RE COLIDE_GPU_CC COLIDE_GPU_MIN_MEM COLIDE_KERNELS_SUBDIR
 
 exec bash "${COLIDE_ROOT}/dicc_scripts/lib/run_benchmark.sh"
