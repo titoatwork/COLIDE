@@ -34,13 +34,16 @@ TARGETS="${COLIDE_TARGETS:-v100,a100}"
 SBATCH_PARTITION="${COLIDE_SBATCH_PARTITION:-}"
 SBATCH_ACCOUNT="${COLIDE_SBATCH_ACCOUNT:-}"
 SBATCH_QOS="${COLIDE_SBATCH_QOS:-}"
-SBATCH_GRES="${COLIDE_SBATCH_GRES:-gpu:1}"
+# Use ${VAR-default} (not :-) so an explicit empty COLIDE_SBATCH_GRES= omits --gres
+# (required on sites like Rostam where sinfo reports GRES=(null)).
+SBATCH_GRES="${COLIDE_SBATCH_GRES-gpu:1}"
 SBATCH_CONSTRAINT="${COLIDE_SBATCH_CONSTRAINT:-}"
 SBATCH_NODELIST="${COLIDE_SBATCH_NODELIST:-}"
 SBATCH_TIME="${COLIDE_SBATCH_TIME:-02:00:00}"
 SBATCH_CPUS="${COLIDE_SBATCH_CPUS:-4}"
 SBATCH_MEM="${COLIDE_SBATCH_MEM:-32G}"
 SBATCH_EXTRA="${COLIDE_SBATCH_EXTRA:-}"
+SBATCH_GPUS="${COLIDE_SBATCH_GPUS-}"
 
 usage() {
   cat <<'EOF'
@@ -53,7 +56,8 @@ Usage: submit_session.sh [options]
   --partition NAME     sbatch -p
   --account NAME       sbatch -A
   --qos NAME           sbatch -q
-  --gres SPEC          sbatch --gres (default: gpu:1)
+  --gres SPEC          sbatch --gres (default: gpu:1; use --gres none to omit)
+  --gpus N             sbatch --gpus N (alternative to --gres on some sites)
   --constraint EXPR    sbatch -C
   --nodelist NODES     sbatch -w (optional; avoid on portable sites)
   --time TIME          sbatch -t (default: 02:00:00)
@@ -80,7 +84,15 @@ while [[ $# -gt 0 ]]; do
     --partition) SBATCH_PARTITION="${2:?}"; shift 2 ;;
     --account) SBATCH_ACCOUNT="${2:?}"; shift 2 ;;
     --qos) SBATCH_QOS="${2:?}"; shift 2 ;;
-    --gres) SBATCH_GRES="${2:?}"; shift 2 ;;
+    --gres)
+      if [[ "${2:?}" == "none" || "${2}" == "omit" || "${2}" == "-" ]]; then
+        SBATCH_GRES=""
+      else
+        SBATCH_GRES="$2"
+      fi
+      shift 2
+      ;;
+    --gpus) SBATCH_GPUS="${2:?}"; shift 2 ;;
     --constraint) SBATCH_CONSTRAINT="${2:?}"; shift 2 ;;
     --nodelist) SBATCH_NODELIST="${2:?}"; shift 2 ;;
     --time) SBATCH_TIME="${2:?}"; shift 2 ;;
@@ -130,17 +142,25 @@ export COLIDE_PYTORCH_INNER="${COLIDE_PYTORCH_INNER:-1000}"
 #   sbatch_resource_flags [partition] [gres] [constraint]
 sbatch_resource_flags() {
   local part="${1:-${SBATCH_PARTITION}}"
-  local gres="${2:-${SBATCH_GRES}}"
+  local gres="${2-${SBATCH_GRES}}"
   local constraint="${3:-${SBATCH_CONSTRAINT}}"
   [[ -n "${part}" ]] && printf '%s\n' "--partition=${part}"
   [[ -n "${SBATCH_ACCOUNT}" ]] && printf '%s\n' "--account=${SBATCH_ACCOUNT}"
   [[ -n "${SBATCH_QOS}" ]] && printf '%s\n' "--qos=${SBATCH_QOS}"
-  [[ -n "${gres}" ]] && printf '%s\n' "--gres=${gres}"
+  # Prefer --gpus when set (some sites); else --gres if non-empty.
+  if [[ -n "${SBATCH_GPUS}" ]]; then
+    printf '%s\n' "--gpus=${SBATCH_GPUS}"
+  elif [[ -n "${gres}" ]]; then
+    printf '%s\n' "--gres=${gres}"
+  fi
   [[ -n "${constraint}" ]] && printf '%s\n' "--constraint=${constraint}"
   [[ -n "${SBATCH_NODELIST}" ]] && printf '%s\n' "--nodelist=${SBATCH_NODELIST}"
   [[ -n "${SBATCH_TIME}" ]] && printf '%s\n' "--time=${SBATCH_TIME}"
   [[ -n "${SBATCH_CPUS}" ]] && printf '%s\n' "--cpus-per-task=${SBATCH_CPUS}"
   [[ -n "${SBATCH_MEM}" ]] && printf '%s\n' "--mem=${SBATCH_MEM}"
+  # Always pin single-node for GPU benches unless user overrode via --extra.
+  printf '%s\n' "--nodes=1"
+  printf '%s\n' "--ntasks=1"
   if [[ -n "${SBATCH_EXTRA}" ]]; then
     # shellcheck disable=SC2086
     printf '%s\n' ${SBATCH_EXTRA}
