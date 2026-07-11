@@ -1,44 +1,45 @@
 # COLIDE — Session Handoff
 
-**Last session:** 2026-07-11 (session 4 — DICC hardening, CLOSED on tooling). **Read this whole
-file before doing anything else.** Session 3 history is preserved below. **Session 4 closed the
-scripting gap for item #3; the remaining work is the user running Day 1 + Day 2 on DICC and only
-then updating README/paper numbers from accepted compare artifacts.** See **"Session 5 starting
-point"** near the end.
+**Last session:** 2026-07-11 (session 4 — portable cluster campaign + Rostam Day 1). **Read this
+whole file before doing anything else.** Session 3 history is preserved below. **Item #3 tooling
+is done and Day 1 ran successfully on LSU Rostam; Day 2 + compare + README/paper updates remain.**
+See **"Session 5 starting point"** near the end. Preferred operator entry:
+`bash dicc_scripts/run_campaign.sh` (branch `final-polish`).
 
-## Session 4 progress (2026-07-11) — DICC campaign tooling hardened
+## Session 4 progress (2026-07-11) — portable campaign stack + Rostam Day 1
 
-**Item #3 (DICC cross-hardware) — tooling READY; cluster execution still user-side.** The old
-`02`/`03` job scripts and `05_run_all.sh` were not safe for a multi-day campaign. Hardened and
-pushed on branch `final-polish` as commit `ba6e0cb` (`feat: harden DICC multi-day campaign
-workflow`). Operator guide: `dicc_scripts/README.md`.
+### A. Tooling (item #3 scripts) — DONE, pushed on `final-polish`
 
-What was wrong (critical findings that motivated the rewrite):
-- Contradictory working directories → Slurm relative log paths / `05_run_all.sh` could fail.
-- Non-interactive jobs did not properly init Conda; soft failures could still print “Complete.”
-- Concurrent V100/A100 jobs could overwrite shared JSON/ONNX/fixed result names.
-- `benchmark_cuda_kernels_stats.py` defaulted to n=20 and silently tolerated missing binaries,
-  parse failures, nonzero exits, and numerical-validation failures.
-- Legacy PyTorch paths were single-run or 10-trial and baked RTX 3050 constants into shared files.
-- **Full-model CUDA-vs-PyTorch speedup is not currently valid:** V3 PyTorch runs attention +
-  LayerNorm + global average pooling; CUDA implements none of those; `fused_pipeline.cu` skips
-  Block 3 and reconstructs latency additively. Per-block (esp. Block 3) remains usable.
+Motivation: old `02`/`03`/`05` mixed relative Slurm logs, shared fixed JSON names, soft conda,
+n=20 soft CUDA stats, and DICC-only paths (`/scr`, gpu05/gpu06). Concurrent jobs could clobber
+results; failed runs could still print “Complete.”
 
-What landed:
+Also: **full CUDA vs PyTorch pipeline speedup is not valid** — V3 has attention + LayerNorm + GAP;
+CUDA lacks those; `fused_pipeline.cu` skips Block 3 (additive reconstruction only). Per-block
+(especially Block 3) remains the valid comparison.
+
+**One-command entry (use this):**
+
+```bash
+cd /path/to/COLIDE
+bash dicc_scripts/run_campaign.sh            # Day 1
+bash dicc_scripts/run_campaign.sh --day 2    # later UTC day, same binaries
+```
+
 | Piece | Role |
 |-------|------|
-| `dicc_scripts/01_setup.sh` | `set -Eeuo pipefail`, real conda init, `git pull --ff-only` + dirty/SHA checks, minimal deps, atomic V100/A100 compile + `SHA256SUMS`, no `nvidia-smi` on login nodes |
-| `02`/`03` | Thin SBATCH resource wrappers only |
-| `lib/common.sh` + `lib/run_benchmark.sh` | Shared runner; GPU asserts (1 device, name regex, CC, mem, non-MIG); isolated run dirs |
-| `submit_session.sh` | Preferred entry: `COLIDE_ROOT`, absolute logs, `--chdir`, `--parsable`, session JSON; V100+A100 default; Nsight opt-in with `afterok` |
-| `05_run_all.sh` | Alias → `submit_session.sh` |
-| `04_nsight_profile.sh` | Writes under isolated campaign path |
-| `scripts/benchmark_cuda_kernels_stats.py` | Default n=100, `--output`/`--raw-output`, CIs, `--strict` fatals |
-| `scripts/benchmark_pytorch_gpu_stats.py` | New: 20×1000, full V3 + blocks 1–4, production checkpoint `best_model_botiot_twostage.pth`, `comparability.full_pipeline…valid=false`, Block 3 `valid=true` |
-| `scripts/compare_dicc_sessions.py` | Two distinct dates; reject SHA/binary/checkpoint/protocol/GPU mismatch; means/CVs/CIs/spread, Cohen’s d, Welch; stable wording = “consistent with WSL2-specific drift” (not proof) |
-| `dicc_scripts/validate/local_validate.sh` | Offline suite — bash -n, ShellCheck, mock success/failure, wrong-GPU, missing-conda, same-day/incomplete/provenance rejects, spool-CWD dry-run (**28/28 pass**) |
+| **`dicc_scripts/run_campaign.sh`** | **Single entry:** auto partition/GRES/nvcc/Python, compile, submit |
+| `01_setup.sh` | `--python-only` / `--kernels-only`; venv if no conda; torch **cu121** default |
+| `submit_session.sh` | `--gres none`, `--allow-dirty`, per-profile partitions |
+| `job_benchmark.sh` + `lib/run_benchmark.sh` | Isolated runs; `CUDA_VISIBLE_DEVICES=0` on multi-GPU nodes |
+| `compile_on_gpu.sh` | Optional compile-only sbatch helper |
+| `profiles/{v100,a100}.env` | Identity + kernel subdir |
+| `scripts/benchmark_cuda_kernels_stats.py` | n=100, strict, **retries** for flaky fp16 validation |
+| `scripts/benchmark_pytorch_gpu_stats.py` | 20×1000; cuDNN SM&lt;7.5 fallback; comparability flags |
+| `scripts/compare_dicc_sessions.py` | Cross-day provenance gate + Welch / Cohen’s d |
+| `validate/local_validate.sh` | Offline suite (mocks) |
 
-Result layout (never legacy fixed names from this path):
+Result layout:
 ```text
 benchmarks/results/dicc/<campaign>/<gpu>/<date>_job<id>/
   manifest.json  environment.txt  kernel_SHA256SUMS
@@ -46,19 +47,52 @@ benchmarks/results/dicc/<campaign>/<gpu>/<date>_job<id>/
   raw/  logs/  exit_status  SUCCESS
 ```
 
-Docs updated in the same follow-up commit as this handoff: `CLAUDE.md`, `AGENTS.md`,
-`environment.md`, README Phase-3 operator note (numbers unchanged until cross-day artifacts exist).
+Key commits on `final-polish` (oldest→newer, session 4 arc): `ba6e0cb` harden → portability/
+Rostam fixes → `187ab37` multi-GPU pin → `991a941` V100 cuDNN + A100 fp16 retries →
+`7c8a97f`/`54c3dcd` **`run_campaign.sh`**.
 
-**Still blocked on the human:** actually run Day 1 + Day 2 on a SLURM cluster on the **same**
-commit and **same** compiled binaries (do **not** re-run `01_setup.sh` between days), then
-`compare_dicc_sessions.py`. Only after both GPUs accept, update README cross-hardware table /
-paper blocks / `verify_claims.py` from those artifacts.
+### B. Rostam (LSU CCT) — site facts encoded in scripts
 
-**Portability fix (same session, follow-up):** first cluster attempt on LSU Rostam failed because
-the operator paste hard-coded `COLIDE_ROOT=/scr/$USER/colide` and `mkdir /scr`. Scripts no longer
-depend on DICC paths or `gpu05`/`gpu06` nodelists. `COLIDE_ROOT` defaults to the checkout
-containing `dicc_scripts/`; resources are passed as `submit_session.sh --partition/--account/
---gres/...` or via `site.env`. See `dicc_scripts/README.md` “Quick start (any cluster)”.
+| Fact | Implication |
+|------|-------------|
+| Login has no `module spider cuda` | Compile on GPU node; `nvcc` at `/usr/local/cuda*/bin` |
+| Partitions `cuda-V100`, `cuda-A100`, `DGX-A100` | Auto-detect / env override |
+| sinfo GRES=(null) | `--gres none` or empty; `--gres=gpu:1` → “config not available” |
+| Nodes show 2–4 GPUs without GRES isolation | Pin `CUDA_VISIBLE_DEVICES=0` (do not require exactly 1 GPU) |
+| torch 2.13+cu130 cuDNN | Breaks V100 (SM 7.0 &lt; 7.5) → **cu121** wheels |
+| A100 `fused_block3_fp16` | Intermittent numerical FAILED under n=100 → retries + max hard skips |
+
+### C. Rostam Day 1 — SUCCESS (provisional)
+
+Checkout: `/home/aagrawal/COLIDE`, campaign `core`, date `20260711`.
+
+| GPU | SUCCESS run dir | Notes |
+|-----|-----------------|-------|
+| V100 | `benchmarks/results/dicc/core/v100s/20260711_job167674/` | CUDA n=100 + PyTorch 20×1000 |
+| A100 | `benchmarks/results/dicc/core/a100/20260711_job167675/` | same |
+
+**Ignore** failed early dirs: `job167669`–`167672` (multi-GPU assert / torch cu130 / fp16 flake).
+
+Day‑1 means (from operator peek; not yet README-final):
+
+| Metric | V100 | A100 |
+|--------|------|------|
+| CUDA block3_fp16 mean | ~581 µs (n=100) | ~706 µs (n=100) |
+| PyTorch block3 mean | ~512 µs | ~353 µs |
+| PyTorch full V3 mean | ~1470 µs | ~801 µs |
+| full pipeline CUDA/PT valid | **false** | **false** |
+
+Interpretation notes: V100 custom BiLSTM faster than A100 fits sequential/clock-bound narrative.
+PyTorch Block3 faster than custom FP16 on Rostam is a real protocol result — do not paper-claim
+until Day 2 + compare; document timing-loop / cuDNN caveats if it holds.
+
+### D. Still open (next human/agent steps)
+
+1. **Day 2** on Rostam: `bash dicc_scripts/run_campaign.sh --day 2` on a **later UTC date**, same
+   commit, **no** reinstall/recompile.
+2. **`compare_dicc_sessions.py`** for `v100s` and `a100`.
+3. Only then update README cross-hardware table / paper blocks / `verify_claims.py`.
+4. Never publish full-pipeline CUDA vs PyTorch speedup until architecture parity is fixed.
 
 ## Session 3 progress (2026-07-02)
 
@@ -435,24 +469,19 @@ PYTHONPATH=. python scripts/benchmark_cuda_kernels_stats.py --kernels-dir infere
    and the headline ratios widened to 3.04x-3.78x / 2.25x-2.99x / 3.60x-4.99x / 5.72x-7.83x
    (Eager/torch.compile/TensorRT/ORT-GPU). Propagated everywhere.
 
-3. **Phase 3 (DICC re-run) — tooling READY (session 4 / 2026-07-11); cluster still user-side.**
-   No SSH/cluster access from the agent environment. **Do not use the pre-session-4 flow**
-   (direct `sbatch 02`/`03` with shared fixed JSON names, n=20 soft stats, `benchmark_pipeline.py`
-   as the PyTorch path). Use the hardened path instead — full detail in **"Session 4 progress"**
-   above and `dicc_scripts/README.md`:
-   - Branch: `final-polish` @ `ba6e0cb` or later.
-   - Setup once: `bash dicc_scripts/01_setup.sh` then `export COLIDE_ROOT=/scr/$USER/colide`.
-   - Day 1 + Day 2 (different UTC dates, **same git SHA, same binaries — no recompile on day 2**):
-     `bash dicc_scripts/submit_session.sh --campaign core --date YYYYMMDD`
-   - Compare: `PYTHONPATH=. python scripts/compare_dicc_sessions.py --gpu v100s|a100 --date-a … --date-b …`
-   - PyTorch same-hardware baseline now comes from `benchmark_pytorch_gpu_stats.py` inside the
-     shared runner (not `benchmark_pipeline.py` / not legacy `statistical_confidence.json`).
-   - CUDA stats: n=100 strict; results only under
-     `benchmarks/results/dicc/<campaign>/<gpu>/<date>_job<id>/`.
-   - **Full-pipeline CUDA/PyTorch ratio still invalid** (attention/LN/GAP + fused_pipeline Block-3
-     gap). Fill README cross-hardware **per-block / absolute** numbers from accepted compare
-     artifacts; do not invent full-pipeline speedups.
-   - If DICC is stable across days, phrase as **consistent with WSL2-specific drift** (not proof).
+3. **Phase 3 (cluster re-run) — tooling DONE; Rostam Day 1 SUCCESS; Day 2+paper still open
+   (session 4 / 2026-07-11).** Prefer **`bash dicc_scripts/run_campaign.sh`** (not raw
+   `sbatch 02`/`03`, not fixed JSON paths). Full detail in **"Session 4 progress"** above.
+   - Branch: `final-polish` with `run_campaign.sh` (`54c3dcd`+).
+   - Day 1 Rostam SUCCESS: `v100s/20260711_job167674`, `a100/20260711_job167675`.
+   - Day 2: `bash dicc_scripts/run_campaign.sh --day 2` (later UTC date; same SHA/binaries).
+   - Compare: `scripts/compare_dicc_sessions.py --gpu v100s|a100 --date-a … --date-b …`.
+   - PyTorch path: `benchmark_pytorch_gpu_stats.py` (not legacy `benchmark_pipeline.py` /
+     `statistical_confidence.json` for new campaigns).
+   - CUDA stats: n=100 strict + validation retries; results under
+     `benchmarks/results/dicc/<campaign>/<gpu>/<date>_job<id>/` only.
+   - **Full-pipeline CUDA/PyTorch ratio still invalid.** Per-block only until parity fixed.
+   - Stable multi-day cluster means → “consistent with WSL2-specific drift” (not proof).
 
 4. **Phase 4 (optional ceiling-raising items, not started, no urgency)** — from the original
    plan, still relevant: batch-size sweep for TensorRT/torch.compile/ORT (currently batch=1
@@ -618,27 +647,31 @@ functionally unchanged, rebuilt for full traceability during the 4-block re-veri
 
 ## Session 4 closed / Session 5 starting point
 
-- Read `CLAUDE.md` first (architecture + **updated DICC operator block** + fused_pipeline
-  parity caveat). Operator detail: `dicc_scripts/README.md`.
-- **Session 4 git state:** branch `final-polish` pushed to `origin/final-polish`. Tooling commit
-  `ba6e0cb`; docs follow-up is the tip of the branch after this handoff update. Working tree may
-  still show untracked noise only if something else was left local — agent docs (`CLAUDE.md`,
-  `AGENTS.md`) are tracked after this session.
-- **`scripts/verify_claims.py`:** still the gate for paper numbers; run before editing README
-  claim text. Session 4 did **not** change citable latency/accuracy numbers.
+- Read `CLAUDE.md` first (architecture + **cluster one-command block** + fused_pipeline parity).
+  Operator detail: `dicc_scripts/README.md`. Prefer **`bash dicc_scripts/run_campaign.sh`**.
+- **Git:** branch `final-polish` → `origin/final-polish`. Session‑4 tip includes `run_campaign.sh`
+  (`54c3dcd` and later). Agent docs (`CLAUDE.md`, `AGENTS.md`, `HANDOFF.md`) updated together.
+- **Item #3 status:** tooling complete; **Rostam Day 1 SUCCESS** recorded above. **Day 2 +
+  compare + README/paper number updates still open.** Do not treat Day‑1 means as submission-final.
+- **`scripts/verify_claims.py`:** still the gate before editing citable README/paper numbers.
+  Session 4 did not rewrite those tables yet.
 - **What's next, priority order:**
-  1. **Item #3 execution (user on DICC)** — checkout `final-polish`, `01_setup.sh` once, Day 1 +
-     Day 2 via `submit_session.sh` (same SHA/binaries), then `compare_dicc_sessions.py` for
-     `v100s` and `a100`. Only then update README cross-hardware table, paper blocks, and
-     `verify_claims.py` from accepted artifacts. Do **not** publish full-pipeline CUDA/PyTorch
-     speedups until architecture parity is fixed.
-  2. **Item #5 remaining sub-tasks** — RF teacher strengthen or ensemble teacher fix/retune.
+  1. **Day 2 on Rostam (or any site)** — same checkout/SHA/binaries/torch; later UTC date:
+     `bash dicc_scripts/run_campaign.sh --day 2` then `compare_dicc_sessions.py` for `v100s` +
+     `a100`. Then update README cross-hardware / paper blocks from accepted artifacts only.
+     **Never** full-pipeline CUDA/PyTorch speedup until architecture parity is fixed.
+  2. **Item #5 remaining** — RF teacher strengthen or ensemble teacher fix/retune.
   3. **Item #4 ceiling-raisers** — numerical-fidelity table, batch-size sweep, threats-to-validity
-     (WSL2 drift + DICC cross-day wording ready-made).
+     (WSL2 drift + multi-day cluster wording).
 - **Model checkpoints:** `model/best_model_botiot_twostage.pth` is production (0.9790 macro-F1).
   `model/best_model.pth` is stale (0.9352). `train_twostage.py` overwrites production with no
   suffix — back up before re-running.
-- **CUDA kernel weight exports** were re-exported against 0.9790 in session 3; re-export only if
-  the model is retrained.
-- **Range-claim discipline (from session 3, still in force):** enumerate every session data point
-  before extending a min/max range — never diff only against “whatever’s live now.”
+- **CUDA weight exports** re-exported against 0.9790 in session 3; re-export only if model retrained.
+- **Range-claim discipline:** enumerate every session data point before extending min/max ranges.
+- **Cluster ops shorthand for next agent:**
+  ```bash
+  bash dicc_scripts/run_campaign.sh              # new site / Day 1
+  bash dicc_scripts/run_campaign.sh --day 2      # Day 2
+  find benchmarks/results/dicc -name SUCCESS
+  PYTHONPATH=. python scripts/compare_dicc_sessions.py --gpu v100s --date-a … --date-b …
+  ```
