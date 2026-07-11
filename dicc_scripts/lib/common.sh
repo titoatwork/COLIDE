@@ -166,6 +166,10 @@ find_nvcc() {
 # Expected identity is passed as:
 #   assert_gpu <label> <name_regex> <compute_capability> <min_mem_mib>
 # Example: assert_gpu v100s 'V100' 7.0 30000
+#
+# On sites without GRES isolation (e.g. Rostam), a job may see every GPU on
+# the node (2x V100, 4x A100). We pin to CUDA_VISIBLE_DEVICES (default 0)
+# so benchmarks use exactly one device and name/CC checks apply to that card.
 assert_gpu() {
   local label="$1"
   local name_regex="$2"
@@ -177,13 +181,35 @@ assert_gpu() {
 
   local gpu_count
   gpu_count="$(nvidia-smi -L 2>/dev/null | wc -l | tr -d ' ')"
-  if [[ "${gpu_count}" != "1" ]]; then
-    die "Expected exactly 1 visible GPU for ${label}, found ${gpu_count}. Refusing multi-GPU/MIG-shared runs."
+  if [[ -z "${gpu_count}" || "${gpu_count}" -lt 1 ]]; then
+    die "No GPUs visible via nvidia-smi for ${label}"
+  fi
+
+  # Pin to one physical index before queries (so multi-GPU nodes are usable).
+  local dev_index="${COLIDE_CUDA_DEVICE:-0}"
+  if [[ -z "${CUDA_VISIBLE_DEVICES:-}" ]]; then
+    export CUDA_VISIBLE_DEVICES="${dev_index}"
+    log "Pinned CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES} (${gpu_count} GPUs visible on node)"
+  else
+    log "Using pre-set CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES} (${gpu_count} GPUs on node before mask)"
+  fi
+
+  # After masking, nvidia-smi -L may still show all GPUs depending on driver;
+  # query by index from the original list using CUDA_VISIBLE_DEVICES first entry.
+  local phys_idx
+  phys_idx="${CUDA_VISIBLE_DEVICES%%,*}"
+  # Strip any MIG uuid form — if non-numeric, fall back to device 0 fields.
+  if ! [[ "${phys_idx}" =~ ^[0-9]+$ ]]; then
+    phys_idx=0
   fi
 
   local name
-  name="$(nvidia-smi --query-gpu=name --format=csv,noheader 2>/dev/null | head -1 | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
-  [[ -n "${name}" ]] || die "Unable to query GPU name"
+  name="$(nvidia-smi --id="${phys_idx}" --query-gpu=name --format=csv,noheader 2>/dev/null | head -1 | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+  if [[ -z "${name}" ]]; then
+    name="$(nvidia-smi --query-gpu=name --format=csv,noheader 2>/dev/null | sed -n "$((phys_idx + 1))p" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+  fi
+  [[ -n "${name}" ]] || die "Unable to query GPU name for index ${phys_idx}"
+
   # name_regex of "." or ".*" matches anything (portable / unknown product strings).
   if [[ "${name_regex}" != "." && "${name_regex}" != ".*" ]]; then
     if ! [[ "${name}" =~ ${name_regex} ]]; then
@@ -191,28 +217,32 @@ assert_gpu() {
     fi
   fi
 
-  # MIG: if MIG mode is enabled or nvidia-smi reports MIG devices, refuse.
+  # MIG: refuse MIG instances for these benches (need full device).
   local mig_mode
-  mig_mode="$(nvidia-smi --query-gpu=mig.mode.current --format=csv,noheader 2>/dev/null | head -1 | tr -d ' ' || true)"
+  mig_mode="$(nvidia-smi --id="${phys_idx}" --query-gpu=mig.mode.current --format=csv,noheader 2>/dev/null | head -1 | tr -d ' ' || true)"
   if [[ "${mig_mode}" == "Enabled" ]]; then
     die "GPU is in MIG mode (current=${mig_mode}); full-device allocation required for ${label}"
   fi
-  if nvidia-smi -L 2>/dev/null | grep -qi 'MIG'; then
-    die "Visible device list includes MIG instances; full-device allocation required for ${label}"
+  if echo "${name}" | grep -qi 'MIG'; then
+    die "Selected device looks like a MIG instance ('${name}'); full-device required for ${label}"
   fi
 
   local mem_total
-  mem_total="$(nvidia-smi --query-gpu=memory.total --format=csv,noheader,nounits 2>/dev/null | head -1 | tr -d ' ')"
+  mem_total="$(nvidia-smi --id="${phys_idx}" --query-gpu=memory.total --format=csv,noheader,nounits 2>/dev/null | head -1 | tr -d ' ')"
+  if [[ -z "${mem_total}" ]]; then
+    mem_total="$(nvidia-smi --query-gpu=memory.total --format=csv,noheader,nounits 2>/dev/null | sed -n "$((phys_idx + 1))p" | tr -d ' ')"
+  fi
   [[ -n "${mem_total}" ]] || die "Unable to query GPU memory"
   if (( mem_total < min_mem_mib )); then
     die "GPU memory ${mem_total} MiB is below minimum ${min_mem_mib} MiB for ${label}"
   fi
 
-  # Compute capability via nvidia-smi compute_cap if available, else python/torch later.
   local cc
-  cc="$(nvidia-smi --query-gpu=compute_cap --format=csv,noheader 2>/dev/null | head -1 | tr -d ' ' || true)"
+  cc="$(nvidia-smi --id="${phys_idx}" --query-gpu=compute_cap --format=csv,noheader 2>/dev/null | head -1 | tr -d ' ' || true)"
+  if [[ -z "${cc}" || "${cc}" == "[N/A]" ]]; then
+    cc="$(nvidia-smi --query-gpu=compute_cap --format=csv,noheader 2>/dev/null | sed -n "$((phys_idx + 1))p" | tr -d ' ' || true)"
+  fi
   if [[ -n "${cc}" && "${cc}" != "[N/A]" ]]; then
-    # Allow expect_cc=0.0 or "any" to skip strict CC check (portable debugging).
     if [[ "${expect_cc}" != "0.0" && "${expect_cc}" != "any" && "${cc}" != "${expect_cc}" ]]; then
       die "Compute capability ${cc} != expected ${expect_cc} for ${label}"
     fi
@@ -224,7 +254,8 @@ assert_gpu() {
   export COLIDE_GPU_NAME="${name}"
   export COLIDE_GPU_CC="${cc:-unknown}"
   export COLIDE_GPU_MEM_MIB="${mem_total}"
-  log "GPU OK: label=${label} name='${name}' cc=${COLIDE_GPU_CC} mem=${mem_total}MiB"
+  export COLIDE_GPU_NODE_COUNT="${gpu_count}"
+  log "GPU OK: label=${label} name='${name}' cc=${COLIDE_GPU_CC} mem=${mem_total}MiB visible_on_node=${gpu_count} CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES}"
 }
 
 # ---------------------------------------------------------------------------

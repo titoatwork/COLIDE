@@ -63,6 +63,14 @@ trap on_exit EXIT
 # after a partial failure (that was the previous failure mode).
 set -E
 
+# Ensure CUDA toolkit libs are findable if present (does not require nvcc at runtime).
+if [[ -d /usr/local/cuda/lib64 ]]; then
+  export LD_LIBRARY_PATH="/usr/local/cuda/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
+fi
+if [[ -d /usr/local/cuda/bin ]]; then
+  export PATH="/usr/local/cuda/bin:${PATH}"
+fi
+
 activate_colide_env
 assert_gpu "${COLIDE_GPU_LABEL}" "${COLIDE_GPU_NAME_RE}" "${COLIDE_GPU_CC}" "${COLIDE_GPU_MIN_MEM}"
 
