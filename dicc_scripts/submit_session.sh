@@ -121,12 +121,17 @@ export COLIDE_PYTORCH_INNER="${COLIDE_PYTORCH_INNER:-1000}"
   || die "Checkpoint missing: ${COLIDE_ROOT}/${COLIDE_CHECKPOINT}"
 
 # Print resource flags one-per-line (portable; no namerefs / assoc arrays).
+# Optional args override globals for this call:
+#   sbatch_resource_flags [partition] [gres] [constraint]
 sbatch_resource_flags() {
-  [[ -n "${SBATCH_PARTITION}" ]] && printf '%s\n' "--partition=${SBATCH_PARTITION}"
+  local part="${1:-${SBATCH_PARTITION}}"
+  local gres="${2:-${SBATCH_GRES}}"
+  local constraint="${3:-${SBATCH_CONSTRAINT}}"
+  [[ -n "${part}" ]] && printf '%s\n' "--partition=${part}"
   [[ -n "${SBATCH_ACCOUNT}" ]] && printf '%s\n' "--account=${SBATCH_ACCOUNT}"
   [[ -n "${SBATCH_QOS}" ]] && printf '%s\n' "--qos=${SBATCH_QOS}"
-  [[ -n "${SBATCH_GRES}" ]] && printf '%s\n' "--gres=${SBATCH_GRES}"
-  [[ -n "${SBATCH_CONSTRAINT}" ]] && printf '%s\n' "--constraint=${SBATCH_CONSTRAINT}"
+  [[ -n "${gres}" ]] && printf '%s\n' "--gres=${gres}"
+  [[ -n "${constraint}" ]] && printf '%s\n' "--constraint=${constraint}"
   [[ -n "${SBATCH_NODELIST}" ]] && printf '%s\n' "--nodelist=${SBATCH_NODELIST}"
   [[ -n "${SBATCH_TIME}" ]] && printf '%s\n' "--time=${SBATCH_TIME}"
   [[ -n "${SBATCH_CPUS}" ]] && printf '%s\n' "--cpus-per-task=${SBATCH_CPUS}"
@@ -175,6 +180,15 @@ submit_profile() {
   export_list+=",COLIDE_GPU_MIN_MEM=${COLIDE_GPU_MIN_MEM}"
   export_list+=",COLIDE_KERNELS_SUBDIR=${COLIDE_KERNELS_SUBDIR}"
 
+  # Profile may override partition/gres/constraint (needed when V100/A100 are
+  # different queues, e.g. Rostam cuda-V100 vs cuda-A100).
+  local use_part="${COLIDE_PROFILE_PARTITION:-}"
+  local use_gres="${COLIDE_PROFILE_GRES:-}"
+  local use_constraint="${COLIDE_PROFILE_CONSTRAINT:-}"
+  [[ -n "${use_part}" ]] || use_part="${SBATCH_PARTITION}"
+  [[ -n "${use_gres}" ]] || use_gres="${SBATCH_GRES}"
+  [[ -n "${use_constraint}" ]] || use_constraint="${SBATCH_CONSTRAINT}"
+
   local -a cmd=(
     sbatch
     --parsable
@@ -184,10 +198,9 @@ submit_profile() {
     --output="${LOG_DIR}/${profile_name}_%j.out"
     --error="${LOG_DIR}/${profile_name}_%j.err"
   )
-  # shellcheck disable=SC2207
   while IFS= read -r flag; do
     [[ -n "${flag}" ]] && cmd+=("${flag}")
-  done < <(sbatch_resource_flags)
+  done < <(sbatch_resource_flags "${use_part}" "${use_gres}" "${use_constraint}")
   if [[ ${#dep_args[@]} -gt 0 ]]; then
     cmd+=("${dep_args[@]}")
   fi

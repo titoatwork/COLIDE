@@ -132,7 +132,11 @@ if ! command -v nvcc >/dev/null 2>&1; then
     module load "${m}" 2>/dev/null && break || true
   done
 fi
-command -v nvcc >/dev/null 2>&1 || die "nvcc not found. Load a CUDA toolkit module (module avail | grep -i cuda)."
+if ! command -v nvcc >/dev/null 2>&1; then
+  log "HINT: try:  module spider cuda   OR   module avail 2>&1 | grep -iE 'cuda|nvhpc|cudatoolkit'"
+  log "HINT: then: module load <name> && which nvcc"
+  die "nvcc not found. Load a CUDA toolkit module on this login node before setup."
+fi
 log "nvcc: $(command -v nvcc)"
 mkdir -p "${COLIDE_ROOT}/benchmarks/results/dicc"
 nvcc --version | tee "${COLIDE_ROOT}/benchmarks/results/dicc/setup_nvcc_version.txt" >/dev/null || true
