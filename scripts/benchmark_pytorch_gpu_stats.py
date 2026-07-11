@@ -95,6 +95,24 @@ def run_worker(checkpoint: str, inner: int, warmup: int, seed: int) -> None:
     torch.manual_seed(seed)
     np.random.seed(seed)
 
+    # Torch 2.13+cu130 cuDNN refuses SM < 7.5 (V100 is 7.0). Prefer reinstalling
+    # a cu121 wheel; as a last resort disable cuDNN so benches still complete.
+    cudnn_mode = "enabled"
+    props = torch.cuda.get_device_properties(0)
+    sm75_or_newer = (props.major > 7) or (props.major == 7 and props.minor >= 5)
+    if not sm75_or_newer:
+        # Proactively avoid the hard crash path on V100 with modern cuDNN.
+        try:
+            torch.backends.cudnn.enabled = True
+            x = torch.randn(1, 8, 16, device="cuda")
+            w = torch.randn(8, 8, 3, device="cuda")
+            with torch.no_grad():
+                _ = torch.nn.functional.conv1d(x, w, padding=1)
+        except RuntimeError as exc:
+            msg = str(exc)
+            torch.backends.cudnn.enabled = False
+            cudnn_mode = f"disabled_for_sm_{props.major}.{props.minor}:{msg[:100]}"
+
     with open(PROJECT_ROOT / "config" / "config.yaml") as f:
         config = yaml.safe_load(f)
 
@@ -102,7 +120,11 @@ def run_worker(checkpoint: str, inner: int, warmup: int, seed: int) -> None:
     state = torch.load(checkpoint, map_location="cpu", weights_only=True)
     model.load_state_dict(state)
     model.eval()
-    model_gpu = model.cuda()
+    try:
+        model_gpu = model.cuda()
+    except RuntimeError as exc:
+        print(json.dumps({"error": str(exc)}))
+        return
 
     class Block1(torch.nn.Module):
         def __init__(self, m):
@@ -197,6 +219,9 @@ def run_worker(checkpoint: str, inner: int, warmup: int, seed: int) -> None:
         "inner_forwards": inner,
         "warmup": warmup,
         "seed": seed,
+        "torch_version": torch.__version__,
+        "cudnn_enabled": bool(torch.backends.cudnn.enabled),
+        "cudnn_mode": cudnn_mode,
         "full_model_us": time_module(model_gpu, inp_full, inner, warmup),
         "block1_us": time_module(b1, inp_b1, inner, warmup),
         "block2_us": time_module(b2, inp_b2, inner, warmup),
