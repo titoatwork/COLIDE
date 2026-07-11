@@ -66,11 +66,16 @@ V100S is fastest because BiLSTM sequential recurrence is clock-speed-bound, not 
 \* Same comparison as "3.04x–3.78x over eager PyTorch" above (20-trial, statistically validated) — the chained
 custom-CUDA pipeline and the eager-PyTorch full-model forward pass are the same computation on the same
 GPU, so this is not an independent number.
-\*\* No same-hardware PyTorch GPU baseline was captured during the DICC V100S/A100 runs (only the custom
-CUDA kernels were benchmarked there — see `dicc_v100_summary.txt` / `dicc_a100_summary.txt`). Reusing the
-RTX 3050 PyTorch baseline to compute a ratio for different hardware would not be a valid same-machine
-comparison, so no ratio is reported here pending a real PyTorch-GPU benchmark run on those machines
-(tracked for the Phase 3 re-verification pass).
+\*\* No same-hardware PyTorch GPU baseline was captured during the *legacy* DICC V100S/A100 runs (only the
+custom CUDA kernels were benchmarked there — see `dicc_v100_summary.txt` / `dicc_a100_summary.txt`).
+Reusing the RTX 3050 PyTorch baseline to compute a ratio for different hardware would not be a valid
+same-machine comparison, so no ratio is reported here yet. The hardened Phase 3 campaign
+(`dicc_scripts/submit_session.sh` + `scripts/benchmark_pytorch_gpu_stats.py`, branch `final-polish`)
+collects same-hardware PyTorch baselines under isolated
+`benchmarks/results/dicc/<campaign>/<gpu>/<date>_job<id>/` dirs; replace this footnote only after
+accepted Day-1/Day-2 compare artifacts exist. **Do not** publish a full-pipeline CUDA/PyTorch speedup
+from those runs until architecture parity is fixed (V3 attention/LayerNorm/GAP are not in the CUDA
+path; `fused_pipeline.cu` skips Block 3) — per-block ratios (esp. Block 3) are the valid comparisons.
 
 ### Per-Block Performance (RTX 3050)
 
@@ -141,10 +146,11 @@ that day — despite each individual session's own internal CV looking tight (6.
 This means within-session CV understates true measurement uncertainty on this WSL2 dev box: there is real
 session-to-session drift (thermal state / background load / WSL2 scheduler) that one n=100 run, however
 tight its own std, does not capture. Rather than silently picking one session's numbers, this README
-reports both as an explicit range. **Recommendation for the DICC re-run (Phase 3):** repeat the same
-n-trial harness across at least two separate `sbatch` submissions on different days and check for the
-same drift there — if DICC (native Linux, no WSL2 passthrough) is stable across sessions, that's good
-evidence this variance is a WSL2-specific artifact rather than a fundamental limit of the methodology.
+reports both as an explicit range. **Phase 3 DICC re-run (tooling ready on `final-polish`):** use
+`dicc_scripts/submit_session.sh` for Day 1 and Day 2 on the **same git SHA and same compiled binaries**,
+then `scripts/compare_dicc_sessions.py` (rejects provenance mismatches; requires two distinct dates and
+`SUCCESS` markers). If DICC session means are stable, describe that as *consistent with WSL2-specific
+drift* — not as proof that WSL2 is the sole cause. Operator guide: `dicc_scripts/README.md`.
 
 ### Detection Accuracy — BoT-IoT (733,705 test samples)
 

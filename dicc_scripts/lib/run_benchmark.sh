@@ -74,7 +74,7 @@ write_environment "${RUN_DIR}"
 copy_kernel_checksums "${RUN_DIR}" "${COLIDE_KERNELS_DIR}"
 
 # Optional secondary compute-cap check via torch (catches driver/tooling mismatch).
-python - <<PY
+python - <<'PY'
 import os, sys
 try:
     import torch
@@ -86,11 +86,11 @@ if not torch.cuda.is_available():
     sys.exit(1)
 p = torch.cuda.get_device_properties(0)
 got = f"{p.major}.{p.minor}"
-expect = os.environ["COLIDE_GPU_CC"]
-if got != expect:
+expect = os.environ.get("COLIDE_GPU_CC", "any")
+if expect not in ("0.0", "any", "") and got != expect:
     print(f"ERROR: torch compute capability {got} != expected {expect}", file=sys.stderr)
     sys.exit(1)
-print(f"torch CC OK: {got} device={torch.cuda.get_device_name(0)}")
+print(f"torch CC OK: {got} device={torch.cuda.get_device_name(0)} (expect={expect})")
 PY
 
 log "=== Single-run CUDA kernel smoke (must pass validation) ==="

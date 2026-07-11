@@ -1,97 +1,92 @@
-# DICC cluster scripts
+# Cluster campaign scripts (portable SLURM)
 
-Hardened Slurm workflow for multi-day V100 / A100 latency campaigns.
+Hardened multi-day GPU latency campaigns. **No hardcoded site paths** (`/scr/...`),
+**no hardcoded hostnames** (`gpu05`/`gpu06`). Works on DICC, LSU Rostam, or any
+SLURM cluster with a writable checkout and `nvcc` + conda/modules.
 
-## Why this layout
+## Quick start (any cluster)
 
-Previous scripts mixed relative log paths, shared fixed JSON filenames, soft
-conda activation, and non-strict CUDA stats. Concurrent V100/A100 jobs could
-overwrite each other, and failed commands could still print “Complete.”
+```bash
+# You are already inside a COLIDE checkout (clone or rsync — any path is fine)
+cd /path/to/COLIDE
+export COLIDE_ROOT="$PWD"   # optional; scripts default to this tree
 
-This tree isolates every run, fails closed, and separates submission from
-measurement.
+# 1) Setup once on a login/build node (no GPU required)
+bash dicc_scripts/01_setup.sh
+# single-arch example (only V100 kernels):
+# bash dicc_scripts/01_setup.sh --targets sm_70:v100
+
+# 2) Day 1 submit — set YOUR site's partition/account if required
+bash dicc_scripts/submit_session.sh \
+  --targets v100,a100 \
+  --campaign core \
+  --date "$(date -u +%Y%m%d)" \
+  --partition YOUR_PARTITION \    # omit if default partition is fine
+  --account YOUR_ACCOUNT \        # omit if not required
+  --gres gpu:1
+
+# 3) Day 2 (next UTC day): SAME commit, do NOT re-run 01_setup.sh
+bash dicc_scripts/submit_session.sh \
+  --targets v100,a100 \
+  --campaign core \
+  --date "$(date -u +%Y%m%d)" \
+  --partition YOUR_PARTITION \
+  --account YOUR_ACCOUNT
+
+# 4) Compare after both days have SUCCESS markers
+module load miniconda 2>/dev/null || true
+source "$(conda info --base)/etc/profile.d/conda.sh"
+conda activate colide
+export PYTHONPATH=.
+python scripts/compare_dicc_sessions.py --gpu v100s --date-a D1 --date-b D2
+python scripts/compare_dicc_sessions.py --gpu a100  --date-a D1 --date-b D2
+```
+
+Discover site knobs:
+
+```bash
+sinfo -o "%P %G %l %D" | head
+module avail 2>&1 | head
+```
+
+Optional: `cp dicc_scripts/site.env.example dicc_scripts/site.env` and edit defaults.
 
 ## Layout
 
 | Path | Role |
 |------|------|
-| `01_setup.sh` | Clone/ff-only pull, conda env, atomic V100/A100 kernel compile + SHA256 |
-| `02_benchmark_v100.sh` | Thin SBATCH resource wrapper (gpu05 / V100) |
-| `03_benchmark_a100.sh` | Thin SBATCH resource wrapper (gpu06 / A100) |
-| `04_nsight_profile.sh` | Opt-in Nsight on A100 (prefer `--with-nsight`) |
-| `05_run_all.sh` | Back-compat → `submit_session.sh` |
-| `submit_session.sh` | Preferred entry: absolute logs, `--chdir`, session manifest |
-| `lib/common.sh` | Conda init, GPU asserts, run-dir / manifest helpers |
-| `lib/run_benchmark.sh` | Shared measurement body (CUDA strict stats + PyTorch harness) |
-| `validate/local_validate.sh` | Offline suite (bash -n, shellcheck, mocks) |
+| `01_setup.sh` | Repo-local setup: conda, atomic kernel compile + SHA256 |
+| `submit_session.sh` | Preferred entry: absolute logs, `--chdir`, multi-profile |
+| `job_benchmark.sh` | Generic SLURM body (no site hostnames) |
+| `profiles/*.env` | GPU identity + kernel subdir (v100, a100, …) |
+| `site.env.example` | Partition/account/gres template |
+| `02`/`03` | Back-compat wrappers → same runner |
+| `lib/run_benchmark.sh` | Measurement body |
+| `validate/local_validate.sh` | Offline suite |
 
-## Cluster usage
-
-```bash
-# On login node (no GPU required for compile)
-bash dicc_scripts/01_setup.sh
-export COLIDE_ROOT=/scr/$USER/colide
-
-# Day 1 (UTC date label defaults to today)
-bash dicc_scripts/submit_session.sh --campaign core
-# Optional Nsight after A100 succeeds:
-# bash dicc_scripts/submit_session.sh --campaign core --with-nsight
-
-# Day 2 — same commit and binaries, new date
-bash dicc_scripts/submit_session.sh --campaign core --date YYYYMMDD
-```
-
-Results land under:
+## Result isolation
 
 ```text
 benchmarks/results/dicc/<campaign>/<gpu>/<date>_job<id>/
-  manifest.json
-  environment.txt
-  kernel_SHA256SUMS
-  cuda_kernel_stats.json
-  pytorch_gpu_stats.json
-  raw/
-  logs/
-  exit_status
-  SUCCESS          # only on clean exit
+  manifest.json  environment.txt  kernel_SHA256SUMS
+  cuda_kernel_stats.json  pytorch_gpu_stats.json
+  raw/  logs/  exit_status  SUCCESS
 ```
 
-Never write legacy fixed names like `pipeline_benchmark.json` or
-`statistical_confidence.json` from this path.
+## Adding a new GPU profile
 
-## Cross-day compare
+1. Compile: `bash dicc_scripts/01_setup.sh --targets sm_86:rtx`
+2. Create `profiles/rtx.env` (label, name regex, CC, min mem, kernels subdir).
+3. Submit: `bash dicc_scripts/submit_session.sh --targets rtx --constraint …`
 
-```bash
-cd $COLIDE_ROOT
-PYTHONPATH=. python scripts/compare_dicc_sessions.py \
-  --gpu v100s --date-a YYYYMMDD --date-b YYYYMMDD
-PYTHONPATH=. python scripts/compare_dicc_sessions.py \
-  --gpu a100  --date-a YYYYMMDD --date-b YYYYMMDD
-```
+## Comparability
 
-Rejected if dates match, `SUCCESS` missing, or git SHA / kernel checksums /
-checkpoint / protocol / GPU identity differ.
+- Full CUDA-vs-PyTorch pipeline speedup is **not valid** until architecture parity.
+- Block 3 is the preferred head-to-head.
+- Stable multi-day means: “consistent with WSL2-specific drift,” not proof.
 
-Stable DICC means are described as **consistent with WSL2-specific drift**, not
-as proof. Update README/paper numbers only from accepted cross-day artifacts.
-
-## Comparability (read this)
-
-- **Full CUDA vs PyTorch pipeline speedup is not valid** until architecture
-  parity: V3 PyTorch runs attention + LayerNorm + global average pool; CUDA
-  implements none of those; `fused_pipeline.cu` skips Block 3.
-- **Block 3** (BiLSTM + last timestep) is a valid head-to-head.
-- Per-block 1/2/4 comparisons remain usable; full-model PyTorch latency is
-  still collected for absolute numbers.
-
-## Local validation (no cluster)
+## Local validation
 
 ```bash
 bash dicc_scripts/validate/local_validate.sh
 ```
-
-## Related Python entry points
-
-- `scripts/benchmark_cuda_kernels_stats.py` — default `n=100`, `--strict`, raw samples, CIs
-- `scripts/benchmark_pytorch_gpu_stats.py` — 20×1000, production checkpoint, comparability flags
-- `scripts/compare_dicc_sessions.py` — cross-day gate + Welch / Cohen’s d

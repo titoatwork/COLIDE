@@ -178,3 +178,26 @@ The BoT-IoT 10-best features are pre-aggregated flow statistics. Temporal window
 
 ### Phase 1 Readiness
 All prerequisites for CUDA kernel development are met: trained model, exported weights, verified accuracy, defined benchmarking methodology.
+
+---
+
+## 2026-07-11 — Session 4 (DICC campaign hardening)
+
+### Completed
+- [x] Hardened DICC Slurm workflow: `01_setup.sh`, thin `02`/`03` wrappers, `lib/run_benchmark.sh`, `submit_session.sh`
+- [x] Isolated results under `benchmarks/results/dicc/<campaign>/<gpu>/<date>_job<id>/` with SUCCESS/manifest/checksums
+- [x] Strengthened `scripts/benchmark_cuda_kernels_stats.py` (n=100 default, `--strict`, raw samples, CIs)
+- [x] Added `scripts/benchmark_pytorch_gpu_stats.py` (20×1000, production checkpoint, comparability flags)
+- [x] Added `scripts/compare_dicc_sessions.py` (cross-day provenance gate + Welch / Cohen’s d)
+- [x] Local validation suite `dicc_scripts/validate/local_validate.sh` — 28/28 pass
+- [x] Pushed tooling on `final-polish` (`ba6e0cb`); updated `CLAUDE.md`, `AGENTS.md`, `HANDOFF.md`, `environment.md`, README Phase-3 notes
+
+### Not done (blocked on cluster access)
+- [ ] Day 1 + Day 2 DICC runs (same commit + binaries)
+- [ ] Cross-day compare acceptance
+- [ ] README/paper number updates from accepted artifacts only
+
+### Key decisions
+- Full CUDA-vs-PyTorch pipeline speedup is invalid until architecture parity (attention/LN/GAP + fused_pipeline Block-3 gap)
+- Prefer per-block comparisons, especially Block 3
+- Stable DICC → “consistent with WSL2-specific drift”, not proof
