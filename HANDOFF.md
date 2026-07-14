@@ -1,73 +1,145 @@
 # COLIDE — Session Handoff
 
-**Last session:** 2026-07-14 (branch unify — `final-polish` → `master`). **Do not
-re-read this whole file by default.** Open with: (1) this header + roadmap, (2) NEXT ACTION,
-(3) `CLAUDE.md` + `dicc_scripts/README.md`, (4) `verify_claims` only when editing numbers.
+**PAUSED 2026-07-14 (user request).** Stop operational rushing. User has another job; DICC
+execution deferred. **Next dedicated chat = deep design / analysis plan** for everything done
+so far (not a code sprint). Resume cluster work only after that plan is approved.
 
-**Git:** single line of work on **`master`**. `final-polish` tip (run_campaign, V100/A100
-fixes, Rostam Day 1 notes) is merged into master. Prefer **`master` only** going forward.
+**Last operational work:** branch unify `final-polish` → `master` on GitHub (`fc45dd6`);
+partial UM DICC path discovery with user (India latency); **no** successful sync of DICC
+checkout to current `master` yet.
 
-**State:** Local S4–S5/S7 done; S6/S8 skipped; DICC tooling complete including
-`run_campaign.sh`. **Rostam Day 1 already SUCCESS** (provisional means below). **Next = Day 2
-+ compare** (then Session 10 ingest in a **new chat**).
+**Open with (any future chat):** (1) this header, (2) roadmap, (3) “Paused checkpoint” below,
+(4) `CLAUDE.md` + `dicc_scripts/README.md` only if resuming cluster.
 
 ---
 
-## Session roadmap (authoritative)
+## Paused checkpoint (authoritative — 2026-07-14)
 
-| Work | Goal | Status |
-|------|------|--------|
-| Local S4 | Baseline verify + multi-session roadmap | **CLOSED** |
-| DICC tooling (final-polish) | Hardened campaign + `run_campaign.sh` | **MERGED INTO MASTER** |
-| Local S5 | Ensemble fix + RF strengthen | **CLOSED** (keep 0.9790 / RF 0.9864) |
-| Local S6 | Optional balanced-RF KD | **SKIPPED** |
-| Local S7 | Threats-to-validity + numerical fidelity | **CLOSED** |
-| Local S8 | Batch-size note | **SKIPPED** |
-| Local S9 simple runbook | `docs/DICC_RUNBOOK.md` | **SUPERSEDED** by `dicc_scripts/README.md` |
-| Rostam Day 1 | V100+A100 SUCCESS runs | **DONE** (provisional; not paper-final) |
-| **USER / cluster now** | **Day 2 + compare** | **CURRENT** |
-| S10 | Ingest compare → README/claims | After Day 2 (new chat) |
-| S11 | Manuscript spine | Pending |
+### Laptop / GitHub
+| Item | Value |
+|------|--------|
+| Canonical branch | **`master` only** |
+| Laptop + `origin/master` | In sync @ **`fc45dd6`** (`merge: final-polish into master`) |
+| Production model | `model/best_model_botiot_twostage.pth` md5 **`80a90f7cc210276300eaa90173a5a385`**, macro-F1 **0.9790** |
+| Published RF bar | **0.9864** (`rf_baseline_processed.json`) — do not silently raise to 0.9885 |
+| `verify_claims.py` | Green at last local checks |
+| `final-polish` remote | Fully contained in master; optional to delete later |
+
+### What was completed (local sessions, this arc)
+| Work | Status |
+|------|--------|
+| S4 baseline + multi-session roadmap + one-chat rule | **CLOSED** |
+| S5 ensemble Val-F1 fix + RF teacher strengthen | **CLOSED** (champion kept) |
+| S6 balanced-RF KD | **SKIPPED** (low EV) |
+| S7 threats-to-validity + numerical fidelity table | **CLOSED** |
+| S8 batch-size note | **SKIPPED** |
+| S9 simple DICC_RUNBOOK | **SUPERSEDED** by `dicc_scripts/README.md` + `run_campaign.sh` |
+| Branch unify (final-polish → master) | **DONE / pushed** |
+| Rostam Day 1 | **Trial only** (tooling); **not** paper-official UM campaign |
+| Historical UM DICC (2026-06-21) | **Exists** as `benchmarks/results/dicc_{v100,a100}_summary.txt` (single-shot; no multi-day / no same-GPU PyTorch) |
+
+### UM DICC discovery (in progress — paused mid-way)
+| Item | Finding |
+|------|---------|
+| Login | `login01.dicc.um.edu.my` |
+| User | `ibteshamulhaque` |
+| Home | `/home/user/ibteshamulhaque` |
+| **Actual clone path** | **`/home/user/ibteshamulhaque/colide`** (NOT `/scr/...`) |
+| Remote | `https://github.com/titoatwork/COLIDE.git` |
+| DICC git state when paused | `master` @ `956667f`, **ahead 8 / behind 32** vs origin; **no** `run_campaign.sh` |
+| Backup branch on DICC | `backup-dicc-before-sync-20260714` @ `956667f` |
+| Blocker | **`git fetch` from DICC freezes** (network path India→UM→GitHub). Do **not** rely on fetch-on-DICC. |
+| Recommended sync method | **Laptop tarball/scp** of current `master` → DICC (see below); leave old tree as `colide-old-diverged-*` |
+| Official campaign site | **UM DICC** (not Rostam) |
+| Paper multi-day campaign | **Not started** on current hardened stack at UM |
+
+### Science caveats (do not forget in design plan)
+1. **Full-pipeline Custom CUDA vs full PyTorch V3 speedup is not valid** until architecture parity (attention / LayerNorm / GAP missing on CUDA path; `fused_pipeline` issues). Prefer **Block 3** head-to-head.
+2. WSL2 RTX 3050 has real **session-to-session** latency drift → ranges, not lucky points.
+3. RF still beats CNN-BiLSTM on BoT-IoT hard labels (0.9864 vs 0.9790); systems story is the contribution.
+4. June 2026 DICC summaries are **legacy single-run**; new campaign needs Day1+Day2 + compare + PyTorch-on-same-GPU.
+
+### Process lesson (user-confirmed)
+Work was rushed across too many HANDOFF “sessions” in one heavy chat. Going forward:
+- **Slow down.** Prefer analysis and design before more execution.
+- **One focused chat per major work package.**
+- Next package is **design/plan**, not “run more scripts.”
+
+---
+
+## NEXT — ordered resume plan (do not skip ahead)
+
+### 1) NEW CHAT — Design & analysis plan (FIRST when user returns)
+**Title prompt for user to paste:**
+```text
+Continue COLIDE — DESIGN PLAN session only (no cluster runs, no training).
+Read HANDOFF.md "Paused checkpoint" + CLAUDE.md + README abstract/limitations.
+Deeply analyze everything done so far. Produce a well-researched design/plan:
+what is solid, what is weak, what is invalid (e.g. full-pipeline parity),
+what must be re-run on UM DICC, manuscript path, risks, ordered work packages.
+Do not implement code or start DICC jobs in this session.
+```
+**Deliverable:** written plan (in repo doc e.g. `docs/DESIGN_PLAN.md` or HANDOFF section) for user approval.
+
+### 2) After plan approved — UM DICC code sync (when user has time)
+```text
+# On DICC: park old diverged clone
+cd /home/user/ibteshamulhaque
+mv colide colide-old-diverged-20260714   # if not already moved
+
+# On laptop (has clean master): pack and scp — avoid git fetch on DICC
+cd /home/titoisalive
+tar czf colide-master-for-dicc.tar.gz \
+  --exclude='colide/.venv' --exclude='colide/**/__pycache__' \
+  -C /home/titoisalive colide
+scp colide-master-for-dicc.tar.gz \
+  ibteshamulhaque@login01.dicc.um.edu.my:/home/user/ibteshamulhaque/
+
+# On DICC: unpack
+cd /home/user/ibteshamulhaque && tar xzf colide-master-for-dicc.tar.gz
+cd colide && ls dicc_scripts/run_campaign.sh && git log -1 --oneline
+```
+
+### 3) UM DICC official campaign (after sync)
+- Day 1: `bash dicc_scripts/run_campaign.sh`
+- Day 2 (new calendar day, same tree/SHA): `bash dicc_scripts/run_campaign.sh --day 2`
+- Compare: `scripts/compare_dicc_sessions.py`
+- Operator guide: `dicc_scripts/README.md`
+- Copy `benchmarks/results/dicc/` home via scp (results usually gitignored)
+
+### 4) Session 10 — ingest (new chat, after artifacts)
+Update README cross-hardware / claims only from accepted compare outputs.
+
+### 5) Session 11 — manuscript spine (new chat)
+
+---
+
+## Session roadmap (status at pause)
+
+| Work | Status |
+|------|--------|
+| Local S4–S5, S7 | **CLOSED** |
+| S6, S8 | **SKIPPED** |
+| DICC tooling on master | **DONE** |
+| Rostam | **Trial only** |
+| UM DICC path discovery | **PARTIAL** (path known; sync blocked by network) |
+| UM DICC multi-day campaign (hardened) | **NOT STARTED** |
+| Design plan deep-dive | **NEXT (new chat)** |
+| S10 ingest / S11 manuscript | **Blocked on plan + DICC** |
 
 ### Chat ↔ project session (HARD RULE)
 
-1. One HANDOFF work package ≈ one chat (or explicit user “new session” go).
-2. Close → document in this file → stop or only continue if user authorized multi-step.
-3. Prefer correctness over speed. Context does not reset on HANDOFF CLOSE — use a new chat when heavy.
-4. Agent may open a logical new session when user grants freedom, but **must** update this file.
+1. One major package ≈ one chat.
+2. Document in this file before stopping.
+3. **Correctness and design over speed.**
+4. Context does not reset when HANDOFF says CLOSED — open a **new chat** for the design plan.
 
 ### Rules (always)
 
 - `verify_claims.py` before/after claim edits
 - Backup `best_model_botiot_twostage.pth` before `train_twostage.py`
 - Never use stale `best_model.pth` as production
-- Push when cluster/sync needs it
-- **Do not publish full-pipeline Custom-CUDA vs PyTorch speedups** until architecture parity
-  (V3 attention/LN/GAP vs CUDA path). Prefer **Block 3** head-to-head
-
----
-
-## NEXT ACTION — Day 2 + compare (not Session 10 yet)
-
-**Canonical operator guide:** `dicc_scripts/README.md`  
-**Preferred entry:**
-
-```bash
-cd /path/to/COLIDE
-git checkout master && git pull --ff-only
-# Day 1 (if not already done on this checkout):
-bash dicc_scripts/run_campaign.sh
-# Day 2 (later; same SHA; do not reinstall/recompile unless forced):
-bash dicc_scripts/run_campaign.sh --day 2
-# Or one-shot where site allows:
-# bash dicc_scripts/run_campaign.sh --full
-
-find benchmarks/results/dicc -name SUCCESS
-PYTHONPATH=. python scripts/compare_dicc_sessions.py --gpu v100s --date-a D1 --date-b D2
-PYTHONPATH=. python scripts/compare_dicc_sessions.py --gpu a100  --date-a D1 --date-b D2
-```
-
-Then **new chat:** “Session 10 only — DICC compare artifacts ready.”
+- Prefer Block 3 over invalid full-pipeline CUDA vs PyTorch claims
 
 ---
 
@@ -76,7 +148,7 @@ Then **new chat:** “Session 10 only — DICC compare artifacts ready.”
 Merged `origin/final-polish` into `master` so GitHub has one tip with:
 - Grok local sessions (roadmap, ensemble/RF, fidelity, one-chat rule)
 - `run_campaign.sh`, V100 cuDNN / A100 fp16 retries, Rostam Day 1 documentation
-Production checkpoint unchanged (0.9790). Paper tables unchanged until Day 2 + compare.
+Production checkpoint unchanged (0.9790). Paper tables unchanged until UM multi-day campaign.
 
 ---
 
