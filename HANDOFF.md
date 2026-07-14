@@ -1,12 +1,11 @@
 # COLIDE — Session Handoff
 
-**Last session:** 2026-07-14 (Grok, session 7, CLOSED). **Do not re-read this whole file by
-default** — open with (1) this header + **Session N progress**, (2) **Session roadmap**, (3)
-**Session N+1 starting point**, (4) `CLAUDE.md`. Dive into older session blocks only when
-debugging a specific claim.
+**Last session:** 2026-07-14 (Grok, session 9, CLOSED — agent side). **Do not re-read this whole
+file by default** — open with (1) this header + **Session N progress**, (2) **Session roadmap**,
+(3) **Session N+1 starting point**, (4) `CLAUDE.md`.
 
-**Session 6 SKIPPED** (user granted autonomy; low EV for balanced-RF KD vs manuscript assets).
-**Session 7** added threats-to-validity + numerical fidelity table; production 0.9790 untouched.
+**S6 skipped, S7 docs/fidelity done, S8 skipped, S9 runbook written.** Blocked on **user** for
+multi-day DICC `sbatch` + `scp` before Session 10.
 
 ---
 
@@ -22,9 +21,9 @@ the in-repo map so any agent can continue without chat memory.
 | **5** | Ensemble diagnostic fix + stronger RF teacher experiment | **CLOSED 2026-07-14** |
 | **6** | Optional KD with balanced RF teacher | **SKIPPED 2026-07-14** (low EV) |
 | **7** | Phase 4: threats-to-validity + numerical fidelity table | **CLOSED 2026-07-14** |
-| **8** | Optional batch-size / TensorRT fairness note | **NEXT (skippable)** |
-| **9** | DICC runbook + user multi-day cluster submit | pending (user for sbatch) |
-| **10** | Ingest DICC JSON → cross-hardware README/claims | pending (needs S9 artifacts) |
+| **8** | Optional batch-size / TensorRT fairness note | **SKIPPED 2026-07-14** |
+| **9** | DICC runbook (agent) + multi-day cluster submit (user) | **AGENT DONE; USER PENDING** |
+| **10** | Ingest DICC JSON → cross-hardware README/claims | **NEXT** (needs user artifacts) |
 | **11** | Manuscript spine from `docs/paper_text_blocks.md` | pending |
 
 **Rules:** one primary goal per session; run `verify_claims.py` at open and after claim edits;
@@ -59,17 +58,34 @@ weights). Do not conflate the two in manuscript prose — §16 labels them A and
 
 ---
 
-## Session 8 starting point
+## Session 9 progress (2026-07-14) — agent portion CLOSED
 
-- **Brief pack:** this section + roadmap + `CLAUDE.md`.
-- **Choose at open:**
-  - **8A (optional):** light batch-size latency note (1/32/128) eager vs custom CUDA; document
-    that headline remains batch=1. Skip if GPU time is better spent on DICC prep.
-  - **8B (recommended next scientific gap):** treat S8 as skip → **Session 9** DICC runbook
-    (`docs/DICC_RUNBOOK.md`) so user can multi-day `sbatch`.
-- **Open check:** `verify_claims.py`; production md5 `80a90f7…`.
-- **Non-goals:** do not re-open KD unless user explicitly asks; do not invent V100/A100 PyTorch
-  ratios without DICC JSON.
+**Goal:** Foolproof multi-day DICC execution instructions; no fabricated cluster numbers.
+**Done:** `docs/DICC_RUNBOOK.md` — Day 0 setup, Day 1/2 `sbatch`, artifact patterns, `scp`
+examples, failure checklist, Session 10 handoff criteria.
+**User still must:** push latest `master` if cluster clone is stale; run setup; submit V100+A100
+on **two different days**; copy tagged JSON/logs into laptop `benchmarks/results/`.
+**Not done by agent:** actual `sbatch` (no cluster access from this environment).
+
+---
+
+## Session 10 starting point
+
+- **Blocked until** laptop `benchmarks/results/` contains ≥2 day-tags of
+  `cuda_kernel_stats_v100s_*.json`, `cuda_kernel_stats_a100_*.json`, and tagged
+  `pipeline_benchmark_*` for each GPU (see `docs/DICC_RUNBOOK.md` §4).
+- When unblocked: compute means/ranges; same-hardware Custom CUDA vs PyTorch ratios; update
+  README cross-hardware table; `verify_claims.py` manifest; threats-to-validity DICC stability
+  sentence; HANDOFF item #3 RESOLVED or partial.
+- **Open check:** `verify_claims.py`; do not invent ratios if files missing.
+- **Optional while waiting:** Session 11 partial manuscript spine with hardware section marked
+  “DICC pending” — only if user wants prose progress without cluster data.
+
+---
+
+## Session 8 starting point (SUPERSEDED — SKIPPED)
+
+Skipped in favor of DICC runbook (Session 9). Batch-size sweep remains optional future work.
 
 ---
 
