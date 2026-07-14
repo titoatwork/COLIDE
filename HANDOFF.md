@@ -1,218 +1,118 @@
 # COLIDE — Session Handoff
 
-**Last session:** 2026-07-14 (Grok, session 9, CLOSED — agent side). **Do not re-read this whole
-file by default** — open with (1) this header + **Session N progress**, (2) **Session roadmap**,
-(3) **Session N+1 starting point**, (4) `CLAUDE.md`.
+**Last session:** 2026-07-14 merge (local Grok S4–S9 + origin DICC hardening). **Do not
+re-read this whole file by default** — open with (1) this header + roadmap, (2) **next action**,
+(3) `CLAUDE.md` + `dicc_scripts/README.md` for cluster, (4) `verify_claims` only when editing numbers.
 
-**S6 skipped, S7 docs/fidelity done, S8 skipped, S9 runbook written.** Blocked on **user** for
-multi-day DICC `sbatch` + `scp` before Session 10.
+**Numbering note:** Origin’s “Session 4 (2026-07-11)” was **DICC tooling only**. Local Grok
+“Sessions 4–9 (2026-07-14)” were baseline/RF/fidelity/runbook. Both are real; the **roadmap table
+below is authoritative for what is done vs next.**
 
----
-
-## Session roadmap (Sessions 4–11)
-
-Work **one session at a time**. Close each session by updating this file (progress + next
-starting point). Full operating protocol lives in the multi-session master plan; this table is
-the in-repo map so any agent can continue without chat memory.
-
-| Session | Goal | Status |
-|---------|------|--------|
-| **4** | Baseline `verify_claims` + this roadmap / HANDOFF scaffold | **CLOSED 2026-07-14** |
-| **5** | Ensemble diagnostic fix + stronger RF teacher experiment | **CLOSED 2026-07-14** |
-| **6** | Optional KD with balanced RF teacher | **SKIPPED 2026-07-14** (low EV) |
-| **7** | Phase 4: threats-to-validity + numerical fidelity table | **CLOSED 2026-07-14** |
-| **8** | Optional batch-size / TensorRT fairness note | **SKIPPED 2026-07-14** |
-| **9** | DICC runbook (agent) + multi-day cluster submit (user) | **AGENT DONE; USER PENDING** |
-| **10** | Ingest DICC JSON → cross-hardware README/claims | **NEXT** (needs user artifacts) |
-| **11** | Manuscript spine from `docs/paper_text_blocks.md` | pending |
-
-**Rules:** one primary goal per session; run `verify_claims.py` at open and after claim edits;
-backup `model/best_model_botiot_twostage.pth` before any `train_twostage.py`; never use stale
-`model/best_model.pth` (0.9352) as production; push only when user asks.
-
-### Chat ↔ project session (HARD RULE — set 2026-07-14 by user)
-
-User request after Sessions 4–9 felt too fast in one conversation: **do not stack
-project sessions inside one chat.**
-
-1. **One HANDOFF session = one chat thread.** Open → do only that session’s goal →
-   close HANDOFF + commit → **stop**. Do not start Session N+1 in the same chat.
-2. **User starts the next chat** with something like:
-   `Continue COLIDE — Session N only. Read HANDOFF top + CLAUDE.md; run verify_claims.`
-3. Agent must **not** interpret “you have the wheel” / “keep going” as permission to
-   run multiple session cards in one sitting. At most: finish the *current* open
-   session, then stop and wait.
-4. Prefer **correctness over speed**. If work is docs-only it can still finish in one
-   session, but never chain S7+S8+S9 style without an explicit new chat / new go.
-5. Context window of the chat is **not** reset by writing “Session N CLOSED” in
-   HANDOFF — only a **new chat** gives a light brief pack.
+**State:** S4–S5,S7 local work done; S6/S8 skipped; DICC **tooling on master is hardened**
+(`dicc_scripts/README.md` — preferred over `docs/DICC_RUNBOOK.md`). **Next human action = Day 1
+cluster submit.** Session 10 (ingest) only after Day 1+2 SUCCESS + compare. **New chat for Session
+10** — do not stack in a long thread.
 
 ---
 
-## Session 7 progress (2026-07-14)
+## Session roadmap (authoritative)
 
-**Goal:** Phase 4 manuscript assets — threats-to-validity draft + numerical fidelity table.
-**Non-goals:** no KD, no DICC, no production checkpoint change. Session 6 deliberately skipped
-(user: "you have the wheel"; S5 showed only +0.21pp RF hard-label gain).
+| Session / work | Goal | Status |
+|----------------|------|--------|
+| Local S4 | Baseline verify + multi-session roadmap | **CLOSED** |
+| Origin DICC tooling | Hardened multi-day campaign (`submit_session.sh`, etc.) | **CLOSED / on master** |
+| Local S5 | Ensemble Val-F1 fix + RF teacher strengthen | **CLOSED** (keep 0.9790 / RF bar 0.9864) |
+| Local S6 | Optional balanced-RF KD | **SKIPPED** |
+| Local S7 | Threats-to-validity + numerical fidelity | **CLOSED** |
+| Local S8 | Batch-size note | **SKIPPED** |
+| Local S9 simple runbook | `docs/DICC_RUNBOOK.md` | **SUPERSEDED** by `dicc_scripts/README.md` |
+| **USER now** | **DICC Day 1 + Day 2** (same SHA, no re-setup day 2) | **CURRENT** |
+| S10 | Ingest compare artifacts → README/claims | After Day 1+2 (new chat) |
+| S11 | Manuscript spine | After or parallel if user chooses |
 
-**Safety**
-- Production md5 still `80a90f7cc210276300eaa90173a5a385` (unchanged).
-- `verify_claims.py`: all tracked claims PASS including 3 new fidelity claims; 0 regressions.
+### Chat ↔ project session (HARD RULE)
 
-**Deliverables**
-1. `scripts/numerical_fidelity.py` — real-weight block fidelity (n=10 refs) + CUDA binary self-checks.
-2. `benchmarks/results/numerical_fidelity.json` (gitignored dir; regenerate with the script).
-   - Export path: **bit-identical** (max abs error 0) for blocks 1–4 + full logits; 10/10 pred agree.
-   - CUDA: fused_block1/2/3/3_fp16/3_naive/4 all **PASS** at disclosed tols (FP16 Block3: 5e-2).
-3. `docs/paper_text_blocks.md` §15 Threats to Validity + §16 Numerical Fidelity Table.
-4. `README.md` Limitations: two bullets (measurement environment + numerical fidelity).
-5. `scripts/verify_claims.py`: claims `fidelity_export_bit_identical`,
-   `fidelity_cuda_selfcheck_all_pass`, `fidelity_block3_fp16_tolerance`.
+1. One HANDOFF work package ≈ one chat. Close → stop → user opens new chat for next.
+2. Prefer correctness over speed; do not chain multi-session stacks.
+3. Context does not reset when HANDOFF says CLOSED — only a **new chat** does.
 
-**Note:** Real-weight table is PyTorch live vs exported references (faithful export of 0.9790).
-CUDA self-checks are per-binary GPU-vs-CPU at fixed tolerances (some unit tests use synthetic
-weights). Do not conflate the two in manuscript prose — §16 labels them A and B.
+### Rules (always)
 
----
-
-## Session 9 progress (2026-07-14) — agent portion CLOSED
-
-**Goal:** Foolproof multi-day DICC execution instructions; no fabricated cluster numbers.
-**Done:** `docs/DICC_RUNBOOK.md` — Day 0 setup, Day 1/2 `sbatch`, artifact patterns, `scp`
-examples, failure checklist, Session 10 handoff criteria.
-**User still must:** push latest `master` if cluster clone is stale; run setup; submit V100+A100
-on **two different days**; copy tagged JSON/logs into laptop `benchmarks/results/`.
-**Not done by agent:** actual `sbatch` (no cluster access from this environment).
+- `verify_claims.py` before/after claim edits
+- Backup `best_model_botiot_twostage.pth` before `train_twostage.py`
+- Never use stale `best_model.pth` as production
+- Push only when needed for cluster/sync
+- **Do not publish full-pipeline Custom-CUDA vs PyTorch speedups** until architecture parity
+  (V3 attention/LN/GAP vs CUDA last-timestep path) is fixed — Block 3 is the valid head-to-head
 
 ---
 
-## Session 10 starting point
+## NEXT ACTION — user DICC execution (not Session 10 yet)
 
-- **Blocked until** laptop `benchmarks/results/` contains ≥2 day-tags of
-  `cuda_kernel_stats_v100s_*.json`, `cuda_kernel_stats_a100_*.json`, and tagged
-  `pipeline_benchmark_*` for each GPU (see `docs/DICC_RUNBOOK.md` §4).
-- When unblocked: compute means/ranges; same-hardware Custom CUDA vs PyTorch ratios; update
-  README cross-hardware table; `verify_claims.py` manifest; threats-to-validity DICC stability
-  sentence; HANDOFF item #3 RESOLVED or partial.
-- **Open check:** `verify_claims.py`; do not invent ratios if files missing.
-- **Optional while waiting:** Session 11 partial manuscript spine with hardware section marked
-  “DICC pending” — only if user wants prose progress without cluster data.
+**Operator guide (canonical):** `dicc_scripts/README.md`  
+**Do not use** the older simple `docs/DICC_RUNBOOK.md` as primary (superseded by hardened scripts).
 
----
+```bash
+# On cluster, inside COLIDE checkout at the merged master SHA:
+export COLIDE_ROOT="$PWD"
+bash dicc_scripts/01_setup.sh          # Day 0 only — once
+bash dicc_scripts/submit_session.sh \
+  --targets v100,a100 \
+  --campaign core \
+  --date "$(date -u +%Y%m%d)" \
+  --partition YOUR_PARTITION \   # site-specific; omit if default OK
+  --account YOUR_ACCOUNT \       # omit if not required
+  --gres gpu:1
 
-## Session 8 starting point (SUPERSEDED — SKIPPED)
+# Day 2 (different UTC date): SAME commit, do NOT re-run 01_setup.sh
+bash dicc_scripts/submit_session.sh --targets v100,a100 --campaign core \
+  --date "$(date -u +%Y%m%d)" --partition ... --account ...
 
-Skipped in favor of DICC runbook (Session 9). Batch-size sweep remains optional future work.
+# After both days SUCCESS:
+python scripts/compare_dicc_sessions.py --gpu v100s --date-a D1 --date-b D2
+python scripts/compare_dicc_sessions.py --gpu a100  --date-a D1 --date-b D2
+```
 
----
+Results live under `benchmarks/results/dicc/<campaign>/<gpu>/<date>_job<id>/` with `SUCCESS`.
 
-## Session 5 progress (2026-07-14)
-
-**Goal:** Fix ensemble teacher Val-F1 diagnostic; measure whether a stronger RF on the
-canonical processed splits beats 0.9864; decide KD/promote vs keep champion. **Non-goals:**
-no DICC, no manuscript rewrite, no overwriting production without backup.
-
-**Safety (verified end of session)**
-- Production `model/best_model_botiot_twostage.pth` md5 `80a90f7cc210276300eaa90173a5a385`
-  unchanged; byte-identical backup at `model/best_model_botiot_twostage_BACKUP_0.9790_s5.pth`.
-- Canonical `benchmarks/results/rf_baseline_processed.json` (published **0.9864**) **not
-  modified** (md5 `02f2cbff15ebab6073d8627869e49305`).
-- `verify_claims.py`: **63/63 PASS**, 0 regressions. No README/paper claim numbers changed.
-- **No** `train_twostage.py` run. **No** full KD retrain this session.
-
-**1. Ensemble diagnostic fix — DONE**
-- File: `scripts/train_ensemble_distill.py` `train_ensemble_teacher()`.
-- Bug: `probs` is train-set length; `len(probs) != len(y_val)` always, so the ternary fell
-  through to `rf.predict(X_val)` — printed "Ensemble teacher Val F1" was **solo RF**.
-- Fix: compute true ensemble val F1 from mean of RF/XGB/LGBM `predict_proba(X_val)`; also
-  print solo RF/XGB/LGBM val F1. **Returned train soft labels for the KD loop are unchanged.**
-
-**2. RF teacher strengthen sweep — DONE**
-- Script: `scripts/rf_teacher_strengthen.py` (new).
-- Data: same `data/processed/*.npy` as `rf_baseline_processed.py`.
-- Output (gitignored dir, on disk): `benchmarks/results/rf_teacher_strengthen.json`.
-- Results (test macro-F1):
-
-| Config | Test macro-F1 | Notes |
-|--------|---------------|--------|
-| baseline_200 (canonical recipe) | **0.9864** | Exact reproduce of published figure |
-| trees_500 | 0.9805 | **Worse**; Theft F1 1.0 → 0.9655 |
-| trees_200_balanced | **0.9885** | Best (+0.0021); Normal 0.953 → 0.963 |
-| trees_500_balanced | 0.9885 | Same as 200_balanced; more trees no gain |
-| trees_500_balanced_depth30 | 0.9885 | Same plateau |
-| trees_500_balanced_subsample | 0.9885 | Same plateau |
-
-**3. Decision (Session 5 close)**
-- **Keep production CNN-BiLSTM champion 0.9790.** Do not promote; do not re-export weights.
-- **Keep published RF comparison bar at 0.9864** (`rf_baseline_processed.json`). Raising the
-  bar to 0.9885 without a better student would *widen* the reported gap (worse narrative for
-  no systems gain). The balanced config is an *optional stronger teacher recipe*, not a new
-  apples-to-apples baseline unless we deliberately reframe both sides later.
-- **No full KD this session** (deliberate): payoff of +0.21pp hard-label RF is modest; KD is
-  multi-hour and risks checkpoint churn. Flags for a future try are already in
-  `train_distill.py` with **defaults identical to historical recipe**.
-- **Optional Session 6:** one KD with  
-  `PYTHONPATH=. python scripts/train_distill.py --alpha 0.6 --temperature 10.0 --focal-gamma 2.0
-  --rf-class-weight balanced --suffix a0.6_T10_focal2_rfbal`  
-  then two-stage **only if** that KD beats 0.9763 stage-1; always backup production first.
-  **Or skip S6 entirely → Session 7** (threats-to-validity + numerical fidelity) if user
-  prefers manuscript assets over a low-EV training run.
-
-**Code changes this session**
-- `scripts/train_ensemble_distill.py` — diagnostic fix only
-- `scripts/train_distill.py` — optional `--rf-n-estimators`, `--rf-class-weight`,
-  `--rf-max-depth` (defaults preserve bit-reproducible historical KD)
-- `scripts/rf_teacher_strengthen.py` — new sweep script
-- `model/best_model_botiot_twostage_BACKUP_0.9790_s5.pth` — safety backup of production
+Then: **new chat** → “Session 10 only — DICC artifacts ready.”
 
 ---
 
-## Session 6 starting point (SUPERSEDED — SKIPPED 2026-07-14)
+## DICC tooling (origin, 2026-07-11) — summary
 
-Optional balanced-RF KD was skipped (low expected value vs Phase 4 docs). See Session 7/8
-starting points at top of file.
+Hardened multi-day campaign: isolated run dirs, n=100 kernel stats default, strict failures,
+`benchmark_pytorch_gpu_stats.py`, `compare_dicc_sessions.py`, offline validate suite.
+Full detail was in the final-polish merge; see `dicc_scripts/README.md` and git history `ba6e0cb`.
 
----
-
-## Session 4 progress (2026-07-14)
-
-**Goal:** Prove repo health after Session 3; install multi-session roadmap into HANDOFF so
-Session 5+ can start with light context. **Non-goals:** no training, no DICC, no manuscript
-rewrite, no number changes in README/paper.
-
-**Baseline verification**
-- `source .venv/bin/activate && PYTHONPATH=. python3 scripts/verify_claims.py`
-- **RESULT: 63/63 claims PASSED, 0 regressions.** Orphan bolded README numbers still untracked
-  (not load-bearing): `0.6, 1.00x, 10.0, 2.0, 3.3%`.
-
-**Inventory (no mutations)**
-- Git: `master` clean, aligned with `origin/master`, HEAD `d8ccd20` (plus this HANDOFF commit
-  after Session 4 close).
-- Production checkpoint: `model/best_model_botiot_twostage.pth` (mtime 2026-07-02 02:50);
-  `benchmarks/results/twostage_botiot.json` → `macro_f1` ≈ **0.9790**.
-- Stale checkpoint still present: `model/best_model.pth` (2026-06-13) — do not use for "the" model.
-- Weight export metadata: `model/weights_bin/validation_metadata.json` present (session-3
-  re-export era); treat as current until next retrain.
-- CUDA sources: 7 fused `*.cu` kernels under `inference/kernels/`.
-- DICC scripts present: `01_setup.sh` … `05_run_all.sh` (path bug fixed session 3; job-id
-  tagging in `d8ccd20`). Still needs user multi-day `sbatch` (Sessions 9–10).
-
-**Decisions**
-- Adopt session-by-session execution (S4–S11) with HANDOFF as continuity memory across tools
-  (human / Claude / Grok).
-- Prefer unblocked local work (S5–S8) before/cluster-parallel with DICC (S9–S10).
-- Session 4 intentionally makes **no scientific number changes** — only process/docs.
-
-**Git:** HANDOFF-only doc commit for this session (no claim/code churn).
+**Critical science caveat (from that work):** full-model CUDA-vs-PyTorch pipeline speedup is
+**not currently valid** (attention/LayerNorm/GAP missing on CUDA path; fused_pipeline reconstructs
+latency). Prefer **per-block, especially Block 3**.
 
 ---
 
-## Session 5 starting point (SUPERSEDED 2026-07-14)
+## Local Session 7 progress (2026-07-14)
 
-**Superseded by "Session 5 progress" + "Session 6 starting point" at the top of this file.**
-Goals were completed: ensemble diagnostic fixed; RF strengthen sweep done; champion 0.9790 kept.
+**Goal:** threats-to-validity + numerical fidelity. Production md5 `80a90f7…` unchanged.
+Deliverables: `scripts/numerical_fidelity.py`, paper_text_blocks §15–§16, README limitations,
+verify_claims fidelity entries. Export path bit-identical n=10; six CUDA self-checks PASS.
 
 ---
+
+## Local Session 5 progress (2026-07-14)
+
+Ensemble Val-F1 diagnostic fixed (KD path unchanged). RF strengthen: baseline 0.9864 reproduced;
+best `class_weight=balanced` → 0.9885 (+0.21pp); trees_500 alone worse. **Kept champion 0.9790
+and published RF bar 0.9864.** Optional KD skipped (S6).
+
+---
+
+## Local Session 4 progress (2026-07-14)
+
+Baseline `verify_claims` 63/63 PASS; multi-session roadmap + one-chat rule installed.
+
+---
+
 
 ## Session 3 progress (2026-07-02)
 
@@ -589,34 +489,24 @@ PYTHONPATH=. python scripts/benchmark_cuda_kernels_stats.py --kernels-dir infere
    and the headline ratios widened to 3.04x-3.78x / 2.25x-2.99x / 3.60x-4.99x / 5.72x-7.83x
    (Eager/torch.compile/TensorRT/ORT-GPU). Propagated everywhere.
 
-3. **Phase 3 (DICC re-run) needs the user to actually execute it** — no SSH/cluster access from
-   this dev environment. `dicc_scripts/01_setup.sh`, `02_benchmark_v100.sh`, and
-   `03_benchmark_a100.sh` are all updated and ready:
-   - `01_setup.sh` now also compiles `fused_block3_naive` and `fused_pipeline` for V100/A100
-     (previously only 5 of 7 binaries were compiled there — `fused_pipeline` was apparently
-     compiled manually at some point since `dicc_v100_summary.txt`/`dicc_a100_summary.txt`
-     already have pipeline-chained numbers, but the setup script itself had a gap, now closed).
-   - `02_benchmark_v100.sh` / `03_benchmark_a100.sh` now run
-     `scripts/benchmark_cuda_kernels_stats.py` (n=20 trials) for real statistical backing on
-     those platforms, saving to `cuda_kernel_stats_v100s.json` / `cuda_kernel_stats_a100.json`.
-   - They also still run `scripts/benchmark_pipeline.py`, which (thanks to the Phase 1.2 fix)
-     will now save a hardware-tagged `pipeline_benchmark_<gpu>.json` instead of clobbering the
-     RTX 3050 result — **this is what will finally give V100S/A100 a real same-hardware
-     PyTorch-GPU baseline**, resolving the Phase 1.2 "n/a**" footnote in README's cross-hardware
-     table.
-   - **NEW instruction from the user (2026-07-01), given the local Measurement Stability finding
-     above:** don't run the DICC n-trial harness as a single sitting. Submit the same benchmark
-     via `sbatch` across **at least two separate submissions on different days** and compare —
-     check whether V100S/A100 show the same kind of session-to-session drift found locally on
-     this WSL2 box. If DICC (native Linux, no WSL2 passthrough) is stable across sessions, that's
-     good evidence the local variance is a WSL2-specific artifact rather than a fundamental limit
-     of the methodology — worth stating explicitly in the paper either way. If DICC shows the same
-     instability, that's an even bigger methodology finding deserving its own disclosure section.
-   - **Next session, once the user has run these on DICC:** pull the resulting JSON files back
-     into `benchmarks/results/`, add manifest entries to `verify_claims.py` for the V100S/A100
-     PyTorch baselines, compute the real "vs PyTorch" ratios for those platforms, update
-     README's cross-hardware table to replace the "n/a**" footnote with real numbers, and update
-     `dicc_v100_summary.txt`/`dicc_a100_summary.txt`-style summaries if useful.
+3. **Phase 3 (DICC re-run) — tooling READY (session 4 / 2026-07-11); cluster still user-side.**
+   No SSH/cluster access from the agent environment. **Do not use the pre-session-4 flow**
+   (direct `sbatch 02`/`03` with shared fixed JSON names, n=20 soft stats, `benchmark_pipeline.py`
+   as the PyTorch path). Use the hardened path instead — full detail in **"Session 4 progress"**
+   above and `dicc_scripts/README.md`:
+   - Branch: `final-polish` @ `ba6e0cb` or later.
+   - Setup once: `bash dicc_scripts/01_setup.sh` then `export COLIDE_ROOT=/scr/$USER/colide`.
+   - Day 1 + Day 2 (different UTC dates, **same git SHA, same binaries — no recompile on day 2**):
+     `bash dicc_scripts/submit_session.sh --campaign core --date YYYYMMDD`
+   - Compare: `PYTHONPATH=. python scripts/compare_dicc_sessions.py --gpu v100s|a100 --date-a … --date-b …`
+   - PyTorch same-hardware baseline now comes from `benchmark_pytorch_gpu_stats.py` inside the
+     shared runner (not `benchmark_pipeline.py` / not legacy `statistical_confidence.json`).
+   - CUDA stats: n=100 strict; results only under
+     `benchmarks/results/dicc/<campaign>/<gpu>/<date>_job<id>/`.
+   - **Full-pipeline CUDA/PyTorch ratio still invalid** (attention/LN/GAP + fused_pipeline Block-3
+     gap). Fill README cross-hardware **per-block / absolute** numbers from accepted compare
+     artifacts; do not invent full-pipeline speedups.
+   - If DICC is stable across days, phrase as **consistent with WSL2-specific drift** (not proof).
 
 4. **Phase 4 (optional ceiling-raising items, not started, no urgency)** — from the original
    plan, still relevant: batch-size sweep for TensorRT/torch.compile/ORT (currently batch=1
@@ -780,13 +670,9 @@ checkpoints (`model/*.pth`) ARE tracked**: 3 new focal-gamma sweep checkpoints c
 tracked**: all 7 recompiled from source (`nvcc -arch=sm_86`) and committed in `d9e1f79`,
 functionally unchanged, rebuilt for full traceability during the 4-block re-verification pass.
 
-## Session 4 starting point (SUPERSEDED 2026-07-14)
+## Archival session-start markers (superseded)
 
-**Superseded by "Session 5 starting point" and "Session roadmap" at the top of this file.**
-Kept for archival continuity with Session 3's close-out prose only.
+Use the **Session roadmap** and **NEXT ACTION** at the top of this file.
+Official DICC operator path: `dicc_scripts/README.md` (not the July-14 simple runbook alone).
+Production model: `best_model_botiot_twostage.pth` (0.9790). Range-claim discipline still in force.
 
-- Session 4 ran baseline verify (63/63 PASS) and installed the multi-session roadmap.
-- Open work remains: item #5 (S5–S6), item #4 (S7–S8), item #3 DICC (S9–S10), manuscript (S11).
-- Production model remains `model/best_model_botiot_twostage.pth` (0.9790). Backup before
-  `train_twostage.py`. Weight exports current until next retrain.
-- Range-claim rule still stands: enumerate every known session data point before widening min/max.

@@ -1,3 +1,5 @@
+> **SUPERSEDED for operators:** use  (hardened multi-day campaign on master). This file is historical only.
+
 # COLIDE — DICC Cluster Runbook (Session 9)
 
 **Purpose:** Multi-day V100S + A100 re-benchmark so the paper can replace “n/a” same-hardware PyTorch baselines and check whether session-to-session latency drift is WSL2-specific.
