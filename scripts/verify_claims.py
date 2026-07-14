@@ -500,6 +500,43 @@ def build_claims():
             [f"{max_gpu:,.0f}"],
         )
 
+    # Session 7 — numerical fidelity (real-weight export + CUDA self-checks)
+    fidelity = load_json("numerical_fidelity.json")
+    if fidelity:
+        rw = fidelity.get("real_weight_fidelity", {})
+        # All blocks should be bit-identical to export (max abs 0.0)
+        block_maxes = [
+            rw[b]["max_abs_error"]
+            for b in ("block1", "block2", "block3", "block4", "full")
+            if b in rw
+        ]
+        if block_maxes and max(block_maxes) == 0.0:
+            add(
+                "fidelity_export_bit_identical",
+                "PyTorch live vs weights_bin/reference: bit-identical on all "
+                "10 validation samples / all blocks (Session 7)",
+                "numerical_fidelity.json",
+                ["bit-identical", "max absolute error of 0"],
+            )
+        cuda_rows = fidelity.get("cuda_selfcheck", [])
+        n_pass = sum(1 for r in cuda_rows if r.get("passed") is True)
+        n_check = sum(1 for r in cuda_rows if r.get("passed") is not None)
+        if n_check >= 6 and n_pass == n_check:
+            add(
+                "fidelity_cuda_selfcheck_all_pass",
+                "All CUDA block binaries pass internal GPU-vs-CPU validation "
+                f"({n_pass}/{n_check}; Session 7)",
+                "numerical_fidelity.json",
+                [f"{n_pass}/{n_check}", "all six block self-checks PASS"],
+            )
+        # Disclosed FP16 Block 3 tolerance (from kernel source + fidelity JSON)
+        add(
+            "fidelity_block3_fp16_tolerance",
+            "Block 3 FP16 self-check tolerance (half precision)",
+            "numerical_fidelity.json / fused_block3_fp16.cu",
+            ["5e-2", "5\\times10^{-2}"],
+        )
+
     return claims
 
 

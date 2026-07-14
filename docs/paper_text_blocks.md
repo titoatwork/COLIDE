@@ -153,3 +153,53 @@ blocks automated retrieval), so this rests on corroborated secondary characteriz
 verbatim-quoted primary source — flag for a manual read of the actual PDF before final submission
 if full certainty is needed.
 
+## 15. Threats to Validity
+
+Several threats to validity shape how the latency and accuracy claims in this paper should be interpreted.
+
+**Internal validity — measurement environment.** Single-sample inference latencies on the primary development machine (RTX 3050 Laptop, WSL2) exhibit genuine *session-to-session* drift beyond within-session variance: re-running the same n=100 CUDA kernel harness and the same n=20 framework comparison on different sittings produced mean shifts on the order of roughly 6–27% for some Block 3 configurations and 14–17% for torch.compile / TensorRT means in back-to-back framework sessions. Headline framework ratios are therefore reported as ranges over independent measurement sessions rather than single point estimates. Within a session, coefficients of variation can look tight while still understating day-to-day uncertainty on a virtualized GPU path. Cross-hardware V100S/A100 pipeline totals currently rest on unreplicated DICC runs without same-hardware PyTorch baselines; a multi-day DICC re-run remains the planned mitigation (see project HANDOFF Phase 3 / Sessions 9–10).
+
+**Internal validity — statistical comparison design.** Framework significance uses two-sample Welch t-tests against a Custom CUDA distribution derived from n=100 kernel trials, not a one-sample test against a fixed constant. ORT CPU is *not* robustly faster or slower than Custom CUDA across sessions (ratio range straddles parity); Eager PyTorch, torch.compile, TensorRT, and ORT GPU remain significantly slower (p<0.001) in all measured framework-side sessions even when exact ratios move.
+
+**Construct validity — model architecture vs. tabular flows.** BoT-IoT 10-best features are pre-aggregated flow statistics. An MLP ablation nearly matches CNN-BiLSTM accuracy, indicating that sequential bias is not essential for detection quality. The recurrent stack is retained primarily as a systems stress case (dynamic control flow that breaks torch.compile CUDA-graph capture). Readers should not interpret the architecture as a claim of superior temporal modeling on this feature set.
+
+**External validity — datasets and class imbalance.** Results are tied to BoT-IoT and ToN-IoT under a documented undersample→SMOTE→scale pipeline. The Theft class has extremely low real support (tens of training samples before SMOTE); minority-class F1 can swing macro-F1 even when majority traffic is classified well (observed as a KD temperature outlier). Generalization to other networks, feature extractors, or live traffic is unproven.
+
+**External validity — accuracy baseline.** A CPU Random Forest on the same preprocessed splits remains stronger (0.9864 vs 0.9790 macro-F1 on BoT-IoT). Knowledge distillation narrows but does not eliminate the gap. The neural model is positioned for GPU deployment, low VRAM relative to large GPU forests, and async on-device LLM explainability — not as a pure accuracy replacement for RF.
+
+**Conclusion validity — LLM explainability.** Dispatch overhead (16.60 µs p99) is rigorously measured on the classify→construct→push path. Generation quality is illustrated with representative examples; no large-scale human evaluation of explanation usefulness is claimed. Generation time (~7–8 s/alert) lives off the critical path by design.
+
+**Reliability of CUDA correctness claims.** Numerical fidelity is split into (i) bit-identical agreement between live PyTorch block outputs and exported reference tensors for the production checkpoint on 10 held-out indices, and (ii) per-binary GPU-vs-CPU self-checks at disclosed tolerances (stricter for FP32 blocks, 5e-2 for FP16 BiLSTM). See §16.
+
+
+## 16. Numerical Fidelity Table
+
+Source: `scripts/numerical_fidelity.py` → `benchmarks/results/numerical_fidelity.json` (Session 7, 2026-07-14). Checkpoint: `model/best_model_botiot_twostage.pth` (0.9790 macro-F1). Reference indices from `model/weights_bin/validation_metadata.json` (n=10).
+
+### A. Real-weight export fidelity (PyTorch live vs `weights_bin/reference`)
+
+Block intermediates follow the CUDA decomposition (projection/conv stack, BiLSTM last timestep, dense head). On all 10 reference samples, every block and the full exported logits path are **bit-identical** to the live model (maximum absolute error of 0; prediction agreement 10/10). This confirms that the binary weight export used by the kernels is a faithful snapshot of the production checkpoint, not a stale or truncated dump.
+
+| Path | Max abs error | Max rel error | n |
+|------|---------------|---------------|---|
+| Block 1 (proj+conv+BN+ReLU) | 0 (bit-identical) | 0 | 10 |
+| Block 2 (conv+BN+ReLU+pool) | 0 (bit-identical) | 0 | 10 |
+| Block 3 (BiLSTM last step) | 0 (bit-identical) | 0 | 10 |
+| Block 4 (dense head) | 0 (bit-identical) | 0 | 10 |
+| Full logits (export path) | 0 (bit-identical) | 0 | 10 |
+
+### B. CUDA kernel self-validation (GPU vs in-binary CPU reference)
+
+Each standalone kernel binary executes an internal numerical check at a fixed tolerance (some unit tests use synthetic weights; the check still exercises the same arithmetic path). Session 7 re-run on RTX 3050: **all six block self-checks PASS**.
+
+| Binary | Precision | Tolerance | Result |
+|--------|-----------|-----------|--------|
+| fused_block1 | FP32 | 1e-3 | PASS |
+| fused_block2 | FP32 | 1e-3 | PASS |
+| fused_block3 | FP32 | 1e-2 | PASS |
+| fused_block3_fp16 | FP16 half2 | 5e-2 | PASS |
+| fused_block3_naive | FP32 | 1e-2 | PASS |
+| fused_block4 | FP32 | 1e-3 | PASS |
+
+The fused pipeline binary is timing-oriented and does not emit a separate validation line; end-to-end correctness is covered by per-block checks plus the real-weight export table above. FP16 BiLSTM uses a deliberately looser tolerance (5e-2) consistent with half-precision accumulation; FP32 blocks use 1e-3–1e-2.
+

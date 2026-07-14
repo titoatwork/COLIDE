@@ -293,6 +293,8 @@ Four fused kernels replacing PyTorch operators:
 - **SMOTE dependency**: 52 Theft samples require synthetic augmentation
 - **Pseudo-sequence**: MLP ablation shows sequential bias is not essential; architecture retained for compiler stress-testing
 - **Energy**: cuML RF (0.048 mJ/flow) is more efficient than CNN-BiLSTM (1.089 mJ/flow) on same A100 hardware
+- **Measurement environment**: WSL2/RTX 3050 shows session-to-session latency drift; framework ratios are reported as ranges (see Measurement Stability). V100S/A100 still lack multi-day same-hardware PyTorch baselines (DICC Phase 3 pending)
+- **Numerical fidelity**: export path is bit-identical on n=10 reference samples; CUDA block self-checks PASS at disclosed tolerances (FP16 Block 3: 5e-2) — see `docs/paper_text_blocks.md` §15–§16 and `scripts/numerical_fidelity.py`
 
 ## Citation
 

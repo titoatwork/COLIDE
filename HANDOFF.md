@@ -1,13 +1,12 @@
 # COLIDE — Session Handoff
 
-**Last session:** 2026-07-14 (Grok, session 5, CLOSED). **Do not re-read this whole file by
+**Last session:** 2026-07-14 (Grok, session 7, CLOSED). **Do not re-read this whole file by
 default** — open with (1) this header + **Session N progress**, (2) **Session roadmap**, (3)
 **Session N+1 starting point**, (4) `CLAUDE.md`. Dive into older session blocks only when
 debugging a specific claim.
 
-**Session 3** closed earlier (Claude). **Session 4** installed roadmap + baseline verify.
-**Session 5** fixed ensemble diagnostic, ran RF teacher strengthen sweep, **kept champion
-0.9790** and published RF bar **0.9864** (no promote).
+**Session 6 SKIPPED** (user granted autonomy; low EV for balanced-RF KD vs manuscript assets).
+**Session 7** added threats-to-validity + numerical fidelity table; production 0.9790 untouched.
 
 ---
 
@@ -21,9 +20,9 @@ the in-repo map so any agent can continue without chat memory.
 |---------|------|--------|
 | **4** | Baseline `verify_claims` + this roadmap / HANDOFF scaffold | **CLOSED 2026-07-14** |
 | **5** | Ensemble diagnostic fix + stronger RF teacher experiment | **CLOSED 2026-07-14** |
-| **6** | Optional KD with balanced RF teacher (user opt-in) — or skip to S7 | **NEXT (optional)** |
-| **7** | Phase 4: threats-to-validity + numerical fidelity table | pending |
-| **8** | Optional batch-size / TensorRT fairness note | pending / skippable |
+| **6** | Optional KD with balanced RF teacher | **SKIPPED 2026-07-14** (low EV) |
+| **7** | Phase 4: threats-to-validity + numerical fidelity table | **CLOSED 2026-07-14** |
+| **8** | Optional batch-size / TensorRT fairness note | **NEXT (skippable)** |
 | **9** | DICC runbook + user multi-day cluster submit | pending (user for sbatch) |
 | **10** | Ingest DICC JSON → cross-hardware README/claims | pending (needs S9 artifacts) |
 | **11** | Manuscript spine from `docs/paper_text_blocks.md` | pending |
@@ -31,6 +30,46 @@ the in-repo map so any agent can continue without chat memory.
 **Rules:** one primary goal per session; run `verify_claims.py` at open and after claim edits;
 backup `model/best_model_botiot_twostage.pth` before any `train_twostage.py`; never use stale
 `model/best_model.pth` (0.9352) as production; push only when user asks.
+
+---
+
+## Session 7 progress (2026-07-14)
+
+**Goal:** Phase 4 manuscript assets — threats-to-validity draft + numerical fidelity table.
+**Non-goals:** no KD, no DICC, no production checkpoint change. Session 6 deliberately skipped
+(user: "you have the wheel"; S5 showed only +0.21pp RF hard-label gain).
+
+**Safety**
+- Production md5 still `80a90f7cc210276300eaa90173a5a385` (unchanged).
+- `verify_claims.py`: all tracked claims PASS including 3 new fidelity claims; 0 regressions.
+
+**Deliverables**
+1. `scripts/numerical_fidelity.py` — real-weight block fidelity (n=10 refs) + CUDA binary self-checks.
+2. `benchmarks/results/numerical_fidelity.json` (gitignored dir; regenerate with the script).
+   - Export path: **bit-identical** (max abs error 0) for blocks 1–4 + full logits; 10/10 pred agree.
+   - CUDA: fused_block1/2/3/3_fp16/3_naive/4 all **PASS** at disclosed tols (FP16 Block3: 5e-2).
+3. `docs/paper_text_blocks.md` §15 Threats to Validity + §16 Numerical Fidelity Table.
+4. `README.md` Limitations: two bullets (measurement environment + numerical fidelity).
+5. `scripts/verify_claims.py`: claims `fidelity_export_bit_identical`,
+   `fidelity_cuda_selfcheck_all_pass`, `fidelity_block3_fp16_tolerance`.
+
+**Note:** Real-weight table is PyTorch live vs exported references (faithful export of 0.9790).
+CUDA self-checks are per-binary GPU-vs-CPU at fixed tolerances (some unit tests use synthetic
+weights). Do not conflate the two in manuscript prose — §16 labels them A and B.
+
+---
+
+## Session 8 starting point
+
+- **Brief pack:** this section + roadmap + `CLAUDE.md`.
+- **Choose at open:**
+  - **8A (optional):** light batch-size latency note (1/32/128) eager vs custom CUDA; document
+    that headline remains batch=1. Skip if GPU time is better spent on DICC prep.
+  - **8B (recommended next scientific gap):** treat S8 as skip → **Session 9** DICC runbook
+    (`docs/DICC_RUNBOOK.md`) so user can multi-day `sbatch`.
+- **Open check:** `verify_claims.py`; production md5 `80a90f7…`.
+- **Non-goals:** do not re-open KD unless user explicitly asks; do not invent V100/A100 PyTorch
+  ratios without DICC JSON.
 
 ---
 
