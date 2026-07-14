@@ -30,6 +30,23 @@ the in-repo map so any agent can continue without chat memory.
 backup `model/best_model_botiot_twostage.pth` before any `train_twostage.py`; never use stale
 `model/best_model.pth` (0.9352) as production; push only when user asks.
 
+### Chat ↔ project session (HARD RULE — set 2026-07-14 by user)
+
+User request after Sessions 4–9 felt too fast in one conversation: **do not stack
+project sessions inside one chat.**
+
+1. **One HANDOFF session = one chat thread.** Open → do only that session’s goal →
+   close HANDOFF + commit → **stop**. Do not start Session N+1 in the same chat.
+2. **User starts the next chat** with something like:
+   `Continue COLIDE — Session N only. Read HANDOFF top + CLAUDE.md; run verify_claims.`
+3. Agent must **not** interpret “you have the wheel” / “keep going” as permission to
+   run multiple session cards in one sitting. At most: finish the *current* open
+   session, then stop and wait.
+4. Prefer **correctness over speed**. If work is docs-only it can still finish in one
+   session, but never chain S7+S8+S9 style without an explicit new chat / new go.
+5. Context window of the chat is **not** reset by writing “Session N CLOSED” in
+   HANDOFF — only a **new chat** gives a light brief pack.
+
 ---
 
 ## Session 7 progress (2026-07-14)
