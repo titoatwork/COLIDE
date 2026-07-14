@@ -122,11 +122,36 @@ def load_data_botiot(smote_scale=1.0):
     return X_tr_smote, y_tr_smote, X_val_scaled, y_val, X_test_scaled, y_test, class_names, num_classes
 
 
-def train_rf_teacher(X_train, y_train, X_val, y_val, class_names, temperature=1.0):
-    """Train RF and generate temperature‑scaled soft probability labels."""
+def train_rf_teacher(
+    X_train,
+    y_train,
+    X_val,
+    y_val,
+    class_names,
+    temperature=1.0,
+    n_estimators=200,
+    class_weight=None,
+    max_depth=None,
+):
+    """Train RF and generate temperature‑scaled soft probability labels.
+
+    Defaults match the historical KD recipe (200 trees, no class_weight,
+    unlimited depth) so existing sweeps remain reproducible bit-for-bit when
+    flags are left at default. Stronger-teacher experiments (Session 5+) pass
+    non-default flags explicitly.
+    """
     print(f"\n{'='*60}")
-    print(f"TRAINING RF TEACHER (200 trees, T={temperature})")
-    rf = RandomForestClassifier(n_estimators=200, random_state=SEED, n_jobs=-1)
+    print(
+        f"TRAINING RF TEACHER (n_estimators={n_estimators}, "
+        f"class_weight={class_weight}, max_depth={max_depth}, T={temperature})"
+    )
+    rf = RandomForestClassifier(
+        n_estimators=n_estimators,
+        random_state=SEED,
+        n_jobs=-1,
+        class_weight=class_weight,
+        max_depth=max_depth,
+    )
     rf.fit(X_train, y_train)
     val_f1 = f1_score(y_val, rf.predict(X_val), average='macro')
     print(f"RF Val Macro-F1: {val_f1:.4f}")
@@ -203,6 +228,14 @@ def main():
                         help='Use FocalLoss with given gamma (0 = normal CE)')
     parser.add_argument('--smote-scale', type=float, default=1.0,
                         help='Scale factor for DDoS/DoS SMOTE targets (1.0 = original)')
+    # RF teacher knobs — defaults preserve historical KD reproducibility
+    parser.add_argument('--rf-n-estimators', type=int, default=200,
+                        help='RF teacher trees (default 200, matches published KD sweeps)')
+    parser.add_argument('--rf-class-weight', type=str, default='none',
+                        choices=['none', 'balanced', 'balanced_subsample'],
+                        help='RF class_weight (default none = historical recipe)')
+    parser.add_argument('--rf-max-depth', type=int, default=0,
+                        help='RF max_depth (0 = None/unlimited, historical default)')
     args = parser.parse_args()
 
     DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -218,8 +251,15 @@ def main():
     with open('config/config.yaml') as f:
         config = yaml.safe_load(f)
 
-    # RF teacher
-    rf, rf_probs = train_rf_teacher(X_train, y_train, X_val, y_val, class_names, args.temperature)
+    # RF teacher (defaults identical to pre-Session-5 recipe)
+    rf_cw = None if args.rf_class_weight == 'none' else args.rf_class_weight
+    rf_depth = None if args.rf_max_depth == 0 else args.rf_max_depth
+    rf, rf_probs = train_rf_teacher(
+        X_train, y_train, X_val, y_val, class_names, args.temperature,
+        n_estimators=args.rf_n_estimators,
+        class_weight=rf_cw,
+        max_depth=rf_depth,
+    )
 
     # DataLoaders
     train_ds = SimpleDataset(X_train, y_train, rf_probs)

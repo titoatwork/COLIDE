@@ -90,11 +90,14 @@ def train_ensemble_teacher(X_train, y_train, X_val, y_val, class_names, temperat
     import lightgbm as lgb
     lgb_model = lgb.LGBMClassifier(n_estimators=200, random_state=SEED, verbose=-1).fit(X_train, y_train)
 
-    # Average probabilities
+    # Average probabilities on the *training* set — these soft labels are what
+    # the KD loop actually consumes (SimpleDataset(X_train, y_train, teacher_probs)).
+    # Do not mix train-length probs with y_val; that was the old diagnostic bug.
     probs = (rf.predict_proba(X_train) + xgb_model.predict_proba(X_train) + lgb_model.predict_proba(X_train)) / 3.0
     probs = probs.astype(np.float32)
 
-    # Temperature scaling
+    # Temperature scaling (train soft labels only; diagnostic val metrics below
+    # use raw untempered predict_proba for honest hard-label F1 reporting)
     if temperature != 1.0:
         probs = np.log(probs + 1e-7) / temperature
         probs = np.exp(probs)
@@ -102,9 +105,25 @@ def train_ensemble_teacher(X_train, y_train, X_val, y_val, class_names, temperat
     probs = np.clip(probs, 1e-7, 1.0)
     probs /= probs.sum(axis=1, keepdims=True)
 
-    val_f1 = f1_score(y_val, np.argmax(probs[:len(y_val)], axis=1) if len(probs) == len(y_val) else
-                      rf.predict(X_val), average='macro')
-    print(f"Ensemble teacher Val F1: {val_f1:.4f}")
+    # Diagnostic only (does not affect returned train probs / KD loop).
+    # Previous code: when len(probs)!=len(y_val) (always true — train is SMOTE-
+    # expanded), fell back to rf.predict(X_val), so the printed "Ensemble teacher
+    # Val F1" was actually solo-RF. Fix: evaluate each model + mean ensemble on X_val.
+    rf_val_pred = rf.predict(X_val)
+    xgb_val_pred = xgb_model.predict(X_val)
+    lgb_val_pred = lgb_model.predict(X_val)
+    ens_val_probs = (
+        rf.predict_proba(X_val) + xgb_model.predict_proba(X_val) + lgb_model.predict_proba(X_val)
+    ) / 3.0
+    ens_val_pred = np.argmax(ens_val_probs, axis=1)
+    rf_val_f1 = f1_score(y_val, rf_val_pred, average="macro", zero_division=0)
+    xgb_val_f1 = f1_score(y_val, xgb_val_pred, average="macro", zero_division=0)
+    lgb_val_f1 = f1_score(y_val, lgb_val_pred, average="macro", zero_division=0)
+    ens_val_f1 = f1_score(y_val, ens_val_pred, average="macro", zero_division=0)
+    print(f"Solo RF     Val F1: {rf_val_f1:.4f}")
+    print(f"Solo XGBoost Val F1: {xgb_val_f1:.4f}")
+    print(f"Solo LightGBM Val F1: {lgb_val_f1:.4f}")
+    print(f"Ensemble teacher Val F1: {ens_val_f1:.4f}  (mean of 3 predict_proba on X_val)")
     return probs
 
 # ---------- Training ----------
