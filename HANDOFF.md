@@ -12,6 +12,89 @@ Agents **do not** have DICC access; **do not invent** cluster numbers.
 **Open with:** (1) this header, (2) `docs/PROF_POR_3DAY.md`, (3) Option A rules,
 (4) after scp of `benchmarks/results/dicc/` → “Prof Por pack” chat.
 
+**Standing process (every session forever):** see **Session lifecycle** below — close with
+verify → commit/push → next-session prompt; never leave uncommitted handoff work.
+
+---
+
+## Session lifecycle (HARD RULE — every session from 2026-07-14 onward)
+
+User-confirmed standing pattern. **Do this at the end of every agent chat**, not only
+design or deadline sessions.
+
+### A. One major package ≈ one chat
+- Do not stack DICC + manuscript + claim rewrites in one thread.
+- Prefer correctness and design over speed.
+
+### B. Before claiming “session done”
+Agent must **actually check** (not assume):
+
+```bash
+cd /path/to/colide
+git status -sb          # clean, or only intentional leftovers documented
+git log -1 --oneline
+git rev-parse HEAD origin/master   # must match after push
+# if claim/README edits: PYTHONPATH=. python scripts/verify_claims.py
+```
+
+Checklist:
+
+| Gate | Requirement |
+|------|-------------|
+| HANDOFF header | Current mode, next package, open-with list updated |
+| Deliverables | On disk under repo (or explicitly “user-manual only”) |
+| Commit | Meaningful message; all session docs/code intended to keep |
+| Push | `master` → `origin/master` unless user forbade network |
+| Clean tree | `nothing to commit, working tree clean` (or list deferred files) |
+| Next prompt | Paste-ready block in HANDOFF **and** in the closing user message |
+| Champion ckpt | Never clobber `best_model_botiot_twostage.pth` without backup + user OK |
+
+### C. Closing message to user (required format)
+1. **Session status table** (done / not done / deferred)  
+2. **Git:** commit hash, pushed yes/no, clean yes/no  
+3. **Paste-ready next-session prompt** (full text, not “see HANDOFF”)  
+4. What **user** must do offline (if any) before that chat  
+
+### D. Canonical next-session prompts (update when mode changes)
+
+**Default while Prof Por deadline active (user finished DICC, results on laptop):**
+
+```text
+Continue COLIDE — Prof Por numbers pack (≤3 day deadline). Option A locked.
+
+Read: HANDOFF.md header + Session lifecycle + docs/PROF_POR_3DAY.md + docs/DESIGN_PLAN.md §5–§6.
+
+I have finished (or partially finished) UM DICC WP1–WP3. Results should be under
+benchmarks/results/dicc/ on the laptop (or I will say what is missing).
+
+Tasks:
+1) Inventory SUCCESS dirs / compare accept/reject for V100 and A100.
+2) Extract Block 3 CUDA + PyTorch same-GPU numbers (and absolute full V3 PT only).
+3) Fill docs/PROF_POR_3DAY.md §4 and produce a short Prof Por update with ALL numbers
+   (local frozen: F1 0.9790, RF 0.9864, LLM 16.60 µs p99, laptop ranges + DICC).
+4) Option A rules: NO full-pipeline Custom CUDA vs full V3 PyTorch speedup claims.
+5) End session per HANDOFF Session lifecycle: verify, commit, push, next prompt.
+
+Do NOT train, do NOT clobber best_model_botiot_twostage.pth, do NOT invent DICC numbers.
+Manuscript spine / deep claim hygiene wait until AFTER this Prof update unless I say otherwise.
+```
+
+**Pre-DICC / operator help only (no cluster from agent):**
+
+```text
+Continue COLIDE — pre-DICC support only (no cluster from agent).
+Read HANDOFF.md Session lifecycle + docs/PROF_POR_3DAY.md.
+Help troubleshoot operator steps / local validate only.
+Do not claim DICC numbers. Do not start manuscript. Champion ckpt frozen.
+End with verify → commit/push if docs changed → next-session prompt.
+```
+
+**After Prof update is sent (later):** replace the prompts above with the next WP
+(WP5 claim hygiene / WP6 manuscript) and keep this lifecycle section intact.
+
+### E. Also document in agent guides
+`CLAUDE.md` and `AGENTS.md` point here so every tool/session sees the rule.
+
 ---
 
 ## Design plan checkpoint (2026-07-14) — **APPROVED**
@@ -38,7 +121,7 @@ Agents **do not** have DICC access; **do not invent** cluster numbers.
 | Item | Value |
 |------|--------|
 | Canonical branch | **`master` only** |
-| Laptop + `origin/master` | In sync @ **`fc45dd6`** (`merge: final-polish into master`) |
+| Laptop + `origin/master` | In sync @ **`fea5204`**+ (design plan / Prof Por playbook; see `git log -1`) |
 | Production model | `model/best_model_botiot_twostage.pth` md5 **`80a90f7cc210276300eaa90173a5a385`**, macro-F1 **0.9790** |
 | Published RF bar | **0.9864** (`rf_baseline_processed.json`) — do not silently raise to 0.9885 |
 | `verify_claims.py` | Green at last local checks |
@@ -82,7 +165,8 @@ Agents **do not** have DICC access; **do not invent** cluster numbers.
 Work was rushed across too many HANDOFF “sessions” in one heavy chat. Going forward:
 - **Slow down.** Prefer analysis and design before more execution.
 - **One focused chat per major work package.**
-- Next package is **design/plan**, not “run more scripts.”
+- **Every session ends with:** verify → commit/push → paste-ready next prompt
+  (see **Session lifecycle** above). This is permanent, not one-off.
 
 ---
 
@@ -142,9 +226,10 @@ Update README cross-hardware / claims only from accepted compare outputs. Option
 ### Chat ↔ project session (HARD RULE)
 
 1. One major package ≈ one chat.
-2. Document in this file before stopping.
+2. Document in this file before stopping (**Session lifecycle** section is authoritative).
 3. **Correctness and design over speed.**
-4. Context does not reset when HANDOFF says CLOSED — open a **new chat** for the design plan.
+4. Context does not carry — open a **new chat** with the paste-ready next prompt.
+5. **Every session:** check git clean + pushed; write next prompt in HANDOFF **and** in the reply.
 
 ### Rules (always)
 
@@ -152,6 +237,7 @@ Update README cross-hardware / claims only from accepted compare outputs. Option
 - Backup `best_model_botiot_twostage.pth` before `train_twostage.py`
 - Never use stale `best_model.pth` as production
 - Prefer Block 3 over invalid full-pipeline CUDA vs PyTorch claims
+- End-of-session lifecycle: verify → commit → push → next prompt (user-confirmed standing order)
 
 ---
 

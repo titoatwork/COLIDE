@@ -216,14 +216,18 @@ Copy/adapt:
 
 ---
 
-## 7. Agent commitments
+## 7. Agent commitments + session close pattern
 
-When you return with `benchmarks/results/dicc/...` on the laptop, ask for:
+**Every agent session** (not only this deadline) must end per `HANDOFF.md` **Session lifecycle**:
+verify → update HANDOFF → commit → push → paste-ready next-session prompt in the reply.
+
+When you return with `benchmarks/results/dicc/...` on the laptop, paste the canonical
+prompt from HANDOFF Session lifecycle §D (“Prof Por numbers pack”), or:
 
 ```text
-Prof Por pack — DICC results on laptop. Fill docs/PROF_POR_3DAY.md §4,
-draft short email/PDF-style brief with Option A-safe language only.
-No new training. No invalid full-pipeline claims.
+Continue COLIDE — Prof Por numbers pack (≤3 day deadline). Option A locked.
+Read HANDOFF.md + docs/PROF_POR_3DAY.md. Fill §4; draft Prof brief; Option A only.
+End session: verify, commit, push, next prompt. No training. No invented DICC numbers.
 ```
 
 Until then, agent will **not** invent cluster numbers and will **not** start manuscript-deep work that delays your DICC focus.

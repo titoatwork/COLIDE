@@ -2,6 +2,17 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Session handoff (HARD RULE — every chat)
+
+**Read `HANDOFF.md` first** (header + **Session lifecycle**). Standing user order:
+
+1. **One major work package ≈ one chat** (do not stack unrelated packages).
+2. **Before stopping:** update `HANDOFF.md`, `git status` clean, **commit + push** `master` unless user forbade network, run `scripts/verify_claims.py` if README/claims changed.
+3. **Closing reply must include:** status table, commit hash + pushed/clean flags, and a **paste-ready next-session prompt** (also stored under HANDOFF Session lifecycle §D).
+4. **Never invent DICC/cluster numbers**; agents have no UM DICC access — user runs WP1–WP3.
+5. **Champion checkpoint:** do not clobber `model/best_model_botiot_twostage.pth` without backup + explicit user OK.
+6. **Option A (locked):** no full-pipeline Custom CUDA vs full V3 PyTorch speedup claims; prefer Block 3 head-to-head. Authority: `docs/DESIGN_PLAN.md`. Deadline playbook when active: `docs/PROF_POR_3DAY.md`.
+
 ## What this is
 
 COLIDE is an academic research codebase (FGCS journal submission) for an IoT network intrusion detection
