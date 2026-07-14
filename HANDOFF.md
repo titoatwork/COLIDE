@@ -1,15 +1,34 @@
 # COLIDE — Session Handoff
 
-**PAUSED 2026-07-14 (user request).** Stop operational rushing. User has another job; DICC
-execution deferred. **Next dedicated chat = deep design / analysis plan** for everything done
-so far (not a code sprint). Resume cluster work only after that plan is approved.
+**DEADLINE MODE (≤3 days) — Prof. Por status update with numbers.**  
+Authority: `docs/DESIGN_PLAN.md` (Option A) + **`docs/PROF_POR_3DAY.md`** (execution order).  
+**Do first:** user-manual **UM DICC WP1→WP2→WP3** + bring results home.  
+**Defer after update:** WP5 claim hygiene, WP6 manuscript spine, WP7 stretch.  
+Agents **do not** have DICC access; **do not invent** cluster numbers.
 
-**Last operational work:** branch unify `final-polish` → `master` on GitHub (`fc45dd6`);
-partial UM DICC path discovery with user (India latency); **no** successful sync of DICC
-checkout to current `master` yet.
+**Last work:** design approved; Prof Por 3-day plan written; tarball ready
+`~/colide-master-for-dicc.tar.gz` (~356MB). DICC tree still not synced.
 
-**Open with (any future chat):** (1) this header, (2) roadmap, (3) “Paused checkpoint” below,
-(4) `CLAUDE.md` + `dicc_scripts/README.md` only if resuming cluster.
+**Open with:** (1) this header, (2) `docs/PROF_POR_3DAY.md`, (3) Option A rules,
+(4) after scp of `benchmarks/results/dicc/` → “Prof Por pack” chat.
+
+---
+
+## Design plan checkpoint (2026-07-14) — **APPROVED**
+
+| Item | Value |
+|------|--------|
+| Deliverable | **`docs/DESIGN_PLAN.md`** |
+| User decision | **Approved everything** (2026-07-14) |
+| Strategy | **Option A** locked — per-block claims only; no full-pipeline CUDA vs full V3 PT |
+| Top invalid claim | Full-pipeline Custom CUDA vs full V3 (attn/LN/GAP; last-timestep vs GAP; pipeline skip B3) |
+| Top scientific risk | Rostam Day 1: B3 CUDA slower than PT on V100/A100 — confirm/refute on UM |
+| Deadline | **≤3 days:** Prof Por quick update **with all numbers incl. DICC** |
+| Playbook | **`docs/PROF_POR_3DAY.md`** |
+| Next (user) | **WP1 sync → Day1 → Day2 → compare → scp results home** |
+| Next (agent) | Fill Prof brief from DICC artifacts only; then rest of plan after deadline |
+| Agent DICC access | **None** |
+| Still forbidden | Invented DICC numbers; full-pipeline CUDA vs V3 claim; clobber champion ckpt |
 
 ---
 
@@ -69,48 +88,39 @@ Work was rushed across too many HANDOFF “sessions” in one heavy chat. Going 
 
 ## NEXT — ordered resume plan (do not skip ahead)
 
-### 1) NEW CHAT — Design & analysis plan (FIRST when user returns)
-**Title prompt for user to paste:**
-```text
-Continue COLIDE — DESIGN PLAN session only (no cluster runs, no training).
-Read HANDOFF.md "Paused checkpoint" + CLAUDE.md + README abstract/limitations.
-Deeply analyze everything done so far. Produce a well-researched design/plan:
-what is solid, what is weak, what is invalid (e.g. full-pipeline parity),
-what must be re-run on UM DICC, manuscript path, risks, ordered work packages.
-Do not implement code or start DICC jobs in this session.
-```
-**Deliverable:** written plan (in repo doc e.g. `docs/DESIGN_PLAN.md` or HANDOFF section) for user approval.
+### 1) Design & analysis plan — **APPROVED 2026-07-14**
+Deliverable: `docs/DESIGN_PLAN.md`. Option A locked.
 
-### 2) After plan approved — UM DICC code sync (when user has time)
+### 2–3) WP1–WP3 — UM DICC (**USER MANUAL ONLY**)
+
+Agents cannot reach `login01.dicc.um.edu.my`. Operator guide: `dicc_scripts/README.md`
++ `docs/DESIGN_PLAN.md` §6/§10. Summary:
+
 ```text
-# On DICC: park old diverged clone
+# WP1 — sync (laptop → DICC tarball; no git fetch on DICC)
 cd /home/user/ibteshamulhaque
-mv colide colide-old-diverged-20260714   # if not already moved
+mv colide colide-old-diverged-20260714   # if needed
 
-# On laptop (has clean master): pack and scp — avoid git fetch on DICC
+# On laptop:
 cd /home/titoisalive
 tar czf colide-master-for-dicc.tar.gz \
-  --exclude='colide/.venv' --exclude='colide/**/__pycache__' \
-  -C /home/titoisalive colide
+  --exclude='colide/.venv' --exclude='colide/.venv-cluster' \
+  --exclude='colide/**/__pycache__' -C /home/titoisalive colide
 scp colide-master-for-dicc.tar.gz \
   ibteshamulhaque@login01.dicc.um.edu.my:/home/user/ibteshamulhaque/
 
-# On DICC: unpack
-cd /home/user/ibteshamulhaque && tar xzf colide-master-for-dicc.tar.gz
-cd colide && ls dicc_scripts/run_campaign.sh && git log -1 --oneline
+# On DICC: unpack; verify run_campaign.sh + champion md5 80a90f7c...
+
+# WP2 Day 1:  bash dicc_scripts/run_campaign.sh
+# WP3 Day 2:  bash dicc_scripts/run_campaign.sh --day 2
+# Compare:    PYTHONPATH=. python scripts/compare_dicc_sessions.py ...
+# scp benchmarks/results/dicc/ back to laptop
 ```
 
-### 3) UM DICC official campaign (after sync)
-- Day 1: `bash dicc_scripts/run_campaign.sh`
-- Day 2 (new calendar day, same tree/SHA): `bash dicc_scripts/run_campaign.sh --day 2`
-- Compare: `scripts/compare_dicc_sessions.py`
-- Operator guide: `dicc_scripts/README.md`
-- Copy `benchmarks/results/dicc/` home via scp (results usually gitignored)
+### 4) Session 10 / WP4–5 — ingest + claim hygiene (new agent chat, after artifacts)
+Update README cross-hardware / claims only from accepted compare outputs. Option A rules.
 
-### 4) Session 10 — ingest (new chat, after artifacts)
-Update README cross-hardware / claims only from accepted compare outputs.
-
-### 5) Session 11 — manuscript spine (new chat)
+### 5) Session 11 / WP6 — manuscript spine (new chat)
 
 ---
 
@@ -124,8 +134,10 @@ Update README cross-hardware / claims only from accepted compare outputs.
 | Rostam | **Trial only** |
 | UM DICC path discovery | **PARTIAL** (path known; sync blocked by network) |
 | UM DICC multi-day campaign (hardened) | **NOT STARTED** |
-| Design plan deep-dive | **NEXT (new chat)** |
-| S10 ingest / S11 manuscript | **Blocked on plan + DICC** |
+| Design plan deep-dive | **APPROVED** (`docs/DESIGN_PLAN.md`, Option A) |
+| WP1–WP3 UM DICC | **USER MANUAL** (agent has no DICC access) |
+| Design/planning phase | **CLOSED** |
+| S10 ingest / S11 manuscript | **Blocked on user DICC Day1/2 accept artifacts** |
 
 ### Chat ↔ project session (HARD RULE)
 
