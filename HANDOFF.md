@@ -10,7 +10,8 @@ Agents **do not** have DICC access; **do not invent** cluster numbers.
 `~/colide-master-for-dicc.tar.gz` (~356MB). DICC tree still not synced.
 
 **Open with:** (1) this header, (2) `docs/PROF_POR_3DAY.md`, (3) Option A rules,
-(4) after scp of `benchmarks/results/dicc/` → “Prof Por pack” chat.
+(4) **next chat = guided UM DICC ops** (user has SSH; agent has no login — step-by-step
+with paste-back of command output). After SUCCESS dirs are on laptop → Prof Por pack chat.
 
 **Standing process (every session forever):** see **Session lifecycle** below — close with
 verify → commit/push → next-session prompt; never leave uncommitted handoff work.
@@ -57,40 +58,60 @@ Checklist:
 
 ### D. Canonical next-session prompts (update when mode changes)
 
-**Default while Prof Por deadline active (user finished DICC, results on laptop):**
+**★ NEXT (default) — Guided UM DICC ops for Prof Por deadline**
+
+User drives SSH/scp; agent coaches live (one step at a time, interpret errors, decide
+when Day1/Day2/compare/scp are done). Agent never invents cluster numbers and cannot
+log into DICC itself.
+
+```text
+Continue COLIDE — GUIDED UM DICC (Prof Por ≤3 day deadline). Option A locked.
+
+Read: HANDOFF.md header + Session lifecycle + docs/PROF_POR_3DAY.md + dicc_scripts/README.md
++ docs/DESIGN_PLAN.md §6.
+
+Role split:
+- I (user) have SSH/scp to login01.dicc.um.edu.my (ibteshamulhaque). I run every command.
+- You (agent) do NOT have DICC access. You guide step-by-step: exact commands, what
+  success looks like, how to fix failures. Wait for me to paste output before the next step.
+
+Walk through in order (do not skip ahead):
+1) Laptop: confirm tarball ~/colide-master-for-dicc.tar.gz (rebuild if missing/stale vs master).
+2) WP1: scp + unpack on DICC; park old colide if needed; verify run_campaign.sh +
+   champion md5 80a90f7cc210276300eaa90173a5a385.
+3) WP2: Day 1 run_campaign.sh — partitions/GRES/torch/cu121 issues as they appear;
+   confirm SUCCESS dirs for available GPUs.
+4) WP3: Day 2 (--day 2), same tree/binaries; compare_dicc_sessions.py accept/reject.
+5) scp benchmarks/results/dicc/ back to laptop; quick inventory of what we have.
+6) If time remains in-chat after results are local: start Prof Por number pack (fill
+   PROF_POR_3DAY §4). Else end with lifecycle + prompt for pure “Prof Por pack” chat.
+
+Rules: no training; no clobber champion ckpt; no invented DICC numbers; no full-pipeline
+CUDA vs full V3 claims. Prefer Block 3 head-to-head. End session: verify, commit/push
+doc notes if any, next prompt.
+```
+
+**After DICC artifacts are already on the laptop (Prof pack only):**
 
 ```text
 Continue COLIDE — Prof Por numbers pack (≤3 day deadline). Option A locked.
 
 Read: HANDOFF.md header + Session lifecycle + docs/PROF_POR_3DAY.md + docs/DESIGN_PLAN.md §5–§6.
 
-I have finished (or partially finished) UM DICC WP1–WP3. Results should be under
-benchmarks/results/dicc/ on the laptop (or I will say what is missing).
+DICC results are under benchmarks/results/dicc/ on the laptop (I will correct if missing).
 
 Tasks:
 1) Inventory SUCCESS dirs / compare accept/reject for V100 and A100.
 2) Extract Block 3 CUDA + PyTorch same-GPU numbers (and absolute full V3 PT only).
 3) Fill docs/PROF_POR_3DAY.md §4 and produce a short Prof Por update with ALL numbers
    (local frozen: F1 0.9790, RF 0.9864, LLM 16.60 µs p99, laptop ranges + DICC).
-4) Option A rules: NO full-pipeline Custom CUDA vs full V3 PyTorch speedup claims.
+4) Option A: NO full-pipeline Custom CUDA vs full V3 PyTorch speedup claims.
 5) End session per HANDOFF Session lifecycle: verify, commit, push, next prompt.
 
 Do NOT train, do NOT clobber best_model_botiot_twostage.pth, do NOT invent DICC numbers.
-Manuscript spine / deep claim hygiene wait until AFTER this Prof update unless I say otherwise.
 ```
 
-**Pre-DICC / operator help only (no cluster from agent):**
-
-```text
-Continue COLIDE — pre-DICC support only (no cluster from agent).
-Read HANDOFF.md Session lifecycle + docs/PROF_POR_3DAY.md.
-Help troubleshoot operator steps / local validate only.
-Do not claim DICC numbers. Do not start manuscript. Champion ckpt frozen.
-End with verify → commit/push if docs changed → next-session prompt.
-```
-
-**After Prof update is sent (later):** replace the prompts above with the next WP
-(WP5 claim hygiene / WP6 manuscript) and keep this lifecycle section intact.
+**After Prof update is sent (later):** WP5 claim hygiene / WP6 manuscript; keep lifecycle.
 
 ### E. Also document in agent guides
 `CLAUDE.md` and `AGENTS.md` point here so every tool/session sees the rule.
@@ -108,9 +129,9 @@ End with verify → commit/push if docs changed → next-session prompt.
 | Top scientific risk | Rostam Day 1: B3 CUDA slower than PT on V100/A100 — confirm/refute on UM |
 | Deadline | **≤3 days:** Prof Por quick update **with all numbers incl. DICC** |
 | Playbook | **`docs/PROF_POR_3DAY.md`** |
-| Next (user) | **WP1 sync → Day1 → Day2 → compare → scp results home** |
-| Next (agent) | Fill Prof brief from DICC artifacts only; then rest of plan after deadline |
-| Agent DICC access | **None** |
+| Next session | **Guided UM DICC** (user SSH + agent step-by-step coaching) |
+| Then | Prof Por numbers pack from local `benchmarks/results/dicc/` |
+| Agent DICC access | **None** — guides only; user pastes command output |
 | Still forbidden | Invented DICC numbers; full-pipeline CUDA vs V3 claim; clobber champion ckpt |
 
 ---

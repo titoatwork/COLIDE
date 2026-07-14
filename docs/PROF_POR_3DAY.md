@@ -3,7 +3,9 @@
 **Deadline:** give Prof. Dr. Por Lip Yee a **quick status update with numbers within ≤3 days**  
 **Priority freeze:** **DICC multi-day numbers first**; manuscript spine / deep claim rewrites / stretch WPs **after** the update.  
 **Strategy still locked:** Option A (valid **per-block** CUDA vs PyTorch only; **no** full-pipeline CUDA vs full V3 speedup).  
-**Agent DICC access:** none — **you run WP1–WP3**; agent packages the brief once you drop results on the laptop.
+**Agent DICC access:** none (cannot SSH). **Guided mode is required:** next session is
+interactive coaching — you run every command on DICC/laptop; agent gives exact steps,
+interprets paste-backs, and only then packages the Prof brief from real artifacts.
 
 **Clock (example if start = Day 0 = today):**
 
@@ -218,19 +220,16 @@ Copy/adapt:
 
 ## 7. Agent commitments + session close pattern
 
-**Every agent session** (not only this deadline) must end per `HANDOFF.md` **Session lifecycle**:
-verify → update HANDOFF → commit → push → paste-ready next-session prompt in the reply.
+**Every agent session** must end per `HANDOFF.md` **Session lifecycle**:
+verify → update HANDOFF → commit → push → paste-ready next-session prompt.
 
-When you return with `benchmarks/results/dicc/...` on the laptop, paste the canonical
-prompt from HANDOFF Session lifecycle §D (“Prof Por numbers pack”), or:
+**DICC is not “user alone.”** Default next chat is **Guided UM DICC** (HANDOFF §D):
+agent coaches WP1→WP3 live; user pastes outputs. After `benchmarks/results/dicc/` is
+on the laptop, same chat may start the Prof pack if time allows, or a follow-up
+“Prof Por numbers pack” chat.
 
-```text
-Continue COLIDE — Prof Por numbers pack (≤3 day deadline). Option A locked.
-Read HANDOFF.md + docs/PROF_POR_3DAY.md. Fill §4; draft Prof brief; Option A only.
-End session: verify, commit, push, next prompt. No training. No invented DICC numbers.
-```
-
-Until then, agent will **not** invent cluster numbers and will **not** start manuscript-deep work that delays your DICC focus.
+Agent will **not** invent cluster numbers and will **not** start manuscript-deep work
+that delays DICC + Prof update.
 
 ---
 
