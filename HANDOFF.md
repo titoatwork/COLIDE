@@ -134,20 +134,10 @@ no DICC, no manuscript rewrite, no overwriting production without backup.
 
 ---
 
-## Session 6 starting point
+## Session 6 starting point (SUPERSEDED — SKIPPED 2026-07-14)
 
-- **Brief pack:** this section + roadmap + `CLAUDE.md`. Do not re-run the full RF sweep unless
-  `rf_teacher_strengthen.json` is missing on disk.
-- **Choose one path at open (user decides):**
-  - **6A (optional accuracy):** one KD with balanced RF teacher flags above + optional
-    two-stage; backup production first; never overwrite without comparing to 0.9790.
-  - **6B (recommended if time-limited):** skip accuracy; treat S6 as no-op and start
-    **Session 7** work (threats-to-validity draft + numerical fidelity table) under a
-    Session 7 header — still fine to call it Session 7 and leave S6 "skipped" in roadmap.
-- **Open check:** `verify_claims.py` green; confirm production md5 still
-  `80a90f7cc210276300eaa90173a5a385`.
-- **Non-goals:** do not change published 0.9864 RF bar without explicit user decision;
-  do not touch DICC yet (S9).
+Optional balanced-RF KD was skipped (low expected value vs Phase 4 docs). See Session 7/8
+starting points at top of file.
 
 ---
 
