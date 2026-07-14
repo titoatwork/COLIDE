@@ -157,8 +157,6 @@ setup_python() {
 
   log "Installing minimal benchmark dependencies"
   python -m pip install --upgrade pip
-  # CPU wheel is fine for installing; CUDA torch may need a site-specific index.
-  # Prefer default PyPI; user can set COLIDE_PIP_EXTRA / TORCH_INDEX_URL.
   # shellcheck disable=SC2086
   python -m pip install \
     ${COLIDE_PIP_EXTRA:-} \
@@ -166,14 +164,11 @@ setup_python() {
     'scipy>=1.13.0' \
     'pyyaml>=6.0' \
     'scikit-learn>=1.5.0'
-  if [[ -n "${TORCH_INDEX_URL:-}" ]]; then
-    python -m pip install 'torch>=2.5.0' --index-url "${TORCH_INDEX_URL}"
-  else
-    python -m pip install 'torch>=2.5.0' || {
-      log "WARN: default torch install failed; retry with CUDA 12.1 index"
-      python -m pip install 'torch>=2.5.0' --index-url https://download.pytorch.org/whl/cu121
-    }
-  fi
+  # Default to cu121 wheels: support V100 (SM 7.0) + A100. PyPI's newest torch
+  # (e.g. 2.13+cu130) ships cuDNN that refuses SM < 7.5 and breaks V100.
+  TORCH_INDEX_URL="${TORCH_INDEX_URL:-https://download.pytorch.org/whl/cu121}"
+  log "Installing torch from ${TORCH_INDEX_URL}"
+  python -m pip install --upgrade 'torch>=2.5.0,<2.7' --index-url "${TORCH_INDEX_URL}"
 
   python - <<'PY'
 import numpy, scipy, yaml, torch

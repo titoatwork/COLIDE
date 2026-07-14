@@ -1,66 +1,49 @@
 # Cluster campaign scripts (portable SLURM)
 
-Hardened multi-day GPU latency campaigns. **No hardcoded site paths** (`/scr/...`),
-**no hardcoded hostnames** (`gpu05`/`gpu06`). Works on DICC, LSU Rostam, or any
-SLURM cluster with a writable checkout and `nvcc` + conda/modules.
+Hardened multi-day GPU latency campaigns. **No hardcoded site paths**, **no
+hardcoded hostnames**. Works on DICC, LSU Rostam, laptops, or any SLURM site.
 
-## Quick start (any cluster)
+## One command (preferred)
 
 ```bash
-# You are already inside a COLIDE checkout (clone or rsync — any path is fine)
 cd /path/to/COLIDE
-export COLIDE_ROOT="$PWD"   # optional; scripts default to this tree
-
-# 1) Setup once on a login/build node (no GPU required)
-bash dicc_scripts/01_setup.sh
-# single-arch example (only V100 kernels):
-# bash dicc_scripts/01_setup.sh --targets sm_70:v100
-
-# 2) Day 1 submit — set YOUR site's partition/account if required
-bash dicc_scripts/submit_session.sh \
-  --targets v100,a100 \
-  --campaign core \
-  --date "$(date -u +%Y%m%d)" \
-  --partition YOUR_PARTITION \    # omit if default partition is fine
-  --account YOUR_ACCOUNT \        # omit if not required
-  --gres gpu:1
-
-# 3) Day 2 (next UTC day): SAME commit, do NOT re-run 01_setup.sh
-bash dicc_scripts/submit_session.sh \
-  --targets v100,a100 \
-  --campaign core \
-  --date "$(date -u +%Y%m%d)" \
-  --partition YOUR_PARTITION \
-  --account YOUR_ACCOUNT
-
-# 4) Compare after both days have SUCCESS markers
-module load miniconda 2>/dev/null || true
-source "$(conda info --base)/etc/profile.d/conda.sh"
-conda activate colide
-export PYTHONPATH=.
-python scripts/compare_dicc_sessions.py --gpu v100s --date-a D1 --date-b D2
-python scripts/compare_dicc_sessions.py --gpu a100  --date-a D1 --date-b D2
+bash dicc_scripts/run_campaign.sh --full
 ```
 
-Discover site knobs:
+That **one line** does Day 1 → wait → Day 2 → wait → cross-day compare (as far as the
+site allows): setup Python, detect partitions/GRES, compile kernels, submit both
+GPU classes, then compare SUCCESS runs. Day-2 date label is `<day>_d2` so it works
+even on the same calendar day.
 
 ```bash
-sinfo -o "%P %G %l %D" | head
-module avail 2>&1 | head
+# Day 1 only / Day 2 only / options:
+bash dicc_scripts/run_campaign.sh
+bash dicc_scripts/run_campaign.sh --day 2
+bash dicc_scripts/run_campaign.sh --wait
+bash dicc_scripts/run_campaign.sh --targets v100
+bash dicc_scripts/run_campaign.sh --local
+bash dicc_scripts/run_campaign.sh --dry-run
 ```
 
-Optional: `cp dicc_scripts/site.env.example dicc_scripts/site.env` and edit defaults.
+Overrides when auto-detect is wrong:
+
+```bash
+export COLIDE_V100_PARTITION=cuda-V100
+export COLIDE_A100_PARTITION=cuda-A100
+export COLIDE_SBATCH_GRES=            # force no gres
+export COLIDE_SBATCH_ACCOUNT=myacct
+bash dicc_scripts/run_campaign.sh
+```
 
 ## Layout
 
 | Path | Role |
 |------|------|
-| `01_setup.sh` | Repo-local setup: conda, atomic kernel compile + SHA256 |
-| `submit_session.sh` | Preferred entry: absolute logs, `--chdir`, multi-profile |
-| `job_benchmark.sh` | Generic SLURM body (no site hostnames) |
-| `profiles/*.env` | GPU identity + kernel subdir (v100, a100, …) |
-| `site.env.example` | Partition/account/gres template |
-| `02`/`03` | Back-compat wrappers → same runner |
+| **`run_campaign.sh`** | **One-command entry (use this)** |
+| `01_setup.sh` | Python env + kernel compile (called by run_campaign) |
+| `submit_session.sh` | SLURM submit helper |
+| `job_benchmark.sh` | Generic job body |
+| `profiles/*.env` | GPU identity (v100, a100) |
 | `lib/run_benchmark.sh` | Measurement body |
 | `validate/local_validate.sh` | Offline suite |
 
@@ -72,12 +55,6 @@ benchmarks/results/dicc/<campaign>/<gpu>/<date>_job<id>/
   cuda_kernel_stats.json  pytorch_gpu_stats.json
   raw/  logs/  exit_status  SUCCESS
 ```
-
-## Adding a new GPU profile
-
-1. Compile: `bash dicc_scripts/01_setup.sh --targets sm_86:rtx`
-2. Create `profiles/rtx.env` (label, name regex, CC, min mem, kernels subdir).
-3. Submit: `bash dicc_scripts/submit_session.sh --targets rtx --constraint …`
 
 ## Comparability
 

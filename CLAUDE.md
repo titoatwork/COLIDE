@@ -73,37 +73,57 @@ This assumes the CUDA kernels are already compiled in `inference/kernels/`. Indi
 scripts in `scripts/benchmark_*.py` can be run standalone for iterating on one measurement at a time
 (e.g. `python scripts/benchmark_stats.py` for the statistical-significance trial runs).
 
-**Cluster campaigns (SLURM, any site):** portable multi-day workflow under `dicc_scripts/`.
-**No hardcoded `/scr` paths or host nodelists.** Prefer `dicc_scripts/README.md`.
+**Cluster campaigns (SLURM, any site) — one command.** No hardcoded `/scr` paths or nodelists.
+Operator guide: `dicc_scripts/README.md`. Branch for this stack: `final-polish` (tip includes
+`run_campaign.sh` @ `54c3dcd` and later).
 
 ```bash
-# Inside any COLIDE checkout on the login node (no GPU required for compile)
 cd /path/to/COLIDE
-export COLIDE_ROOT="$PWD"   # optional; defaults to this tree
-bash dicc_scripts/01_setup.sh
-# or single arch: bash dicc_scripts/01_setup.sh --targets sm_70:v100
+# ★ Single line: Day1 + wait + Day2 + wait + compare
+bash dicc_scripts/run_campaign.sh --full
 
-# Submit (pass YOUR partition/account; omit if defaults work)
-bash dicc_scripts/submit_session.sh --targets v100,a100 --campaign core \
-  --date $(date -u +%Y%m%d) --partition YOUR_PARTITION --account YOUR_ACCOUNT
-# Optional Nsight: add --with-nsight
-
-# After Day 1 and Day 2 both have SUCCESS (same git SHA + same binaries):
-PYTHONPATH=. python scripts/compare_dicc_sessions.py --gpu v100s --date-a D1 --date-b D2
-PYTHONPATH=. python scripts/compare_dicc_sessions.py --gpu a100  --date-a D1 --date-b D2
+# Piecemeal (optional):
+bash dicc_scripts/run_campaign.sh              # Day 1 only
+bash dicc_scripts/run_campaign.sh --day 2      # Day 2 only (<day>_d2 label)
+bash dicc_scripts/run_campaign.sh --local      # no sbatch
+bash dicc_scripts/run_campaign.sh --dry-run
 ```
 
-Layout of each run (never legacy fixed filenames):
+`run_campaign.sh` auto-detects: repo root, Python (`.venv-cluster` + torch **cu121** for V100+A100),
+SLURM partitions (`cuda-V100` / `cuda-A100` / `gpu` / …), whether to omit `--gres` when sinfo
+reports GRES=(null) (Rostam), and compiles via local `nvcc` or a one-shot GPU sbatch when login
+has no toolkit (`PATH` often needs `/usr/local/cuda/bin` on GPU nodes).
+
+| Piece | Role |
+|-------|------|
+| **`dicc_scripts/run_campaign.sh`** | **Preferred single entry** |
+| `01_setup.sh` | `--python-only` / `--kernels-only` / `--targets sm_70:v100,sm_80:a100` |
+| `submit_session.sh` | SLURM submit; `--gres none`; `--allow-dirty`; per-profile partition |
+| `job_benchmark.sh` + `lib/run_benchmark.sh` | Job body; pins `CUDA_VISIBLE_DEVICES=0` on multi-GPU nodes |
+| `profiles/{v100,a100}.env` | GPU name regex, CC, min mem, kernel subdir |
+| `scripts/benchmark_cuda_kernels_stats.py` | n=100 default, `--strict`, retries for flaky fp16 validation |
+| `scripts/benchmark_pytorch_gpu_stats.py` | 20×1000, production ckpt, cuDNN SM&lt;7.5 fallback, comparability flags |
+| `scripts/compare_dicc_sessions.py` | Cross-day gate + Welch / Cohen’s d |
+
+Result layout (never legacy fixed filenames from this path):
 `benchmarks/results/dicc/<campaign>/<gpu>/<date>_job<id>/` — `manifest.json`, `environment.txt`,
 `kernel_SHA256SUMS`, `cuda_kernel_stats.json`, `pytorch_gpu_stats.json`, `raw/`, `logs/`,
 `exit_status`, `SUCCESS` (only on clean exit).
 
-Thin wrappers: `02_benchmark_v100.sh` / `03_benchmark_a100.sh` (SBATCH resources only);
-shared body: `lib/run_benchmark.sh`. Offline checks: `bash dicc_scripts/validate/local_validate.sh`.
+**Rostam (LSU) hard-won facts** (portable code already encodes these):
+- Login has **no** CUDA module; `nvcc` lives on GPU nodes under `/usr/local/cuda*/bin`.
+- Partitions: `cuda-V100` (bahram/diablo), `cuda-A100` (nasrin/toranj), `DGX-A100`.
+- sinfo GRES=(null) → **do not** force `--gres=gpu:1` (use `--gres none` / empty).
+- Multi-GPU nodes: pin one device; do not require exactly one visible GPU.
+- Torch from default PyPI (2.13+cu130) breaks V100 (cuDNN refuses SM&lt;7.5) → install **cu121**.
+- A100 `fused_block3_fp16` can intermittently FAIL numerical validation → retries + bounded skips.
 
-Related Python: `scripts/benchmark_cuda_kernels_stats.py` (default n=100, `--strict`),
-`scripts/benchmark_pytorch_gpu_stats.py` (20×1000, production checkpoint
-`model/best_model_botiot_twostage.pth`), `scripts/compare_dicc_sessions.py`.
+**Day‑1 Rostam SUCCESS (provisional; not paper-final until Day 2 + compare):**  
+`v100s/20260711_job167674`, `a100/20260711_job167675` on Rostam under user checkout
+`/home/aagrawal/COLIDE`. Example means: V100 CUDA block3_fp16 ~581 µs, PyTorch block3 ~512 µs,
+PyTorch full ~1470 µs; A100 CUDA block3_fp16 ~706 µs, PyTorch block3 ~353 µs, PyTorch full ~801 µs.
+V100 custom BiLSTM faster than A100 (sequential/clock-bound story). **Do not** publish full-pipeline
+CUDA/PyTorch speedups. Day 2 still required before updating README/paper tables.
 
 **Comparability rule:** full CUDA-vs-PyTorch pipeline speedup is **not valid** until architecture
 parity — V3 PyTorch runs attention + LayerNorm + global average pool; CUDA implements none of those;

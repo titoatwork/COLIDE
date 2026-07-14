@@ -1,4 +1,4 @@
-> **SUPERSEDED for operators:** use `dicc_scripts/README.md` (hardened multi-day campaign on master). This file is historical only.
+> **SUPERSEDED for operators:** use `dicc_scripts/README.md` and `bash dicc_scripts/run_campaign.sh` (canonical on master). This file is historical only.
 
 # COLIDE — DICC Cluster Runbook (Session 9)
 
