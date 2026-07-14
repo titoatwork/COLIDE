@@ -1,10 +1,92 @@
 # COLIDE — Session Handoff
 
-**Last session:** 2026-07-02 (Claude Sonnet 5, session 3, CLOSED). **Read this whole file before
-doing anything else** — it has the full context needed to continue without re-deriving what's
-already been established. **Session 3 is done and pushed — see "Session 3 progress" below for the
-full list of what changed, then "Session 4 starting point" near the end of this file for exactly
-where to pick up.**
+**Last session:** 2026-07-14 (Grok, session 4, CLOSED). **Do not re-read this whole file by
+default** — open with (1) this header + **Session N progress**, (2) **Session roadmap**, (3)
+**Session N+1 starting point**, (4) `CLAUDE.md`. Dive into older session blocks only when
+debugging a specific claim.
+
+**Session 3** (Claude Sonnet 5, 2026-07-02) closed and pushed earlier; full detail still below.
+**Session 4** (this file top) installed the multi-session finish plan and verified baseline.
+
+---
+
+## Session roadmap (Sessions 4–11)
+
+Work **one session at a time**. Close each session by updating this file (progress + next
+starting point). Full operating protocol lives in the multi-session master plan; this table is
+the in-repo map so any agent can continue without chat memory.
+
+| Session | Goal | Status |
+|---------|------|--------|
+| **4** | Baseline `verify_claims` + this roadmap / HANDOFF scaffold | **CLOSED 2026-07-14** |
+| **5** | Ensemble diagnostic fix + stronger RF teacher experiment | **NEXT** |
+| **6** | Optional two-stage promote (only if S5 warrants) | pending |
+| **7** | Phase 4: threats-to-validity + numerical fidelity table | pending |
+| **8** | Optional batch-size / TensorRT fairness note | pending / skippable |
+| **9** | DICC runbook + user multi-day cluster submit | pending (user for sbatch) |
+| **10** | Ingest DICC JSON → cross-hardware README/claims | pending (needs S9 artifacts) |
+| **11** | Manuscript spine from `docs/paper_text_blocks.md` | pending |
+
+**Rules:** one primary goal per session; run `verify_claims.py` at open and after claim edits;
+backup `model/best_model_botiot_twostage.pth` before any `train_twostage.py`; never use stale
+`model/best_model.pth` (0.9352) as production; push only when user asks.
+
+---
+
+## Session 4 progress (2026-07-14)
+
+**Goal:** Prove repo health after Session 3; install multi-session roadmap into HANDOFF so
+Session 5+ can start with light context. **Non-goals:** no training, no DICC, no manuscript
+rewrite, no number changes in README/paper.
+
+**Baseline verification**
+- `source .venv/bin/activate && PYTHONPATH=. python3 scripts/verify_claims.py`
+- **RESULT: 63/63 claims PASSED, 0 regressions.** Orphan bolded README numbers still untracked
+  (not load-bearing): `0.6, 1.00x, 10.0, 2.0, 3.3%`.
+
+**Inventory (no mutations)**
+- Git: `master` clean, aligned with `origin/master`, HEAD `d8ccd20` (plus this HANDOFF commit
+  after Session 4 close).
+- Production checkpoint: `model/best_model_botiot_twostage.pth` (mtime 2026-07-02 02:50);
+  `benchmarks/results/twostage_botiot.json` → `macro_f1` ≈ **0.9790**.
+- Stale checkpoint still present: `model/best_model.pth` (2026-06-13) — do not use for "the" model.
+- Weight export metadata: `model/weights_bin/validation_metadata.json` present (session-3
+  re-export era); treat as current until next retrain.
+- CUDA sources: 7 fused `*.cu` kernels under `inference/kernels/`.
+- DICC scripts present: `01_setup.sh` … `05_run_all.sh` (path bug fixed session 3; job-id
+  tagging in `d8ccd20`). Still needs user multi-day `sbatch` (Sessions 9–10).
+
+**Decisions**
+- Adopt session-by-session execution (S4–S11) with HANDOFF as continuity memory across tools
+  (human / Claude / Grok).
+- Prefer unblocked local work (S5–S8) before/cluster-parallel with DICC (S9–S10).
+- Session 4 intentionally makes **no scientific number changes** — only process/docs.
+
+**Git:** HANDOFF-only doc commit for this session (no claim/code churn).
+
+---
+
+## Session 5 starting point
+
+- **Brief pack only:** this section + Session roadmap above + `CLAUDE.md` + scripts listed below.
+  Do **not** re-audit the whole repo or re-derive Session 3 ranges unless a claim fails.
+- **Open check:** `PYTHONPATH=. python3 scripts/verify_claims.py` must stay green.
+- **Primary goals (item #5 remaining):**
+  1. Fix diagnostic-only bug in `scripts/train_ensemble_distill.py` (~line 105: compares
+     `len(probs)` train size to `len(y_val)` — printed "Ensemble teacher Val F1" is wrong;
+     KD loop itself may still use train probs correctly — verify while fixing).
+  2. Stronger RF teacher on the **same** `data/processed/*.npy` pipeline as
+     `scripts/rf_baseline_processed.py` (more trees e.g. 500, `class_weight='balanced'`, light
+     depth search). Save JSON under `benchmarks/results/`.
+  3. Decision: if teacher soft labels look better, schedule one KD run (same session or S6);
+     if not, document no-op and leave champion **0.9790** untouched.
+- **Footgun:** `train_twostage.py` overwrites `model/best_model_botiot_twostage.pth` with no
+  suffix — **backup first** if any two-stage run is attempted (prefer defer promote to Session 6).
+- **Non-goals for S5:** DICC, manuscript rewrite, Phase 4 fidelity table (those are S7/S9).
+- **Close ritual:** Session 5 progress block at top of this file; Session 6 starting point;
+  `verify_claims.py` if any published number changed.
+
+---
 
 ## Session 3 progress (2026-07-02)
 
@@ -572,40 +654,13 @@ checkpoints (`model/*.pth`) ARE tracked**: 3 new focal-gamma sweep checkpoints c
 tracked**: all 7 recompiled from source (`nvcc -arch=sm_86`) and committed in `d9e1f79`,
 functionally unchanged, rebuilt for full traceability during the 4-block re-verification pass.
 
-## Session 4 starting point
+## Session 4 starting point (SUPERSEDED 2026-07-14)
 
-- Read `CLAUDE.md` first (architecture overview — updated this session for the widened Block 3
-  progression range, 7.55x-9.50x).
-- **`scripts/verify_claims.py` passes all claims, 0 regressions, as of the last commit.** Run it
-  first thing to confirm nothing drifted between sessions before trusting this file's claims.
-- **Every open item from session 3's "Open items" list below is either RESOLVED or has a clear
-  next step** — see the numbered list further down for the authoritative status of items #1-#5.
-  Items #0 (Sophimatics), the stale-weight-export loose end, and the RTX3050
-  measurement-stability follow-through (items #1/#2) are all fully closed out as of this session.
-- **What's realistically next, roughly in priority order:**
-  1. **Item #3 (DICC cross-hardware)** — the single biggest remaining gap. V100S/A100 only have
-     single unreplicated runs, no statistical trials, no same-hardware PyTorch baseline. Entirely
-     blocked on the user running `sbatch` jobs across >=2 separate days — no cluster access from
-     here. The scripts are ready and were fixed this session (see item #2's writeup above for the
-     relative-path bug that would have crashed them on first submission).
-  2. **Item #5's remaining sub-tasks** — RF teacher strengthening (more trees, `class_weight=
-     'balanced'`, depth tuning) or fixing+retuning the ensemble teacher (`train_ensemble_distill.py`
-     has a diagnostic-only bug at ~line 105, and underperforms solo RF untuned). The focal-gamma
-     sweep (this session) was a clean negative result — gamma=2.0 remains the champion.
-  3. **Item #4 (ceiling-raisers)** — numerical-fidelity table, batch-size sweep, threats-to-validity
-     section (this session's measurement-stability findings are ready-made source material for
-     that section). No urgency.
-- **Model checkpoints:** `model/best_model_botiot_twostage.pth` is the final, correct model
-  (0.9790 macro-F1). `model/best_model.pth` is a stale pre-distillation checkpoint (0.9352) —
-  don't use it for anything claiming to represent "the" model. **`train_twostage.py` has no
-  suffix flag and will silently overwrite the production checkpoint on every run — back up the
-  current best before running it again** (this bit session 3 once already, see item #5's loose-end
-  writeup above).
-- **CUDA kernel weight exports are current** as of this session (`model/weights/`,
-  `model/weights_bin/`), matching the 0.9790 checkpoint — re-export again only if the model gets
-  retrained.
-- **A pattern worth internalizing before extending any more "range across N sessions" claims:**
-  this session caught itself making the same mistake twice — computing a new range using only the
-  newest 1-2 data points and silently dropping an already-known intermediate one sitting in a
-  backup file. Before extending any range claim, explicitly enumerate every session's data point
-  first, don't just diff against "whatever's live now."
+**Superseded by "Session 5 starting point" and "Session roadmap" at the top of this file.**
+Kept for archival continuity with Session 3's close-out prose only.
+
+- Session 4 ran baseline verify (63/63 PASS) and installed the multi-session roadmap.
+- Open work remains: item #5 (S5–S6), item #4 (S7–S8), item #3 DICC (S9–S10), manuscript (S11).
+- Production model remains `model/best_model_botiot_twostage.pth` (0.9790). Backup before
+  `train_twostage.py`. Weight exports current until next retrain.
+- Range-claim rule still stands: enumerate every known session data point before widening min/max.
