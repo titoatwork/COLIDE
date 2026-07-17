@@ -1,17 +1,19 @@
 # COLIDE — Session Handoff
 
-**DEADLINE MODE (≤3 days) — Prof. Por status update with numbers.**  
-Authority: `docs/DESIGN_PLAN.md` (Option A) + **`docs/PROF_POR_3DAY.md`** (execution order).  
-**Do first:** user-manual **UM DICC WP1→WP2→WP3** + bring results home.  
-**Defer after update:** WP5 claim hygiene, WP6 manuscript spine, WP7 stretch.  
+**MODE:** Pre-manuscript critical path — **UM DICC multi-day → Prof numbers pack → claim hygiene.**  
+Authority: `docs/DESIGN_PLAN.md` (Option A) + **`docs/FINAL_PLAN.md`** + `docs/PROF_POR_3DAY.md`.  
+**Do first:** Unblock DICC (Prof decision on Cheran / stable runner) → Day1+Day2 → results on laptop.  
+**Then:** Prof pack → claim hygiene. **Defer:** manuscript spine (P4), stretch (P5).  
 Agents **do not** have DICC access; **do not invent** cluster numbers.
 
-**Last work:** design approved; Prof Por 3-day plan written; tarball ready
-`~/colide-master-for-dicc.tar.gz` (~356MB). DICC tree still not synced.
+**Last work (2026-07-17):** Guided DICC session — tarball rebuilt & scp’d; WP1 verify OK on user
+home; partitions from `sacct`: **`gpu-v100s` / `gpu-a100`**, gres `gpu:1`; Day1 blocked by SSH
+freezes + conda `set -u`; user emailed Prof (Cheran optional cluster help). Final plan written:
+`docs/FINAL_PLAN.md`.
 
-**Open with:** (1) this header, (2) `docs/PROF_POR_3DAY.md`, (3) Option A rules,
-(4) **next chat = guided UM DICC ops** (user has SSH; agent has no login — step-by-step
-with paste-back of command output). After SUCCESS dirs are on laptop → Prof Por pack chat.
+**Open with:** (1) this header, (2) **`docs/FINAL_PLAN.md`**, (3) Option A rules.
+**Next:** Prof reply → Cheran/user run card in FINAL_PLAN §3 P0 → when
+`benchmarks/results/dicc/` on laptop → **Prof Por pack** chat.
 
 **Standing process (every session forever):** see **Session lifecycle** below — close with
 verify → commit/push → next-session prompt; never leave uncommitted handoff work.
