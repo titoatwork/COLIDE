@@ -136,6 +136,12 @@ scp -r ibteshamulhaque@login01.dicc.um.edu.my:/home/user/ibteshamulhaque/colide/
 Then open an agent chat: **“Prof Por pack — DICC results landed.”**  
 Agent fills §4 table below and polishes the email/slide text.
 
+**HARD GATE before send (user-confirmed 2026-07-17):** do **not** email §5 (or any
+“final” numbers pack) until a **codebase-wide numbers match** is done — README, docs,
+`paper_text_blocks`, HANDOFF, §4 table, and draft email must agree with the same JSON
+sources — and `PYTHONPATH=. python scripts/verify_claims.py` is **green**. See
+`docs/FINAL_PLAN.md` phase **P2a–P2d**.
+
 **Operator guide detail:** `dicc_scripts/README.md`.
 
 ---
@@ -235,13 +241,16 @@ that delays DICC + Prof update.
 
 ## 8. Single checklist (print this)
 
-- [ ] scp tarball to DICC  
+- [ ] scp tarball to DICC (or Cheran runs on his account after Prof OK)  
 - [ ] unpack; `run_campaign.sh` present; md5 `80a90f7c…`  
 - [ ] Day 1 jobs → both GPUs `SUCCESS` (or document missing partition)  
 - [ ] Day 2 jobs → `SUCCESS`  
 - [ ] compare accept  
 - [ ] scp `benchmarks/results/dicc/` home  
-- [ ] fill §4 + send §5 text to Prof  
-- [ ] only then: claim hygiene / manuscript  
+- [ ] fill §4 from JSON only  
+- [ ] **codebase-wide numbers match** (README / docs / claims / email draft)  
+- [ ] `verify_claims.py` green  
+- [ ] **only then** send §5 text to Prof  
+- [ ] after send: residual hygiene / manuscript (not blockers for the send)
 
 **You have the operational wheel on DICC; I have the scientific/claim wheel once results land.**

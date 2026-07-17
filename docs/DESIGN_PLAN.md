@@ -578,4 +578,5 @@ benchmarks/results/dicc_*_summary.txt    LEGACY June 2026 single-shot only
 | 2026-07-14 | **User approved entire plan** (Option A locked; WP order §10 authorized). |
 | 2026-07-14 | **Design/planning phase closed.** WP1–WP3 are **user-manual on UM DICC** (agents have no cluster access). Next agent work = WP4+ after user brings compare artifacts. |
 | 2026-07-14 | **Deadline replan:** Prof Por update in ≤3 days needs **all numbers including DICC first**. Operator playbook: `docs/PROF_POR_3DAY.md`. Defer WP5–WP7 until after that update. |
+| 2026-07-17 | **Final plan:** `docs/FINAL_PLAN.md`. DICC partitions `gpu-v100s`/`gpu-a100`. **Hard gate:** codebase-wide numbers match + `verify_claims.py` green before any final Prof numbers email (P2). |
 | 2026-07-14 | **Standing session lifecycle** locked (every chat): verify → commit/push → paste-ready next prompt. See `HANDOFF.md` Session lifecycle; mirrored in `CLAUDE.md` / `AGENTS.md`. |

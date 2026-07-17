@@ -1,19 +1,17 @@
 # COLIDE — Session Handoff
 
-**MODE:** Pre-manuscript critical path — **UM DICC multi-day → Prof numbers pack → claim hygiene.**  
+**MODE:** Pre-manuscript — **DICC multi-day → numbers match (hard gate) → Prof report.**  
 Authority: `docs/DESIGN_PLAN.md` (Option A) + **`docs/FINAL_PLAN.md`** + `docs/PROF_POR_3DAY.md`.  
-**Do first:** Unblock DICC (Prof decision on Cheran / stable runner) → Day1+Day2 → results on laptop.  
-**Then:** Prof pack → claim hygiene. **Defer:** manuscript spine (P4), stretch (P5).  
-Agents **do not** have DICC access; **do not invent** cluster numbers.
+**Do first:** Unblock DICC (await Prof reply re Cheran) → Day1+Day2 → results on laptop.  
+**Then:** P2 extract + **codebase-wide numbers match** + `verify_claims.py` green → **only then** email Prof.  
+**Defer:** manuscript (P4), stretch (P5). Agents: **no DICC login**; **no invented numbers**.
 
-**Last work (2026-07-17):** Guided DICC session — tarball rebuilt & scp’d; WP1 verify OK on user
-home; partitions from `sacct`: **`gpu-v100s` / `gpu-a100`**, gres `gpu:1`; Day1 blocked by SSH
-freezes + conda `set -u`; user emailed Prof (Cheran optional cluster help). Final plan written:
-`docs/FINAL_PLAN.md`.
+**Last work (2026-07-17):** Guided DICC session (tarball, WP1, partitions `gpu-v100s`/`gpu-a100`);
+Prof emailed re access; `docs/FINAL_PLAN.md` locked; **hard gate added:** no final Prof numbers
+email until full codebase numbers match + verify_claims green. **Paused awaiting Prof reply.**
 
-**Open with:** (1) this header, (2) **`docs/FINAL_PLAN.md`**, (3) Option A rules.
-**Next:** Prof reply → Cheran/user run card in FINAL_PLAN §3 P0 → when
-`benchmarks/results/dicc/` on laptop → **Prof Por pack** chat.
+**Open with:** (1) this header, (2) **`docs/FINAL_PLAN.md`**, (3) Option A + numbers-match gate.
+**Next:** Prof reply → run card FINAL_PLAN §3 P0 → results home → **Prof Por pack with match gate**.
 
 **Standing process (every session forever):** see **Session lifecycle** below — close with
 verify → commit/push → next-session prompt; never leave uncommitted handoff work.
@@ -93,27 +91,44 @@ CUDA vs full V3 claims. Prefer Block 3 head-to-head. End session: verify, commit
 doc notes if any, next prompt.
 ```
 
-**After DICC artifacts are already on the laptop (Prof pack only):**
+**After DICC artifacts are already on the laptop (Prof pack + numbers match):**
 
 ```text
-Continue COLIDE — Prof Por numbers pack (≤3 day deadline). Option A locked.
+Continue COLIDE — Prof Por numbers pack + codebase numbers match. Option A locked.
 
-Read: HANDOFF.md header + Session lifecycle + docs/PROF_POR_3DAY.md + docs/DESIGN_PLAN.md §5–§6.
+Read: HANDOFF.md header + Session lifecycle + docs/FINAL_PLAN.md P2 + docs/PROF_POR_3DAY.md
++ docs/DESIGN_PLAN.md §5–§6.
 
 DICC results are under benchmarks/results/dicc/ on the laptop (I will correct if missing).
 
-Tasks:
+Tasks (do not skip; do NOT email Prof until 4–5 are done):
 1) Inventory SUCCESS dirs / compare accept/reject for V100 and A100.
-2) Extract Block 3 CUDA + PyTorch same-GPU numbers (and absolute full V3 PT only).
-3) Fill docs/PROF_POR_3DAY.md §4 and produce a short Prof Por update with ALL numbers
-   (local frozen: F1 0.9790, RF 0.9864, LLM 16.60 µs p99, laptop ranges + DICC).
-4) Option A: NO full-pipeline Custom CUDA vs full V3 PyTorch speedup claims.
-5) End session per HANDOFF Session lifecycle: verify, commit, push, next prompt.
+2) Extract Block 3 CUDA + PyTorch same-GPU numbers (and absolute full V3 PT only) from JSON.
+3) Fill docs/PROF_POR_3DAY.md §4.
+4) Codebase-wide numbers match: README, docs, paper_text_blocks, HANDOFF, §4, draft email
+   must agree; fix stale strings; ranges not lucky points; June legacy labeled if used.
+5) PYTHONPATH=. python scripts/verify_claims.py must be green.
+6) Only then produce/send short Prof Por update with ALL locked numbers.
+7) Option A: NO full-pipeline Custom CUDA vs full V3 PyTorch speedup claims.
+8) End session per HANDOFF Session lifecycle: verify, commit, push, next prompt.
 
 Do NOT train, do NOT clobber best_model_botiot_twostage.pth, do NOT invent DICC numbers.
 ```
 
-**After Prof update is sent (later):** WP5 claim hygiene / WP6 manuscript; keep lifecycle.
+**★ NEXT while waiting on Prof:** no DICC ops required; resume with Prof decision.
+
+```text
+Continue COLIDE per docs/FINAL_PLAN.md. Option A locked. Numbers-match gate before any Prof send.
+
+Prof decision on Cheran/DICC: [agreed / declined / pending — fill in].
+If agreed: coach run card P0→P1; wait for paste-backs / results tarball.
+If results under benchmarks/results/dicc/: run Prof pack P2a–P2d (match + verify_claims before email).
+
+Rules: no training; no clobber champion; no invented numbers; no full-pipeline CUDA vs full V3.
+End per HANDOFF lifecycle.
+```
+
+**After Prof update is sent (later):** residual P3 / manuscript P4; keep lifecycle.
 
 ### E. Also document in agent guides
 `CLAUDE.md` and `AGENTS.md` point here so every tool/session sees the rule.

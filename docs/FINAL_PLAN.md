@@ -35,7 +35,8 @@
 | Partitions (from `sacct` jobs 363046/363047) | **`gpu-v100s`**, **`gpu-a100`**; GRES **`gpu:1`** |
 | Day 1 / Day 2 new campaign | **Not completed** (SSH freezes; conda/`set -u`; then access strategy shifted) |
 | Prof email | Sent: bottleneck + ask guidance re Cheran helping on cluster if appropriate |
-| Pre-manuscript clock | **~1 week typical** after DICC runner is unblocked (best ~3–7 days) |
+| **Hard gate before any Prof “final” numbers email** | **Codebase-wide numbers match** + `verify_claims.py` green (see P2) |
+| Pre-manuscript clock | **~1–1.5 weeks typical** after DICC runner unblocked (best ~4–7 days incl. match pass) |
 
 ---
 
@@ -96,42 +97,72 @@ bash dicc_scripts/run_campaign.sh --day 2      # Day 2 (same calendar day OK via
 
 ---
 
-### Phase P2 — Prof numbers pack (status update, not manuscript)
+### Phase P2 — Extract + **codebase-wide numbers match** + Prof report  
+**(HARD GATE — do not email Prof until this phase exits)**
 
 **Owner:** User + agent (laptop).  
-**Playbook:** `docs/PROF_POR_3DAY.md` §4–§5.
+**Playbook:** `docs/PROF_POR_3DAY.md` §4–§5 + this section.  
+**User rule (2026-07-17):** Must perform a **sight / consistency match of numbers across the entire public codebase** before sending anything that looks like a final status pack.
 
-1. Inventory SUCCESS paths; fill §4 tables from JSON only.  
-2. Report Block 3 CUDA vs PyTorch ratios; absolute full V3 PT only (no invalid full CUDA/full V3 ratio).  
-3. Attach local frozen metrics (F1, RF, LLM, laptop ranges).  
-4. Label June 551/592 only if needed as **legacy single-shot**.  
-5. Email Prof with evidence-based update (addresses his request: consistent protocol, preliminary until validated).
+#### P2a — Extract from artifacts only
 
-**Exit P2:** Prof has a numbered status update.  
-**Clock:** ~0.5–1 day after P1.
+1. Inventory SUCCESS paths; compare accept/reject.  
+2. Fill `docs/PROF_POR_3DAY.md` §4 from JSON only (Block 3 CUDA vs PT; absolute full V3 PT; no invalid full CUDA/full V3 ratio).  
+3. List local frozen metrics (F1, RF, LLM, laptop ranges) from source JSON.  
+4. Label June 551/592 only if used as **legacy single-shot**.
+
+#### P2b — Codebase-wide numbers match (required)
+
+Reconcile **every** user-facing number with a single source of truth:
+
+| Surface | Must match |
+|---------|------------|
+| `README.md` | Accuracy, latency ranges, DICC (when added), md5 |
+| `docs/PROF_POR_3DAY.md` §4–§5 | Same cells as JSON / email |
+| `docs/paper_text_blocks.md` / abstract drafts | No stale point ratios |
+| `HANDOFF.md` | No contradictory frozen numbers |
+| `scripts/verify_claims.py` manifest | Claims true; regressions fail closed |
+| Email / slide text to Prof | **Identical** to locked §4 table |
+
+Checks include: F1 **0.9790**, RF **0.9864**, gap **0.74%**, ToN-IoT **0.9526**, checkpoint md5, laptop **ranges** (not lucky points), new DICC µs, Option A language (no full-pipeline CUDA vs full V3).
+
+#### P2c — Automated gate
+
+```bash
+cd /path/to/colide
+PYTHONPATH=. python scripts/verify_claims.py   # must be green
+```
+
+#### P2d — Send Prof report
+
+Only after P2a–P2c: email the numbered status (local + DICC + caveats).  
+Stretch improvements (P5) and full manuscript (P4) stay **after** this send.
+
+**Exit P2:** (1) locked number table, (2) public surfaces consistent, (3) `verify_claims.py` green, (4) Prof emailed.  
+**Clock after P1:** **~1–2 days** (extract half-day + match 1–2 days if many stale strings).  
+**Total P0→P2 after unblock:** **~5–7 days typical** (best ~4; buffer ~1–1.5 weeks).
 
 ---
 
-### Phase P3 — Claim hygiene (end of pre-manuscript)
+### Phase P3 — Pre-manuscript closeout (residual hygiene)
 
-**Owner:** User + agent.
+**Owner:** User + agent.  
+*Most claim work is now inside P2b; P3 is residual only.*
 
-1. Align README / claim tables with **accepted** DICC numbers only.  
-2. Strip or fence any full-pipeline CUDA vs full V3 language.  
-3. Keep WSL2 figures as **ranges + venue-labeled**.  
-4. Run `PYTHONPATH=. python scripts/verify_claims.py` green.  
-5. One-page threats-to-validity checklist (drift, sum-of-blocks totals, RF gap, architecture parity).
+1. Threats-to-validity one-pager if not already in the Prof mail.  
+2. Any remaining internal docs / comments.  
+3. Confirm no training / champion touch.  
 
-**Exit P3:** Repo claims match artifacts; **pre-manuscript phase complete**.  
-**Clock:** ~1–3 days.  
-**Total P0→P3 after unblock:** **~1–2 weeks typical** (best ~3–7 days).
+**Exit P3:** Pre-manuscript phase complete; safe to start P4 manuscript.  
+**Clock:** ~0.5–1 day if P2 was thorough.  
+**Total P0→P3:** **~1–1.5 weeks typical**.
 
 ---
 
 ### Phase P4 — Manuscript spine (after pre-manuscript)
 
 **Owner:** User (+ Cheran on writing if that is his role).  
-**Not started until P2/P3.**
+**Not started until P2 complete (report sent + numbers matched).**
 
 Contribution spine:
 
@@ -164,8 +195,9 @@ Minimum figures/tables: per-block latency (laptop + DICC); Block 3 CUDA vs PT; m
 - [ ] Day1 + Day2 SUCCESS on DICC for available GPUs  
 - [ ] Compare accept (or explicit partial + reason)  
 - [ ] Results on laptop under `benchmarks/results/dicc/`  
-- [ ] Prof numbered update sent  
-- [ ] Claims hygiene + `verify_claims.py` green  
+- [ ] **Codebase-wide numbers match** (README, docs, claims, email draft)  
+- [ ] `verify_claims.py` green  
+- [ ] Prof numbered update sent (**only after** match gate)  
 - [ ] Option A respected in all public text  
 
 ### Good enough to *write* for FGCS (systems) / careful IoTJ
@@ -181,8 +213,8 @@ Minimum figures/tables: per-block latency (laptop + DICC); Block 3 CUDA vs PT; m
 | Situation | Action |
 |-----------|--------|
 | Prof declines Cheran for cluster | User runs with `tmux` / better link; same run card |
-| Only Day 1 finishes | Prof update: provisional single-day DICC + local pack; label clearly |
-| Queue blocked entire window | Local pack + June legacy labeled **legacy, not multi-day** + “campaign in flight” |
+| Only Day 1 finishes | Provisional single-day DICC + local pack; label clearly; **still run numbers-match gate** before send |
+| Queue blocked entire window | Local pack + June legacy labeled **legacy, not multi-day** + “campaign in flight”; **still match local numbers across codebase** before send |
 | Compare rejects | Report both days; no “stable multi-day” claim until fixed or explained |
 | One partition missing | Document; publish the GPU that completed |
 
@@ -204,7 +236,8 @@ Minimum figures/tables: per-block latency (laptop + DICC); Block 3 CUDA vs PT; m
 1. Wait for Prof’s reply on the access plan.  
 2. If approved → send Cheran the **run card** in §3 P0 + tarball/repo link.  
 3. When `benchmarks/results/dicc/` is on the laptop → chat: **“Prof Por pack — DICC results landed.”**  
-4. Then P2 → P3 → only then P4 manuscript.
+4. Agent/user run **P2a → P2b numbers match → P2c verify_claims → P2d send** (no skip).  
+5. Only then P3 residual closeout / P4 manuscript / P5 stretch.
 
 ---
 
@@ -227,3 +260,4 @@ Minimum figures/tables: per-block latency (laptop + DICC); Block 3 CUDA vs PT; m
 | Date | Note |
 |------|------|
 | 2026-07-17 | Final plan from guided DICC session: partitions locked, Cheran path, pre-manuscript vs manuscript clocks, Option A freeze. |
+| 2026-07-17 | **Hard gate:** codebase-wide numbers match + `verify_claims.py` green **before** any final Prof numbers email; P2 restructured (P2a–P2d); clocks +1–2 days for match pass. |
