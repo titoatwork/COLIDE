@@ -11,7 +11,7 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 3. **Closing reply must include:** status table, commit hash + pushed/clean flags, and a **paste-ready next-session prompt** (also stored under HANDOFF Session lifecycle §D).
 4. **Never invent DICC/cluster numbers**; agents have no UM DICC SSH — for DICC, **guide the user step-by-step** (they paste outputs). Do not abandon them to solo cluster ops unless they ask to work offline.
 5. **Champion checkpoint:** do not clobber `model/best_model_botiot_twostage.pth` without backup + explicit user OK.
-6. **Option A (locked):** no full-pipeline Custom CUDA vs full V3 PyTorch speedup claims; prefer Block 3 head-to-head. Authority: `docs/DESIGN_PLAN.md`. Deadline playbook when active: `docs/PROF_POR_3DAY.md`.
+6. **Option A (locked):** no full-pipeline Custom CUDA vs full V3 PyTorch speedup claims; prefer Block 3 head-to-head. Authority: `docs/DESIGN_PLAN.md`. Execution plan: `docs/FINAL_PLAN.md`. Prof pack: `docs/PROF_POR_3DAY.md`. **Hard gate:** codebase-wide numbers match + `verify_claims.py` green before any final Prof numbers email.
 
 ## What this is
 
