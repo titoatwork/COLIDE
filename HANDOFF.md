@@ -1,21 +1,23 @@
 # COLIDE — Session Handoff
 
-**MODE:** Pre-manuscript — **contingency Prof pack READY** (local + legacy DICC labeled);
-multi-day DICC still pending Prof/ops.  
-Authority: `docs/DESIGN_PLAN.md` (Option A) + **`docs/FINAL_PLAN.md`** + `docs/PROF_POR_3DAY.md`
-+ **`docs/PROF_POR_STATUS_REPORT.md`**.  
-**Do first:** User may **send** contingency pack now (or wait for Monday). Multi-day still
-needs Prof reply re Cheran → Day1+Day2 → results home → **refresh** §4 ratios only from JSON.  
-**Then (if multi-day lands):** P2 extract + numbers match + `verify_claims.py` green → updated email.  
+**MODE:** Pre-manuscript — **deep codebase evidence audit NEXT** (feedstock for a later
+report-writer LLM). Do **not** draft Prof email/report in the audit chat.  
+Authority: `docs/DESIGN_PLAN.md` (Option A) + **`docs/FINAL_PLAN.md`** +  
+**`docs/PROMPT_DEEP_CODEBASE_AUDIT.md`** (paste-ready prompt).  
+**Do first:** New chat → paste full prompt from `docs/PROMPT_DEEP_CODEBASE_AUDIT.md` → produce
+`docs/audit/*.md` (claims, git re-verification, planned vs optional work).  
+**Then:** Separate package = report writer from audit pack (not this chat). Multi-day DICC
+still blocked on Prof/ops.  
+**Note:** `docs/PROF_POR_STATUS_REPORT.md` was a mistaken early draft — **not** ground truth;
+audit must rebuild evidence from code/JSON/history.  
 **Defer:** manuscript (P4), stretch (P5). Agents: **no DICC login**; **no invented numbers**.
 
-**Last work (2026-07-18):** User chose **not** to wait for multi-day DICC before drafting report.
-Built **`docs/PROF_POR_STATUS_REPORT.md`** (local frozen numbers + June legacy 551/592 µs labeled
-+ multi-day TBD + email §8). Updated `PROF_POR_3DAY.md` §4–§5. `verify_claims.py` green.
-**Multi-day campaign still not run** — awaiting Prof reply (likely Monday).
+**Last work (2026-07-18):** User corrected course — do **not** draft Prof report yet. Wrote
+paste-ready **extreme deep audit** prompt: `docs/PROMPT_DEEP_CODEBASE_AUDIT.md`. Prior
+contingency report file may remain on disk but is non-authoritative.
 
-**Open with:** (1) this header, (2) **`docs/PROF_POR_STATUS_REPORT.md`**, (3) FINAL_PLAN Option A.
-**Next:** Send report if user wants → else wait Prof → DICC run → refresh ratios only.
+**Open with:** (1) this header, (2) **`docs/PROMPT_DEEP_CODEBASE_AUDIT.md`** (paste block).
+**Next:** Run audit chat to completion → then report-writer chat.
 
 **Standing process (every session forever):** see **Session lifecycle** below — close with
 verify → commit/push → next-session prompt; never leave uncommitted handoff work.
