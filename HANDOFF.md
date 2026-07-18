@@ -1,23 +1,22 @@
 # COLIDE — Session Handoff
 
-**MODE:** Pre-manuscript — **deep codebase evidence audit NEXT** (feedstock for a later
-report-writer LLM). Do **not** draft Prof email/report in the audit chat.  
-Authority: `docs/DESIGN_PLAN.md` (Option A) + **`docs/FINAL_PLAN.md`** +  
-**`docs/PROMPT_DEEP_CODEBASE_AUDIT.md`** (paste-ready prompt).  
-**Do first:** New chat → paste full prompt from `docs/PROMPT_DEEP_CODEBASE_AUDIT.md` → produce
-`docs/audit/*.md` (claims, git re-verification, planned vs optional work).  
-**Then:** Separate package = report writer from audit pack (not this chat). Multi-day DICC
-still blocked on Prof/ops.  
-**Note:** `docs/PROF_POR_STATUS_REPORT.md` was a mistaken early draft — **not** ground truth;
-audit must rebuild evidence from code/JSON/history.  
-**Defer:** manuscript (P4), stretch (P5). Agents: **no DICC login**; **no invented numbers**.
+**MODE:** Pre-manuscript — **evidence audit COMPLETE**; next package = **report-writer LLM**
+from `docs/audit/` feedstock only (not freehand README).  
+Authority: `docs/DESIGN_PLAN.md` (Option A) + **`docs/FINAL_PLAN.md`** + audit pack  
+`docs/audit/00_INDEX.md` → `11_REPORT_WRITER_BRIEF.md`.  
+**Do first:** New chat → open `docs/audit/00_INDEX.md` + `11_REPORT_WRITER_BRIEF.md` → draft
+status text with **empty multi-day DICC cells** and Option A caveats.  
+**Do not:** invent DICC multi-day numbers; treat `docs/PROF_POR_STATUS_REPORT.md` as
+non-authoritative; full-pipeline CUDA vs full V3 speedup.  
+**Defer:** manuscript (P4), stretch (P5). Multi-day DICC still blocked on Prof/ops.  
+Agents: **no DICC login**; **no invented numbers**; **no champion retrain**.
 
-**Last work (2026-07-18):** User corrected course — do **not** draft Prof report yet. Wrote
-paste-ready **extreme deep audit** prompt: `docs/PROMPT_DEEP_CODEBASE_AUDIT.md`. Prior
-contingency report file may remain on disk but is non-authoritative.
+**Last work (2026-07-18):** Extreme deep codebase evidence audit → `docs/audit/*.md` (12 files).
+verify_claims green (66 pass / 0 fail). Champion md5 confirmed
+`80a90f7cc210276300eaa90173a5a385`. Multi-day `benchmarks/results/dicc/` **ABSENT**.
 
-**Open with:** (1) this header, (2) **`docs/PROMPT_DEEP_CODEBASE_AUDIT.md`** (paste block).
-**Next:** Run audit chat to completion → then report-writer chat.
+**Open with:** (1) this header, (2) **`docs/audit/00_INDEX.md`**, (3) **`docs/audit/11_REPORT_WRITER_BRIEF.md`**.  
+**Next:** Report-writer package (separate chat) — see Session lifecycle §D.
 
 **Standing process (every session forever):** see **Session lifecycle** below — close with
 verify → commit/push → next-session prompt; never leave uncommitted handoff work.
@@ -64,37 +63,54 @@ Checklist:
 
 ### D. Canonical next-session prompts (update when mode changes)
 
-**★ NEXT (default) — Guided UM DICC ops for Prof Por deadline**
-
-User drives SSH/scp; agent coaches live (one step at a time, interpret errors, decide
-when Day1/Day2/compare/scp are done). Agent never invents cluster numbers and cannot
-log into DICC itself.
+**★ NEXT (default) — Report writer from audit feedstock**
 
 ```text
-Continue COLIDE — GUIDED UM DICC (Prof Por ≤3 day deadline). Option A locked.
+Continue COLIDE — REPORT WRITER from evidence audit pack only. Option A locked.
+
+Read in order:
+1) HANDOFF.md header + Session lifecycle
+2) docs/audit/00_INDEX.md
+3) docs/audit/11_REPORT_WRITER_BRIEF.md  (Facts may / must NOT state)
+4) docs/audit/04_CLAIMS_REGISTER.md + 09_RAW_NUMBER_TABLES.md
+5) docs/audit/05_GIT_REVERIFICATION.md + 06_CONTRADICTIONS.md + 10_EVIDENCE_GAPS.md
+6) docs/FINAL_PLAN.md P2 (numbers-match gate) + docs/DESIGN_PLAN.md Option A
+
+Task: Produce a status report draft for Prof Por (or internal status) that:
+- Uses ONLY numbers with sources in docs/audit/ (or cited JSON paths there).
+- Leaves multi-day DICC cells EMPTY / labels June 551/592 as LEGACY single-shot only.
+- States Option A: no full-pipeline Custom CUDA vs full V3 PyTorch speedup; no "same computation".
+- Includes RF gap honesty (0.9864 vs 0.9790), WSL2 measurement ranges, fidelity notes.
+- Does NOT invent cluster multi-day numbers; does NOT treat PROF_POR_STATUS_REPORT.md as truth.
+- Lists planned work from docs/audit/07_PLANNED_WORK_LEFT.md only.
+- Optional: flag unplanned improvements from 08 only as optional.
+
+Hard gate before any "final" email send still applies later: codebase numbers match +
+verify_claims green after any doc edits. This chat is drafting from feedstock, not
+claiming P2 complete for multi-day DICC.
+
+No training; no clobber best_model_botiot_twostage.pth; end per HANDOFF lifecycle.
+```
+
+**Alternate — Guided UM DICC ops (when user has SSH time)**
+
+User drives SSH/scp; agent coaches live. Agent never invents cluster numbers.
+
+```text
+Continue COLIDE — GUIDED UM DICC. Option A locked.
 
 Read: HANDOFF.md header + Session lifecycle + docs/PROF_POR_3DAY.md + dicc_scripts/README.md
-+ docs/DESIGN_PLAN.md §6.
++ docs/DESIGN_PLAN.md §6 + docs/FINAL_PLAN.md P0–P1.
 
 Role split:
 - I (user) have SSH/scp to login01.dicc.um.edu.my (ibteshamulhaque). I run every command.
-- You (agent) do NOT have DICC access. You guide step-by-step: exact commands, what
-  success looks like, how to fix failures. Wait for me to paste output before the next step.
+- You (agent) do NOT have DICC access. Guide step-by-step; wait for pasted output.
 
-Walk through in order (do not skip ahead):
-1) Laptop: confirm tarball ~/colide-master-for-dicc.tar.gz (rebuild if missing/stale vs master).
-2) WP1: scp + unpack on DICC; park old colide if needed; verify run_campaign.sh +
-   champion md5 80a90f7cc210276300eaa90173a5a385.
-3) WP2: Day 1 run_campaign.sh — partitions/GRES/torch/cu121 issues as they appear;
-   confirm SUCCESS dirs for available GPUs.
-4) WP3: Day 2 (--day 2), same tree/binaries; compare_dicc_sessions.py accept/reject.
-5) scp benchmarks/results/dicc/ back to laptop; quick inventory of what we have.
-6) If time remains in-chat after results are local: start Prof Por number pack (fill
-   PROF_POR_3DAY §4). Else end with lifecycle + prompt for pure “Prof Por pack” chat.
+Walk through: tarball → unpack → run_campaign Day1 → Day2 → compare → scp
+benchmarks/results/dicc/ home. Champion md5 80a90f7cc210276300eaa90173a5a385.
 
-Rules: no training; no clobber champion ckpt; no invented DICC numbers; no full-pipeline
-CUDA vs full V3 claims. Prefer Block 3 head-to-head. End session: verify, commit/push
-doc notes if any, next prompt.
+Rules: no training; no invented DICC numbers; no full-pipeline CUDA vs full V3.
+End: verify, commit/push notes, next prompt (Prof pack if artifacts local).
 ```
 
 **After DICC artifacts are already on the laptop (Prof pack + numbers match):**
