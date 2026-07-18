@@ -1,23 +1,23 @@
 # COLIDE — Session Handoff
 
-**MODE:** Pre-manuscript — **interim status draft COMPLETE** (scope = through DICC blocker
-only; multi-day work labeled **leftover / blocked**).  
+**MODE:** Pre-manuscript — **full interim status report COMPLETE** (done + leftover +
+pre-manuscript suggestions; multi-day DICC cells EMPTY / leftover blocked).  
 Authority: `docs/DESIGN_PLAN.md` (Option A) + **`docs/FINAL_PLAN.md`** +  
-`docs/STATUS_REPORT_DRAFT.md` + `docs/audit/`.  
-**Do first:** User may share interim draft with Prof if desired; critical path still  
-Prof/ops decision on UM DICC.  
+**`docs/STATUS_REPORT_DRAFT.md`** + `docs/audit/`.  
+**Do first:** User may generate email/slides from STATUS_REPORT_DRAFT; critical path  
+still Prof/ops on UM DICC. **No new session required** unless context ends or DICC starts.  
 **Do not:** invent multi-day numbers; treat `PROF_POR_STATUS_REPORT.md` as truth;
 full-pipeline CUDA vs full V3; claim final multi-day pack complete.  
 **Defer:** manuscript (P4), stretch (P5). Multi-day DICC = leftover blocked.  
 Agents: **no DICC login**; **no invented numbers**; **no champion retrain**.
 
-**Last work (2026-07-18):** `docs/STATUS_REPORT_DRAFT.md` reframed as **interim status
-through blocker**; remaining P0–P2 multi-day tasks = **leftover due to DICC block**.  
+**Last work (2026-07-18):** Full-depth `docs/STATUS_REPORT_DRAFT.md` — everything done
+(early July arc), blocker, leftover L1–L8, pre-manuscript must/should/stretch/optional.  
 verify_claims green. Champion md5 `80a90f7cc210276300eaa90173a5a385`.  
 `benchmarks/results/dicc/` **ABSENT**.
 
 **Open with:** (1) this header, (2) **`docs/STATUS_REPORT_DRAFT.md`**.  
-**Next:** Wait on Prof / guided DICC when unblocked — Session lifecycle §D.
+**Next:** User generates report from draft; or guided DICC when unblocked — §D.
 
 **Standing process (every session forever):** see **Session lifecycle** below — close with
 verify → commit/push → next-session prompt; never leave uncommitted handoff work.
