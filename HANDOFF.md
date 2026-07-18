@@ -1,17 +1,21 @@
 # COLIDE — Session Handoff
 
-**MODE:** Pre-manuscript — **DICC multi-day → numbers match (hard gate) → Prof report.**  
-Authority: `docs/DESIGN_PLAN.md` (Option A) + **`docs/FINAL_PLAN.md`** + `docs/PROF_POR_3DAY.md`.  
-**Do first:** Unblock DICC (await Prof reply re Cheran) → Day1+Day2 → results on laptop.  
-**Then:** P2 extract + **codebase-wide numbers match** + `verify_claims.py` green → **only then** email Prof.  
+**MODE:** Pre-manuscript — **contingency Prof pack READY** (local + legacy DICC labeled);
+multi-day DICC still pending Prof/ops.  
+Authority: `docs/DESIGN_PLAN.md` (Option A) + **`docs/FINAL_PLAN.md`** + `docs/PROF_POR_3DAY.md`
++ **`docs/PROF_POR_STATUS_REPORT.md`**.  
+**Do first:** User may **send** contingency pack now (or wait for Monday). Multi-day still
+needs Prof reply re Cheran → Day1+Day2 → results home → **refresh** §4 ratios only from JSON.  
+**Then (if multi-day lands):** P2 extract + numbers match + `verify_claims.py` green → updated email.  
 **Defer:** manuscript (P4), stretch (P5). Agents: **no DICC login**; **no invented numbers**.
 
-**Last work (2026-07-17):** Guided DICC session (tarball, WP1, partitions `gpu-v100s`/`gpu-a100`);
-Prof emailed re access; `docs/FINAL_PLAN.md` locked; **hard gate added:** no final Prof numbers
-email until full codebase numbers match + verify_claims green. **Paused awaiting Prof reply.**
+**Last work (2026-07-18):** User chose **not** to wait for multi-day DICC before drafting report.
+Built **`docs/PROF_POR_STATUS_REPORT.md`** (local frozen numbers + June legacy 551/592 µs labeled
++ multi-day TBD + email §8). Updated `PROF_POR_3DAY.md` §4–§5. `verify_claims.py` green.
+**Multi-day campaign still not run** — awaiting Prof reply (likely Monday).
 
-**Open with:** (1) this header, (2) **`docs/FINAL_PLAN.md`**, (3) Option A + numbers-match gate.
-**Next:** Prof reply → run card FINAL_PLAN §3 P0 → results home → **Prof Por pack with match gate**.
+**Open with:** (1) this header, (2) **`docs/PROF_POR_STATUS_REPORT.md`**, (3) FINAL_PLAN Option A.
+**Next:** Send report if user wants → else wait Prof → DICC run → refresh ratios only.
 
 **Standing process (every session forever):** see **Session lifecycle** below — close with
 verify → commit/push → next-session prompt; never leave uncommitted handoff work.

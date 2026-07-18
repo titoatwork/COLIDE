@@ -159,16 +159,27 @@ sources — and `PYTHONPATH=. python scripts/verify_claims.py` is **green**. See
 
 ---
 
-## 4. DICC fill-in table (blank — you/agent complete after runs)
+## 4. DICC fill-in table
 
-### Day 1 / Day 2 paths
+**Canonical sendable report (2026-07-18, contingency path):**  
+`docs/PROF_POR_STATUS_REPORT.md` — local frozen pack + **legacy June single-shot** DICC (labeled) + multi-day TBD.  
+`verify_claims.py` green on that date. Do not invent multi-day cells.
+
+### Day 1 / Day 2 paths (new multi-day campaign)
 
 | GPU | Day1 SUCCESS dir | Day2 SUCCESS dir | Compare result |
 |-----|------------------|------------------|----------------|
-| V100 | | | accept / reject |
-| A100 | | | accept / reject |
+| V100 | *pending* | *pending* | — |
+| A100 | *pending* | *pending* | — |
 
-### Core latencies (µs) — paste means from JSON
+### Legacy June 2026 single-shot (NOT multi-day; jobs 363046 / 363047)
+
+| GPU | Pipeline total (µs) | Block 3 FP16 (µs) | Same-GPU PT baseline |
+|-----|---------------------|-------------------|----------------------|
+| V100S | **~551** (550.664) | 511.852 | **none** (no ratio) |
+| A100 | **~592** (592.044) | 548.368 | **none** (no ratio) |
+
+### Core latencies (µs) — multi-day (blank until SUCCESS JSON)
 
 | Metric | V100 Day1 | V100 Day2 | A100 Day1 | A100 Day2 |
 |--------|-----------|-----------|-----------|-----------|
@@ -181,34 +192,37 @@ sources — and `PYTHONPATH=. python scripts/verify_claims.py` is **green**. See
 
 | Ratio | V100 | A100 | Note |
 |-------|------|------|------|
-| CUDA B3 FP16 / PyTorch B3 | | | Prefer multi-day stable mean |
+| CUDA B3 FP16 / PyTorch B3 | *TBD multi-day* | *TBD multi-day* | Prefer multi-day stable mean |
 | Full CUDA pipeline / full V3 PT | **n/a** | **n/a** | Invalid under Option A |
 
 ---
 
-## 5. Draft text for Prof (local half ready; DICC half TBD)
+## 5. Draft text for Prof (contingency pack ready 2026-07-18)
 
-Copy/adapt:
+**Full tables + caveats:** `docs/PROF_POR_STATUS_REPORT.md`  
+**Email-ready short version:** same file §8 (copy/paste).
 
-> **COLIDE — short status for Prof. Por (deadline window)**  
+Summary (local half locked; DICC multi-day honest TBD):
+
+> **COLIDE — short status for Prof. Por**  
 >  
 > **Goal:** FGCS-class systems paper: custom CUDA inference for CNN-BiLSTM IoT IDS + on-device LLM explainability; contribution is systems/measurement, not SOTA accuracy.  
 >  
 > **Accuracy (final local, frozen):** BoT-IoT two-stage model **macro-F1 = 0.9790** (checkpoint md5 `80a90f7c…`). Apples-to-apples CPU RF on same splits **0.9864** → gap **0.74%**. ToN-IoT clean **0.9526**. We do **not** claim beating RF.  
 >  
-> **Latency (laptop RTX 3050 / WSL2):** Custom CUDA FP16 block-sum pipeline **594–675 µs** (multi-session range). Framework comparisons reported as **ranges** because of real session-to-session drift. Block 3 FP16 optimization ladder **7.55–9.50×** vs naive.  
+> **Latency (laptop RTX 3050 / WSL2):** Custom CUDA FP16 block-sum pipeline **594–675 µs** (multi-session range). Framework comparisons as **ranges**: eager **3.04–3.78×**, torch.compile **2.25–2.99×**, TensorRT **3.60–4.99×**, ORT-GPU **5.72–7.83×**. Block 3 FP16 ladder **7.55–9.50×** vs naive.  
 >  
-> **Important scientific caveat (we are handling correctly):** full-model Custom CUDA vs full PyTorch V3 speedup is **not** claimed yet — V3 has attention/LayerNorm/GAP that CUDA does not implement. Valid head-to-head is **per-block**, especially **Block 3 (BiLSTM)**.  
+> **Important scientific caveat:** full-model Custom CUDA vs full PyTorch V3 speedup is **not** claimed — V3 has attention/LayerNorm/GAP that CUDA does not implement. Valid head-to-head is **per-block**, especially **Block 3 (BiLSTM)**.  
 >  
 > **LLM:** async on-device TinyLlama; dispatch overhead **16.60 µs p99** (5k trials).  
 >  
 > **Throughput:** **25,899 flows/s** streaming (batch=128, RTX 3050).  
 >  
-> **UM DICC (in progress this week):** multi-day V100/A100 campaign with same-hardware PyTorch baselines — tables below after Day1+Day2+compare.  
+> **UM DICC:** June 2026 **legacy single-shot** pipeline totals — V100S **~551 µs**, A100 **~592 µs** (CUDA only; no same-GPU PT baseline). Multi-day Day1+Day2 + PT baselines are scripted; execution pending access/ops (guidance re Cheran appreciated).  
 >  
-> **Next after this update:** claim hygiene + manuscript spine; optional CUDA parity only if needed.
+> **Next after multi-day lands:** fill §4 ratios from JSON + residual claim hygiene + manuscript spine.
 
-*(Replace the DICC sentence with the filled §4 table when ready.)*
+*(When multi-day SUCCESS exists: replace legacy-only sentence with filled §4 table; re-run numbers match + verify_claims before any “final” email.)*
 
 ---
 
