@@ -1,22 +1,25 @@
 # COLIDE — Session Handoff
 
-**MODE:** Pre-manuscript — **evidence audit COMPLETE**; next package = **report-writer LLM**
-from `docs/audit/` feedstock only (not freehand README).  
+**MODE:** Pre-manuscript — **report draft from audit feedstock COMPLETE**; multi-day DICC
+still **ABSENT**. Next = user/Prof ops decision **or** optional claim-hygiene (Option A
+wording) **or** guided DICC when SSH available.  
 Authority: `docs/DESIGN_PLAN.md` (Option A) + **`docs/FINAL_PLAN.md`** + audit pack  
-`docs/audit/00_INDEX.md` → `11_REPORT_WRITER_BRIEF.md`.  
-**Do first:** New chat → open `docs/audit/00_INDEX.md` + `11_REPORT_WRITER_BRIEF.md` → draft
-status text with **empty multi-day DICC cells** and Option A caveats.  
-**Do not:** invent DICC multi-day numbers; treat `docs/PROF_POR_STATUS_REPORT.md` as
-non-authoritative; full-pipeline CUDA vs full V3 speedup.  
-**Defer:** manuscript (P4), stretch (P5). Multi-day DICC still blocked on Prof/ops.  
+`docs/audit/` + draft **`docs/STATUS_REPORT_DRAFT.md`**.  
+**Do first:** Read draft + audit brief; decide whether to (a) wait on Prof/DICC,  
+(b) optional U3/U1 wording/packaging, or (c) guided DICC ops.  
+**Do not:** invent multi-day DICC numbers; treat `docs/PROF_POR_STATUS_REPORT.md` as truth;
+full-pipeline CUDA vs full V3; send “final” email until P2 gates after artifacts land.  
+**Defer:** manuscript (P4), stretch (P5). Multi-day DICC blocked on Prof/ops.  
 Agents: **no DICC login**; **no invented numbers**; **no champion retrain**.
 
-**Last work (2026-07-18):** Extreme deep codebase evidence audit → `docs/audit/*.md` (12 files).
+**Last work (2026-07-18):** Report-writer package → `docs/STATUS_REPORT_DRAFT.md`
+(Option A; RF 0.9864 vs 0.9790; WSL2 ranges; empty multi-day cells; June 551/592 LEGACY;
+planned work from 07 only). Prior: evidence audit `docs/audit/*.md`.  
 verify_claims green (66 pass / 0 fail). Champion md5 confirmed
 `80a90f7cc210276300eaa90173a5a385`. Multi-day `benchmarks/results/dicc/` **ABSENT**.
 
-**Open with:** (1) this header, (2) **`docs/audit/00_INDEX.md`**, (3) **`docs/audit/11_REPORT_WRITER_BRIEF.md`**.  
-**Next:** Report-writer package (separate chat) — see Session lifecycle §D.
+**Open with:** (1) this header, (2) **`docs/STATUS_REPORT_DRAFT.md`**, (3) **`docs/audit/11_REPORT_WRITER_BRIEF.md`**.  
+**Next:** See Session lifecycle §D (default: wait-on-Prof / optional hygiene / guided DICC).
 
 **Standing process (every session forever):** see **Session lifecycle** below — close with
 verify → commit/push → next-session prompt; never leave uncommitted handoff work.
@@ -63,33 +66,24 @@ Checklist:
 
 ### D. Canonical next-session prompts (update when mode changes)
 
-**★ NEXT (default) — Report writer from audit feedstock**
+**★ NEXT (default) — While waiting on Prof / after status draft**
 
 ```text
-Continue COLIDE — REPORT WRITER from evidence audit pack only. Option A locked.
+Continue COLIDE per docs/FINAL_PLAN.md. Option A locked. Numbers-match gate before any final Prof send.
 
-Read in order:
-1) HANDOFF.md header + Session lifecycle
-2) docs/audit/00_INDEX.md
-3) docs/audit/11_REPORT_WRITER_BRIEF.md  (Facts may / must NOT state)
-4) docs/audit/04_CLAIMS_REGISTER.md + 09_RAW_NUMBER_TABLES.md
-5) docs/audit/05_GIT_REVERIFICATION.md + 06_CONTRADICTIONS.md + 10_EVIDENCE_GAPS.md
-6) docs/FINAL_PLAN.md P2 (numbers-match gate) + docs/DESIGN_PLAN.md Option A
+Read: HANDOFF.md header + Session lifecycle + docs/STATUS_REPORT_DRAFT.md
++ docs/audit/11_REPORT_WRITER_BRIEF.md + docs/audit/07_PLANNED_WORK_LEFT.md.
 
-Task: Produce a status report draft for Prof Por (or internal status) that:
-- Uses ONLY numbers with sources in docs/audit/ (or cited JSON paths there).
-- Leaves multi-day DICC cells EMPTY / labels June 551/592 as LEGACY single-shot only.
-- States Option A: no full-pipeline Custom CUDA vs full V3 PyTorch speedup; no "same computation".
-- Includes RF gap honesty (0.9864 vs 0.9790), WSL2 measurement ranges, fidelity notes.
-- Does NOT invent cluster multi-day numbers; does NOT treat PROF_POR_STATUS_REPORT.md as truth.
-- Lists planned work from docs/audit/07_PLANNED_WORK_LEFT.md only.
-- Optional: flag unplanned improvements from 08 only as optional.
+Prof decision on Cheran/DICC: [agreed / declined / pending — fill in].
+Status draft exists at docs/STATUS_REPORT_DRAFT.md (local-only; multi-day cells EMPTY).
 
-Hard gate before any "final" email send still applies later: codebase numbers match +
-verify_claims green after any doc edits. This chat is drafting from feedstock, not
-claiming P2 complete for multi-day DICC.
+If Prof agreed and SSH available: switch to GUIDED UM DICC prompt.
+If results under benchmarks/results/dicc/: run Prof pack P2a–P2d (match + verify_claims before email).
+If still waiting: optional only — U3 fix "same computation" wording and/or U1 claim-JSON packaging
+(from docs/audit/08); do NOT invent multi-day numbers; do NOT claim P2 complete for DICC.
 
-No training; no clobber best_model_botiot_twostage.pth; end per HANDOFF lifecycle.
+Rules: no training; no clobber champion; no full-pipeline CUDA vs full V3.
+End per HANDOFF lifecycle.
 ```
 
 **Alternate — Guided UM DICC ops (when user has SSH time)**
