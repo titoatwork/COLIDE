@@ -1,25 +1,23 @@
 # COLIDE — Session Handoff
 
-**MODE:** Pre-manuscript — **report draft from audit feedstock COMPLETE**; multi-day DICC
-still **ABSENT**. Next = user/Prof ops decision **or** optional claim-hygiene (Option A
-wording) **or** guided DICC when SSH available.  
-Authority: `docs/DESIGN_PLAN.md` (Option A) + **`docs/FINAL_PLAN.md`** + audit pack  
-`docs/audit/` + draft **`docs/STATUS_REPORT_DRAFT.md`**.  
-**Do first:** Read draft + audit brief; decide whether to (a) wait on Prof/DICC,  
-(b) optional U3/U1 wording/packaging, or (c) guided DICC ops.  
-**Do not:** invent multi-day DICC numbers; treat `docs/PROF_POR_STATUS_REPORT.md` as truth;
-full-pipeline CUDA vs full V3; send “final” email until P2 gates after artifacts land.  
-**Defer:** manuscript (P4), stretch (P5). Multi-day DICC blocked on Prof/ops.  
+**MODE:** Pre-manuscript — **interim status draft COMPLETE** (scope = through DICC blocker
+only; multi-day work labeled **leftover / blocked**).  
+Authority: `docs/DESIGN_PLAN.md` (Option A) + **`docs/FINAL_PLAN.md`** +  
+`docs/STATUS_REPORT_DRAFT.md` + `docs/audit/`.  
+**Do first:** User may share interim draft with Prof if desired; critical path still  
+Prof/ops decision on UM DICC.  
+**Do not:** invent multi-day numbers; treat `PROF_POR_STATUS_REPORT.md` as truth;
+full-pipeline CUDA vs full V3; claim final multi-day pack complete.  
+**Defer:** manuscript (P4), stretch (P5). Multi-day DICC = leftover blocked.  
 Agents: **no DICC login**; **no invented numbers**; **no champion retrain**.
 
-**Last work (2026-07-18):** Report-writer package → `docs/STATUS_REPORT_DRAFT.md`
-(Option A; RF 0.9864 vs 0.9790; WSL2 ranges; empty multi-day cells; June 551/592 LEGACY;
-planned work from 07 only). Prior: evidence audit `docs/audit/*.md`.  
-verify_claims green (66 pass / 0 fail). Champion md5 confirmed
-`80a90f7cc210276300eaa90173a5a385`. Multi-day `benchmarks/results/dicc/` **ABSENT**.
+**Last work (2026-07-18):** `docs/STATUS_REPORT_DRAFT.md` reframed as **interim status
+through blocker**; remaining P0–P2 multi-day tasks = **leftover due to DICC block**.  
+verify_claims green. Champion md5 `80a90f7cc210276300eaa90173a5a385`.  
+`benchmarks/results/dicc/` **ABSENT**.
 
-**Open with:** (1) this header, (2) **`docs/STATUS_REPORT_DRAFT.md`**, (3) **`docs/audit/11_REPORT_WRITER_BRIEF.md`**.  
-**Next:** See Session lifecycle §D (default: wait-on-Prof / optional hygiene / guided DICC).
+**Open with:** (1) this header, (2) **`docs/STATUS_REPORT_DRAFT.md`**.  
+**Next:** Wait on Prof / guided DICC when unblocked — Session lifecycle §D.
 
 **Standing process (every session forever):** see **Session lifecycle** below — close with
 verify → commit/push → next-session prompt; never leave uncommitted handoff work.
