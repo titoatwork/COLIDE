@@ -79,3 +79,15 @@ Note: RF 0.9778 on this protocol ≠ published 0.9864 (different feature/pipelin
 | xgb | 0.976 | DONE |
 | lgbm | 0.551 | DONE after DataFrame fix (still weak — RUN_DOCUMENTED) |
 | svm pilot 150k | FAILED | &lt;3 samples/class — RUN_DOCUMENTED |
+
+
+### Multirun seeds complete so far
+| seed | best val macro-F1 | min_cls_f1 | elapsed |
+|------|-------------------|------------|---------|
+| 42 | 0.9780 | 0.9315 | 28 min |
+| 43 | 0.9578 | 0.9091 | 25 min |
+| 44 | **0.9840** | **0.9589** | 36 min |
+| 45 | running | | |
+| 46 | pending | | |
+
+Partial mean (n=3): **0.9733** ± 0.0137 — desirable; seed 43 is the weak tail.
