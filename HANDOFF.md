@@ -1,32 +1,23 @@
 # COLIDE — Session Handoff
 
-**MODE:** 🚀 **EXECUTION — skip nothing, exceptional quality.** Close every row in
-**`docs/execution_plan/PROF_FEEDBACK_TRACKER.md`**.  
-**Goal:** Meet full Prof Por feedback (`docs/feedback1.docx`) for WoS-level contribution.  
-**Law:** Tracker + `docs/execution_plan/00_INDEX.md` + Option A (`DESIGN_PLAN.md`).  
-**Policy:** Run significant items → JSON under `benchmarks/results/` → **INCORPORATED**
-or **RUN_DOCUMENTED** (negatives kept). No silent skips. No “just enough.”  
+**MODE:** 🚀 **EXECUTION continues in NEXT chat.** Skip nothing. Tracker is law.  
+**This chat retired** after foundation + long jobs launched (multirun still running).  
 
-**Parallel tracks:**  
-- **A (cluster):** Phase 0 UM DICC when access exists — HARD GATE for I*/H7/K7.  
-- **B (local science):** protocol → multi-run → method/HPO/imbalance/teachers →
-  ablations/baselines/Pareto → deploy re-bench → XAI choice → ToN → paper.  
+**Goal:** Full Prof Por feedback (`docs/feedback1.docx`) → WoS-level contribution.  
+**Law:** `PROF_FEEDBACK_TRACKER.md` + `SESSION_CONTINUITY.md` + Option A.  
+**Policy:** run → JSON → INCORPORATED or RUN_DOCUMENTED. No silent skips.
 
-**Do first each chat:** Read tracker; pick **one WP** from `15_WORK_PACKAGES.md`; execute;
-flip tracker statuses; commit.  
-**Do not:** invent DICC numbers; clobber `best_model_botiot_twostage.pth` without BACKUP;
-manuscript before tracker largely green; full-pipeline CUDA vs full V3.  
+**Do first next chat:**  
+1) `docs/execution_plan/SESSION_CONTINUITY.md`  
+2) Check running jobs / collect JSON under `benchmarks/results/multirun/`  
+3) Continue next WP  
 
-**Done so far (2026-07-19):**  
-- Protocol + FT/multirun/classical tooling; skip-nothing tracker.  
-- Smoke FT val **0.9755**; champion eval val **0.9780**; md5 `80a90f7…` safe.  
-- Full-data classical **LR val 0.523** done; RF/XGB/LGBM full-data **in flight**.  
-- Multirun 5×10ep **in flight** (seed 42); imbalance compare **queued** after summary.  
-- Continuity: `docs/execution_plan/SESSION_CONTINUITY.md`. DICC **ABSENT**.  
+**Background (leave running):**  
+- Multirun 5×10ep (may still be on seed 42) — `/tmp/multirun_full.log`  
+- Classical full lr,rf,xgb,lgbm — `/tmp/classical_full.log`  
+- Queue after multirun summary: imbalance compare  
 
-**Open with:** (1) this header, (2) **`SESSION_CONTINUITY.md`**,
-(3) **`PROF_FEEDBACK_TRACKER.md`**.  
-**Next:** Collect multirun/classical JSON → imbalance compare → method/HPO.
+**Done this chat:** protocol, eval sealed, FT/multirun/classical/imbalance tooling, smoke FT 0.9755, champion val 0.9780, LR full-data 0.523. Champion md5 `80a90f7…` **untouched**. DICC **ABSENT**.
 
 **Standing process (every session forever):** see **Session lifecycle** below — close with
 verify → commit/push → next-session prompt; never leave uncommitted handoff work.
