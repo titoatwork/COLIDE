@@ -250,11 +250,18 @@
 | Date | What changed |
 |------|----------------|
 | 2026-07-19 | Tracker created; protocol foundation DONE; all science items TODO/PARTIAL/BLOCKED as above |
+| 2026-07-19 | **Skip-nothing policy locked:** run significant items → record → incorporate or RUN_DOCUMENTED |
 
 ---
 
 ## Definition of “all of them done”
 
-Every row is `DONE` (or `DEFERRED` with written scientific reason + Prof-aligned title scoping), DICC unblocked items closed, and manuscript only after that.
+Every row is:
 
-**We do not mark complete early.**
+- **DONE** / **INCORPORATED**, or  
+- **RUN_DOCUMENTED** (ran; not selected; notes + JSON exist), or  
+- **BLOCKED** only with unblock path (e.g. waiting DICC access),
+
+and manuscript only after that.
+
+**We do not mark complete early. We do not skip in silence.**
