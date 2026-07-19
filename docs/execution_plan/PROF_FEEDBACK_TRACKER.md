@@ -219,7 +219,7 @@
 | L2 | Mod table before final model | PARTIAL | Written |
 | L3 | Avoid changing many parts at once | PARTIAL | Discipline |
 | L4 | Phase: freeze preprocess/split/metrics/seeds/hardware/baseline | PARTIAL | Protocol + freeze card |
-| L5 | ≥5 independent training runs mean±std | IN_PROGRESS | smoke seed42 DONE val_macro_f1=0.9755 (2ep); full 5-seed×10ep multirun launched |
+| L5 | ≥5 independent training runs mean±std | DONE | multirun mean 0.9714 ± 0.0109 n=5 (val only) |
 | L6 | Optuna/Bayesian HPO | TODO | |
 | L7 | One clear proposed method | TODO | |
 | L8 | Deploy: export, parity, profile, kernels, TRT/ORT/compile, FP16/INT8 | PARTIAL | Local CUDA exists |

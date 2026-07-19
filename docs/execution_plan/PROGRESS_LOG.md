@@ -91,3 +91,21 @@ Note: RF 0.9778 on this protocol ≠ published 0.9864 (different feature/pipelin
 | 46 | pending | | |
 
 Partial mean (n=3): **0.9733** ± 0.0137 — desirable; seed 43 is the weak tail.
+
+
+### Multirun WP1b COMPLETE
+| seed | best val macro-F1 | min_cls_f1 |
+|------|-------------------|------------|
+| 42 | 0.9780 | 0.9315 |
+| 43 | 0.9578 | 0.9091 |
+| 44 | **0.9840** | **0.9589** |
+| 45 | 0.9746 | 0.9143 |
+| 46 | 0.9624 | 0.9091 |
+
+**mean 0.9714 ± 0.0109** (n=5)  
+min 0.9578 max 0.9840  
+Path: `benchmarks/results/multirun/summary.json`  
+Test sealed. Champion not overwritten.
+
+### Next (auto-started)
+Imbalance loss compare (ce → focal → focal_cb → logit_adj), 5 epochs, seed 42.
