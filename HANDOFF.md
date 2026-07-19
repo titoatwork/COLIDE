@@ -1,23 +1,15 @@
 # COLIDE — Session Handoff
 
-**MODE:** 🚀 **EXECUTION continues in NEXT chat.** Skip nothing. Tracker is law.  
-**This chat retired** after foundation + long jobs launched (multirun still running).  
-
-**Goal:** Full Prof Por feedback (`docs/feedback1.docx`) → WoS-level contribution.  
+**MODE:** 🚀 **EXECUTION ACTIVE (this chat continues).** Skip nothing. Tracker is law.  
+**Goal:** Full Prof Por feedback → WoS-level contribution.  
 **Law:** `PROF_FEEDBACK_TRACKER.md` + `SESSION_CONTINUITY.md` + Option A.  
-**Policy:** run → JSON → INCORPORATED or RUN_DOCUMENTED. No silent skips.
+**Policy:** run → JSON → INCORPORATED or RUN_DOCUMENTED. No silent skips.  
+**Retire only later** (~400k tokens or user says so) — not yet.
 
-**Do first next chat:**  
-1) `docs/execution_plan/SESSION_CONTINUITY.md`  
-2) Check running jobs / collect JSON under `benchmarks/results/multirun/`  
-3) Continue next WP  
+**Do first each turn:** check multirun/classical jobs + JSON; advance next WP.  
 
-**Background (leave running):**  
-- Multirun 5×10ep (may still be on seed 42) — `/tmp/multirun_full.log`  
-- Classical full lr,rf,xgb,lgbm — `/tmp/classical_full.log`  
-- Queue after multirun summary: imbalance compare  
-
-**Done this chat:** protocol, eval sealed, FT/multirun/classical/imbalance tooling, smoke FT 0.9755, champion val 0.9780, LR full-data 0.523. Champion md5 `80a90f7…` **untouched**. DICC **ABSENT**.
+**Background:** multirun 5×10ep; classical full; queue imbalance after multirun summary.  
+**Done so far:** protocol, FT/multirun/classical/imbalance tooling, smoke 0.9755, champion val 0.9780, LR full 0.523. md5 `80a90f7…` safe. DICC **ABSENT**.
 
 **Standing process (every session forever):** see **Session lifecycle** below — close with
 verify → commit/push → next-session prompt; never leave uncommitted handoff work.
