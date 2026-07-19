@@ -75,25 +75,26 @@ Checklist:
 
 ### D. Canonical next-session prompts (update when mode changes)
 
-**★ NEXT (default) — Execution plan WP0 or WP1a**
+**★ NEXT (default) — Close tracker rows (rock mode)**
 
 ```text
-Continue COLIDE — EXCEPTIONAL EXECUTION PLAN. Option A CUDA locked.
-Authority: docs/execution_plan/00_INDEX.md + 15_WORK_PACKAGES.md + feedback1.docx.
+Continue COLIDE — FULL PROF FEEDBACK EXECUTION. Skip nothing. Exceptional quality.
+Option A CUDA locked. Authority: docs/execution_plan/PROF_FEEDBACK_TRACKER.md +
+00_INDEX.md + feedback1.docx.
 
-Read in order:
-1) HANDOFF.md header + Session lifecycle
-2) docs/execution_plan/00_INDEX.md
-3) docs/execution_plan/03_GAP_MATRIX.md
-4) docs/execution_plan/04_PHASE0_DICC.md OR 05_PHASE1_BASELINE.md
-5) docs/execution_plan/14_EXCEPTIONAL_STANDARDS.md + 16_SAFETY_AND_RULES.md
+Read: HANDOFF.md header + Session lifecycle + PROF_FEEDBACK_TRACKER.md + 15_WORK_PACKAGES.md.
 
-Task: Execute ONE work package only.
-- If DICC access: WP0 (guided campaign; user SSH; no invented numbers).
-- If waiting: WP1a (unified botiot_protocol + freeze card) to exceptional standard.
-Do NOT start HPO/method/manuscript until Phase 0 done (unless pure prep).
-Do NOT clobber best_model_botiot_twostage.pth without BACKUP + OK.
-End per HANDOFF lifecycle.
+Policy: every significant Prof item must be RUN with JSON results; then INCORPORATED
+or RUN_DOCUMENTED (what happened). No silent skips. Protocol freeze enables fair
+improvements — still deliver HPO, method, imbalance, teachers, ablations, baselines,
+Pareto, DICC, XAI, ToN as tracked.
+
+Default next (no DICC required): WP1b multi-seed baseline under scripts/protocol
+OR implement train path on protocol + first imbalance/teacher experiments.
+If user has DICC SSH: WP0 in parallel/separate focus.
+
+Rules: no invent multi-day numbers; no clobber best_model_botiot_twostage.pth without
+BACKUP + OK; update tracker statuses every session; commit/push; end lifecycle.
 ```
 
 **Alternate — Guided UM DICC ops (when user has SSH time)**
