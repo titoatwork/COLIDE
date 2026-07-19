@@ -35,7 +35,6 @@ def fit_predict(name: str, X_tr, y_tr, X_te, seed: int):
         clf = LogisticRegression(
             max_iter=500,
             solver="lbfgs",
-            n_jobs=-1,
             random_state=seed,
         )
     elif name == "svm":

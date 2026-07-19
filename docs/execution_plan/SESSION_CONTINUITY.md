@@ -1,8 +1,9 @@
 # Session Continuity / Handover Pack
 
-**Purpose:** Resume another chat with zero context loss.  
-**Update:** every significant session end.  
-**Last update:** 2026-07-19 (rock-mode execution)
+**Purpose:** Live continuity notes while executing (also usable if a chat is retired later).  
+**Not a retirement signal** — this chat continues until ~400k tokens or user says stop.  
+**Update:** every significant milestone.  
+**Last update:** 2026-07-19 (rock-mode; stay in this chat)
 
 ---
 
