@@ -81,12 +81,14 @@
 
 ## 6. Acceptance criteria
 
-- [ ] One import path for data in new experiments  
-- [ ] Written freeze card reviewed  
-- [ ] Val metrics available without touching test  
+- [x] One import path for data in new experiments (`scripts/protocol/botiot.py`)  
+- [x] Written freeze card reviewed (`BASELINE_FREEZE_CARD.md`)  
+- [x] Val metrics available without touching test (`eval_checkpoint.py`)  
 - [ ] Multi-run JSON exists OR documented compute blocker with single-run + justification  
-- [ ] Baseline champion md5 recorded  
-- [ ] No training script silently uses different features/split  
+- [x] Baseline champion md5 recorded (freeze card)  
+- [ ] Legacy train scripts fully migrated to protocol (still ad hoc loaders)  
+
+**2026-07-19 progress:** smoke OK; champion val macro-F1 **0.9780** under `stage_b_ft` (test sealed).  
 
 ---
 

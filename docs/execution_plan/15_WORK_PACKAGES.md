@@ -11,7 +11,7 @@
 |----|------|-------|---------|-------|--------|
 | WP0 | UM DICC Day1+Day2+compare+scp | 0 | — | User/ops + coach | **TODO** |
 | WP0b | Extract DICC JSON tables + fork decision | 0 | WP0 | Agent+user | TODO |
-| WP1a | Unified `botiot_protocol.py` + freeze card | 1 | — (prep ok) | Agent | TODO |
+| WP1a | Unified `botiot_protocol.py` + freeze card | 1 | — (prep ok) | Agent | **DONE 2026-07-19** |
 | WP1b | Multi-run baseline driver (5 seeds) | 1 | WP1a | Agent | TODO |
 | WP2a | Sign method package (MOD table) | 2 | WP0b preferred | User+agent | TODO |
 | WP2b | Implement losses + thresholds modules | 2 | WP1a | Agent | TODO |
