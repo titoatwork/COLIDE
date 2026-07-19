@@ -128,9 +128,9 @@
 
 | ID | Requirement | Status | Evidence / notes |
 |----|-------------|--------|------------------|
-| G1 | Logistic Regression | PARTIAL | pilot max_train=100k val_f1=0.463 (RUN_DOCUMENTED pilot; full-data TODO) |
-| G2 | SVM | TODO | |
-| G3 | Random Forest | PARTIAL | published 0.9864 exists; pilot 100k val_f1=0.686 not comparable — full-data re-run TODO |
+| G1 | Logistic Regression | DONE (val) | full stage_b_ft val_macro_f1=0.5231; test sealed |
+| G2 | SVM | TODO | LinearSVC still to run |
+| G3 | Random Forest | PARTIAL | protocol-fair val 0.9778; published 0.9864 is other path — both kept |
 | G4 | XGBoost | TODO | |
 | G5 | LightGBM | TODO | |
 | G6 | MLP | PARTIAL | Historical |

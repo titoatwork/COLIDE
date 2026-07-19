@@ -68,15 +68,19 @@ def fit_predict(name: str, X_tr, y_tr, X_te, seed: int):
     elif name == "lgbm":
         from lightgbm import LGBMClassifier
 
+        # Force numeric feature matrix (avoid feature-name mismatch warnings / bugs)
+        X_tr = np.asarray(X_tr, dtype=np.float32)
+        X_te = np.asarray(X_te, dtype=np.float32)
         clf = LGBMClassifier(
-            n_estimators=200,
+            n_estimators=300,
             num_leaves=63,
-            learning_rate=0.1,
+            learning_rate=0.05,
             subsample=0.8,
             colsample_bytree=0.8,
             n_jobs=-1,
             random_state=seed,
             verbose=-1,
+            force_col_wise=True,
         )
     else:
         raise ValueError(name)
