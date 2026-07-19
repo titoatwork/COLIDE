@@ -18,16 +18,15 @@ flip tracker statuses; commit.
 manuscript before tracker largely green; full-pipeline CUDA vs full V3.  
 
 **Done so far (2026-07-19):**  
-- Interim + Prof feedback; tracker skip-nothing; execution plan pack.  
-- **Protocol DONE** (`scripts/protocol/*`, eval sealed, freeze card).  
-- Champion val F1 **0.9780**; md5 `80a90f7…` untouched.  
-- **WP1b:** `train_protocol_ft.py` + multirun driver; seed42 FT smoke **on GPU**.  
-- Classical baseline script + pilot (lr/rf, max_train=100k) **on CPU**.  
+- Protocol + FT/multirun/classical tooling; skip-nothing tracker.  
+- Smoke FT val **0.9755**; champion eval val **0.9780**; md5 `80a90f7…` safe.  
+- Full-data classical **LR val 0.523** done; RF/XGB/LGBM full-data **in flight**.  
+- Multirun 5×10ep **in flight** (seed 42); imbalance compare **queued** after summary.  
 - Continuity: `docs/execution_plan/SESSION_CONTINUITY.md`. DICC **ABSENT**.  
 
 **Open with:** (1) this header, (2) **`SESSION_CONTINUITY.md`**,
 (3) **`PROF_FEEDBACK_TRACKER.md`**.  
-**Next:** Finish WP1b full 5-seed (epochs=10) → full classical baselines → method/HPO.
+**Next:** Collect multirun/classical JSON → imbalance compare → method/HPO.
 
 **Standing process (every session forever):** see **Session lifecycle** below — close with
 verify → commit/push → next-session prompt; never leave uncommitted handoff work.
