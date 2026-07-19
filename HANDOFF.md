@@ -1,25 +1,34 @@
 # COLIDE — Session Handoff
 
-**MODE:** Achieve **every** Prof Por feedback item — tracker is law.
-**`docs/execution_plan/PROF_FEEDBACK_TRACKER.md`** (update every session).  
-Plan: `docs/execution_plan/00_INDEX.md`. Protocol foundation: `scripts/protocol/*`.  
-**Phase 0 DICC = HARD GATE for cluster items.** Non-DICC science continues in parallel.  
-Authority: `docs/feedback1.docx` + tracker + Option A.  
-**Do first:** Tracker + next WP (1b multi-run / method trainer / DICC if access).  
-**Do not:** drop tracker items; invent DICC numbers; clobber champion without BACKUP;
-“just enough”; manuscript before tracker green; **silent skips**.  
-**Skip-nothing:** run significant Prof items → JSON + notes → INCORPORATED or
-RUN_DOCUMENTED (negative results kept).  
-Agents: **no DICC invent**; flip tracker statuses when done.
+**MODE:** 🚀 **EXECUTION — skip nothing, exceptional quality.** Close every row in
+**`docs/execution_plan/PROF_FEEDBACK_TRACKER.md`**.  
+**Goal:** Meet full Prof Por feedback (`docs/feedback1.docx`) for WoS-level contribution.  
+**Law:** Tracker + `docs/execution_plan/00_INDEX.md` + Option A (`DESIGN_PLAN.md`).  
+**Policy:** Run significant items → JSON under `benchmarks/results/` → **INCORPORATED**
+or **RUN_DOCUMENTED** (negatives kept). No silent skips. No “just enough.”  
 
-**Last work (2026-07-19):** Full **PROF_FEEDBACK_TRACKER** (every §1–10 + staged +
-RQs). Protocol foundation DONE (botiot stages, metrics, losses, thresholds, eval).
-Champion val F1 **0.9780** sealed-test path. Email ready. md5
-`80a90f7cc210276300eaa90173a5a385`. DICC **ABSENT**.
+**Parallel tracks:**  
+- **A (cluster):** Phase 0 UM DICC when access exists — HARD GATE for I*/H7/K7.  
+- **B (local science):** protocol → multi-run → method/HPO/imbalance/teachers →
+  ablations/baselines/Pareto → deploy re-bench → XAI choice → ToN → paper.  
 
-**Open with:** (1) this header, (2) **`PROF_FEEDBACK_TRACKER.md`**,
-(3) **`15_WORK_PACKAGES.md`**.  
-**Next:** Close tracker rows — WP1b / method train / baselines / DICC — §D.
+**Do first each chat:** Read tracker; pick **one WP** from `15_WORK_PACKAGES.md`; execute;
+flip tracker statuses; commit.  
+**Do not:** invent DICC numbers; clobber `best_model_botiot_twostage.pth` without BACKUP;
+manuscript before tracker largely green; full-pipeline CUDA vs full V3.  
+
+**Done so far (2026-07-19):**  
+- Interim report sent; Prof feedback received + analysed.  
+- Execution plan pack `docs/execution_plan/` (phases 0–9 + standards).  
+- **Protocol foundation DONE:** `scripts/protocol/*` (botiot stages, metrics, losses,
+  thresholds, result_schema), `eval_checkpoint.py`, smoke test, freeze card.  
+- Champion **val** macro-F1 **0.9780** under `stage_b_ft` (test sealed by default).  
+- md5 still `80a90f7cc210276300eaa90173a5a385`. DICC tree **ABSENT**.  
+
+**Open with:** (1) this header, (2) **`docs/execution_plan/PROF_FEEDBACK_TRACKER.md`**,
+(3) **`docs/execution_plan/15_WORK_PACKAGES.md`**.  
+**Next WP default:** WP1b multi-run baseline **or** method trainer on protocol **or**
+guided DICC if user has SSH.
 
 **Standing process (every session forever):** see **Session lifecycle** below — close with
 verify → commit/push → next-session prompt; never leave uncommitted handoff work.
