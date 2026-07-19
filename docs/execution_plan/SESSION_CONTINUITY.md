@@ -40,7 +40,9 @@ Complete **every** item in `PROF_FEEDBACK_TRACKER.md` to exceptional standard fo
 | Freeze card | **DONE** | `BASELINE_FREEZE_CARD.md` |
 | `train_protocol_ft.py` | **DONE** | never overwrites champion by default |
 | `run_baseline_multirun.py` | **DONE** | 5-seed driver |
-| Smoke FT seed 42 (2 epoch) | **IN_PROGRESS / check** | `model/multirun/ft_seed42.pth` appeared mid-run |
+| Smoke FT seed 42 (2 epoch) | **DONE** | val_macro_f1 **0.9755**; `multirun/ft_seed42.json`; ~411s |
+| Classical pilot lr/rf 100k | **DONE (pilot only)** | lr 0.463 / rf 0.686 val — **not** full-data; re-run full for G* |
+| Full multirun 5×10ep | **LAUNCHED** | check `/tmp/multirun_full.log` + `run_baseline_multirun` |
 
 **Champion:** `model/best_model_botiot_twostage.pth` md5 **`80a90f7cc210276300eaa90173a5a385`** — do not clobber.
 
@@ -120,4 +122,12 @@ Update tracker; commit/push; end per HANDOFF lifecycle.
 
 ## 8. Git tip at last continuity edit
 
-See `git log -1` on master after commit of this file.
+`cd411bc`+ (classical LR fix); results under `benchmarks/results/` are **gitignored** — local only until packaging WP.
+
+### Running jobs to check
+
+```bash
+ps -eo pid,cmd | awk '/run_baseline_multirun|train_protocol_ft|run_classical/{print}'
+tail -30 /tmp/multirun_full.log
+ls benchmarks/results/multirun/
+```

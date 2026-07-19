@@ -128,9 +128,9 @@
 
 | ID | Requirement | Status | Evidence / notes |
 |----|-------------|--------|------------------|
-| G1 | Logistic Regression | TODO | |
+| G1 | Logistic Regression | PARTIAL | pilot max_train=100k val_f1=0.463 (RUN_DOCUMENTED pilot; full-data TODO) |
 | G2 | SVM | TODO | |
-| G3 | Random Forest | PARTIAL | 0.9864 protocol |
+| G3 | Random Forest | PARTIAL | published 0.9864 exists; pilot 100k val_f1=0.686 not comparable — full-data re-run TODO |
 | G4 | XGBoost | TODO | |
 | G5 | LightGBM | TODO | |
 | G6 | MLP | PARTIAL | Historical |
@@ -219,7 +219,7 @@
 | L2 | Mod table before final model | PARTIAL | Written |
 | L3 | Avoid changing many parts at once | PARTIAL | Discipline |
 | L4 | Phase: freeze preprocess/split/metrics/seeds/hardware/baseline | PARTIAL | Protocol + freeze card |
-| L5 | ≥5 independent training runs mean±std | IN_PROGRESS | train_protocol_ft + run_baseline_multirun; seed42 smoke running |
+| L5 | ≥5 independent training runs mean±std | IN_PROGRESS | smoke seed42 DONE val_macro_f1=0.9755 (2ep); full 5-seed×10ep multirun launched |
 | L6 | Optuna/Bayesian HPO | TODO | |
 | L7 | One clear proposed method | TODO | |
 | L8 | Deploy: export, parity, profile, kernels, TRT/ORT/compile, FP16/INT8 | PARTIAL | Local CUDA exists |
