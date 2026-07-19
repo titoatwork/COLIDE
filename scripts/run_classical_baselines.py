@@ -33,8 +33,8 @@ def fit_predict(name: str, X_tr, y_tr, X_te, seed: int):
         from sklearn.linear_model import LogisticRegression
 
         clf = LogisticRegression(
-            max_iter=200,
-            multi_class="auto",
+            max_iter=500,
+            solver="lbfgs",
             n_jobs=-1,
             random_state=seed,
         )
