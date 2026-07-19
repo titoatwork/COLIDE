@@ -33,7 +33,12 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from scripts.protocol.botiot import load_botiot, load_config  # noqa: E402
-from scripts.protocol.losses import FocalLoss  # noqa: E402
+from scripts.protocol.losses import (  # noqa: E402
+    FocalLoss,
+    LogitAdjustedCrossEntropy,
+    class_balanced_weights,
+    class_probs_from_counts,
+)
 from scripts.protocol.metrics import compute_classification_metrics  # noqa: E402
 from scripts.protocol.result_schema import make_result_envelope  # noqa: E402
 
@@ -92,6 +97,14 @@ def main() -> int:
     p.add_argument("--lr", type=float, default=1e-4)
     p.add_argument("--batch-size", type=int, default=256)
     p.add_argument("--focal-gamma", type=float, default=2.0)
+    p.add_argument(
+        "--loss",
+        type=str,
+        default="focal",
+        choices=["focal", "ce", "focal_cb", "logit_adj"],
+        help="Train loss: focal | ce | class-balanced focal | logit-adjusted CE",
+    )
+    p.add_argument("--logit-tau", type=float, default=1.0)
     p.add_argument("--patience", type=int, default=3)
     p.add_argument(
         "--save-path",
