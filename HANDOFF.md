@@ -18,17 +18,16 @@ flip tracker statuses; commit.
 manuscript before tracker largely green; full-pipeline CUDA vs full V3.  
 
 **Done so far (2026-07-19):**  
-- Interim report sent; Prof feedback received + analysed.  
-- Execution plan pack `docs/execution_plan/` (phases 0–9 + standards).  
-- **Protocol foundation DONE:** `scripts/protocol/*` (botiot stages, metrics, losses,
-  thresholds, result_schema), `eval_checkpoint.py`, smoke test, freeze card.  
-- Champion **val** macro-F1 **0.9780** under `stage_b_ft` (test sealed by default).  
-- md5 still `80a90f7cc210276300eaa90173a5a385`. DICC tree **ABSENT**.  
+- Interim + Prof feedback; tracker skip-nothing; execution plan pack.  
+- **Protocol DONE** (`scripts/protocol/*`, eval sealed, freeze card).  
+- Champion val F1 **0.9780**; md5 `80a90f7…` untouched.  
+- **WP1b:** `train_protocol_ft.py` + multirun driver; seed42 FT smoke **on GPU**.  
+- Classical baseline script + pilot (lr/rf, max_train=100k) **on CPU**.  
+- Continuity: `docs/execution_plan/SESSION_CONTINUITY.md`. DICC **ABSENT**.  
 
-**Open with:** (1) this header, (2) **`docs/execution_plan/PROF_FEEDBACK_TRACKER.md`**,
-(3) **`docs/execution_plan/15_WORK_PACKAGES.md`**.  
-**Next WP default:** WP1b multi-run baseline **or** method trainer on protocol **or**
-guided DICC if user has SSH.
+**Open with:** (1) this header, (2) **`SESSION_CONTINUITY.md`**,
+(3) **`PROF_FEEDBACK_TRACKER.md`**.  
+**Next:** Finish WP1b full 5-seed (epochs=10) → full classical baselines → method/HPO.
 
 **Standing process (every session forever):** see **Session lifecycle** below — close with
 verify → commit/push → next-session prompt; never leave uncommitted handoff work.
