@@ -1,23 +1,22 @@
 # COLIDE — Session Handoff
 
-**MODE:** Post-interim — **Prof feedback roadmap LOCKED**. Execute
-`docs/PROF_FEEDBACK_ROADMAP.md` in order. **Phase 0 = UM DICC (HARD GATE).**  
-Authority: `docs/feedback1.docx` + **`docs/PROF_FEEDBACK_ROADMAP.md`** +
-`docs/MOD_DECISION_TABLE.md` + Option A (`docs/DESIGN_PLAN.md`).  
-**Do first:** Phase 0 DICC (user/ops) **or** prep-only packages (baseline inventory)
-while waiting — never invent multi-day numbers.  
-**Do not:** skip to manuscript; full-pipeline CUDA vs full V3; clobber champion without
-BACKUP; implement all modifications at once.  
-**After DICC:** Phase 1 baseline freeze → Phase 2 one method package → HPO/ablations.  
-Agents: **no DICC login**; **no invented numbers**; retrain only under roadmap protocol.
+**MODE:** Exceptional execution pack **ACTIVE**. Full plan under
+**`docs/execution_plan/`** (codebase inventory + feedback analysis + gap matrix +
+Phases 0–9 + work packages). **Phase 0 UM DICC = HARD GATE.**  
+Authority: `docs/feedback1.docx` + **`docs/execution_plan/00_INDEX.md`** + Option A.  
+**Do first:** Open `docs/execution_plan/00_INDEX.md` + `15_WORK_PACKAGES.md`; run WP0
+(DICC) or WP1a (protocol prep) only.  
+**Do not:** invent multi-day numbers; manuscript early; clobber champion without BACKUP;
+kitchen-sink retrain; “just enough” shortcuts (see `14_EXCEPTIONAL_STANDARDS.md`).  
+Agents: **no DICC invent**; retrain only under phase protocol.
 
-**Last work (2026-07-19):** Prof email + `feedback1.docx` analysed; roadmap + mod
-decision table written. Interim report sent. Champion md5 still
+**Last work (2026-07-19):** Deep codebase + feedback analysis → `docs/execution_plan/*`
+(17 files). Prior: interim report sent; short roadmap. Champion md5
 `80a90f7cc210276300eaa90173a5a385`. `benchmarks/results/dicc/` **ABSENT**.
 
-**Open with:** (1) this header, (2) **`docs/PROF_FEEDBACK_ROADMAP.md`**,
-(3) **`docs/MOD_DECISION_TABLE.md`**.  
-**Next:** Phase 0 guided DICC **or** Phase-0-wait prep (baseline freeze card) — §D.
+**Open with:** (1) this header, (2) **`docs/execution_plan/00_INDEX.md`**,
+(3) **`docs/execution_plan/15_WORK_PACKAGES.md`**.  
+**Next:** WP0 guided DICC **or** WP1a unified data protocol — §D.
 
 **Standing process (every session forever):** see **Session lifecycle** below — close with
 verify → commit/push → next-session prompt; never leave uncommitted handoff work.
@@ -64,22 +63,24 @@ Checklist:
 
 ### D. Canonical next-session prompts (update when mode changes)
 
-**★ NEXT (default) — Prof feedback roadmap Phase 0 or prep**
+**★ NEXT (default) — Execution plan WP0 or WP1a**
 
 ```text
-Continue COLIDE — PROF FEEDBACK ROADMAP. Option A CUDA rules locked.
-Authority: docs/PROF_FEEDBACK_ROADMAP.md + docs/MOD_DECISION_TABLE.md + docs/feedback1.docx.
+Continue COLIDE — EXCEPTIONAL EXECUTION PLAN. Option A CUDA locked.
+Authority: docs/execution_plan/00_INDEX.md + 15_WORK_PACKAGES.md + feedback1.docx.
 
-Read: HANDOFF.md header + Session lifecycle + PROF_FEEDBACK_ROADMAP.md §2–§3 + MOD_DECISION_TABLE.md.
+Read in order:
+1) HANDOFF.md header + Session lifecycle
+2) docs/execution_plan/00_INDEX.md
+3) docs/execution_plan/03_GAP_MATRIX.md
+4) docs/execution_plan/04_PHASE0_DICC.md OR 05_PHASE1_BASELINE.md
+5) docs/execution_plan/14_EXCEPTIONAL_STANDARDS.md + 16_SAFETY_AND_RULES.md
 
-Order: Phase 0 UM DICC HARD GATE before full HPO/method/manuscript.
-If I have SSH / DICC ready: GUIDED UM DICC (user runs, agent coaches); scp results to
-benchmarks/results/dicc/; no invented numbers.
-If DICC still blocked: PREP ONLY — baseline freeze inventory (Phase 1 card), script survey
-vs Prof checklist, M16 claim-JSON packaging plan. Do NOT start bulk retrain or manuscript.
-Do NOT clobber best_model_botiot_twostage.pth without BACKUP + explicit OK.
-Do NOT implement all M* candidates at once — one package per chat.
-
+Task: Execute ONE work package only.
+- If DICC access: WP0 (guided campaign; user SSH; no invented numbers).
+- If waiting: WP1a (unified botiot_protocol + freeze card) to exceptional standard.
+Do NOT start HPO/method/manuscript until Phase 0 done (unless pure prep).
+Do NOT clobber best_model_botiot_twostage.pth without BACKUP + OK.
 End per HANDOFF lifecycle.
 ```
 
