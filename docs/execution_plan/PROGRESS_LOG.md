@@ -45,3 +45,19 @@ JSON: `benchmarks/results/multirun/ft_seed{seed}.json`
 - Multirun: `run_baseline_multirun`  
 - Classical: `/tmp/classical_full.log`  
 - Post-multirun: imbalance via watcher on `summary.json`  
+
+### Multirun seed 42 full (completed)
+- best val macro-F1 **0.9780** (epoch 3), early-stopped after epoch 5
+- elapsed ~1702s (~28 min)
+- history: ep1 0.9755, ep2 0.9684, ep3 **0.9780**, ep4 0.9722, ep5 0.9408
+- seed 43 started
+
+### Classical full (protocol stage_b_ft, val only)
+| model | val_macro_f1 | min_cls_f1 | theft_f1 |
+|-------|--------------|------------|----------|
+| lr | 0.5231 | 0.0 | 0.0 |
+| rf | 0.9778 | 0.9231 | 0.9231 |
+| xgb | 0.9762 | 0.9231 | 0.9231 |
+| lgbm | 0.4951 | 0.0 | 0.0 (re-run in flight) |
+
+Note: RF 0.9778 on this protocol ≠ published 0.9864 (different feature/pipeline).
