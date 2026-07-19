@@ -178,7 +178,20 @@ def main() -> int:
     model = CNNBiLSTMAttention(config).to(device)
     model.load_state_dict(torch.load(init_ckpt, map_location=device, weights_only=True))
 
-    criterion = FocalLoss(gamma=args.focal_gamma)
+    y_tr_t = torch.from_numpy(bundle.y_train)
+    if args.loss == "focal":
+        criterion = FocalLoss(gamma=args.focal_gamma)
+    elif args.loss == "ce":
+        criterion = torch.nn.CrossEntropyLoss()
+    elif args.loss == "focal_cb":
+        w = class_balanced_weights(y_tr_t, bundle.num_classes).to(device)
+        criterion = FocalLoss(gamma=args.focal_gamma, alpha=w)
+    elif args.loss == "logit_adj":
+        pi = class_probs_from_counts(y_tr_t, bundle.num_classes).to(device)
+        criterion = LogitAdjustedCrossEntropy(pi, tau=args.logit_tau)
+    else:
+        raise ValueError(args.loss)
+
     optimizer = Adam(model.parameters(), lr=args.lr)
     scaler = GradScaler("cuda", enabled=device.type == "cuda")
 
@@ -252,6 +265,8 @@ def main() -> int:
             "lr": args.lr,
             "batch_size": args.batch_size,
             "focal_gamma": args.focal_gamma,
+            "loss": args.loss,
+            "logit_tau": args.logit_tau,
             "patience": args.patience,
             "save_path": str(save_path),
         },
