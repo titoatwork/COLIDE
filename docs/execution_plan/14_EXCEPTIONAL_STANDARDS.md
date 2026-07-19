@@ -64,6 +64,21 @@ An experiment is done only when:
 - Kitchen-sink architecture without ablation  
 - Title promises (class-aware/explainable) without eval  
 - Shipping interim process quality as the contribution  
+- **Silently skipping a Prof-required experiment** without RUN_DOCUMENTED / BLOCKED note  
+
+---
+
+## 5b. Skip-nothing experiment policy (user-locked)
+
+| Step | Action |
+|------|--------|
+| 1 | Identify tracker ID (e.g. C7 SupCon, D2 weighted CE) |
+| 2 | Run bounded experiment under frozen protocol |
+| 3 | Save JSON + log path in tracker notes |
+| 4 | If useful → INCORPORATED into final package / paper table |
+| 5 | If not → RUN_DOCUMENTED: one paragraph + metrics (negative result kept) |
+
+Final model may be lean; **evidence trail must be complete**.
 
 ---
 

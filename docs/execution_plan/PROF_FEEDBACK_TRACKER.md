@@ -3,9 +3,19 @@
 **Source of truth for requirements:** `docs/feedback1.docx` + email on interim report  
 **Operational plan:** `docs/execution_plan/*`  
 **Update rule:** Every session that finishes work must flip status here.  
-**Statuses:** `TODO` | `IN_PROGRESS` | `PARTIAL` | `DONE` | `BLOCKED` (reason) | `DEFERRED` (only with written reason)
+**Statuses:** `TODO` | `IN_PROGRESS` | `PARTIAL` | `DONE` | `BLOCKED` (reason) | `RUN_DOCUMENTED` (ran; not in final method; see notes/JSON) | `INCORPORATED` (in final package)
 
 **Commitment:** Achieve **all** items below to exceptional (not “just enough”) standard before calling the paper ready.
+
+---
+
+## Project policy (user-locked 2026-07-19) — SKIP NOTHING
+
+1. **No silent skips.** Every Prof requirement that is scientifically significant is **run** (or BLOCKED only for missing ops/data, e.g. DICC access).  
+2. **Run → record.** Every run leaves JSON under `benchmarks/results/` (or documented path) with protocol_id, seed, config, metrics, git_sha, timestamp.  
+3. **Then decide.** If useful → **INCORPORATED** into the final method/paper tables. If not → status **RUN_DOCUMENTED** with a short note *what happened* and *why not in final package* (negative result is still evidence).  
+4. **No “we ignored it.”** Optional-looking items (SupCon, uncertainty, etc.) still get at least a **bounded experiment** + write-up unless truly impossible (compute/ops) — then BLOCKED with reason and a plan to unblock.  
+5. **Documentation of failures counts.** Ablations and failed variants go in appendix/results JSON even if not in the abstract.
 
 ---
 

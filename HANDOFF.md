@@ -7,7 +7,9 @@ Plan: `docs/execution_plan/00_INDEX.md`. Protocol foundation: `scripts/protocol/
 Authority: `docs/feedback1.docx` + tracker + Option A.  
 **Do first:** Tracker + next WP (1b multi-run / method trainer / DICC if access).  
 **Do not:** drop tracker items; invent DICC numbers; clobber champion without BACKUP;
-“just enough”; manuscript before tracker green.  
+“just enough”; manuscript before tracker green; **silent skips**.  
+**Skip-nothing:** run significant Prof items → JSON + notes → INCORPORATED or
+RUN_DOCUMENTED (negative results kept).  
 Agents: **no DICC invent**; flip tracker statuses when done.
 
 **Last work (2026-07-19):** Full **PROF_FEEDBACK_TRACKER** (every §1–10 + staged +
