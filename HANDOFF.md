@@ -10,13 +10,15 @@ Authority: `docs/feedback1.docx` + **`docs/execution_plan/00_INDEX.md`** + Optio
 kitchen-sink retrain; “just enough” shortcuts (see `14_EXCEPTIONAL_STANDARDS.md`).  
 Agents: **no DICC invent**; retrain only under phase protocol.
 
-**Last work (2026-07-19):** Deep codebase + feedback analysis → `docs/execution_plan/*`
-(17 files). Prior: interim report sent; short roadmap. Champion md5
+**Last work (2026-07-19):** Phase 1 protocol **started/landed**: `scripts/protocol/*`
+(botiot load stages, metrics, losses, thresholds, result schema),
+`eval_checkpoint.py` (val-only; champion val macro-F1 **0.9780**), freeze card.
+Email draft for Prof ready. Execution plan pack exists. Champion md5
 `80a90f7cc210276300eaa90173a5a385`. `benchmarks/results/dicc/` **ABSENT**.
 
 **Open with:** (1) this header, (2) **`docs/execution_plan/00_INDEX.md`**,
 (3) **`docs/execution_plan/15_WORK_PACKAGES.md`**.  
-**Next:** WP0 guided DICC **or** WP1a unified data protocol — §D.
+**Next:** WP1b multi-run baseline **or** method package decision + trainer on protocol — §D.
 
 **Standing process (every session forever):** see **Session lifecycle** below — close with
 verify → commit/push → next-session prompt; never leave uncommitted handoff work.
