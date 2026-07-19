@@ -67,10 +67,12 @@ def fit_predict(name: str, X_tr, y_tr, X_te, seed: int):
         )
     elif name == "lgbm":
         from lightgbm import LGBMClassifier
+        import pandas as pd
 
-        # Force numeric feature matrix (avoid feature-name mismatch warnings / bugs)
-        X_tr = np.asarray(X_tr, dtype=np.float32)
-        X_te = np.asarray(X_te, dtype=np.float32)
+        # Use named columns for stable LightGBM sklearn API
+        cols = [f"f{i}" for i in range(X_tr.shape[1])]
+        X_tr = pd.DataFrame(np.asarray(X_tr, dtype=np.float32), columns=cols)
+        X_te = pd.DataFrame(np.asarray(X_te, dtype=np.float32), columns=cols)
         clf = LGBMClassifier(
             n_estimators=300,
             num_leaves=63,
