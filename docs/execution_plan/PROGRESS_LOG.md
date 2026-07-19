@@ -61,3 +61,21 @@ JSON: `benchmarks/results/multirun/ft_seed{seed}.json`
 | lgbm | 0.4951 | 0.0 | 0.0 (re-run in flight) |
 
 Note: RF 0.9778 on this protocol ≠ published 0.9864 (different feature/pipeline).
+
+
+### Multirun update (live)
+| seed | best val macro-F1 | elapsed | status |
+|------|-------------------|---------|--------|
+| 42 | **0.9780** | ~28 min | DONE (early stop ep6) |
+| 43 | **0.9578** | ~25 min | DONE (early stop ep5) |
+| 44 | in progress | — | RUNNING |
+| 45–46 | pending | — | |
+
+### Classical full (protocol stage_b_ft, val)
+| model | val_macro_f1 | notes |
+|-------|--------------|-------|
+| lr | 0.523 | DONE |
+| rf | 0.978 | DONE (≠ published 0.9864 path) |
+| xgb | 0.976 | DONE |
+| lgbm | 0.551 | DONE after DataFrame fix (still weak — RUN_DOCUMENTED) |
+| svm pilot 150k | FAILED | &lt;3 samples/class — RUN_DOCUMENTED |
