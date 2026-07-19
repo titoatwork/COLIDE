@@ -1,23 +1,23 @@
 # COLIDE — Session Handoff
 
-**MODE:** Pre-manuscript — **full interim status report COMPLETE** (done + leftover +
-pre-manuscript suggestions; multi-day DICC cells EMPTY / leftover blocked).  
-Authority: `docs/DESIGN_PLAN.md` (Option A) + **`docs/FINAL_PLAN.md`** +  
-**`docs/STATUS_REPORT_DRAFT.md`** + `docs/audit/`.  
-**Do first:** User may generate email/slides from STATUS_REPORT_DRAFT; critical path  
-still Prof/ops on UM DICC. **No new session required** unless context ends or DICC starts.  
-**Do not:** invent multi-day numbers; treat `PROF_POR_STATUS_REPORT.md` as truth;
-full-pipeline CUDA vs full V3; claim final multi-day pack complete.  
-**Defer:** manuscript (P4), stretch (P5). Multi-day DICC = leftover blocked.  
-Agents: **no DICC login**; **no invented numbers**; **no champion retrain**.
+**MODE:** Post-interim — **Prof feedback roadmap LOCKED**. Execute
+`docs/PROF_FEEDBACK_ROADMAP.md` in order. **Phase 0 = UM DICC (HARD GATE).**  
+Authority: `docs/feedback1.docx` + **`docs/PROF_FEEDBACK_ROADMAP.md`** +
+`docs/MOD_DECISION_TABLE.md` + Option A (`docs/DESIGN_PLAN.md`).  
+**Do first:** Phase 0 DICC (user/ops) **or** prep-only packages (baseline inventory)
+while waiting — never invent multi-day numbers.  
+**Do not:** skip to manuscript; full-pipeline CUDA vs full V3; clobber champion without
+BACKUP; implement all modifications at once.  
+**After DICC:** Phase 1 baseline freeze → Phase 2 one method package → HPO/ablations.  
+Agents: **no DICC login**; **no invented numbers**; retrain only under roadmap protocol.
 
-**Last work (2026-07-18):** Full-depth `docs/STATUS_REPORT_DRAFT.md` — everything done
-(early July arc), blocker, leftover L1–L8, pre-manuscript must/should/stretch/optional.  
-verify_claims green. Champion md5 `80a90f7cc210276300eaa90173a5a385`.  
-`benchmarks/results/dicc/` **ABSENT**.
+**Last work (2026-07-19):** Prof email + `feedback1.docx` analysed; roadmap + mod
+decision table written. Interim report sent. Champion md5 still
+`80a90f7cc210276300eaa90173a5a385`. `benchmarks/results/dicc/` **ABSENT**.
 
-**Open with:** (1) this header, (2) **`docs/STATUS_REPORT_DRAFT.md`**.  
-**Next:** User generates report from draft; or guided DICC when unblocked — §D.
+**Open with:** (1) this header, (2) **`docs/PROF_FEEDBACK_ROADMAP.md`**,
+(3) **`docs/MOD_DECISION_TABLE.md`**.  
+**Next:** Phase 0 guided DICC **or** Phase-0-wait prep (baseline freeze card) — §D.
 
 **Standing process (every session forever):** see **Session lifecycle** below — close with
 verify → commit/push → next-session prompt; never leave uncommitted handoff work.
@@ -64,23 +64,22 @@ Checklist:
 
 ### D. Canonical next-session prompts (update when mode changes)
 
-**★ NEXT (default) — While waiting on Prof / after status draft**
+**★ NEXT (default) — Prof feedback roadmap Phase 0 or prep**
 
 ```text
-Continue COLIDE per docs/FINAL_PLAN.md. Option A locked. Numbers-match gate before any final Prof send.
+Continue COLIDE — PROF FEEDBACK ROADMAP. Option A CUDA rules locked.
+Authority: docs/PROF_FEEDBACK_ROADMAP.md + docs/MOD_DECISION_TABLE.md + docs/feedback1.docx.
 
-Read: HANDOFF.md header + Session lifecycle + docs/STATUS_REPORT_DRAFT.md
-+ docs/audit/11_REPORT_WRITER_BRIEF.md + docs/audit/07_PLANNED_WORK_LEFT.md.
+Read: HANDOFF.md header + Session lifecycle + PROF_FEEDBACK_ROADMAP.md §2–§3 + MOD_DECISION_TABLE.md.
 
-Prof decision on Cheran/DICC: [agreed / declined / pending — fill in].
-Status draft exists at docs/STATUS_REPORT_DRAFT.md (local-only; multi-day cells EMPTY).
+Order: Phase 0 UM DICC HARD GATE before full HPO/method/manuscript.
+If I have SSH / DICC ready: GUIDED UM DICC (user runs, agent coaches); scp results to
+benchmarks/results/dicc/; no invented numbers.
+If DICC still blocked: PREP ONLY — baseline freeze inventory (Phase 1 card), script survey
+vs Prof checklist, M16 claim-JSON packaging plan. Do NOT start bulk retrain or manuscript.
+Do NOT clobber best_model_botiot_twostage.pth without BACKUP + explicit OK.
+Do NOT implement all M* candidates at once — one package per chat.
 
-If Prof agreed and SSH available: switch to GUIDED UM DICC prompt.
-If results under benchmarks/results/dicc/: run Prof pack P2a–P2d (match + verify_claims before email).
-If still waiting: optional only — U3 fix "same computation" wording and/or U1 claim-JSON packaging
-(from docs/audit/08); do NOT invent multi-day numbers; do NOT claim P2 complete for DICC.
-
-Rules: no training; no clobber champion; no full-pipeline CUDA vs full V3.
 End per HANDOFF lifecycle.
 ```
 
