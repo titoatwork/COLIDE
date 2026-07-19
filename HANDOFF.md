@@ -1,24 +1,23 @@
 # COLIDE — Session Handoff
 
-**MODE:** Exceptional execution pack **ACTIVE**. Full plan under
-**`docs/execution_plan/`** (codebase inventory + feedback analysis + gap matrix +
-Phases 0–9 + work packages). **Phase 0 UM DICC = HARD GATE.**  
-Authority: `docs/feedback1.docx` + **`docs/execution_plan/00_INDEX.md`** + Option A.  
-**Do first:** Open `docs/execution_plan/00_INDEX.md` + `15_WORK_PACKAGES.md`; run WP0
-(DICC) or WP1a (protocol prep) only.  
-**Do not:** invent multi-day numbers; manuscript early; clobber champion without BACKUP;
-kitchen-sink retrain; “just enough” shortcuts (see `14_EXCEPTIONAL_STANDARDS.md`).  
-Agents: **no DICC invent**; retrain only under phase protocol.
+**MODE:** Achieve **every** Prof Por feedback item — tracker is law.
+**`docs/execution_plan/PROF_FEEDBACK_TRACKER.md`** (update every session).  
+Plan: `docs/execution_plan/00_INDEX.md`. Protocol foundation: `scripts/protocol/*`.  
+**Phase 0 DICC = HARD GATE for cluster items.** Non-DICC science continues in parallel.  
+Authority: `docs/feedback1.docx` + tracker + Option A.  
+**Do first:** Tracker + next WP (1b multi-run / method trainer / DICC if access).  
+**Do not:** drop tracker items; invent DICC numbers; clobber champion without BACKUP;
+“just enough”; manuscript before tracker green.  
+Agents: **no DICC invent**; flip tracker statuses when done.
 
-**Last work (2026-07-19):** Phase 1 protocol **started/landed**: `scripts/protocol/*`
-(botiot load stages, metrics, losses, thresholds, result schema),
-`eval_checkpoint.py` (val-only; champion val macro-F1 **0.9780**), freeze card.
-Email draft for Prof ready. Execution plan pack exists. Champion md5
-`80a90f7cc210276300eaa90173a5a385`. `benchmarks/results/dicc/` **ABSENT**.
+**Last work (2026-07-19):** Full **PROF_FEEDBACK_TRACKER** (every §1–10 + staged +
+RQs). Protocol foundation DONE (botiot stages, metrics, losses, thresholds, eval).
+Champion val F1 **0.9780** sealed-test path. Email ready. md5
+`80a90f7cc210276300eaa90173a5a385`. DICC **ABSENT**.
 
-**Open with:** (1) this header, (2) **`docs/execution_plan/00_INDEX.md`**,
-(3) **`docs/execution_plan/15_WORK_PACKAGES.md`**.  
-**Next:** WP1b multi-run baseline **or** method package decision + trainer on protocol — §D.
+**Open with:** (1) this header, (2) **`PROF_FEEDBACK_TRACKER.md`**,
+(3) **`15_WORK_PACKAGES.md`**.  
+**Next:** Close tracker rows — WP1b / method train / baselines / DICC — §D.
 
 **Standing process (every session forever):** see **Session lifecycle** below — close with
 verify → commit/push → next-session prompt; never leave uncommitted handoff work.

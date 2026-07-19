@@ -26,6 +26,7 @@
 | File | Contents |
 |------|----------|
 | `00_INDEX.md` | This file |
+| **`PROF_FEEDBACK_TRACKER.md`** | **Live checklist of every Prof requirement (update always)** |
 | `01_CODEBASE_INVENTORY.md` | Every major area of the repo; what each file family does |
 | `02_FEEDBACK_DEEP_ANALYSIS.md` | Line-by-line interpretation of Prof feedback + implications |
 | `03_GAP_MATRIX.md` | Prof requirement × current code/results × gap × severity |
