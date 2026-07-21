@@ -1,7 +1,33 @@
 # Progress log (results as they land)
 
 **Policy:** document everything; label pilot vs full; test sealed unless noted.  
-**Handoff snapshot:** 2026-07-21 (documentation only — no new experiments this day)
+**Handoff snapshot:** 2026-07-21 (WP2d val thresholds DONE)
+
+---
+
+## 2026-07-21 — WP2d val thresholds (science)
+
+Script: `scripts/run_val_thresholds.py` (+ hardened `scripts/protocol/thresholds.py`)  
+Checkpoint: `model/imbalance_loss/ft_focal_seed42.pth` md5 `170eaccc584ba12cce2a34ca52ebfbf2`  
+Protocol: `botiot_v1` / `stage_b_ft` / seed 42 / **val only** (test sealed)  
+Result: `benchmarks/results/imbalance_loss/thresholds_focal_seed42.json` md5 `2a6bc98d967883efc53d326535cf9d5b`
+
+| Variant | Val macro-F1 | Min cls F1 | Theft F1 | Normal F1 |
+|---------|--------------|------------|----------|-----------|
+| argmax (baseline) | **0.9780** | 0.9315 | 1.0000 | 0.9315 |
+| fixed t=0.5 | 0.9780 | 0.9315 | 1.0000 | 0.9315 |
+| search macro_f1 | 0.9780 | 0.9315 | 1.0000 | 0.9315 |
+| search min_per_class_f1 | 0.9780 | 0.9315 | 1.0000 | 0.9315 |
+| joint macro→min | 0.9780 | 0.9315 | 1.0000 | 0.9315 |
+| search class_f1 Theft | 0.9780 | 0.9315 | 1.0000 | 0.9315 |
+| search class_f1 Normal | 0.9780 | 0.9315 | 1.0000 | 0.9315 |
+
+**Decision: RUN_DOCUMENTED** — Δmacro=0, Δmin=0 vs argmax. Keep default **argmax** decode for CAD-CBA-v1.  
+Interpretation: focal FT probabilities are already decisive on val; per-class thresholds add no selection signal for this checkpoint.  
+Champion md5 **unchanged** `80a90f7cc210276300eaa90173a5a385`.  
+Tracker: B12 / C11 / D7 → RUN_DOCUMENTED. WP2d DONE.
+
+**Next science:** WP4b teachers/KD under protocol **or** WP3 Optuna **or** WP5 ablations/neural baselines.
 
 ---
 
@@ -76,11 +102,13 @@ Signed: **CAD-CBA-v1** in `METHOD_PACKAGE_DECISION.md` (keep V3 arch + **focal**
 ### Explicitly NOT started this arc
 - Optuna HPO  
 - Ablation ladder / neural baselines suite  
-- Val threshold JSON on best ckpt (util ready)  
+- Teacher/KD under protocol (WP4b)  
 - DICC multi-day  
 - XAI quality suite  
 - ToN final method  
 - Manuscript  
+
+*(Val thresholds: completed later same calendar day — see WP2d section above.)*
 
 ---
 

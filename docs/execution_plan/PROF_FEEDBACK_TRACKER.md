@@ -47,7 +47,7 @@
 | B9 | Class weights | PARTIAL | npy exists; often unused in train |
 | B10 | Distill T and α | PARTIAL | Manual sweeps done historically |
 | B11 | Sequence length | TODO | |
-| B12 | Decision thresholds minority | PARTIAL | `thresholds.py` exists; not in full HPO yet |
+| B12 | Decision thresholds minority | RUN_DOCUMENTED | WP2d on `ft_focal_seed42`: all decode variants = argmax val macro 0.9780 (Δ0); keep argmax (`thresholds_focal_seed42.json`) |
 | B13 | Objectives: val macro-F1, bal-acc, minority recall | PARTIAL | Metrics module has them |
 | B14 | Test untouched until final config | PARTIAL | `eval_checkpoint` seals test by default |
 
@@ -67,7 +67,7 @@
 | C8 | Asymmetric loss minority | TODO | Later unless chosen |
 | C9 | Teacher ensemble distillation | PARTIAL | Script exists; student not final |
 | C10 | Uncertainty-aware detection | TODO | Later unless chosen |
-| C11 | Adaptive per-class thresholds | PARTIAL | Search util exists; not locked in method |
+| C11 | Adaptive per-class thresholds | RUN_DOCUMENTED | Val grid search macro/min/joint/Theft/Normal — no lift vs argmax on focal FT; not in package |
 | C12 | Component addresses named weakness | TODO | Imbalance default weakness |
 | C13 | Mod comparison table before lock | PARTIAL | `MOD_DECISION_TABLE.md` |
 
@@ -79,13 +79,13 @@
 
 | ID | Requirement | Status | Evidence / notes |
 |----|-------------|--------|------------------|
-| D1 | Imbalance first-class (not accuracy-only) | PARTIAL | Metrics + loss compare done; thresholds/stratified still open |
+| D1 | Imbalance first-class (not accuracy-only) | PARTIAL | Metrics + loss compare + thresholds done; stratified still open |
 | D2 | Weighted CE | RUN_DOCUMENTED | CE FT control val 0.9755 (`imbalance_loss/ft_ce_seed42.json`) |
 | D3 | Focal loss | INCORPORATED | Best in 4-way compare val **0.9780** — default CAD-CBA-v1 |
 | D4 | Class-balanced focal | RUN_DOCUMENTED | val 0.9121 — worse macro; JSON kept |
 | D5 | Logit adjustment | RUN_DOCUMENTED | val 0.9225 — worse macro; JSON kept |
 | D6 | Stratified batch sampling | TODO | |
-| D7 | Minority-aware threshold tuning | PARTIAL | util ready; run on `model/imbalance_loss/ft_focal_seed42.pth` next |
+| D7 | Minority-aware threshold tuning | RUN_DOCUMENTED | WP2d DONE: macro/min/joint/class_f1 on focal seed42; Δmacro=0 Δmin=0 vs argmax; keep argmax |
 | D8 | Controlled oversampling | PARTIAL | SMOTE stage_a in protocol |
 | D9 | Supervised contrastive | TODO | Optional bounded run later |
 | D10 | Select on macro-F1 + per-class rare attacks | PARTIAL | metrics logged; loss pick used val macro-F1 + min cls F1 |
@@ -254,6 +254,7 @@
 | 2026-07-19 | User trust + **rock mode**: execute all tracker rows; protocol foundation DONE; next WP1b/method/DICC |
 | 2026-07-19 | **WP1b multirun DONE** mean 0.9714±0.0109 n=5; classical protocol-fair LR/RF/XGB/LGBM documented; **imbalance 4-way DONE** focal INCORPORATE |
 | 2026-07-21 | **Handoff-only session:** no new experiments. Tracker G3–G5/D*/C6/L5 aligned; `SESSION_CONTINUITY` + `RESULTS_DISK_MANIFEST` written; next chat continues from continuity §5 |
+| 2026-07-21 | **WP2d val thresholds DONE** on `ft_focal_seed42.pth`: all variants = argmax 0.9780 → **RUN_DOCUMENTED** keep argmax; B12/C11/D7 updated; next: teachers / Optuna / ablations |
 
 ---
 

@@ -1,7 +1,7 @@
 # Session Continuity / Handoff Pack
 
 **Session closed for continuity:** 2026-07-21  
-**Mode this session:** documentation + handoff only — **no new experiments**  
+**Mode this session:** **WP2d science** — val thresholds on focal FT (then docs + handoff)  
 **Git tip at handoff:** see latest commit after handoff push (`git log -1 --oneline`)  
 **Machine root:** `/home/titoisalive/colide`
 
@@ -102,11 +102,23 @@ Summary: `benchmarks/results/imbalance_loss/summary.json`
 **Winner: focal** (same as multirun baseline recipe).  
 Ckpts: `model/imbalance_loss/ft_{ce,focal,focal_cb,logit_adj}_seed42.pth`
 
-### 3.6 Not done (do next chat)
-- Val threshold search JSON on best focal (util exists; good first job)  
-- Optuna HPO  
-- Teacher/KD under protocol  
-- Ablations ladder + neural baselines + Pareto  
+### 3.6 WP2d val thresholds on focal (DONE — this session)
+Script: `scripts/run_val_thresholds.py`  
+Ckpt: `model/imbalance_loss/ft_focal_seed42.pth` md5 `170eaccc584ba12cce2a34ca52ebfbf2`  
+JSON: `benchmarks/results/imbalance_loss/thresholds_focal_seed42.json` md5 `2a6bc98d967883efc53d326535cf9d5b`
+
+| Variant | Val macro-F1 | Min cls F1 |
+|---------|--------------|------------|
+| argmax / fixed 0.5 / all searches | **0.9780** | **0.9315** |
+
+All seven decode variants identical (Theft F1=1.0, Normal F1=0.9315).  
+**Decision: RUN_DOCUMENTED** — keep **argmax** default for CAD-CBA-v1.  
+Tracker: B12, C11, D7 → RUN_DOCUMENTED. WP board: WP2d DONE.
+
+### 3.7 Not done (do next chat)
+- Optuna HPO (WP3)  
+- Teacher/KD under protocol (WP4b) — **recommended next**  
+- Ablations ladder + neural baselines + Pareto (WP5)  
 - SVM full-data fair run  
 - LGBM fix / re-run to RF-class quality  
 - DICC multi-day  
@@ -116,15 +128,16 @@ Ckpts: `model/imbalance_loss/ft_{ce,focal,focal_cb,logit_adj}_seed42.pth`
 
 ## 4. Background jobs at handoff
 
-**Expect idle** for train/multirun/imbalance (all completed 2026-07-19).  
+**Expect idle** (WP2d finished ~2026-07-21T11:09Z).  
 Verify:
 
 ```bash
 cd /home/titoisalive/colide
-ps -eo pid,cmd | awk '/train_protocol_ft|run_baseline_multirun|run_imbalance|run_classical/{print}'
+ps -eo pid,cmd | awk '/run_val_thresholds|train_protocol_ft|run_baseline_multirun|run_imbalance|run_classical/{print}'
 # should be empty (or only the awk line itself)
 test -f benchmarks/results/multirun/summary.json && echo multirun_OK
 test -f benchmarks/results/imbalance_loss/summary.json && echo imbalance_OK
+test -f benchmarks/results/imbalance_loss/thresholds_focal_seed42.json && echo thresholds_OK
 md5sum model/best_model_botiot_twostage.pth
 # expect: 80a90f7cc210276300eaa90173a5a385
 ```
@@ -135,16 +148,15 @@ Untracked leftover (do not treat as active job): `scripts/watch_and_queue_next.s
 
 ## 5. Next chat work order (strict)
 
-1. **Verify** disk vs `RESULTS_DISK_MANIFEST.md` (summaries + champion md5).  
-2. **Optional quick:** thresholds on `model/imbalance_loss/ft_focal_seed42.pth` → JSON under `benchmarks/results/imbalance_loss/` (val only).  
-3. Confirm tracker rows match §3 (should already after 2026-07-21 handoff).  
-4. **Next science (pick one, full JSON + tracker flip):**  
-   - Teacher compare (RF/XGB/ensemble soft labels) under protocol, **or**  
-   - Optuna HPO val-only (B*), **or**  
-   - Ablation ladder F*  
-5. **DICC** when user has access (Phase 0) — parallel track.  
-6. Never start manuscript until tracker largely green.  
-7. End session: update tracker + progress + HANDOFF + commit/push.
+1. **Verify** disk vs `RESULTS_DISK_MANIFEST.md` (summaries + thresholds + champion md5).  
+2. Confirm tracker rows B12/C11/D7/WP2d match §3.6 (should already after this handoff).  
+3. **Next science (pick one, full JSON + tracker flip):**  
+   - **WP4b** Teacher compare (RF/XGB/ensemble soft labels) under protocol, **or**  
+   - **WP3** Optuna HPO val-only (B*), **or**  
+   - **WP5** Ablation ladder / neural baselines  
+4. **DICC** when user has access (Phase 0) — parallel track.  
+5. Never start manuscript until tracker largely green.  
+6. End session: update tracker + progress + HANDOFF + commit/push.
 
 ---
 
@@ -166,20 +178,20 @@ Read first (in order):
 Verify on disk (do not invent if missing):
 - benchmarks/results/multirun/summary.json  (mean ~0.9714±0.0109, n=5)
 - benchmarks/results/imbalance_loss/summary.json  (focal wins 0.9780)
+- benchmarks/results/imbalance_loss/thresholds_focal_seed42.json  (WP2d: RUN_DOCUMENTED keep argmax)
 - benchmarks/results/baselines_classical/*_seed42.json + summary_handoff.json
 - model/multirun/ft_seed{42..46}.pth ; model/imbalance_loss/ft_*_seed42.pth
 - Champion md5 still 80a90f7cc210276300eaa90173a5a385
 
-Last session (2026-07-21): DOCUMENTATION / HANDOFF ONLY — no new experiments.
-Completed prior: protocol; WP1b multirun DONE; classical protocol-fair RF/XGB/LR;
-imbalance loss compare DONE (focal INCORPORATE; focal_cb/logit_adj RUN_DOCUMENTED).
+Last session (2026-07-21): WP2d val thresholds on ft_focal_seed42.pth — all variants
+= argmax val macro-F1 0.9780 → RUN_DOCUMENTED keep argmax. B12/C11/D7 flipped.
+Prior: protocol; WP1b multirun; classical RF/XGB/LR; imbalance loss (focal INCORPORATE).
 
 Next (pick one, document JSON + update tracker):
-A) Val thresholds on model/imbalance_loss/ft_focal_seed42.pth
-B) Teacher/KD experiments under protocol
-C) Optuna HPO val-only
-D) Ablations / neural baselines
-E) Guided DICC if user has SSH
+A) Teacher/KD experiments under protocol (WP4b)  ← recommended
+B) Optuna HPO val-only (WP3)
+C) Ablations / neural baselines (WP5)
+D) Guided DICC if user has SSH (WP0)
 
 Rules: no invent multi-day numbers; no clobber champion without BACKUP;
 update tracker every WP; commit/push; end per HANDOFF lifecycle.
@@ -199,12 +211,14 @@ update tracker every WP; commit/push; end per HANDOFF lifecycle.
 | Work packages | `docs/execution_plan/15_WORK_PACKAGES.md` |
 | Multirun summary | `benchmarks/results/multirun/summary.json` |
 | Imbalance summary | `benchmarks/results/imbalance_loss/summary.json` |
+| Val thresholds (WP2d) | `benchmarks/results/imbalance_loss/thresholds_focal_seed42.json` |
 | Classical handoff table | `benchmarks/results/baselines_classical/summary_handoff.json` |
 | Protocol | `scripts/protocol/*` |
 | Train FT | `scripts/train_protocol_ft.py` |
 | Multirun | `scripts/run_baseline_multirun.py` |
 | Classical | `scripts/run_classical_baselines.py` |
 | Loss compare | `scripts/run_imbalance_loss_compare.py` |
+| Val thresholds | `scripts/run_val_thresholds.py` |
 
 **Note:** `benchmarks/results/` is largely **gitignored** — results live on this machine; next agent must use laptop paths or re-run. Manifest commits the **headlines + md5s**.
 
@@ -219,8 +233,9 @@ update tracker every WP; commit/push; end per HANDOFF lifecycle.
 | Protocol RF/XGB ~0.978/0.976 | Neural in same band — good |
 | Focal best among losses | Keep as default |
 | CB-focal / logit_adj worse macro | Documented negative results |
+| Val thresholds no gain vs argmax | Negative result locked; keep argmax |
 | LGBM weak | Not ready as strong baseline |
 
 ---
 
-*End handoff. Next chat: verify disk → continue tracker from §5.*
+*End handoff. Next chat: verify disk → continue tracker from §5 (teachers / HPO / ablations).*

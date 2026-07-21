@@ -1,7 +1,7 @@
 # COLIDE — Session Handoff
 
 **MODE:** 🚀 **EXECUTION — next chat continues Prof tracker.** This chat closed for continuity.  
-**Closed:** 2026-07-21 · **docs/handoff only** (no new experiments).  
+**Closed:** 2026-07-21 · **WP2d val thresholds** (science + docs).  
 **Authority:** `docs/execution_plan/SESSION_CONTINUITY.md` + `RESULTS_DISK_MANIFEST.md` + `PROF_FEEDBACK_TRACKER.md` + Option A.  
 **Policy:** skip nothing → JSON → INCORPORATED or RUN_DOCUMENTED. No invent DICC numbers.  
 **Champion:** `model/best_model_botiot_twostage.pth` md5 **`80a90f7cc210276300eaa90173a5a385`** — no clobber without BACKUP.
@@ -17,12 +17,13 @@
 | WP1b multirun 5 seeds | **DONE** mean **0.9714 ± 0.0109** |
 | Classical protocol-fair LR/RF/XGB/LGBM | DOCUMENTED (RF 0.978 / XGB 0.976) |
 | Imbalance loss compare 4 losses | **DONE** — **focal wins 0.9780** |
-| CAD-CBA-v1 method decision | Signed (status refreshed) |
-| Full execution plan + tracker | DONE + aligned 2026-07-21 |
-| `RESULTS_DISK_MANIFEST.md` | DONE (committed numbers + md5s) |
+| **WP2d val thresholds on focal seed42** | **DONE** — all variants = argmax → **RUN_DOCUMENTED keep argmax** |
+| CAD-CBA-v1 method decision | Signed (thresholds = argmax) |
+| Full execution plan + tracker | DONE + aligned 2026-07-21 WP2d |
+| `RESULTS_DISK_MANIFEST.md` | DONE (includes thresholds JSON md5) |
 
 **DICC:** still **ABSENT** (`benchmarks/results/dicc/`).  
-**Jobs:** multirun + imbalance compare **finished** (2026-07-19); expect no train processes.
+**Jobs:** multirun + imbalance + thresholds **finished**; expect no train processes.
 
 ---
 
@@ -54,20 +55,20 @@ Read first (in order):
 Verify on disk (do not invent if missing):
 - benchmarks/results/multirun/summary.json  (mean ~0.9714±0.0109, n=5)
 - benchmarks/results/imbalance_loss/summary.json  (focal wins 0.9780)
+- benchmarks/results/imbalance_loss/thresholds_focal_seed42.json  (WP2d: RUN_DOCUMENTED keep argmax)
 - benchmarks/results/baselines_classical/*_seed42.json + summary_handoff.json
 - model/multirun/ft_seed{42..46}.pth ; model/imbalance_loss/ft_*_seed42.pth
 - Champion md5 still 80a90f7cc210276300eaa90173a5a385
 
-Last session (2026-07-21): DOCUMENTATION / HANDOFF ONLY — no new experiments.
-Completed prior: protocol; WP1b multirun DONE; classical protocol-fair RF/XGB/LR;
-imbalance loss compare DONE (focal INCORPORATE; focal_cb/logit_adj RUN_DOCUMENTED).
+Last session (2026-07-21): WP2d val thresholds on ft_focal_seed42.pth — all variants
+= argmax val macro-F1 0.9780 → RUN_DOCUMENTED keep argmax. B12/C11/D7 flipped.
+Prior: protocol; WP1b multirun; classical RF/XGB/LR; imbalance loss (focal INCORPORATE).
 
 Next (pick one, document JSON + update tracker):
-A) Val thresholds on model/imbalance_loss/ft_focal_seed42.pth
-B) Teacher/KD experiments under protocol
-C) Optuna HPO val-only
-D) Ablations / neural baselines
-E) Guided DICC if user has SSH
+A) Teacher/KD experiments under protocol (WP4b)  ← recommended
+B) Optuna HPO val-only (WP3)
+C) Ablations / neural baselines (WP5)
+D) Guided DICC if user has SSH (WP0)
 
 Rules: no invent multi-day numbers; no clobber champion without BACKUP;
 update tracker every WP; commit/push; end per HANDOFF lifecycle.
@@ -111,4 +112,4 @@ git rev-parse HEAD origin/master
 
 Design plan Option A approved; FINAL_PLAN P0–P5; audit pack `docs/audit/`; interim Word report sent to Prof; feedback in `docs/feedback1.docx`.
 
-**Next science priority after verify disk:** thresholds on focal **or** HPO/teachers/ablations per continuity §5.
+**Next science priority after verify disk:** teachers/KD (WP4b) **or** Optuna (WP3) **or** ablations (WP5) per continuity §5.

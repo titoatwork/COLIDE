@@ -1,6 +1,7 @@
 # Results Disk Manifest (handoff snapshot)
 
-**Generated (UTC):** 2026-07-21T11:01:25.771483+00:00
+**Generated (UTC):** 2026-07-21T11:01:25.771483+00:00  
+**Last append (UTC):** 2026-07-21T11:09:20 (WP2d val thresholds)  
 **Host path root:** `/home/titoisalive/colide`
 
 `benchmarks/results/` is **gitignored**. This file is committed so the next session can verify local artifacts without inventing numbers.
@@ -26,6 +27,7 @@
 | `benchmarks/results/imbalance_loss/ft_focal_seed42.json` | yes | `09744f7e5c6022e1183d4570b5c2a12a` | 6332 | best_val_macro_f1=0.9780 |
 | `benchmarks/results/imbalance_loss/ft_focal_cb_seed42.json` | yes | `637c2d985a5ef74e93d6659c7fd8bcf1` | 6334 | best_val_macro_f1=0.9121 |
 | `benchmarks/results/imbalance_loss/ft_logit_adj_seed42.json` | yes | `56143d80bc55cbc86f27ea8721f311c6` | 6081 | best_val_macro_f1=0.9225 |
+| `benchmarks/results/imbalance_loss/thresholds_focal_seed42.json` | yes | `2a6bc98d967883efc53d326535cf9d5b` | 34114 | WP2d; all variants=argmax 0.9780; RUN_DOCUMENTED |
 | `benchmarks/results/baselines_classical/summary_handoff.json` | yes | `b4faee6d15c5c53cbc59faa44df89993` | 1786 | lr=0.5231; rf=0.9778; xgb=0.9762; lgbm=0.5512 |
 | `benchmarks/results/baselines_classical/TABLE_VAL.json` | yes | `6ff4f624ae0b3c8336e7f1abd733ac50` | 1248 | lr=0.5231; rf=0.9778; xgb=0.9762; lgbm=0.4951 |
 | `benchmarks/results/baselines_classical/lr_seed42.json` | yes | `5c68972f00fedbd1308f0f7b6d82d3ff` | 4885 | val.macro_f1=0.5231 |
@@ -57,6 +59,7 @@
 | Protocol multirun FT mean±std val macro-F1 | 0.9714 ± 0.0109 (n=5) | `multirun/summary.json` |
 | Multirun best seed | 0.9840 seed44 | `multirun/ft_seed44.json` |
 | Loss compare winner | focal 0.9780 | `imbalance_loss/summary.json` |
+| Val thresholds on focal seed42 | no gain vs argmax (all variants 0.9780); keep argmax | `imbalance_loss/thresholds_focal_seed42.json` |
 | Protocol-fair RF val | 0.9778 | `baselines_classical/rf_seed42.json` |
 | Protocol-fair XGB val | 0.9762 | `baselines_classical/xgb_seed42.json` |
 | Published RF (different pipeline) | 0.9864 | historical / freeze card — not protocol-fair |

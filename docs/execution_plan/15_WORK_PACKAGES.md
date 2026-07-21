@@ -18,7 +18,7 @@
 | WP2b | Implement losses + thresholds modules | 2 | WP1a | Agent | **DONE** |
 | WP2b-run | Imbalance loss 4-way compare | 4 | WP2b | Agent | **DONE** focal INCORPORATE |
 | WP2c | Architecture delta if any (attention/multi-scale) | 2 | WP2a | Agent | TODO (only if plateaus) |
-| WP2d | Val threshold search on focal best | 2/4 | WP2b-run | Agent | **TODO next** |
+| WP2d | Val threshold search on focal best | 2/4 | WP2b-run | Agent | **DONE 2026-07-21** RUN_DOCUMENTED keep argmax |
 | WP3 | Optuna HPO study + sealed test | 3 | WP1–2 | Agent | TODO |
 | WP4a | Imbalance strategy sweep (beyond loss) | 4 | WP1–3 | Agent | PARTIAL (loss done; stratified/SupCon open) |
 | WP4b | Teacher sweep (RF/XGB/LGBM/ensemble) | 4 | WP1–3 | Agent | TODO |
@@ -39,8 +39,8 @@
 
 | Priority | Action |
 |----------|--------|
-| 0 | Verify disk via `RESULTS_DISK_MANIFEST.md` + summaries |
-| 1 | **WP2d** val thresholds on `ft_focal_seed42.pth` **or** **WP4b** teachers **or** **WP3** Optuna |
+| 0 | Verify disk via `RESULTS_DISK_MANIFEST.md` + summaries (incl. thresholds JSON) |
+| 1 | **WP4b** teachers/KD under protocol **or** **WP3** Optuna **or** **WP5** ablations/neural |
 | Parallel | **WP0** only when user has DICC SSH |
 | Never first | WP9b manuscript with empty cluster cells |
 
