@@ -36,20 +36,20 @@
 
 | ID | Requirement | Status | Evidence / notes |
 |----|-------------|--------|------------------|
-| B1 | Controlled HPO (not manual few params) | TODO | Need Optuna study |
-| B2 | CNN layers and filters | TODO | |
-| B3 | Convolution kernel sizes | TODO | |
-| B4 | BiLSTM hidden dims and layers | TODO | |
-| B5 | Dropout rate | TODO | |
-| B6 | LR and LR scheduler | TODO | |
-| B7 | Batch size | TODO | |
-| B8 | Focal-loss parameters | PARTIAL | Used; not full search |
-| B9 | Class weights | PARTIAL | npy exists; often unused in train |
-| B10 | Distill T and α | PARTIAL | Historical + WP4b fixed α=0.6 T=10 under protocol; full Optuna still open |
-| B11 | Sequence length | TODO | |
+| B1 | Controlled HPO (not manual few params) | DONE | WP3 Optuna TPE study `botiot_stage_b_ft_hpo_v1`; 20 trials + full-train refine; `hpo/summary.json` |
+| B2 | CNN layers and filters | TODO | Arch frozen CAD-CBA-v1 for KD init; WP2c if plateau |
+| B3 | Convolution kernel sizes | TODO | Same — deferred with fixed padding=1 for k=3 |
+| B4 | BiLSTM hidden dims and layers | TODO | Arch frozen; WP2c if plateau |
+| B5 | Dropout rate | DONE (train) | WP3 searched dropout 0.10–0.50 + attention_dropout 0–0.30; winner dropout≈0.148 att≈0.214 |
+| B6 | LR and LR scheduler | DONE | WP3: lr log 1e-5–3e-3; scheduler {none,cosine,step}; winner lr≈5.89e-5 cosine |
+| B7 | Batch size | DONE | WP3 categorical {128,256,512,1024}; winner **1024** |
+| B8 | Focal-loss parameters | DONE (γ) | WP3 γ∈[0.5,3.5]; winner **≈1.917** (α class-weights still open B9) |
+| B9 | Class weights | PARTIAL | npy exists; not in WP3 search (focal plain) |
+| B10 | Distill T and α | PARTIAL | Historical + WP4b fixed α=0.6 T=10; not in stage_b_ft HPO |
+| B11 | Sequence length | TODO | reshape fixed [2,32] with V3 |
 | B12 | Decision thresholds minority | RUN_DOCUMENTED | WP2d on `ft_focal_seed42`: all decode variants = argmax val macro 0.9780 (Δ0); keep argmax (`thresholds_focal_seed42.json`) |
-| B13 | Objectives: val macro-F1, bal-acc, minority recall | PARTIAL | Metrics module has them |
-| B14 | Test untouched until final config | PARTIAL | `eval_checkpoint` seals test by default |
+| B13 | Objectives: val macro-F1, bal-acc, minority recall | DONE (logged) | Primary max val macro-F1; min-cls / bal-acc / Theft logged per trial |
+| B14 | Test untouched until final config | PARTIAL | WP3 test SEALED; multi-seed sealed test of winner still TODO |
 
 ---
 
@@ -220,7 +220,7 @@
 | L3 | Avoid changing many parts at once | PARTIAL | Discipline |
 | L4 | Phase: freeze preprocess/split/metrics/seeds/hardware/baseline | PARTIAL | Protocol + freeze card |
 | L5 | ≥5 independent training runs mean±std | DONE | multirun mean 0.9714 ± 0.0109 n=5 (val only) |
-| L6 | Optuna/Bayesian HPO | TODO | |
+| L6 | Optuna/Bayesian HPO | DONE | WP3 Optuna TPE val-only; winner INCORPORATE 0.9791 (`config/hpo_best.yaml`) |
 | L7 | One clear proposed method | TODO | |
 | L8 | Deploy: export, parity, profile, kernels, TRT/ORT/compile, FP16/INT8 | PARTIAL | Local CUDA exists |
 | L9 | Realistic: trade-off vs beat RF everywhere | PARTIAL | Framing |
@@ -256,6 +256,7 @@
 | 2026-07-21 | **Handoff-only session:** no new experiments. Tracker G3–G5/D*/C6/L5 aligned; `SESSION_CONTINUITY` + `RESULTS_DISK_MANIFEST` written; next chat continues from continuity §5 |
 | 2026-07-21 | **WP2d val thresholds DONE** on `ft_focal_seed42.pth`: all variants = argmax 0.9780 → **RUN_DOCUMENTED** keep argmax; B12/C11/D7 updated; next: teachers / Optuna / ablations |
 | 2026-07-21 | **WP4b teacher/KD DONE** stage_a_kd α=0.6 T=10 γ=2: ensemble student **0.9401 INCORPORATE**; rf 0.9346 / none 0.9326 / xgb 0.9270 / lgbm 0.8829 RUN_DOCUMENTED; E*/C9 updated; next: Optuna (WP3) or ablations (WP5) |
+| 2026-07-21 | **WP3 Optuna HPO DONE** stage_b_ft val-only: Stage A 20 trials (11 complete/9 pruned, max_train=400k); Stage B full refine top-3; winner trial8 **0.9791 INCORPORATE** (Δ+0.0010 vs multirun seed42 0.9780); B1/B5–B8/L6 updated; arch B2–B4 deferred; next: FT from ensemble+HPO or WP5 |
 
 ---
 

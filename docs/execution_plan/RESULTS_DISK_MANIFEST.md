@@ -1,7 +1,7 @@
 # Results Disk Manifest (handoff snapshot)
 
 **Generated (UTC):** 2026-07-21T11:01:25.771483+00:00  
-**Last append (UTC):** 2026-07-21T13:35:14 (WP4b teacher/KD)
+**Last append (UTC):** 2026-07-21T16:20:36 (WP3 Optuna HPO)
 **Host path root:** `/home/titoisalive/colide`
 
 `benchmarks/results/` is **gitignored**. This file is committed so the next session can verify local artifacts without inventing numbers.
@@ -67,6 +67,8 @@
 | Champion md5 | 80a90f7cc210276300eaa90173a5a385 | `model/best_model_botiot_twostage.pth` |
 | WP4b best KD teacher (student val macro-F1) | ensemble **0.9401** | `teachers_kd/summary.json` |
 | WP4b RF / none / XGB / LGBM student | 0.9346 / 0.9326 / 0.9270 / 0.8829 | `teachers_kd/kd_*_seed42.json` |
+| WP3 HPO winner (full-train refine val macro-F1) | **0.9791** INCORPORATE | `hpo/summary.json` + `config/hpo_best.yaml` |
+| WP3 Stage A best (subsampled train) | trial 11 **0.9787** | `hpo/summary.json` |
 | DICC multi-day tree | ABSENT | no `benchmarks/results/dicc/` |
 
 ## Trap warnings
@@ -116,4 +118,51 @@
 | 5 | lgbm | 0.8829 | 0.7059 | 0.7059 | 0.5928 | RUN_DOCUMENTED (weak teacher) |
 
 **Note:** These are **stage_a_kd from-scratch** student numbers (not stage_b FT). Do not mix with multirun FT mean 0.9714. Champion md5 unchanged.
+
+## WP3 Optuna HPO (2026-07-21)
+
+**Stage:** `stage_b_ft` · **seed 42** · val-only · test sealed · arch fixed V3  
+**Script:** `scripts/hpo_optuna_botiot.py`  
+**Stage A:** 20 trials, epochs≤4, patience=2, max_train=400000 stratified, full val · 11 COMPLETE / 9 PRUNED  
+**Stage B:** top-3 full train, epochs≤8, patience=3  
+**Wall:** ~69 min total  
+**Decision:** **INCORPORATE** winner 0.9791 (Δ+0.0010 vs multirun seed42 baseline 0.9780)
+
+### Result JSON / config
+
+| Path | md5 | bytes | key metrics |
+|------|-----|-------|-------------|
+| `benchmarks/results/hpo/summary.json` | `5ba39a920706100b13975e89c3b20924` | 24094 | winner 0.9791 INCORPORATE |
+| `benchmarks/results/hpo/top10_trials.json` | `ad5141befae0dfa55f389f7da72a9967` | 6452 | Stage A ranked |
+| `benchmarks/results/hpo/refine_rank2_trial008_seed42.json` | `4248a1417b89515ea49207e1cf2033bd` | 6206 | full-train winner JSON |
+| `benchmarks/results/hpo/study.db` | (sqlite) | 155648 | Optuna storage |
+| `config/hpo_best.yaml` | `598d87c9ea5d0f26847ce7b860a0eb68` | 1013 | CAD-CBA-v1 train HPs |
+
+### Winner checkpoint
+
+| Path | md5 | bytes |
+|------|-----|-------|
+| `model/hpo/refine_rank2_trial008_seed42.pth` | `f9360aec2c003815140823cfe9b2a386` | 2135710 |
+
+### Winner params (exact)
+
+| HP | Value |
+|----|-------|
+| lr | 5.89306076111462e-05 |
+| batch_size | 1024 |
+| focal_gamma | 1.9166447754858478 |
+| dropout_rate | 0.14783769837532068 |
+| attention_dropout | 0.21397343616689848 |
+| weight_decay | 0.00019158219548093185 |
+| scheduler | cosine |
+
+### Stage B refine ranking (full train)
+
+| Rank | Trial | val macro-F1 | Min-cls | Theft | Decision |
+|------|-------|--------------|---------|-------|----------|
+| 1 | 8 | **0.9791** | 0.9351 | 1.0000 | **INCORPORATE** |
+| 2 | 11 | 0.9721 | 0.9014 | 1.0000 | RUN_DOCUMENTED |
+| 3 | 13 | 0.8656 | 0.5000 | 0.5000 | RUN_DOCUMENTED |
+
+**Trap:** Stage A used max_train=400k; do not claim Stage A scores as full-train. Winner is Stage B full-train only. Champion not overwritten.
 

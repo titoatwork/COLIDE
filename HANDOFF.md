@@ -1,7 +1,7 @@
 # COLIDE — Session Handoff
 
 **MODE:** 🚀 **EXECUTION — next chat continues Prof tracker.** This chat closed for continuity.  
-**Closed:** 2026-07-21 · **WP4b teacher/KD** (science + docs).  
+**Closed:** 2026-07-21 · **WP3 Optuna HPO** (science + docs).  
 **Authority:** `docs/execution_plan/SESSION_CONTINUITY.md` + `RESULTS_DISK_MANIFEST.md` + `PROF_FEEDBACK_TRACKER.md` + Option A.  
 **Policy:** skip nothing → JSON → INCORPORATED or RUN_DOCUMENTED. No invent DICC numbers.  
 **Champion:** `model/best_model_botiot_twostage.pth` md5 **`80a90f7cc210276300eaa90173a5a385`** — no clobber without BACKUP.
@@ -18,13 +18,14 @@
 | Classical protocol-fair LR/RF/XGB/LGBM | DOCUMENTED (RF 0.978 / XGB 0.976) |
 | Imbalance loss compare 4 losses | **DONE** — **focal wins 0.9780** |
 | WP2d val thresholds on focal seed42 | **DONE** — keep argmax |
-| **WP4b teacher/KD (stage_a_kd)** | **DONE** — **ensemble student 0.9401 INCORPORATE** |
-| CAD-CBA-v1 method decision | Signed (KD teacher = ensemble; thresholds = argmax; loss = focal) |
-| Full execution plan + tracker | DONE + aligned 2026-07-21 WP4b |
-| `RESULTS_DISK_MANIFEST.md` | DONE (includes teachers_kd md5s) |
+| WP4b teacher/KD (stage_a_kd) | **DONE** — **ensemble student 0.9401 INCORPORATE** |
+| **WP3 Optuna HPO (stage_b_ft, val-only)** | **DONE** — winner **0.9791 INCORPORATE** train HPs |
+| CAD-CBA-v1 method decision | Signed (loss=focal; thresholds=argmax; KD=ensemble; **train HPs from hpo_best.yaml**) |
+| Full execution plan + tracker | DONE + aligned 2026-07-21 WP3 |
+| `RESULTS_DISK_MANIFEST.md` | DONE (includes hpo md5s) |
 
-**DICC:** still **ABSENT** (`benchmarks/results/dicc/`).  
-**Jobs:** WP4b **finished**; expect no train processes.
+**DICC:** still **ABSENT** (`benchmarks/results/dicc/`) — dedicated session when user opens it.  
+**Jobs:** WP3 **finished** (~69 min wall); expect no train processes.
 
 ---
 
@@ -52,25 +53,28 @@ Read first (in order):
 5) docs/execution_plan/PROF_FEEDBACK_TRACKER.md
 6) docs/execution_plan/METHOD_PACKAGE_DECISION.md
 7) docs/execution_plan/15_WORK_PACKAGES.md
+8) config/hpo_best.yaml
 
 Verify on disk (do not invent if missing):
-- benchmarks/results/teachers_kd/summary.json  (ensemble wins ~0.9401)
-- benchmarks/results/teachers_kd/kd_*_seed42.json
+- benchmarks/results/hpo/summary.json  (winner ~0.9791 INCORPORATE)
+- config/hpo_best.yaml
+- model/hpo/refine_rank2_trial008_seed42.pth
+- benchmarks/results/teachers_kd/summary.json  (ensemble ~0.9401)
 - benchmarks/results/multirun/summary.json  (mean ~0.9714±0.0109, n=5)
-- benchmarks/results/imbalance_loss/summary.json  (focal wins 0.9780)
-- benchmarks/results/imbalance_loss/thresholds_focal_seed42.json
-- model/teachers_kd/kd_*_a0.6_T10.0_g2.0_seed42.pth
+- benchmarks/results/imbalance_loss/summary.json  (focal 0.9780)
 - Champion md5 still 80a90f7cc210276300eaa90173a5a385
 
-Last session (2026-07-21): WP4b teacher/KD under protocol stage_a_kd —
-ensemble student 0.9401 INCORPORATE; rf/none/xgb/lgbm RUN_DOCUMENTED.
-Prior: protocol; WP1b multirun; classical RF/XGB; imbalance (focal); WP2d thresholds=argmax.
+Last session (2026-07-21): WP3 Optuna HPO stage_b_ft val-only —
+Stage A 20 trials (11 complete / 9 pruned, max_train=400k explore);
+Stage B full-train refine top-3; winner trial8 refine 0.9791 INCORPORATE
+(lr≈5.89e-5, batch=1024, γ≈1.92, dropout≈0.148, att_drop≈0.214, wd≈1.92e-4, cosine).
+Prior: WP4b ensemble KD 0.9401; multirun; focal; thresholds=argmax.
 
 Next (pick one, document JSON + update tracker):
-A) Optuna HPO val-only (WP3)  ← recommended
+A) stage_b FT multirun from ensemble KD init + HPO train HPs  ← recommended
 B) Ablations / neural baselines (WP5)
-C) stage_b FT from ensemble KD init
-D) Guided DICC if user has SSH (WP0)
+C) Multi-seed confirm of HPO winner (n≥5)
+D) Guided DICC if user opens dedicated session (WP0)
 
 Rules: no invent multi-day numbers; no clobber champion without BACKUP;
 update tracker every WP; commit/push; end per HANDOFF lifecycle.
@@ -103,11 +107,12 @@ git rev-parse HEAD origin/master
 
 - Option A: no full-pipeline Custom CUDA vs full V3  
 - Test sealed until final config  
-- Official cluster: UM DICC only  
+- Official cluster: UM DICC only — **user will open a dedicated DICC session**  
 - Results under `benchmarks/results/` often **gitignored** — use `RESULTS_DISK_MANIFEST.md` + local paths  
 - Agents: no invented DICC numbers  
 - Classical: prefer `summary_handoff.json` over possibly stale `summary.json`  
 - Teacher KD: prefer `teachers_kd/summary.json`; stage_a KD ≠ stage_b FT numbers  
+- HPO: prefer `benchmarks/results/hpo/summary.json` + `config/hpo_best.yaml`; Stage A may use max_train subsample; Stage B refine = full train  
 
 ---
 
@@ -115,4 +120,4 @@ git rev-parse HEAD origin/master
 
 Design plan Option A approved; FINAL_PLAN P0–P5; audit pack `docs/audit/`; interim Word report sent to Prof; feedback in `docs/feedback1.docx`.
 
-**Next science priority after verify disk:** Optuna (WP3) **or** ablations (WP5) **or** FT from ensemble KD per continuity §5.
+**Next science priority after verify disk:** FT multirun from ensemble KD + HPO HPs **or** WP5 ablations **or** multi-seed HPO confirm. DICC only when user opens that session.

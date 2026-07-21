@@ -19,7 +19,7 @@
 | WP2b-run | Imbalance loss 4-way compare | 4 | WP2b | Agent | **DONE** focal INCORPORATE |
 | WP2c | Architecture delta if any (attention/multi-scale) | 2 | WP2a | Agent | TODO (only if plateaus) |
 | WP2d | Val threshold search on focal best | 2/4 | WP2b-run | Agent | **DONE 2026-07-21** RUN_DOCUMENTED keep argmax |
-| WP3 | Optuna HPO study + sealed test | 3 | WP1–2 | Agent | TODO |
+| WP3 | Optuna HPO study + sealed test | 3 | WP1–2 | Agent | **DONE 2026-07-21** train HPs INCORPORATE 0.9791 (test still sealed; multi-seed confirm open) |
 | WP4a | Imbalance strategy sweep (beyond loss) | 4 | WP1–3 | Agent | PARTIAL (loss done; stratified/SupCon open) |
 | WP4b | Teacher sweep (RF/XGB/LGBM/ensemble) | 4 | WP1–3 | Agent | **DONE 2026-07-21** ensemble student 0.9401 INCORPORATE |
 | WP5a | Full ablation ladder | 5 | Final recipe | Agent | TODO |
@@ -39,10 +39,10 @@
 
 | Priority | Action |
 |----------|--------|
-| 0 | Verify disk via `RESULTS_DISK_MANIFEST.md` (incl. `teachers_kd/`) |
-| 1 | **WP3** Optuna HPO val-only **or** **WP5** ablations/neural baselines |
-| Optional | stage_b FT from ensemble KD init (`kd_ensemble_…seed42.pth`) |
-| Parallel | **WP0** only when user has DICC SSH |
+| 0 | Verify disk via `RESULTS_DISK_MANIFEST.md` (incl. `hpo/` + `hpo_best.yaml`) |
+| 1 | **stage_b FT multirun** from ensemble KD init + HPO train HPs **or** **WP5** ablations |
+| Optional | Multi-seed confirm of HPO winner (n≥5) |
+| Parallel | **WP0** only when user opens dedicated DICC session |
 | Never first | WP9b manuscript with empty cluster cells |
 
 ---

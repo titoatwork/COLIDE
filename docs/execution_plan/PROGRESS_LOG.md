@@ -1,7 +1,59 @@
 # Progress log (results as they land)
 
 **Policy:** document everything; label pilot vs full; test sealed unless noted.  
-**Handoff snapshot:** 2026-07-21 (WP4b teacher/KD DONE)
+**Handoff snapshot:** 2026-07-21 (WP3 Optuna HPO DONE)
+
+---
+
+## 2026-07-21 — WP3 Optuna HPO under protocol (science)
+
+Script: `scripts/hpo_optuna_botiot.py`  
+Protocol: `botiot_v1` / **stage_b_ft** / seed 42 / full val / **test sealed**  
+Init: `model/best_model_botiot_distill_a0.6_T10.0_focal2.pth`  
+Arch: fixed `cnn_bilstm_v3_attention` (CAD-CBA-v1; no arch search this WP)  
+Study: `botiot_stage_b_ft_hpo_v1` · SQLite `benchmarks/results/hpo/study.db`  
+Summary: `benchmarks/results/hpo/summary.json` md5 `5ba39a920706100b13975e89c3b20924`  
+Winner config: `config/hpo_best.yaml` md5 `598d87c9ea5d0f26847ce7b860a0eb68`  
+Champion md5 **unchanged** `80a90f7cc210276300eaa90173a5a385`.  
+Wall ~69 min (Stage A ~38.6 min + refine ~29.7 min).
+
+### Stage A (explore)
+- n_trials=20 · epochs≤4 · patience=2 · **max_train=400_000** stratified (val full)  
+- COMPLETE **11** / PRUNED **9**  
+- Best Stage A: trial **11** val macro-F1 **0.9787** (min-cls 0.9351, Theft 1.0)
+
+### Stage B (full-train refine top-3)
+
+| Rank | Source trial | Full-train val macro-F1 | Min-cls | Theft | Bal-acc | Decision |
+|------|--------------|-------------------------|---------|-------|---------|----------|
+| **1 (winner)** | **8** | **0.9791** | **0.9351** | **1.0000** | **0.9863** | **INCORPORATE** |
+| 2 | 11 | 0.9721 | 0.9014 | 1.0000 | 0.9645 | RUN_DOCUMENTED (Stage-A best collapsed) |
+| 3 | 13 | 0.8656 | 0.5000 | 0.5000 | 0.8203 | RUN_DOCUMENTED (unstable) |
+
+Baseline ref (multirun seed42 default HPs): **0.9780** · Δwinner **+0.0010**
+
+### Winner train HPs (CAD-CBA-v1)
+| HP | Value |
+|----|-------|
+| lr | 5.893e-5 |
+| batch_size | 1024 |
+| focal_gamma | 1.917 |
+| dropout_rate | 0.148 |
+| attention_dropout | 0.214 |
+| weight_decay | 1.916e-4 |
+| scheduler | cosine |
+
+Ckpt: `model/hpo/refine_rank2_trial008_seed42.pth` md5 `f9360aec2c003815140823cfe9b2a386`
+
+**Interpretation**
+- Controlled Optuna search beats default multirun seed42 HPs slightly but **credibly** under full protocol val.  
+- Cosine + lower lr + larger batch cluster on Stage A; Stage B refine is required (trial 11 did not transfer).  
+- Arch dims not searched (KD init / CAD-CBA-v1 freeze) — WP2c only if plateaus.  
+- Test still sealed; multi-seed confirm + FT from ensemble KD remain open.
+
+Tracker: B1/B6–B8/L6/WP3 updated. CAD-CBA-v1 train HPs → `hpo_best.yaml`.
+
+**Next science:** FT multirun from ensemble KD + HPO HPs **or** WP5 ablations **or** multi-seed HPO confirm.
 
 ---
 

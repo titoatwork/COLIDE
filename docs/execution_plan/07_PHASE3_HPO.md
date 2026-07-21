@@ -1,8 +1,9 @@
 # 07 — Phase 3: Systematic Hyperparameter Optimisation
 
-**Status:** NOT STARTED  
+**Status:** DONE (WP3 2026-07-21) — train HPs INCORPORATED; arch search deferred; sealed multi-seed test of winner still open  
 **Depends on:** Phase 1 protocol; preferably method skeleton from Phase 2  
 **Prof:** §1 + staged Phase 2 search table  
+**Evidence:** `benchmarks/results/hpo/summary.json` · `config/hpo_best.yaml` · `scripts/hpo_optuna_botiot.py`  
 
 ---
 
@@ -69,13 +70,19 @@ Integrate with Phase 1 data protocol.
 
 ## 5. Acceptance criteria
 
-- [ ] Study fully logged (trial id, params, val metrics, seed)  
-- [ ] Test evaluated **once** for winner (plus multi-seed if Phase 1 standard)  
-- [ ] No silent use of test for early stopping model selection beyond val  
-- [ ] Winner config committed  
+- [x] Study fully logged (trial id, params, val metrics, seed) — trial JSONs + `study.db` + `summary.json`  
+- [ ] Test evaluated **once** for winner (plus multi-seed if Phase 1 standard) — **deferred** (test sealed until final lock)  
+- [x] No silent use of test for early stopping model selection beyond val  
+- [x] Winner config committed — `config/hpo_best.yaml`  
+
+### WP3 outcome (2026-07-21)
+- Stage A: 20 trials, max_train=400k explore, full val; 11 complete / 9 pruned  
+- Stage B: full-train refine top-3; winner trial **8** val macro-F1 **0.9791** (**INCORPORATE**, Δ+0.0010 vs multirun seed42 0.9780)  
+- Arch HPs (filters/kernel/BiLSTM) **not** searched — CAD-CBA-v1 freeze for KD init  
 
 ---
 
 ## 6. Exit
 
-`hpo_best.yaml` + sealed test JSON becomes input to Phases 4–6.
+`hpo_best.yaml` is the CAD-CBA-v1 train-HP source.  
+Next: multi-seed confirm and/or FT from ensemble KD with these HPs; sealed test only after final config lock.

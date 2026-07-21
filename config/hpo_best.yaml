@@ -1,0 +1,27 @@
+hpo:
+  study_name: botiot_stage_b_ft_hpo_v1
+  trial_number: 8
+  seed: 42
+  protocol_id: botiot_v1
+  stage: stage_b_ft
+  init_checkpoint: model/best_model_botiot_distill_a0.6_T10.0_focal2.pth
+  architecture: cnn_bilstm_v3_attention (CAD-CBA-v1 fixed)
+  objective: maximize val_macro_f1 (test sealed)
+  git_sha: 29d40d1e24abdb28ebb2d39af25493d4d973c371
+  timestamp_utc: '2026-07-21T16:20:35.956855+00:00'
+  best_params:
+    lr: 5.89306076111462e-05
+    batch_size: 1024
+    focal_gamma: 1.9166447754858478
+    dropout_rate: 0.14783769837532068
+    attention_dropout: 0.21397343616689848
+    weight_decay: 0.00019158219548093185
+    scheduler: cosine
+  best_val_metrics:
+    macro_f1: 0.9790643415144729
+    min_per_class_f1: 0.935064935064935
+    balanced_accuracy: 0.9863208410647907
+    theft_f1: 1.0
+    normal_f1: 0.935064935064935
+  note: 'Architecture HPs (CNN filters/BiLSTM dims/kernel) not searched here: CAD-CBA-v1
+    freezes V3 for KD weight transfer. Arch search deferred to WP2c if package plateaus.'
