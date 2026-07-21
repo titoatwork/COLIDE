@@ -180,7 +180,7 @@
 
 | Path | md5 | bytes | key metrics |
 |------|-----|-------|-------------|
-| `benchmarks/results/multirun_ensemble_hpo/summary.json` | `1fa206e34c50e799d531f5eee70629e8` | — | mean **0.9639 ± 0.0185** n=5 |
+| `benchmarks/results/multirun_ensemble_hpo/summary.json` | `1fa206e34c50e799d531f5eee70629e8` | 7396 | mean **0.9639 ± 0.0185** n=5 |
 | `benchmarks/results/multirun_ensemble_hpo/ft_seed42.json` | `b605b08bd52b09d1a95b40883079d95f` | 7820 | 0.9741 |
 | `benchmarks/results/multirun_ensemble_hpo/ft_seed43.json` | `24025857074d4573ea0838046007167e` | 8743 | 0.9328 |
 | `benchmarks/results/multirun_ensemble_hpo/ft_seed44.json` | `0405e3280a748bcec3f3c5996662bc83` | 8806 | 0.9699 |
