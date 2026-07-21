@@ -58,9 +58,9 @@
 
 | ID | Requirement | Status | Evidence / notes |
 |----|-------------|--------|------------------|
-| C1 | Not only “standard CNN–BiLSTM stack” | PARTIAL | CAD-CBA-v1 = V3 attention + ensemble KD + focal + Optuna HPs; **full novelty proof still needs WP5a ladder** |
-| C2 | Class-aware attention after BiLSTM | PARTIAL | V3 backbone has attention (`cnn_bilstm_v3_attention`); ladder A3 vs A4 still required for credit |
-| C3 | Lightweight temporal attention | PARTIAL | Same V3 attention module; ablation proof open (WP5a) |
+| C1 | Not only “standard CNN–BiLSTM stack” | PARTIAL | Ladder shows package A7 **0.9699** &gt; plain A3 **0.9493**; novelty = composition (attn+focal+ens KD+HPO), not attn alone (A4 hurts) |
+| C2 | Class-aware attention after BiLSTM | RUN_DOCUMENTED (caveat) | V3 has attention; WP5a A4 attn+CE **0.7378** &lt; A3 **0.9493** under seed42/8-ep — do not claim attn alone helps; credit is package-level |
+| C3 | Lightweight temporal attention | RUN_DOCUMENTED (caveat) | Same as C2; systems: attn models ~26 µs/sample vs A3 ~20 µs (batch256) |
 | C4 | Multi-scale temporal convolution | TODO | **Playlist required:** bounded experiment or RUN_DOCUMENTED reject after try |
 | C5 | Gated CNN–BiLSTM fusion | TODO | **Playlist required:** bounded experiment or RUN_DOCUMENTED reject after try |
 | C6 | Class-balanced or logit-adjusted loss | RUN_DOCUMENTED | 4-way FT compare: focal best; focal_cb/logit_adj worse macro (`imbalance_loss/`) |
@@ -113,15 +113,15 @@
 
 | ID | Requirement | Status | Evidence / notes |
 |----|-------------|--------|------------------|
-| F1 | CNN only | TODO | **Playlist:** WP5a A1 (`run_ablation_ladder.py` ready) |
-| F2 | BiLSTM only | TODO | **Playlist:** WP5a A2 |
-| F3 | CNN–BiLSTM | DONE (baseline) | Protocol WP1b multirun path + ladder A3 ready; V3 is CNN–BiLSTM–Attn |
-| F4 | + KD | DONE (protocol) | WP4b none vs RF/XGB/LGBM/ensemble; ladder A6 still for incremental FT story |
-| F5 | + imbalance method | PARTIAL | 4-way loss compare DONE; ladder A5 (attn+focal scratch) still required |
-| F6 | + attention/fusion | PARTIAL | V3 attention in package; ladder A3 vs A4 still required |
-| F7 | Full proposed method | PARTIAL | Package multirun ensemble+HPO RUN_DOCUMENTED; ladder A7 still required for incremental table |
+| F1 | CNN only | RUN_DOCUMENTED | WP5a A1 seed42 val macro **0.6221** (min/Theft=0); `ablation_ladder/A1_*.json` |
+| F2 | BiLSTM only | RUN_DOCUMENTED | WP5a A2 seed42 val macro **0.8058** (min/Theft=0.5); `A2_*.json` |
+| F3 | CNN–BiLSTM | RUN_DOCUMENTED (+ prior) | WP5a A3 seed42 **0.9493** (Theft=1.0) strong CE backbone; also WP1b multirun path |
+| F4 | + KD | RUN_DOCUMENTED (+ WP4b) | WP5a A6 attn+focal+ens KD **0.9346** vs A5 0.8684; WP4b ensemble teacher INCORPORATE |
+| F5 | + imbalance method | RUN_DOCUMENTED (+ prior) | WP5a A5 attn+focal scratch **0.8684** ≫ A4 CE 0.7378; 4-way loss focal INCORPORATE prior |
+| F6 | + attention/fusion | RUN_DOCUMENTED | WP5a A4 attn+CE **0.7378** **underperforms** A3 0.9493 under this budget — attention not free gain; full package still uses attn+focal+KD+HPO |
+| F7 | Full proposed method | RUN_DOCUMENTED (ladder) | WP5a A7 full CAD-CBA-v1 **0.9699** tops ladder; package multirun mean 0.9639±0.0185 prior |
 | F8 | Metrics: macro/weighted F1, bal-acc, P/R, per-class F1 | DONE | `scripts/protocol/metrics.py` + all protocol result JSONs |
-| F9 | Latency, params, memory, energy per ablation | TODO | **Playlist:** ladder logs systems metrics; full energy table still open |
+| F9 | Latency, params, memory, energy per ablation | PARTIAL | WP5a logs params + CUDA latency + peak mem per row; **full energy table still open** |
 
 ---
 
@@ -261,6 +261,7 @@
 | 2026-07-21 | **Package FT multirun DONE** ensemble KD init + hpo_best: mean **0.9639 ± 0.0185** n=5 (max 0.9803 seed45; min 0.9328 seed43) RUN_DOCUMENTED — mean does not beat WP1b 0.9714±0.0109; higher variance; L5 dual multirun noted; next: multi-seed HPO confirm or WP5 ablations |
 | 2026-07-21 | **Multi-seed HPO confirm DONE** original distill + hpo_best: mean **0.9689 ± 0.0145** n=5 (max 0.9797 seed44; min 0.9483 seed46; seed42 **0.9791** exact WP3 repro) RUN_DOCUMENTED — mean does not beat WP1b; train HPs stay INCORPORATED; next: WP5a ablations or neural baselines |
 | 2026-07-21 | **Context hygiene / full-playlist lock:** skip-nothing restated as complete **every** tracker row; flipped stale statuses from existing disk evidence (B10/B11, C13, D8/D10, F3/F4/F8, G6/G11/G14, H1/H5, J1, K1, L2–L4/L7/L9, etc.). Open rows marked **Playlist required**. No invented numbers. Next science still WP5a etc. |
+| 2026-07-21 | **WP5a ablation ladder DONE** A1–A7 seed42 val-only ~90 min: A7 **0.9699** &gt; A3 0.9493 &gt; A6 0.9346 &gt; A5 0.8684 &gt; A2 0.8058 &gt; A4 0.7378 &gt; A1 0.6221; F1–F7 RUN_DOCUMENTED; F9 systems partial; A4 attn+CE underperforms A3 (honest); champion unchanged; next WP5b neural baselines |
 
 ---
 

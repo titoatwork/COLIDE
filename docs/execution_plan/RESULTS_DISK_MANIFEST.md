@@ -1,7 +1,7 @@
 # Results Disk Manifest (handoff snapshot)
 
 **Generated (UTC):** 2026-07-21T11:01:25.771483+00:00  
-**Last append (UTC):** 2026-07-21T20:21:00 (multi-seed HPO confirm)
+**Last append (UTC):** 2026-07-21T22:30:00 (WP5a ablation ladder A1–A7)
 **Host path root:** `/home/titoisalive/colide`
 
 `benchmarks/results/` is **gitignored**. This file is committed so the next session can verify local artifacts without inventing numbers.
@@ -265,4 +265,53 @@
 **Decision: RUN_DOCUMENTED** — multi-seed aggregate does **not** beat WP1b mean; higher std (seed46 weak). Seed42 exact repro of WP3 winner supports keeping train HPs **INCORPORATED**. Not a new champion.
 
 **Trap:** Do not mix with package `multirun_ensemble_hpo/` (different init). Do not claim multi-seed HPO mean > WP1b.
+
+## WP5a Ablation ladder A1–A7 (2026-07-21)
+
+**Stage:** `stage_b_ft` · **seed 42** · epochs≤8 · patience=3 · val-only · test sealed · arch variants under CAD-CBA dims  
+**Script:** `scripts/run_ablation_ladder.py` + `model/ablation_variants.py`  
+**Tag:** `ablation_ladder/` (does **not** clobber champion, WP1b `multirun/`, `multirun_hpo_confirm/`, or `multirun_ensemble_hpo/`)  
+**Wall:** ~5397 s (~90 min)  
+**Champion md5 unchanged** `80a90f7cc210276300eaa90173a5a385`
+
+### Result JSON
+
+| Path | md5 | bytes | key metrics |
+|------|-----|-------|-------------|
+| `benchmarks/results/ablation_ladder/summary.json` | `988b826adcea79ef51f4b8144055825e` | 7297 | n=7 success; ranking A7 best |
+| `benchmarks/results/ablation_ladder/A1_cnn_only_seed42.json` | `25217b8cd6f4880467cd4db71fbb950b` | 10743 | 0.6221 |
+| `benchmarks/results/ablation_ladder/A2_bilstm_only_seed42.json` | `b6d531c18ed5de970e4258d5d4de3ba3` | 10920 | 0.8058 |
+| `benchmarks/results/ablation_ladder/A3_cnn_bilstm_seed42.json` | `bb5321e4f652df44f8145c3f07f91c78` | 10879 | 0.9493 |
+| `benchmarks/results/ablation_ladder/A4_cnn_bilstm_attn_ce_seed42.json` | `499dd3b423ed87d199cec5db74c81d3a` | 10718 | 0.7378 |
+| `benchmarks/results/ablation_ladder/A5_cnn_bilstm_attn_focal_seed42.json` | `e310822a0b168fac972c6086e74ee223` | 11015 | 0.8684 |
+| `benchmarks/results/ablation_ladder/A6_attn_focal_ensemble_kd_seed42.json` | `9658ff43007771f28b1b0a06feeac070` | 10219 | 0.9346 |
+| `benchmarks/results/ablation_ladder/A7_full_cad_cba_v1_seed42.json` | `8f2bf9a76dfeef66f4582c991558c9da` | 11070 | **0.9699** |
+
+### Checkpoints
+
+| Path | md5 | bytes |
+|------|-----|-------|
+| `model/ablation_ladder/A1_cnn_only_seed42.pth` | `fd8944a8ed262df7c9554cd46dc26e93` | 147810 |
+| `model/ablation_ladder/A2_bilstm_only_seed42.pth` | `beff44489bababcce461a4445785919f` | 1493736 |
+| `model/ablation_ladder/A3_cnn_bilstm_seed42.pth` | `4f5e2f57a251131e4e9bb8bcd16b2d4f` | 1866342 |
+| `model/ablation_ladder/A4_cnn_bilstm_attn_ce_seed42.pth` | `c62d5407e1f384f650db0169aedb79a5` | 2133794 |
+| `model/ablation_ladder/A5_cnn_bilstm_attn_focal_seed42.pth` | `62e494d861393f953937d04658279c12` | 2133890 |
+| `model/ablation_ladder/A6_attn_focal_ensemble_kd_seed42.pth` | `7a2f05930ce499bf80c549d5357dcc6c` | 2133922 |
+| `model/ablation_ladder/A7_full_cad_cba_v1_seed42.pth` | `43129f48bc1c3c070f83b55b8c34b396` | 2133698 |
+
+### Ranking (val macro-F1) + systems (batch=256 latency)
+
+| Rank | Row | Name | val macro-F1 | Min-cls | Theft | params | µs/sample | Decision |
+|------|-----|------|--------------|---------|-------|--------|-----------|----------|
+| 1 | **A7** | full CAD-CBA-v1 (attn+focal+ens KD+HPO) | **0.9699** | 0.8974 | 1.0000 | 530181 | 26.02 | **RUN_DOCUMENTED** ladder top; package path wins incremental table |
+| 2 | A3 | cnn_bilstm CE scratch | 0.9493 | 0.8571 | 1.0000 | 463877 | 19.96 | RUN_DOCUMENTED strong backbone w/o attn |
+| 3 | A6 | attn+focal+ensemble KD (default HPs) | 0.9346 | 0.8462 | 1.0000 | 530181 | 26.39 | RUN_DOCUMENTED KD lift vs A5 |
+| 4 | A5 | attn+focal scratch | 0.8684 | 0.7059 | 0.7059 | 530181 | 26.69 | RUN_DOCUMENTED focal helps vs A4 |
+| 5 | A2 | bilstm_only CE | 0.8058 | 0.5000 | 0.5000 | 372229 | 15.26 | RUN_DOCUMENTED |
+| 6 | A4 | attn+CE scratch | 0.7378 | 0.0000 | 0.0000 | 530181 | 24.54 | RUN_DOCUMENTED **attn+CE underperforms A3** under this budget |
+| 7 | A1 | cnn_only CE | 0.6221 | 0.0000 | 0.0000 | 34821 | 5.03 | RUN_DOCUMENTED weak |
+
+**Incremental story (honest):** A1≪A2≪A3; A4 (attn+CE) **hurts** vs A3 under seed42/8-ep budget; A5 focal recovers; A6 ensemble KD lifts further; A7 HPO HPs top the ladder at **0.9699**. Do **not** claim attention alone is free gain. Do **not** mix single-seed A7 with WP1b multirun mean 0.9714 or package multirun mean 0.9639.
+
+**Trap:** Ladder is seed **42 only**, epochs≤8 — not multi-seed stability. Systems latency is RTX 3050 batch-256 sync forward, not full energy table (F9 energy still open).
 

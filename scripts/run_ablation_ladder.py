@@ -457,6 +457,11 @@ def main() -> int:
     )
     p.add_argument("--config", type=str, default="config/config.yaml")
     p.add_argument("--tag", type=str, default="ablations")
+    p.add_argument(
+        "--skip-existing",
+        action="store_true",
+        help="Reuse row JSON+ckpt if both exist (thermal resume / partial re-run)",
+    )
     args = p.parse_args()
 
     want = {r.strip().upper() for r in args.rows.split(",") if r.strip()}
@@ -483,6 +488,47 @@ def main() -> int:
     for row in rows:
         save_path = ckpt_dir / f"{row['row']}_{row['name']}_seed{args.seed}.pth"
         results_path = out_dir / f"{row['row']}_{row['name']}_seed{args.seed}.json"
+        if (
+            args.skip_existing
+            and results_path.is_file()
+            and save_path.is_file()
+        ):
+            try:
+                prev = json.loads(results_path.read_text())
+                m = prev.get("metrics") or {}
+                entry = {
+                    "row": row["row"],
+                    "name": row["name"],
+                    "tracker": row["tracker"],
+                    "best_val_macro_f1": m.get("best_val_macro_f1"),
+                    "val_min_per_class_f1": (m.get("val") or {}).get("min_per_class_f1"),
+                    "val_theft_f1": (m.get("val") or {}).get("theft_f1"),
+                    "val_balanced_accuracy": (m.get("val") or {}).get(
+                        "balanced_accuracy"
+                    ),
+                    "n_params": (m.get("systems") or {}).get("n_params"),
+                    "latency_mean_ms": ((m.get("systems") or {}).get("latency") or {}).get(
+                        "mean_ms"
+                    ),
+                    "per_sample_us": ((m.get("systems") or {}).get("latency") or {}).get(
+                        "per_sample_us"
+                    ),
+                    "checkpoint_bytes": (m.get("systems") or {}).get("checkpoint_bytes"),
+                    "elapsed_sec": (prev.get("extra") or {}).get("elapsed_sec"),
+                    "results_path": str(results_path),
+                    "checkpoint_path": str(save_path),
+                    "returncode": 0,
+                    "skipped_existing": True,
+                }
+                print(
+                    f"SKIP existing {row['row']} best_val_macro_f1="
+                    f"{entry.get('best_val_macro_f1')}",
+                    flush=True,
+                )
+                results.append(entry)
+                continue
+            except Exception as e:
+                print(f"WARN skip-existing failed for {row['row']}: {e}", flush=True)
         try:
             entry = train_row(
                 row=row,

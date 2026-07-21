@@ -1,7 +1,7 @@
 # Method package decision (Phase 2) — signed default
 
 **Date:** 2026-07-19  
-**Last status update:** 2026-07-21 (HPO multi-seed confirm mean 0.9689±0.0145 RUN_DOCUMENTED; train HPs stay INCORPORATED)  
+**Last status update:** 2026-07-21 (WP5a ablation ladder A7 0.9699 tops table RUN_DOCUMENTED; train HPs stay INCORPORATED)  
 **Rule:** one package first; **every other playlist idea still gets a bounded run → RUN_DOCUMENTED** (skip-nothing).
 
 ## Chosen package (v1): **Class-aware distilled CNN–BiLSTM (CAD-CBA-v1)**
@@ -46,6 +46,7 @@ Extreme class imbalance + minority (Theft) under neural deploy path; RF still st
 | Multi-seed confirm of HPO winner (val) | **RUN_DOCUMENTED** | mean **0.9689 ± 0.0145** n=5; seed42 **0.9791** repro; does **not** beat WP1b mean |
 | Sealed multi-seed **test** of final lock | **TODO** | only after final config freeze |
 | Package FT multirun (ensemble KD + HPO HPs) | **RUN_DOCUMENTED** | mean **0.9639 ± 0.0185** n=5; max 0.9803; does **not** beat WP1b mean 0.9714±0.0109 |
+| Ablation ladder A1–A7 (seed42) | **RUN_DOCUMENTED** | A7 **0.9699** tops; A3 0.9493; A4 attn+CE **0.7378** underperforms A3 — package composition credit |
 
 ## Negative results locked in (do not re-litigate without new protocol)
 - `focal_cb` val macro-F1 0.9121 — hurts macro  
@@ -56,5 +57,6 @@ Extreme class imbalance + minority (Theft) under neural deploy path; RF still st
 - HPO refine rank3 trial 13 → **0.8656** — unstable under full data  
 - Package multirun ensemble+HPO mean **0.9639 ± 0.0185** < WP1b **0.9714 ± 0.0109** — HPO HPs (tuned on old distill) do not lift multi-seed mean on ensemble KD init; seed 43 weak (0.9328)
 - HPO multi-seed confirm mean **0.9689 ± 0.0145** < WP1b **0.9714 ± 0.0109** — seed42 reproduces 0.9791 but seed46 (0.9483) / seed43 (0.9587) drag; keep train HPs, no mean-win claim
+- Ablation A4 attn+CE **0.7378** < A3 cnn_bilstm CE **0.9493** under seed42/8-ep — attention alone is not a free gain; A7 package path still wins ladder (**0.9699**)
 
 See `RESULTS_DISK_MANIFEST.md` for md5s and paths.

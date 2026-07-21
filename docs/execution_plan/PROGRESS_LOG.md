@@ -1,7 +1,43 @@
 # Progress log (results as they land)
 
 **Policy:** document everything; label pilot vs full; test sealed unless noted.  
-**Handoff snapshot:** 2026-07-21 (multi-seed HPO confirm DONE + full-playlist context hygiene)
+**Handoff snapshot:** 2026-07-21 (WP5a ablation ladder DONE)
+
+---
+
+## 2026-07-21 — WP5a ablation ladder A1–A7 (science)
+
+Scripts: `scripts/run_ablation_ladder.py`, `model/ablation_variants.py`  
+Protocol: `botiot_v1` / **stage_b_ft** / seed **42** / epochs≤8 / patience=3 / **val only** (test sealed)  
+Default HPs: lr=1e-3 Adam batch=512 γ=2 (A7 uses `config/hpo_best.yaml` AdamW/cosine)  
+A6/A7 init: `model/teachers_kd/kd_ensemble_a0.6_T10.0_g2.0_seed42.pth`  
+Tag: `ablation_ladder/` (champion + multirun trees **not** clobbered)  
+Summary: `benchmarks/results/ablation_ladder/summary.json` md5 `988b826adcea79ef51f4b8144055825e`  
+Wall ~5397 s (~90 min). Champion md5 **unchanged** `80a90f7cc210276300eaa90173a5a385`.  
+Thermal: soft 85 / hard 90; no hard trip (peak mid-70s).
+
+| Rank | Row | Config | val macro-F1 | Min-cls | Theft | params | µs/sample |
+|------|-----|--------|--------------|---------|-------|--------|-----------|
+| 1 | **A7** | attn+focal+ens KD+HPO | **0.9699** | 0.8974 | 1.0000 | 530181 | 26.02 |
+| 2 | A3 | cnn_bilstm CE scratch | 0.9493 | 0.8571 | 1.0000 | 463877 | 19.96 |
+| 3 | A6 | attn+focal+ens KD | 0.9346 | 0.8462 | 1.0000 | 530181 | 26.39 |
+| 4 | A5 | attn+focal scratch | 0.8684 | 0.7059 | 0.7059 | 530181 | 26.69 |
+| 5 | A2 | bilstm_only CE | 0.8058 | 0.5000 | 0.5000 | 372229 | 15.26 |
+| 6 | A4 | attn+CE scratch | 0.7378 | 0.0000 | 0.0000 | 530181 | 24.54 |
+| 7 | A1 | cnn_only CE | 0.6221 | 0.0000 | 0.0000 | 34821 | 5.03 |
+
+**Interpretation**
+- Full CAD-CBA-v1 path (**A7**) wins the incremental ladder under seed42 / 8-ep budget.
+- Plain **CNN–BiLSTM (A3)** is already strong (0.9493); **attention+CE alone (A4) underperforms A3** — do not claim free attention gain.
+- Focal (A5), ensemble KD (A6), and HPO HPs (A7) each add ladder lift vs prior step.
+- Single-seed ladder ≠ multi-seed means (WP1b 0.9714±0.0109; package 0.9639±0.0185).
+- F9 systems: params + latency + CUDA mem logged; energy table still open.
+
+**Decision:** F1–F7 **RUN_DOCUMENTED** (A7 tops table; package composition supported). Champion unchanged.
+
+**Also this session:** `--skip-existing` resume on ladder script; `scripts/finalize_ablation_ladder_docs.py`; thermal `logs/thermal_guard_ablation.sh`.
+
+**Next science:** WP5b neural baselines (protocol-fair) **or** D6 stratified batch. DICC only when user opens session.
 
 ---
 
