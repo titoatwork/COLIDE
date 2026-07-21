@@ -1,7 +1,7 @@
 # COLIDE — Session Handoff
 
 **MODE:** 🚀 **EXECUTION — next chat continues Prof tracker.** This chat closed for continuity.  
-**Closed:** 2026-07-21 · **Package FT multirun** ensemble KD + HPO HPs (science + docs + tooling).  
+**Closed:** 2026-07-21 · **Multi-seed HPO confirm** original distill + hpo_best (science + docs).  
 **Authority:** `docs/execution_plan/SESSION_CONTINUITY.md` + `RESULTS_DISK_MANIFEST.md` + `PROF_FEEDBACK_TRACKER.md` + Option A.  
 **Policy:** skip nothing → JSON → INCORPORATED or RUN_DOCUMENTED. **Perfection over LOR hurry.** No invent DICC numbers.  
 **Champion:** `model/best_model_botiot_twostage.pth` md5 **`80a90f7cc210276300eaa90173a5a385`** — no clobber without BACKUP.
@@ -15,14 +15,15 @@
 | Protocol + sealed eval + WP1b multirun 0.9714±0.0109 | DONE (prior) |
 | Classical / imbalance / thresholds / WP4b ensemble KD 0.9401 | DONE (prior) |
 | WP3 Optuna HPO 0.9791 INCORPORATE train HPs | DONE (prior) |
-| **Package FT multirun** ensemble KD + hpo_best | **DONE** mean **0.9639 ± 0.0185** n=5 **RUN_DOCUMENTED** |
-| HPO-aware `train_protocol_ft.py` | DONE |
-| Ablation ladder + HPO multi-seed confirm drivers | DONE (code; not yet full-run) |
-| Thermal guard (soft 85 / hard 90) | DONE (used this session) |
-| `RESULTS_DISK_MANIFEST.md` | Updated (package md5s) |
+| Package FT multirun ensemble KD + hpo_best 0.9639±0.0185 | DONE (prior) |
+| **Multi-seed HPO confirm** orig distill + hpo_best | **DONE** mean **0.9689 ± 0.0145** n=5 **RUN_DOCUMENTED** |
+| Seed42 exact WP3 repro 0.9791 | DONE |
+| Ablation ladder scripts (not run this session) | READY (prior tooling) |
+| Thermal guard for HPO confirm | DONE |
+| `RESULTS_DISK_MANIFEST.md` | Updated (HPO confirm md5s) |
 
 **DICC:** still **ABSENT** — dedicated session when user opens it.  
-**Jobs:** package multirun **finished**; expect idle GPU after cool-down.
+**Jobs:** HPO multiseed confirm **finished** (~50 min wall); expect idle GPU after cool-down.
 
 ---
 
@@ -53,6 +54,7 @@ Read first (in order):
 8) config/hpo_best.yaml
 
 Verify on disk:
+- benchmarks/results/multirun_hpo_confirm/summary.json  (mean ~0.9689±0.0145 n=5)
 - benchmarks/results/multirun_ensemble_hpo/summary.json  (mean ~0.9639±0.0185 n=5)
 - benchmarks/results/hpo/summary.json  (winner ~0.9791)
 - config/hpo_best.yaml
@@ -60,15 +62,14 @@ Verify on disk:
 - benchmarks/results/multirun/summary.json  (WP1b ~0.9714±0.0109)
 - Champion md5 still 80a90f7cc210276300eaa90173a5a385
 
-Last session (2026-07-21): Package FT multirun ensemble KD + HPO —
-mean 0.9639±0.0185 (max 0.9803 seed45; min 0.9328 seed43) RUN_DOCUMENTED;
-does not beat WP1b mean. Ablation + HPO multi-seed scripts ready.
+Last session (2026-07-21): Multi-seed HPO confirm original distill + hpo_best —
+mean 0.9689±0.0145 (max 0.9797 seed44; min 0.9483 seed46; seed42 0.9791 WP3 repro)
+RUN_DOCUMENTED; does not beat WP1b mean. Train HPs stay INCORPORATED.
 
 Next:
-A) Multi-seed HPO confirm n≥5 (original distill + hpo_best)  ← recommended
-B) WP5a ablation ladder
-C) Neural baselines / Pareto
-D) DICC only if user opens dedicated session
+A) WP5a ablation ladder A1–A7  ← recommended
+B) Neural baselines / Pareto
+C) DICC only if user opens dedicated session
 
 Rules: no invent multi-day numbers; no clobber champion without BACKUP;
 thermal guard if sustained train; commit/push; end per HANDOFF lifecycle.
@@ -107,7 +108,7 @@ git rev-parse HEAD origin/master
 - Classical: prefer `summary_handoff.json`  
 - Teacher KD: stage_a KD ≠ stage_b FT numbers  
 - HPO: `hpo/summary.json` + `hpo_best.yaml`  
-- Package multirun: `multirun_ensemble_hpo/` ≠ WP1b `multirun/`  
+- HPO multi-seed confirm: `multirun_hpo_confirm/` ≠ package `multirun_ensemble_hpo/` ≠ WP1b `multirun/`  
 - Laptop thermal: sustained train can hit ~80°C; pause ≥90°C if guard used  
 
 ---
@@ -116,4 +117,4 @@ git rev-parse HEAD origin/master
 
 Design plan Option A approved; FINAL_PLAN P0–P5; audit pack `docs/audit/`; interim Word report sent to Prof; feedback in `docs/feedback1.docx`.
 
-**Next science priority after verify disk:** multi-seed HPO confirm **or** WP5 ablations. DICC only when user opens that session.
+**Next science priority after verify disk:** WP5a ablations **or** neural baselines. DICC only when user opens that session.

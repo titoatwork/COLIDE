@@ -119,6 +119,16 @@ def main() -> int:
         "val_macro_f1_std": statistics.stdev(val_f1s) if len(val_f1s) > 1 else 0.0,
         "val_macro_f1_min": min(val_f1s) if val_f1s else None,
         "val_macro_f1_max": max(val_f1s) if val_f1s else None,
+        "val_min_per_class_f1_mean": statistics.mean(
+            [r["val_min_per_class_f1"] for r in runs if "val_min_per_class_f1" in r]
+        )
+        if any("val_min_per_class_f1" in r for r in runs)
+        else None,
+        "val_theft_f1_mean": statistics.mean(
+            [r["val_theft_f1"] for r in runs if r.get("val_theft_f1") is not None]
+        )
+        if any(r.get("val_theft_f1") is not None for r in runs)
+        else None,
         "wall_sec": (t1 - t0).total_seconds(),
         "started_utc": t0.isoformat(),
         "finished_utc": t1.isoformat(),

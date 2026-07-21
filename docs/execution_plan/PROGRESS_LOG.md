@@ -1,7 +1,47 @@
 # Progress log (results as they land)
 
 **Policy:** document everything; label pilot vs full; test sealed unless noted.  
-**Handoff snapshot:** 2026-07-21 (package FT multirun ensemble+HPO DONE)
+**Handoff snapshot:** 2026-07-21 (multi-seed HPO confirm DONE)
+
+---
+
+## 2026-07-21 — Multi-seed HPO confirm (original distill + hpo_best) (science)
+
+Scripts: `scripts/run_hpo_multiseed_confirm.py`, `scripts/train_protocol_ft.py`  
+Protocol: `botiot_v1` / **stage_b_ft** / seeds 42–46 / epochs≤10 patience=3 / **val only** (test sealed)  
+Init: `model/best_model_botiot_distill_a0.6_T10.0_focal2.pth` (same as WP3 Optuna study)  
+HPs: `config/hpo_best.yaml` (WP3 winner train recipe)  
+Tag: `multirun_hpo_confirm/` (does **not** clobber WP1b `multirun/` or package `multirun_ensemble_hpo/`)  
+Summary: `benchmarks/results/multirun_hpo_confirm/summary.json` md5 `ef6c92a592474c321a4c1300e19a8065`  
+Wall ~2981 s (~50 min). Champion md5 **unchanged** `80a90f7cc210276300eaa90173a5a385`.  
+Thermal: soft 85 / hard 90; peak ~81°C; no hard trip.
+
+| Seed | Best val macro-F1 | Min-cls | Theft | Elapsed |
+|------|-------------------|---------|-------|---------|
+| 42 | **0.9791** | 0.9351 | 1.0000 | ~8.1 min |
+| 43 | 0.9587 | 0.9091 | 0.9091 | ~14.1 min |
+| 44 | **0.9797** | 0.9367 | 1.0000 | ~8.1 min |
+| 45 | 0.9787 | 0.9333 | 1.0000 | ~5.7 min |
+| 46 | 0.9483 | 0.8333 | 0.8333 | ~12.0 min |
+
+**Mean 0.9689 ± 0.0145** (n=5) · min 0.9483 · max 0.9797  
+min-cls mean **0.9095** · Theft mean **0.9485**
+
+**Comparators**
+- WP3 HPO full-train seed42: **0.9791** — seed42 **reproduces** (0.979055 ≈ 0.979064)
+- WP1b multirun (old distill + default HPs): **0.9714 ± 0.0109**
+- Package ensemble KD + HPO: **0.9639 ± 0.0185**
+
+**Interpretation**
+- Fair multi-seed confirm of Optuna train HPs on the **same init** as the study.
+- Seed42 is a clean repro of the WP3 winner; seed44 slightly higher (0.9797).
+- Aggregate mean is **slightly below** WP1b default-HP multirun and **higher variance** (seed46 0.9483 and seed43 0.9587 drag).
+- HPO HPs remain **INCORPORATED** as CAD-CBA-v1 train defaults (credible seed42 lift vs default 0.9780); multi-seed aggregate is **RUN_DOCUMENTED** evidence of seed sensitivity, not a mean-win claim over WP1b.
+- Do not promote HPO multirun mean as “beats baseline multirun.”
+
+**Decision: RUN_DOCUMENTED** (multi-seed aggregate) · train HPs stay **INCORPORATED** from WP3.
+
+**Next science:** WP5a ablation ladder **or** neural baselines / Pareto. DICC only when user opens session.
 
 ---
 

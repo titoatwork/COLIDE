@@ -1,7 +1,7 @@
 # Method package decision (Phase 2) — signed default
 
 **Date:** 2026-07-19  
-**Last status update:** 2026-07-21 (package FT multirun ensemble+HPO mean 0.9639±0.0185 RUN_DOCUMENTED)  
+**Last status update:** 2026-07-21 (HPO multi-seed confirm mean 0.9689±0.0145 RUN_DOCUMENTED; train HPs stay INCORPORATED)  
 **Rule:** one package first; other ideas still RUN_DOCUMENTED later.
 
 ## Chosen package (v1): **Class-aware distilled CNN–BiLSTM (CAD-CBA-v1)**
@@ -43,7 +43,8 @@ Extreme class imbalance + minority (Theft) under neural deploy path; RF still st
 | Optuna HPO (WP3) | **DONE** | full-train refine winner **0.9791 INCORPORATE**; `hpo/summary.json` + `config/hpo_best.yaml` |
 | Default train HPs for CAD-CBA-v1 | **hpo_best.yaml** | lr 5.89e-5, batch 1024, γ≈1.92, cosine, … |
 | Arch deltas (attention/multi-scale) | deferred | only if plateaus |
-| Multi-seed / sealed test of HPO winner | **TODO** | `run_hpo_multiseed_confirm.py` ready |
+| Multi-seed confirm of HPO winner (val) | **RUN_DOCUMENTED** | mean **0.9689 ± 0.0145** n=5; seed42 **0.9791** repro; does **not** beat WP1b mean |
+| Sealed multi-seed **test** of final lock | **TODO** | only after final config freeze |
 | Package FT multirun (ensemble KD + HPO HPs) | **RUN_DOCUMENTED** | mean **0.9639 ± 0.0185** n=5; max 0.9803; does **not** beat WP1b mean 0.9714±0.0109 |
 
 ## Negative results locked in (do not re-litigate without new protocol)
@@ -54,5 +55,6 @@ Extreme class imbalance + minority (Theft) under neural deploy path; RF still st
 - HPO Stage-A best trial 11 → full refine **0.9721** — Stage A rank ≠ Stage B rank  
 - HPO refine rank3 trial 13 → **0.8656** — unstable under full data  
 - Package multirun ensemble+HPO mean **0.9639 ± 0.0185** < WP1b **0.9714 ± 0.0109** — HPO HPs (tuned on old distill) do not lift multi-seed mean on ensemble KD init; seed 43 weak (0.9328)
+- HPO multi-seed confirm mean **0.9689 ± 0.0145** < WP1b **0.9714 ± 0.0109** — seed42 reproduces 0.9791 but seed46 (0.9483) / seed43 (0.9587) drag; keep train HPs, no mean-win claim
 
 See `RESULTS_DISK_MANIFEST.md` for md5s and paths.

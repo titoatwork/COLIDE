@@ -1,7 +1,7 @@
 # Results Disk Manifest (handoff snapshot)
 
 **Generated (UTC):** 2026-07-21T11:01:25.771483+00:00  
-**Last append (UTC):** 2026-07-21T19:20:00 (package FT multirun ensemble+HPO)
+**Last append (UTC):** 2026-07-21T20:21:00 (multi-seed HPO confirm)
 **Host path root:** `/home/titoisalive/colide`
 
 `benchmarks/results/` is **gitignored**. This file is committed so the next session can verify local artifacts without inventing numbers.
@@ -69,6 +69,8 @@
 | WP4b RF / none / XGB / LGBM student | 0.9346 / 0.9326 / 0.9270 / 0.8829 | `teachers_kd/kd_*_seed42.json` |
 | WP3 HPO winner (full-train refine val macro-F1) | **0.9791** INCORPORATE | `hpo/summary.json` + `config/hpo_best.yaml` |
 | WP3 Stage A best (subsampled train) | trial 11 **0.9787** | `hpo/summary.json` |
+| HPO multi-seed confirm (orig distill + hpo_best) | **0.9689 ± 0.0145** n=5 RUN_DOCUMENTED | `multirun_hpo_confirm/summary.json` |
+| HPO confirm seed42 (repro) | **0.9791** | `multirun_hpo_confirm/ft_seed42.json` |
 | DICC multi-day tree | ABSENT | no `benchmarks/results/dicc/` |
 
 ## Trap warnings
@@ -214,4 +216,53 @@
 **Decision: RUN_DOCUMENTED** — full CAD-CBA-v1 path (ensemble KD init + HPO train HPs) is multi-seed stable in the mid-0.96 band, but **mean does not beat WP1b** and **std is higher** (seed 43 weak). HPO was tuned on a different init; do not claim package multirun as an improvement over WP1b mean. Components (ensemble teacher, HPO HPs, focal) remain individually INCORPORATED; aggregate package mean is evidence, not a new champion.
 
 **Trap:** Do not overwrite WP1b `multirun/summary.json` with package numbers. Do not mix stage_a KD 0.9401 with these stage_b FT scores.
+
+## Multi-seed HPO confirm — original distill + hpo_best (2026-07-21)
+
+**Stage:** `stage_b_ft` · seeds 42–46 · val-only · test sealed · arch fixed V3  
+**Init:** `model/best_model_botiot_distill_a0.6_T10.0_focal2.pth` (same as WP3 Optuna)  
+**Train HPs:** `config/hpo_best.yaml`  
+**Scripts:** `scripts/run_hpo_multiseed_confirm.py`, `scripts/train_protocol_ft.py`  
+**Tag:** `multirun_hpo_confirm/` (WP1b + package trees untouched)  
+**Wall:** ~2981 s (~50 min)  
+**Champion md5 unchanged** `80a90f7cc210276300eaa90173a5a385`
+
+### Result JSON
+
+| Path | md5 | bytes | key metrics |
+|------|-----|-------|-------------|
+| `benchmarks/results/multirun_hpo_confirm/summary.json` | `ef6c92a592474c321a4c1300e19a8065` | 3698 | mean **0.9689 ± 0.0145** n=5 |
+| `benchmarks/results/multirun_hpo_confirm/ft_seed42.json` | `1337c4283be9751ff73412b09788afac` | 7501 | **0.9791** (WP3 repro) |
+| `benchmarks/results/multirun_hpo_confirm/ft_seed43.json` | `9312b580b88916e303a3f94bb8d2ce4f` | 9067 | 0.9587 |
+| `benchmarks/results/multirun_hpo_confirm/ft_seed44.json` | `c4d09884caddc68862e326560de58e25` | 7456 | **0.9797** |
+| `benchmarks/results/multirun_hpo_confirm/ft_seed45.json` | `9f728994c53e9c7be2c4cb9312dca472` | 6854 | 0.9787 |
+| `benchmarks/results/multirun_hpo_confirm/ft_seed46.json` | `d984ecf3d86befe09d783c56ea7f9dbc` | 8756 | 0.9483 |
+
+### Checkpoints
+
+| Path | md5 | bytes |
+|------|-----|-------|
+| `model/multirun_hpo_confirm/ft_seed42.pth` | `3d32ffc15d2301331c10a9c9ee9a7aa3` | 2133122 |
+| `model/multirun_hpo_confirm/ft_seed43.pth` | `88fede576071f4f5cb4d9b29b96d810f` | 2133122 |
+| `model/multirun_hpo_confirm/ft_seed44.pth` | `3a3dc725519a62e7c2547b76f3a4ee7a` | 2133122 |
+| `model/multirun_hpo_confirm/ft_seed45.pth` | `dec1a5c68da1574223ae203f21659446` | 2133122 |
+| `model/multirun_hpo_confirm/ft_seed46.pth` | `ed550532175be43e78802c03d384c6c5` | 2133122 |
+
+### Per-seed ranking
+
+| Seed | val macro-F1 | Min-cls | Theft |
+|------|--------------|---------|-------|
+| 44 | **0.9797** | 0.9367 | 1.0000 |
+| 42 | **0.9791** | 0.9351 | 1.0000 |
+| 45 | 0.9787 | 0.9333 | 1.0000 |
+| 43 | 0.9587 | 0.9091 | 0.9091 |
+| 46 | 0.9483 | 0.8333 | 0.8333 |
+
+**Mean 0.9689 ± 0.0145** (n=5) · min-cls mean 0.9095 · Theft mean 0.9485  
+
+**Comparators:** WP3 HPO seed42 **0.9791** (reproduced); WP1b **0.9714 ± 0.0109**; package ensemble+HPO **0.9639 ± 0.0185**.  
+
+**Decision: RUN_DOCUMENTED** — multi-seed aggregate does **not** beat WP1b mean; higher std (seed46 weak). Seed42 exact repro of WP3 winner supports keeping train HPs **INCORPORATED**. Not a new champion.
+
+**Trap:** Do not mix with package `multirun_ensemble_hpo/` (different init). Do not claim multi-seed HPO mean > WP1b.
 

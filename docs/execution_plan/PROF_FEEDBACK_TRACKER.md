@@ -49,7 +49,7 @@
 | B11 | Sequence length | TODO | reshape fixed [2,32] with V3 |
 | B12 | Decision thresholds minority | RUN_DOCUMENTED | WP2d on `ft_focal_seed42`: all decode variants = argmax val macro 0.9780 (Δ0); keep argmax (`thresholds_focal_seed42.json`) |
 | B13 | Objectives: val macro-F1, bal-acc, minority recall | DONE (logged) | Primary max val macro-F1; min-cls / bal-acc / Theft logged per trial |
-| B14 | Test untouched until final config | PARTIAL | WP3 + package multirun test SEALED; multi-seed sealed test of winner still TODO |
+| B14 | Test untouched until final config | PARTIAL | WP3 + package + HPO multi-seed confirm test SEALED; sealed multi-seed **test** of final lock still TODO |
 
 ---
 
@@ -219,8 +219,8 @@
 | L2 | Mod table before final model | PARTIAL | Written |
 | L3 | Avoid changing many parts at once | PARTIAL | Discipline |
 | L4 | Phase: freeze preprocess/split/metrics/seeds/hardware/baseline | PARTIAL | Protocol + freeze card |
-| L5 | ≥5 independent training runs mean±std | DONE | WP1b 0.9714±0.0109; package ensemble+HPO 0.9639±0.0185 n=5 (val only) |
-| L6 | Optuna/Bayesian HPO | DONE | WP3 Optuna TPE val-only; winner INCORPORATE 0.9791 (`config/hpo_best.yaml`) |
+| L5 | ≥5 independent training runs mean±std | DONE | WP1b 0.9714±0.0109; package 0.9639±0.0185; HPO confirm 0.9689±0.0145 n=5 (val only) |
+| L6 | Optuna/Bayesian HPO | DONE | WP3 Optuna TPE val-only; winner INCORPORATE 0.9791; multi-seed confirm RUN_DOCUMENTED 0.9689±0.0145 |
 | L7 | One clear proposed method | TODO | |
 | L8 | Deploy: export, parity, profile, kernels, TRT/ORT/compile, FP16/INT8 | PARTIAL | Local CUDA exists |
 | L9 | Realistic: trade-off vs beat RF everywhere | PARTIAL | Framing |
@@ -258,6 +258,7 @@
 | 2026-07-21 | **WP4b teacher/KD DONE** stage_a_kd α=0.6 T=10 γ=2: ensemble student **0.9401 INCORPORATE**; rf 0.9346 / none 0.9326 / xgb 0.9270 / lgbm 0.8829 RUN_DOCUMENTED; E*/C9 updated; next: Optuna (WP3) or ablations (WP5) |
 | 2026-07-21 | **WP3 Optuna HPO DONE** stage_b_ft val-only: Stage A 20 trials (11 complete/9 pruned, max_train=400k); Stage B full refine top-3; winner trial8 **0.9791 INCORPORATE** (Δ+0.0010 vs multirun seed42 0.9780); B1/B5–B8/L6 updated; arch B2–B4 deferred; next: FT from ensemble+HPO or WP5 |
 | 2026-07-21 | **Package FT multirun DONE** ensemble KD init + hpo_best: mean **0.9639 ± 0.0185** n=5 (max 0.9803 seed45; min 0.9328 seed43) RUN_DOCUMENTED — mean does not beat WP1b 0.9714±0.0109; higher variance; L5 dual multirun noted; next: multi-seed HPO confirm or WP5 ablations |
+| 2026-07-21 | **Multi-seed HPO confirm DONE** original distill + hpo_best: mean **0.9689 ± 0.0145** n=5 (max 0.9797 seed44; min 0.9483 seed46; seed42 **0.9791** exact WP3 repro) RUN_DOCUMENTED — mean does not beat WP1b; train HPs stay INCORPORATED; next: WP5a ablations or neural baselines |
 
 ---
 
