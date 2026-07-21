@@ -1,7 +1,7 @@
 # COLIDE — Session Handoff
 
 **MODE:** 🚀 **EXECUTION — next chat continues Prof tracker.** This chat closed for continuity.  
-**Closed:** 2026-07-21 · **WP2d val thresholds** (science + docs).  
+**Closed:** 2026-07-21 · **WP4b teacher/KD** (science + docs).  
 **Authority:** `docs/execution_plan/SESSION_CONTINUITY.md` + `RESULTS_DISK_MANIFEST.md` + `PROF_FEEDBACK_TRACKER.md` + Option A.  
 **Policy:** skip nothing → JSON → INCORPORATED or RUN_DOCUMENTED. No invent DICC numbers.  
 **Champion:** `model/best_model_botiot_twostage.pth` md5 **`80a90f7cc210276300eaa90173a5a385`** — no clobber without BACKUP.
@@ -17,13 +17,14 @@
 | WP1b multirun 5 seeds | **DONE** mean **0.9714 ± 0.0109** |
 | Classical protocol-fair LR/RF/XGB/LGBM | DOCUMENTED (RF 0.978 / XGB 0.976) |
 | Imbalance loss compare 4 losses | **DONE** — **focal wins 0.9780** |
-| **WP2d val thresholds on focal seed42** | **DONE** — all variants = argmax → **RUN_DOCUMENTED keep argmax** |
-| CAD-CBA-v1 method decision | Signed (thresholds = argmax) |
-| Full execution plan + tracker | DONE + aligned 2026-07-21 WP2d |
-| `RESULTS_DISK_MANIFEST.md` | DONE (includes thresholds JSON md5) |
+| WP2d val thresholds on focal seed42 | **DONE** — keep argmax |
+| **WP4b teacher/KD (stage_a_kd)** | **DONE** — **ensemble student 0.9401 INCORPORATE** |
+| CAD-CBA-v1 method decision | Signed (KD teacher = ensemble; thresholds = argmax; loss = focal) |
+| Full execution plan + tracker | DONE + aligned 2026-07-21 WP4b |
+| `RESULTS_DISK_MANIFEST.md` | DONE (includes teachers_kd md5s) |
 
 **DICC:** still **ABSENT** (`benchmarks/results/dicc/`).  
-**Jobs:** multirun + imbalance + thresholds **finished**; expect no train processes.
+**Jobs:** WP4b **finished**; expect no train processes.
 
 ---
 
@@ -53,21 +54,22 @@ Read first (in order):
 7) docs/execution_plan/15_WORK_PACKAGES.md
 
 Verify on disk (do not invent if missing):
+- benchmarks/results/teachers_kd/summary.json  (ensemble wins ~0.9401)
+- benchmarks/results/teachers_kd/kd_*_seed42.json
 - benchmarks/results/multirun/summary.json  (mean ~0.9714±0.0109, n=5)
 - benchmarks/results/imbalance_loss/summary.json  (focal wins 0.9780)
-- benchmarks/results/imbalance_loss/thresholds_focal_seed42.json  (WP2d: RUN_DOCUMENTED keep argmax)
-- benchmarks/results/baselines_classical/*_seed42.json + summary_handoff.json
-- model/multirun/ft_seed{42..46}.pth ; model/imbalance_loss/ft_*_seed42.pth
+- benchmarks/results/imbalance_loss/thresholds_focal_seed42.json
+- model/teachers_kd/kd_*_a0.6_T10.0_g2.0_seed42.pth
 - Champion md5 still 80a90f7cc210276300eaa90173a5a385
 
-Last session (2026-07-21): WP2d val thresholds on ft_focal_seed42.pth — all variants
-= argmax val macro-F1 0.9780 → RUN_DOCUMENTED keep argmax. B12/C11/D7 flipped.
-Prior: protocol; WP1b multirun; classical RF/XGB/LR; imbalance loss (focal INCORPORATE).
+Last session (2026-07-21): WP4b teacher/KD under protocol stage_a_kd —
+ensemble student 0.9401 INCORPORATE; rf/none/xgb/lgbm RUN_DOCUMENTED.
+Prior: protocol; WP1b multirun; classical RF/XGB; imbalance (focal); WP2d thresholds=argmax.
 
 Next (pick one, document JSON + update tracker):
-A) Teacher/KD experiments under protocol (WP4b)  ← recommended
-B) Optuna HPO val-only (WP3)
-C) Ablations / neural baselines (WP5)
+A) Optuna HPO val-only (WP3)  ← recommended
+B) Ablations / neural baselines (WP5)
+C) stage_b FT from ensemble KD init
 D) Guided DICC if user has SSH (WP0)
 
 Rules: no invent multi-day numbers; no clobber champion without BACKUP;
@@ -105,6 +107,7 @@ git rev-parse HEAD origin/master
 - Results under `benchmarks/results/` often **gitignored** — use `RESULTS_DISK_MANIFEST.md` + local paths  
 - Agents: no invented DICC numbers  
 - Classical: prefer `summary_handoff.json` over possibly stale `summary.json`  
+- Teacher KD: prefer `teachers_kd/summary.json`; stage_a KD ≠ stage_b FT numbers  
 
 ---
 
@@ -112,4 +115,4 @@ git rev-parse HEAD origin/master
 
 Design plan Option A approved; FINAL_PLAN P0–P5; audit pack `docs/audit/`; interim Word report sent to Prof; feedback in `docs/feedback1.docx`.
 
-**Next science priority after verify disk:** teachers/KD (WP4b) **or** Optuna (WP3) **or** ablations (WP5) per continuity §5.
+**Next science priority after verify disk:** Optuna (WP3) **or** ablations (WP5) **or** FT from ensemble KD per continuity §5.

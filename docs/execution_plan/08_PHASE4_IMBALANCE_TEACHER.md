@@ -1,6 +1,6 @@
 # 08 — Phase 4: Class Imbalance + Distillation Teachers
 
-**Status:** NOT STARTED  
+**Status:** PARTIAL — imbalance losses DONE; WP4b teachers DONE (ensemble INCORPORATE); stratified/SupCon still open  
 **Depends on:** Phase 1–3 (can interleave carefully with HPO)  
 **Prof:** §3 imbalance; §4 teachers  
 

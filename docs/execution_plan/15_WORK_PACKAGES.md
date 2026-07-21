@@ -21,7 +21,7 @@
 | WP2d | Val threshold search on focal best | 2/4 | WP2b-run | Agent | **DONE 2026-07-21** RUN_DOCUMENTED keep argmax |
 | WP3 | Optuna HPO study + sealed test | 3 | WP1–2 | Agent | TODO |
 | WP4a | Imbalance strategy sweep (beyond loss) | 4 | WP1–3 | Agent | PARTIAL (loss done; stratified/SupCon open) |
-| WP4b | Teacher sweep (RF/XGB/LGBM/ensemble) | 4 | WP1–3 | Agent | TODO |
+| WP4b | Teacher sweep (RF/XGB/LGBM/ensemble) | 4 | WP1–3 | Agent | **DONE 2026-07-21** ensemble student 0.9401 INCORPORATE |
 | WP5a | Full ablation ladder | 5 | Final recipe | Agent | TODO |
 | WP5b | Fair baseline suite | 5 | WP1a | Agent | PARTIAL (classical LR/RF/XGB/LGBM val; SVM/neural open) |
 | WP5c | Pareto figure + composite score | 5 | WP5a/b + systems | Agent | TODO |
@@ -39,8 +39,9 @@
 
 | Priority | Action |
 |----------|--------|
-| 0 | Verify disk via `RESULTS_DISK_MANIFEST.md` + summaries (incl. thresholds JSON) |
-| 1 | **WP4b** teachers/KD under protocol **or** **WP3** Optuna **or** **WP5** ablations/neural |
+| 0 | Verify disk via `RESULTS_DISK_MANIFEST.md` (incl. `teachers_kd/`) |
+| 1 | **WP3** Optuna HPO val-only **or** **WP5** ablations/neural baselines |
+| Optional | stage_b FT from ensemble KD init (`kd_ensemble_…seed42.pth`) |
 | Parallel | **WP0** only when user has DICC SSH |
 | Never first | WP9b manuscript with empty cluster cells |
 

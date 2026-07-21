@@ -1,7 +1,7 @@
 # Method package decision (Phase 2) — signed default
 
 **Date:** 2026-07-19  
-**Last status update:** 2026-07-21 (WP2d thresholds RUN_DOCUMENTED)  
+**Last status update:** 2026-07-21 (WP4b teacher/KD — ensemble INCORPORATE)  
 **Rule:** one package first; other ideas still RUN_DOCUMENTED later.
 
 ## Chosen package (v1): **Class-aware distilled CNN–BiLSTM (CAD-CBA-v1)**
@@ -9,7 +9,8 @@
 | Component | Decision | Tracker |
 |-----------|----------|---------|
 | Base arch | Keep V3 CNN–BiLSTM–Attention (`cnn_bilstm_v3_attention`) | F3 |
-| KD teacher | RF (n=200) then try ensemble / XGB if student lag | E2–E5 |
+| KD teacher | **Ensemble** (mean RF+XGB+LGBM soft labels); RF fallback | E1–E5, E7 |
+| KD recipe | α=0.6, T=10, focal γ=2 (protocol stage_a_kd) | B10, E* |
 | Loss | **Focal** wins 4-way val compare (CE / focal / focal_cb / logit_adj) | D2–D5 |
 | Thresholds | Val search on focal seed42: **no gain** → keep **argmax** (RUN_DOCUMENTED) | D7, C11 |
 | Multi-scale CNN / new attention | **Later** only if CAD-CBA-v1 plateaus | C3–C4 |
@@ -27,7 +28,7 @@ Extreme class imbalance + minority (Theft) under neural deploy path; RF still st
 - Full V3 CUDA parity (Option B)  
 - Beating RF on every metric before multi-obj tables  
 
-## Status (as of 2026-07-21 WP2d)
+## Status (as of 2026-07-21 WP4b)
 
 | Item | Status | Evidence |
 |------|--------|----------|
@@ -36,12 +37,15 @@ Extreme class imbalance + minority (Theft) under neural deploy path; RF still st
 | Default loss for CAD-CBA-v1 | **focal** | keep |
 | Val thresholds on best focal ckpt | **RUN_DOCUMENTED** | all variants = argmax 0.9780; keep argmax (`thresholds_focal_seed42.json`) |
 | Default decode for CAD-CBA-v1 | **argmax** | thresholds not incorporated |
-| Teacher/KD under protocol | **TODO** | **next science track** |
-| Optuna HPO | **TODO** | |
+| Teacher/KD under protocol (WP4b) | **DONE** | ensemble student **0.9401** INCORPORATE; `teachers_kd/summary.json` |
+| Default KD teacher for CAD-CBA-v1 | **ensemble** | RF fallback; none/xgb/lgbm RUN_DOCUMENTED |
+| Optuna HPO | **TODO** | **next science track** |
 | Arch deltas (attention/multi-scale) | deferred | only if plateaus |
 
 ## Negative results locked in (do not re-litigate without new protocol)
 - `focal_cb` val macro-F1 0.9121 — hurts macro  
 - `logit_adj` val macro-F1 0.9225 — hurts macro  
+- LGBM solo teacher val 0.5928 → student 0.8829 — weak KD path  
+- XGB solo teacher 0.9918 but student 0.9270 — does **not** beat ensemble/RF student  
 
 See `RESULTS_DISK_MANIFEST.md` for md5s and paths.

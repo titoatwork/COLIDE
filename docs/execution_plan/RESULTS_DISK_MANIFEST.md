@@ -1,7 +1,7 @@
 # Results Disk Manifest (handoff snapshot)
 
 **Generated (UTC):** 2026-07-21T11:01:25.771483+00:00  
-**Last append (UTC):** 2026-07-21T11:09:20 (WP2d val thresholds)  
+**Last append (UTC):** 2026-07-21T13:35:14 (WP4b teacher/KD)
 **Host path root:** `/home/titoisalive/colide`
 
 `benchmarks/results/` is **gitignored**. This file is committed so the next session can verify local artifacts without inventing numbers.
@@ -65,6 +65,8 @@
 | Published RF (different pipeline) | 0.9864 | historical / freeze card — not protocol-fair |
 | Champion sealed val macro-F1 | 0.9780 | protocol eval JSON |
 | Champion md5 | 80a90f7cc210276300eaa90173a5a385 | `model/best_model_botiot_twostage.pth` |
+| WP4b best KD teacher (student val macro-F1) | ensemble **0.9401** | `teachers_kd/summary.json` |
+| WP4b RF / none / XGB / LGBM student | 0.9346 / 0.9326 / 0.9270 / 0.8829 | `teachers_kd/kd_*_seed42.json` |
 | DICC multi-day tree | ABSENT | no `benchmarks/results/dicc/` |
 
 ## Trap warnings
@@ -75,4 +77,43 @@
 4. All above metrics are **val-only** unless a JSON explicitly allows test.
 5. Model `.pth` under `model/multirun/` and `model/imbalance_loss/` are local artifacts; re-run if missing on another machine.
 6. `scripts/watch_and_queue_next.sh` is a finished one-shot helper (multirun→imbalance); not an active job.
+
+## WP4b Teacher/KD compare (2026-07-21)
+
+**Stage:** `stage_a_kd` · **seed 42** · **α=0.6 T=10 γ=2** · epochs≤10 patience=4 batch=512 · val-only · test sealed  
+**Scripts:** `scripts/train_protocol_kd.py`, `scripts/run_teacher_kd_compare.py`  
+**Wall:** ~6879 s (~1.9 h)
+
+### Result JSON
+
+| Path | md5 | bytes | key metrics |
+|------|-----|-------|-------------|
+| `benchmarks/results/teachers_kd/summary.json` | `63ab4bd3f40e24adc6788fa1ca255bd8` | 5105 | best=ensemble 0.9401 |
+| `benchmarks/results/teachers_kd/kd_none_seed42.json` | `379df6cbd7aa34e418d35efa0f5acb02` | 8743 | student 0.9326 |
+| `benchmarks/results/teachers_kd/kd_rf_seed42.json` | `836473b48d812b47bb604fb4460c0ad0` | 8602 | student 0.9346; teacher 0.9750 |
+| `benchmarks/results/teachers_kd/kd_xgb_seed42.json` | `2d056371b3e60a1d131bf098ba06e633` | 9534 | student 0.9270; teacher 0.9918 |
+| `benchmarks/results/teachers_kd/kd_lgbm_seed42.json` | `513749956a9248f6fe8c5828098f9695` | 9294 | student 0.8829; teacher 0.5928 |
+| `benchmarks/results/teachers_kd/kd_ensemble_seed42.json` | `03257954837840f5ccb7c8ceeff7303a` | 10097 | student **0.9401**; teacher 0.9803 |
+
+### Checkpoints
+
+| Path | md5 | bytes |
+|------|-----|-------|
+| `model/teachers_kd/kd_none_a0.6_T10.0_g2.0_seed42.pth` | `6ce196e582ce7d79244e9de9270c5b71` | 2133858 |
+| `model/teachers_kd/kd_rf_a0.6_T10.0_g2.0_seed42.pth` | `fc0610beb6c28ccfd17d8d59b6b360d9` | 2133794 |
+| `model/teachers_kd/kd_xgb_a0.6_T10.0_g2.0_seed42.pth` | `bc90b9dad63c1e39a115d1e07b0ed538` | 2133826 |
+| `model/teachers_kd/kd_lgbm_a0.6_T10.0_g2.0_seed42.pth` | `a9101db8f22d551b3a81e48c099f9811` | 2133858 |
+| `model/teachers_kd/kd_ensemble_a0.6_T10.0_g2.0_seed42.pth` | `d1eff65eda2a7bac26523cc2952742dd` | 2133986 |
+
+### Ranking (student val macro-F1)
+
+| Rank | Teacher | Student | Min-cls | Theft | Teacher val | Decision |
+|------|---------|---------|--------|-------|-------------|----------|
+| 1 | **ensemble** | **0.9401** | 0.8434 | 0.9231 | 0.9803 | **INCORPORATE** CAD-CBA-v1 KD teacher |
+| 2 | rf | 0.9346 | 0.8000 | 1.0000 | 0.9750 | RUN_DOCUMENTED (simple fallback) |
+| 3 | none | 0.9326 | 0.8409 | 0.9231 | — | RUN_DOCUMENTED (hard-label control) |
+| 4 | xgb | 0.9270 | 0.8434 | 0.8571 | 0.9918 | RUN_DOCUMENTED (strong teacher, weaker student) |
+| 5 | lgbm | 0.8829 | 0.7059 | 0.7059 | 0.5928 | RUN_DOCUMENTED (weak teacher) |
+
+**Note:** These are **stage_a_kd from-scratch** student numbers (not stage_b FT). Do not mix with multirun FT mean 0.9714. Champion md5 unchanged.
 

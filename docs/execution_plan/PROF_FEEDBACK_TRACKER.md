@@ -45,7 +45,7 @@
 | B7 | Batch size | TODO | |
 | B8 | Focal-loss parameters | PARTIAL | Used; not full search |
 | B9 | Class weights | PARTIAL | npy exists; often unused in train |
-| B10 | Distill T and α | PARTIAL | Manual sweeps done historically |
+| B10 | Distill T and α | PARTIAL | Historical + WP4b fixed α=0.6 T=10 under protocol; full Optuna still open |
 | B11 | Sequence length | TODO | |
 | B12 | Decision thresholds minority | RUN_DOCUMENTED | WP2d on `ft_focal_seed42`: all decode variants = argmax val macro 0.9780 (Δ0); keep argmax (`thresholds_focal_seed42.json`) |
 | B13 | Objectives: val macro-F1, bal-acc, minority recall | PARTIAL | Metrics module has them |
@@ -65,7 +65,7 @@
 | C6 | Class-balanced or logit-adjusted loss | RUN_DOCUMENTED | 4-way FT compare: focal best; focal_cb/logit_adj worse macro (`imbalance_loss/`) |
 | C7 | Supervised contrastive (minority) | TODO | Later unless chosen |
 | C8 | Asymmetric loss minority | TODO | Later unless chosen |
-| C9 | Teacher ensemble distillation | PARTIAL | Script exists; student not final |
+| C9 | Teacher ensemble distillation | INCORPORATED | WP4b: ensemble student val **0.9401** best among 5 teachers (`teachers_kd/`) |
 | C10 | Uncertainty-aware detection | TODO | Later unless chosen |
 | C11 | Adaptive per-class thresholds | RUN_DOCUMENTED | Val grid search macro/min/joint/Theft/Normal — no lift vs argmax on focal FT; not in package |
 | C12 | Component addresses named weakness | TODO | Imbalance default weakness |
@@ -96,14 +96,14 @@
 
 | ID | Requirement | Status | Evidence / notes |
 |----|-------------|--------|------------------|
-| E1 | Improve teacher or ensemble | PARTIAL | RF strengthen + ensemble script |
-| E2 | RF teacher | PARTIAL | Historical |
-| E3 | XGBoost teacher | TODO | |
-| E4 | LightGBM teacher | TODO | (ensemble has combo) |
-| E5 | Calibrated tree ensemble | PARTIAL | ensemble distill |
-| E6 | Strong neural teacher | TODO | |
-| E7 | Heterogeneous ensembles | PARTIAL | |
-| E8 | Student not mere imitation — deployment trade-off | TODO | Need integrated table |
+| E1 | Improve teacher or ensemble | INCORPORATED | WP4b ensemble soft-label mean beats solo RF/XGB/LGBM student |
+| E2 | RF teacher | RUN_DOCUMENTED | Protocol KD student 0.9346 (2nd); teacher val 0.9750; solid fallback |
+| E3 | XGBoost teacher | RUN_DOCUMENTED | Teacher val 0.9918 but student 0.9270 — does not win student |
+| E4 | LightGBM teacher | RUN_DOCUMENTED | Teacher val 0.5928; student 0.8829 — weak path |
+| E5 | Calibrated tree ensemble | INCORPORATED | Unweighted mean RF+XGB+LGBM probs; student **0.9401** best |
+| E6 | Strong neural teacher | TODO | Optional later |
+| E7 | Heterogeneous ensembles | INCORPORATED | RF+XGB+LGBM heterogeneous mean (WP4b) |
+| E8 | Student not mere imitation — deployment trade-off | PARTIAL | Student ≠ copy of best teacher F1 (XGB teacher≠best student); multi-obj table still open |
 | E9 | Lower memory / latency / GPU deploy / temporal | PARTIAL | Scattered numbers |
 
 ---
@@ -115,7 +115,7 @@
 | F1 | CNN only | TODO | |
 | F2 | BiLSTM only | TODO | |
 | F3 | CNN–BiLSTM | PARTIAL | Baseline exists |
-| F4 | + KD | PARTIAL | Historical |
+| F4 | + KD | PARTIAL | Historical + protocol WP4b (none vs KD ladder) |
 | F5 | + imbalance method | TODO | |
 | F6 | + attention/fusion | TODO | |
 | F7 | Full proposed method | TODO | |
@@ -255,6 +255,7 @@
 | 2026-07-19 | **WP1b multirun DONE** mean 0.9714±0.0109 n=5; classical protocol-fair LR/RF/XGB/LGBM documented; **imbalance 4-way DONE** focal INCORPORATE |
 | 2026-07-21 | **Handoff-only session:** no new experiments. Tracker G3–G5/D*/C6/L5 aligned; `SESSION_CONTINUITY` + `RESULTS_DISK_MANIFEST` written; next chat continues from continuity §5 |
 | 2026-07-21 | **WP2d val thresholds DONE** on `ft_focal_seed42.pth`: all variants = argmax 0.9780 → **RUN_DOCUMENTED** keep argmax; B12/C11/D7 updated; next: teachers / Optuna / ablations |
+| 2026-07-21 | **WP4b teacher/KD DONE** stage_a_kd α=0.6 T=10 γ=2: ensemble student **0.9401 INCORPORATE**; rf 0.9346 / none 0.9326 / xgb 0.9270 / lgbm 0.8829 RUN_DOCUMENTED; E*/C9 updated; next: Optuna (WP3) or ablations (WP5) |
 
 ---
 

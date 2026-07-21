@@ -1,7 +1,37 @@
 # Progress log (results as they land)
 
 **Policy:** document everything; label pilot vs full; test sealed unless noted.  
-**Handoff snapshot:** 2026-07-21 (WP2d val thresholds DONE)
+**Handoff snapshot:** 2026-07-21 (WP4b teacher/KD DONE)
+
+---
+
+## 2026-07-21 — WP4b teacher/KD under protocol (science)
+
+Scripts: `scripts/train_protocol_kd.py`, `scripts/run_teacher_kd_compare.py`  
+Protocol: `botiot_v1` / **stage_a_kd** / seed 42 / full train / **val only** (test sealed)  
+Recipe: α=0.6, T=10.0, focal γ=2.0, epochs≤10, patience=4, batch=512, lr=1e-3  
+Summary: `benchmarks/results/teachers_kd/summary.json` md5 `63ab4bd3f40e24adc6788fa1ca255bd8`  
+Wall ~6879 s (~1.9 h). Champion md5 **unchanged** `80a90f7cc210276300eaa90173a5a385`.
+
+| Rank | Teacher | Student val macro-F1 | Min-cls | Theft | Teacher val | Decision |
+|------|---------|----------------------|---------|-------|-------------|----------|
+| 1 | **ensemble** (RF+XGB+LGBM mean) | **0.9401** | 0.8434 | 0.9231 | 0.9803 | **INCORPORATE** |
+| 2 | rf | 0.9346 | 0.8000 | **1.0000** | 0.9750 | RUN_DOCUMENTED fallback |
+| 3 | none (hard-label focal) | 0.9326 | 0.8409 | 0.9231 | — | RUN_DOCUMENTED control |
+| 4 | xgb | 0.9270 | 0.8434 | 0.8571 | **0.9918** | RUN_DOCUMENTED |
+| 5 | lgbm | 0.8829 | 0.7059 | 0.7059 | 0.5928 | RUN_DOCUMENTED (weak) |
+
+**Interpretation**
+- Best **student** is ensemble soft labels — not solo XGB despite XGB’s highest teacher hard-label F1.
+- RF KD still strong and simpler; Theft F1=1.0 on best RF student ckpt.
+- Hard-label `none` nearly matches RF KD (Δmacro ≈ +0.002 for RF) — KD lift modest under this budget.
+- LGBM alone is a poor teacher on stage_a_kd (mirrors classical LGBM weakness).
+- Numbers are **stage_a from-scratch KD**, not stage_b FT (do not mix with multirun mean 0.9714).
+
+Ckpts: `model/teachers_kd/kd_{none,rf,xgb,lgbm,ensemble}_a0.6_T10.0_g2.0_seed42.pth`  
+Tracker: E1–E5/E7/C9/WP4b updated. CAD-CBA-v1 KD teacher → **ensemble**.
+
+**Next science:** WP3 Optuna HPO **or** WP5 ablations/neural baselines **or** stage_b FT from ensemble KD init.
 
 ---
 
