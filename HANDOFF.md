@@ -3,8 +3,9 @@
 **MODE:** 🚀 **EXECUTION — next chat continues Prof tracker.** This chat closed for continuity.  
 **Closed:** 2026-07-21 · **Multi-seed HPO confirm** original distill + hpo_best (science + docs).  
 **Authority:** `docs/execution_plan/SESSION_CONTINUITY.md` + `RESULTS_DISK_MANIFEST.md` + `PROF_FEEDBACK_TRACKER.md` + Option A.  
-**Policy:** skip nothing → JSON → INCORPORATED or RUN_DOCUMENTED. **Perfection over LOR hurry.** No invent DICC numbers.  
-**Champion:** `model/best_model_botiot_twostage.pth` md5 **`80a90f7cc210276300eaa90173a5a385`** — no clobber without BACKUP.
+**Policy:** skip nothing → **complete every playlist/tracker row** → JSON → INCORPORATED or RUN_DOCUMENTED (BLOCKED only for ops). **Perfection over LOR hurry.** No invent DICC numbers. Context hygiene: flip statuses when evidence already exists.  
+**Champion:** `model/best_model_botiot_twostage.pth` md5 **`80a90f7cc210276300eaa90173a5a385`** — no clobber without BACKUP.  
+**Session end:** always paste full next-session prompt in closing message (not only in this file).
 
 ---
 

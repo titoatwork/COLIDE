@@ -2,7 +2,7 @@
 
 **Date:** 2026-07-19  
 **Last status update:** 2026-07-21 (HPO multi-seed confirm mean 0.9689±0.0145 RUN_DOCUMENTED; train HPs stay INCORPORATED)  
-**Rule:** one package first; other ideas still RUN_DOCUMENTED later.
+**Rule:** one package first; **every other playlist idea still gets a bounded run → RUN_DOCUMENTED** (skip-nothing).
 
 ## Chosen package (v1): **Class-aware distilled CNN–BiLSTM (CAD-CBA-v1)**
 

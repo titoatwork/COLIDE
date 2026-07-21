@@ -1,7 +1,20 @@
 # Progress log (results as they land)
 
 **Policy:** document everything; label pilot vs full; test sealed unless noted.  
-**Handoff snapshot:** 2026-07-21 (multi-seed HPO confirm DONE)
+**Handoff snapshot:** 2026-07-21 (multi-seed HPO confirm DONE + full-playlist context hygiene)
+
+---
+
+## 2026-07-21 — Full-playlist / context hygiene (docs only)
+
+User lock reaffirmed: **complete every tracker playlist item** (not only the critical path).  
+Updated `PROF_FEEDBACK_TRACKER.md` from **existing disk/docs evidence** (no new training):
+
+- Closed / upgraded where evidence already existed: B10 (historical α/T sweeps + recipe), B11 (seq len locked), C13, D8, D10, F3/F4/F8, G6 historical, G11, G14, H1/H5, J1, K1, L2–L4/L7/L9, etc.
+- Open rows explicitly tagged **Playlist required** (SupCon, stratified batch, arch HPO B2–B4, neural baselines, XAI, ToN, Pareto, sealed test, …).
+- Continuity + HANDOFF policy text aligned.
+
+**No invented numbers. No science re-runs this micro-pass.**
 
 ---
 

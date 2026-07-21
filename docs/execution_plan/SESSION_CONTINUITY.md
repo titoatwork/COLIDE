@@ -11,11 +11,12 @@
 
 Complete **every** row in `PROF_FEEDBACK_TRACKER.md` for Prof Por / WoS path.
 
-**Policy:** skip nothing → run → JSON → **INCORPORATED** or **RUN_DOCUMENTED**.  
-**Priority (user-locked):** **perfection / full completion** over LOR hurry.  
+**Policy:** skip nothing → **complete every playlist/tracker row** → JSON → **INCORPORATED** or **RUN_DOCUMENTED** (or BLOCKED only for ops like DICC).  
+**Priority (user-locked):** **perfection / full completion** over LOR hurry. **No silent deferrals** of “optional” items (SupCon, arch HPO, neural baselines, XAI, ToN, Pareto, …).  
+**Context hygiene:** if evidence already exists, **update tracker** (do not leave stale TODO). Never invent numbers.  
 **Option A:** per-block CUDA only; no invent multi-day DICC numbers.  
 **Champion:** `model/best_model_botiot_twostage.pth` md5 **`80a90f7cc210276300eaa90173a5a385`** — never clobber without BACKUP + explicit OK.  
-**DICC:** deferred to a **dedicated session** when user opens it (do not start unless asked).
+**DICC:** deferred to a **dedicated session** when user opens it (do not start unless asked) — still on the playlist.
 
 ---
 
@@ -59,14 +60,22 @@ Champion **unchanged**. WP1b + package trees **untouched**. Wall ~50 min.
 - `model/ablation_variants.py` + `scripts/run_ablation_ladder.py` — WP5a ladder A1–A7
 - Thermal guards: `logs/thermal_guard.sh`, `logs/thermal_guard_hpo_confirm.sh`
 
-### 3.12 Not done (do next chat)
-- WP5a ablation ladder run
-- WP5b neural baselines + WP5c Pareto
-- Sealed multi-seed **test** (only after final config lock)
-- Arch HPO / WP2c only if plateau
-- SVM full-data; LGBM classical fix
-- DICC multi-day (user-scheduled)
-- XAI / ToN / manuscript
+### 3.13 Context hygiene (docs-only this follow-up)
+- Tracker policy restated: **complete every playlist item**
+- Stale TODOs flipped where disk evidence already existed (see session log in tracker)
+- Remaining open rows explicitly tagged **Playlist required**
+
+### 3.12 Full remaining playlist (do not skip; order flexible by dependency)
+- **WP5a** ablation ladder A1–A7 (F1–F7, F9) ← next recommended
+- **WP5b** neural baselines (G6 re-protocol, G7–G12) + G2 SVM full + G5 LGBM fix + G15 HPO-effort note
+- **WP5c** Pareto H8
+- **WP4a/D6** stratified batch; **C7/D9** SupCon bounded; **C8** asymmetric loss; **C10** uncertainty; **C4/C5** multi-scale/gated if not rejected after try
+- **B2–B4** bounded arch HPO (WP2c) or RUN_DOCUMENTED after plateau test — still required
+- **B9** class-weight search close
+- Sealed multi-seed **test** after final config lock (B14)
+- **WP6** re-export/fidelity/local re-bench; **WP7** XAI full or J10 drop; **WP8** ToN final method; **WP9** claims + manuscript
+- **WP0** DICC (user-scheduled dedicated session)
+- End every session with **paste-ready handoff prompt** in closing message
 
 ---
 
