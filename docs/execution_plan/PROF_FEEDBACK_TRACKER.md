@@ -49,7 +49,7 @@
 | B11 | Sequence length | TODO | reshape fixed [2,32] with V3 |
 | B12 | Decision thresholds minority | RUN_DOCUMENTED | WP2d on `ft_focal_seed42`: all decode variants = argmax val macro 0.9780 (Δ0); keep argmax (`thresholds_focal_seed42.json`) |
 | B13 | Objectives: val macro-F1, bal-acc, minority recall | DONE (logged) | Primary max val macro-F1; min-cls / bal-acc / Theft logged per trial |
-| B14 | Test untouched until final config | PARTIAL | WP3 test SEALED; multi-seed sealed test of winner still TODO |
+| B14 | Test untouched until final config | PARTIAL | WP3 + package multirun test SEALED; multi-seed sealed test of winner still TODO |
 
 ---
 
@@ -219,7 +219,7 @@
 | L2 | Mod table before final model | PARTIAL | Written |
 | L3 | Avoid changing many parts at once | PARTIAL | Discipline |
 | L4 | Phase: freeze preprocess/split/metrics/seeds/hardware/baseline | PARTIAL | Protocol + freeze card |
-| L5 | ≥5 independent training runs mean±std | DONE | multirun mean 0.9714 ± 0.0109 n=5 (val only) |
+| L5 | ≥5 independent training runs mean±std | DONE | WP1b 0.9714±0.0109; package ensemble+HPO 0.9639±0.0185 n=5 (val only) |
 | L6 | Optuna/Bayesian HPO | DONE | WP3 Optuna TPE val-only; winner INCORPORATE 0.9791 (`config/hpo_best.yaml`) |
 | L7 | One clear proposed method | TODO | |
 | L8 | Deploy: export, parity, profile, kernels, TRT/ORT/compile, FP16/INT8 | PARTIAL | Local CUDA exists |
@@ -257,6 +257,7 @@
 | 2026-07-21 | **WP2d val thresholds DONE** on `ft_focal_seed42.pth`: all variants = argmax 0.9780 → **RUN_DOCUMENTED** keep argmax; B12/C11/D7 updated; next: teachers / Optuna / ablations |
 | 2026-07-21 | **WP4b teacher/KD DONE** stage_a_kd α=0.6 T=10 γ=2: ensemble student **0.9401 INCORPORATE**; rf 0.9346 / none 0.9326 / xgb 0.9270 / lgbm 0.8829 RUN_DOCUMENTED; E*/C9 updated; next: Optuna (WP3) or ablations (WP5) |
 | 2026-07-21 | **WP3 Optuna HPO DONE** stage_b_ft val-only: Stage A 20 trials (11 complete/9 pruned, max_train=400k); Stage B full refine top-3; winner trial8 **0.9791 INCORPORATE** (Δ+0.0010 vs multirun seed42 0.9780); B1/B5–B8/L6 updated; arch B2–B4 deferred; next: FT from ensemble+HPO or WP5 |
+| 2026-07-21 | **Package FT multirun DONE** ensemble KD init + hpo_best: mean **0.9639 ± 0.0185** n=5 (max 0.9803 seed45; min 0.9328 seed43) RUN_DOCUMENTED — mean does not beat WP1b 0.9714±0.0109; higher variance; L5 dual multirun noted; next: multi-seed HPO confirm or WP5 ablations |
 
 ---
 

@@ -1,7 +1,7 @@
 # Results Disk Manifest (handoff snapshot)
 
 **Generated (UTC):** 2026-07-21T11:01:25.771483+00:00  
-**Last append (UTC):** 2026-07-21T16:20:36 (WP3 Optuna HPO)
+**Last append (UTC):** 2026-07-21T19:20:00 (package FT multirun ensemble+HPO)
 **Host path root:** `/home/titoisalive/colide`
 
 `benchmarks/results/` is **gitignored**. This file is committed so the next session can verify local artifacts without inventing numbers.
@@ -165,4 +165,53 @@
 | 3 | 13 | 0.8656 | 0.5000 | 0.5000 | RUN_DOCUMENTED |
 
 **Trap:** Stage A used max_train=400k; do not claim Stage A scores as full-train. Winner is Stage B full-train only. Champion not overwritten.
+
+## Package FT multirun — ensemble KD + HPO HPs (2026-07-21)
+
+**Stage:** `stage_b_ft` · seeds 42–46 · val-only · test sealed · arch fixed V3  
+**Init:** `model/teachers_kd/kd_ensemble_a0.6_T10.0_g2.0_seed42.pth` (WP4b ensemble)  
+**Train HPs:** `config/hpo_best.yaml` (WP3 winner)  
+**Scripts:** `scripts/train_protocol_ft.py` (HPO-aware), `scripts/run_package_ft_multirun.py`  
+**Tag:** `multirun_ensemble_hpo/` (WP1b `multirun/` intentionally untouched)  
+**Wall:** ~5062 s (~84 min)  
+**Champion md5 unchanged** `80a90f7cc210276300eaa90173a5a385`
+
+### Result JSON
+
+| Path | md5 | bytes | key metrics |
+|------|-----|-------|-------------|
+| `benchmarks/results/multirun_ensemble_hpo/summary.json` | `1fa206e34c50e799d531f5eee70629e8` | — | mean **0.9639 ± 0.0185** n=5 |
+| `benchmarks/results/multirun_ensemble_hpo/ft_seed42.json` | `b605b08bd52b09d1a95b40883079d95f` | 7820 | 0.9741 |
+| `benchmarks/results/multirun_ensemble_hpo/ft_seed43.json` | `24025857074d4573ea0838046007167e` | 8743 | 0.9328 |
+| `benchmarks/results/multirun_ensemble_hpo/ft_seed44.json` | `0405e3280a748bcec3f3c5996662bc83` | 8806 | 0.9699 |
+| `benchmarks/results/multirun_ensemble_hpo/ft_seed45.json` | `2d0fc39a3c56b13f996527ecdae70867` | 8522 | **0.9803** |
+| `benchmarks/results/multirun_ensemble_hpo/ft_seed46.json` | `3857772b192ceb8b232baf02208f8845` | 9038 | 0.9623 |
+
+### Checkpoints
+
+| Path | md5 | bytes |
+|------|-----|-------|
+| `model/multirun_ensemble_hpo/ft_seed42.pth` | `bda58953cd3c1990a10a72de28f51d39` | 2133122 |
+| `model/multirun_ensemble_hpo/ft_seed43.pth` | `02b046ea55c7a77f6461c9850193e9b8` | 2133122 |
+| `model/multirun_ensemble_hpo/ft_seed44.pth` | `34fbcfda4c215aa5b71ea31cb7065791` | 2133122 |
+| `model/multirun_ensemble_hpo/ft_seed45.pth` | `66e9167359934261dca48d9a58f98b27` | 2133122 |
+| `model/multirun_ensemble_hpo/ft_seed46.pth` | `e2674fbd45ab34bdd6628850a3839a65` | 2133122 |
+
+### Per-seed ranking
+
+| Seed | val macro-F1 | Min-cls | Theft |
+|------|--------------|---------|-------|
+| 45 | **0.9803** | 0.9474 | 1.0000 |
+| 42 | 0.9741 | 0.9333 | 1.0000 |
+| 44 | 0.9699 | 0.8947 | 1.0000 |
+| 46 | 0.9623 | 0.9091 | 0.9091 |
+| 43 | 0.9328 | 0.8000 | 0.8000 |
+
+**Mean 0.9639 ± 0.0185** (n=5) · min-cls mean 0.8969 · Theft mean 0.9418  
+
+**Comparators:** WP1b multirun (old distill + default HPs) **0.9714 ± 0.0109**; WP3 HPO seed42 refine **0.9791**.  
+
+**Decision: RUN_DOCUMENTED** — full CAD-CBA-v1 path (ensemble KD init + HPO train HPs) is multi-seed stable in the mid-0.96 band, but **mean does not beat WP1b** and **std is higher** (seed 43 weak). HPO was tuned on a different init; do not claim package multirun as an improvement over WP1b mean. Components (ensemble teacher, HPO HPs, focal) remain individually INCORPORATED; aggregate package mean is evidence, not a new champion.
+
+**Trap:** Do not overwrite WP1b `multirun/summary.json` with package numbers. Do not mix stage_a KD 0.9401 with these stage_b FT scores.
 

@@ -1,21 +1,25 @@
 #!/usr/bin/env python3
 """
-Fine-tune a distill checkpoint on BoT-IoT under the canonical protocol (stage_b_ft).
+Fine-tune a distill / KD checkpoint on BoT-IoT under the canonical protocol (stage_b_ft).
 
 - Data: scripts.protocol.botiot (real data, no SMOTE)
 - Selection: validation macro-F1 only
 - Test: only with --allow-test (sealed)
 - NEVER overwrites model/best_model_botiot_twostage.pth unless --allow-overwrite-champion
 
+Supports CAD-CBA-v1 train HPs (Optuna WP3): dropout, attention_dropout, weight_decay,
+scheduler (AdamW + cosine/step). Optional --hpo-config loads defaults from hpo_best.yaml.
+
 Example:
   PYTHONPATH=. .venv/bin/python scripts/train_protocol_ft.py \\
-    --init-checkpoint model/best_model_botiot_distill_a0.6_T10.0_focal2.pth \\
-    --seed 42 --epochs 10
+    --init-checkpoint model/teachers_kd/kd_ensemble_a0.6_T10.0_g2.0_seed42.pth \\
+    --hpo-config config/hpo_best.yaml --seed 42 --epochs 10
 """
 
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 import random
 import sys
@@ -26,7 +30,8 @@ import numpy as np
 import torch
 import yaml
 from torch.amp import GradScaler, autocast
-from torch.optim import Adam
+from torch.optim import Adam, AdamW
+from torch.optim.lr_scheduler import CosineAnnealingLR, StepLR
 from torch.utils.data import DataLoader, TensorDataset
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -54,7 +59,9 @@ def set_seed(seed: int) -> None:
     torch.backends.cudnn.benchmark = False
 
 
-def make_loader(X, y, batch_size: int, shuffle: bool, device: torch.device) -> DataLoader:
+def make_loader(
+    X, y, batch_size: int, shuffle: bool, device: torch.device, drop_last: bool = False
+) -> DataLoader:
     pin = device.type == "cuda"
     ds = TensorDataset(
         torch.from_numpy(np.asarray(X, dtype=np.float32)),
@@ -66,6 +73,7 @@ def make_loader(X, y, batch_size: int, shuffle: bool, device: torch.device) -> D
         shuffle=shuffle,
         num_workers=2,
         pin_memory=pin,
+        drop_last=drop_last,
     )
 
 
@@ -85,6 +93,16 @@ def eval_split(model, loader, device, class_names):
     return compute_classification_metrics(y_true, y_pred, class_names)
 
 
+def _load_hpo_best_params(path: Path) -> dict:
+    with open(path) as f:
+        doc = yaml.safe_load(f)
+    hpo = doc.get("hpo", doc)
+    params = hpo.get("best_params") or hpo.get("params") or {}
+    if not params:
+        raise ValueError(f"No best_params in {path}")
+    return {k: params[k] for k in params}
+
+
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument(
@@ -97,6 +115,44 @@ def main() -> int:
     p.add_argument("--lr", type=float, default=1e-4)
     p.add_argument("--batch-size", type=int, default=256)
     p.add_argument("--focal-gamma", type=float, default=2.0)
+    p.add_argument(
+        "--dropout-rate",
+        type=float,
+        default=None,
+        help="Model dropout (default: config.yaml; or from --hpo-config)",
+    )
+    p.add_argument(
+        "--attention-dropout",
+        type=float,
+        default=None,
+        help="Attention dropout (default: config.yaml; or from --hpo-config)",
+    )
+    p.add_argument(
+        "--weight-decay",
+        type=float,
+        default=0.0,
+        help="AdamW weight decay (0 + default optim=Adam matches pre-HPO FT)",
+    )
+    p.add_argument(
+        "--scheduler",
+        type=str,
+        default="none",
+        choices=["none", "cosine", "step"],
+        help="LR schedule after each epoch (matches WP3 HPO)",
+    )
+    p.add_argument(
+        "--optimizer",
+        type=str,
+        default="auto",
+        choices=["auto", "adam", "adamw"],
+        help="auto: AdamW if weight_decay>0 else Adam (legacy multirun)",
+    )
+    p.add_argument(
+        "--hpo-config",
+        type=str,
+        default="",
+        help="If set, fill unset train HPs from config/hpo_best.yaml best_params",
+    )
     p.add_argument(
         "--loss",
         type=str,
@@ -125,7 +181,33 @@ def main() -> int:
         help="Required if --save-path points at the production champion file",
     )
     p.add_argument("--config", type=str, default="config/config.yaml")
+    p.add_argument(
+        "--drop-last-train",
+        action="store_true",
+        help="drop_last on train loader (recommended for large batch + BN; HPO used this)",
+    )
     args = p.parse_args()
+
+    # Merge HPO winner params when requested (CLI explicit values win after merge for
+    # fields that were intentionally left at argparse defaults).
+    hpo_src = None
+    if args.hpo_config:
+        hpo_path = Path(args.hpo_config)
+        if not hpo_path.is_file():
+            print(f"ERROR: hpo config missing: {hpo_path}", file=sys.stderr)
+            return 1
+        hp = _load_hpo_best_params(hpo_path)
+        hpo_src = str(hpo_path)
+        # Always apply full HPO train recipe when --hpo-config is given (package mode).
+        args.lr = float(hp["lr"])
+        args.batch_size = int(hp["batch_size"])
+        args.focal_gamma = float(hp["focal_gamma"])
+        args.dropout_rate = float(hp["dropout_rate"])
+        args.attention_dropout = float(hp["attention_dropout"])
+        args.weight_decay = float(hp["weight_decay"])
+        args.scheduler = str(hp["scheduler"])
+        if args.optimizer == "auto":
+            args.optimizer = "adamw"
 
     set_seed(args.seed)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -161,21 +243,29 @@ def main() -> int:
         return 1
 
     bundle = load_botiot(stage="stage_b_ft", seed=args.seed)
+    # Match WP3 HPO: drop_last on train for large batches / BN stability
+    drop_last = bool(args.drop_last_train) or args.batch_size >= 512
     train_loader = make_loader(
-        bundle.X_train, bundle.y_train, args.batch_size, True, device
+        bundle.X_train, bundle.y_train, args.batch_size, True, device, drop_last=drop_last
     )
     val_loader = make_loader(
-        bundle.X_val, bundle.y_val, args.batch_size, False, device
+        bundle.X_val, bundle.y_val, args.batch_size, False, device, drop_last=False
     )
     test_loader = make_loader(
-        bundle.X_test, bundle.y_test, args.batch_size, False, device
+        bundle.X_test, bundle.y_test, args.batch_size, False, device, drop_last=False
     )
 
     config = load_config(PROJECT_ROOT / args.config)
+    cfg = copy.deepcopy(config)
+    if args.dropout_rate is not None:
+        cfg["model"]["dropout_rate"] = float(args.dropout_rate)
+    if args.attention_dropout is not None:
+        cfg["model"]["attention_dropout"] = float(args.attention_dropout)
+
     sys.path.insert(0, str(PROJECT_ROOT / "model"))
     from cnn_bilstm_v3_attention import CNNBiLSTMAttention
 
-    model = CNNBiLSTMAttention(config).to(device)
+    model = CNNBiLSTMAttention(cfg).to(device)
     model.load_state_dict(torch.load(init_ckpt, map_location=device, weights_only=True))
 
     y_tr_t = torch.from_numpy(bundle.y_train)
@@ -192,13 +282,38 @@ def main() -> int:
     else:
         raise ValueError(args.loss)
 
-    optimizer = Adam(model.parameters(), lr=args.lr)
+    optim_name = args.optimizer
+    if optim_name == "auto":
+        optim_name = "adamw" if args.weight_decay > 0 else "adam"
+    if optim_name == "adamw":
+        optimizer = AdamW(
+            model.parameters(), lr=args.lr, weight_decay=float(args.weight_decay)
+        )
+    else:
+        optimizer = Adam(model.parameters(), lr=args.lr)
+
+    if args.scheduler == "cosine":
+        scheduler = CosineAnnealingLR(optimizer, T_max=max(args.epochs, 1))
+    elif args.scheduler == "step":
+        scheduler = StepLR(optimizer, step_size=max(args.epochs // 2, 1), gamma=0.5)
+    else:
+        scheduler = None
+
     scaler = GradScaler("cuda", enabled=device.type == "cuda")
 
     best_val_f1 = -1.0
     patience_left = args.patience
     history = []
     t0 = time.time()
+
+    print(
+        f"FT start seed={args.seed} device={device} init={init_ckpt.name} "
+        f"lr={args.lr} bs={args.batch_size} γ={args.focal_gamma} "
+        f"drop={cfg['model'].get('dropout_rate')} att_drop={cfg['model'].get('attention_dropout')} "
+        f"wd={args.weight_decay} sched={args.scheduler} optim={optim_name} "
+        f"epochs≤{args.epochs} patience={args.patience} drop_last_train={drop_last}",
+        flush=True,
+    )
 
     for epoch in range(1, args.epochs + 1):
         model.train()
@@ -217,6 +332,9 @@ def main() -> int:
             running += float(loss.item()) * xb.size(0)
             n += xb.size(0)
 
+        if scheduler is not None:
+            scheduler.step()
+
         val_m = eval_split(model, val_loader, device, bundle.class_names)
         train_loss = running / max(n, 1)
         history.append(
@@ -226,13 +344,18 @@ def main() -> int:
                 "val_macro_f1": val_m["macro_f1"],
                 "val_balanced_accuracy": val_m["balanced_accuracy"],
                 "val_min_per_class_f1": val_m["min_per_class_f1"],
+                "val_theft_f1": val_m.get("theft_f1"),
+                "val_normal_f1": val_m.get("normal_f1"),
+                "lr": float(optimizer.param_groups[0]["lr"]),
             }
         )
         print(
             f"seed={args.seed} epoch {epoch:02d} | loss {train_loss:.4f} | "
             f"val_macro_f1 {val_m['macro_f1']:.4f} | "
             f"val_bal_acc {val_m['balanced_accuracy']:.4f} | "
-            f"min_cls_f1 {val_m['min_per_class_f1']:.4f}"
+            f"min_cls_f1 {val_m['min_per_class_f1']:.4f} | "
+            f"theft {val_m.get('theft_f1', float('nan')):.4f} | "
+            f"lr {optimizer.param_groups[0]['lr']:.2e}"
         )
 
         if val_m["macro_f1"] > best_val_f1:
@@ -265,9 +388,16 @@ def main() -> int:
             "lr": args.lr,
             "batch_size": args.batch_size,
             "focal_gamma": args.focal_gamma,
+            "dropout_rate": cfg["model"].get("dropout_rate"),
+            "attention_dropout": cfg["model"].get("attention_dropout"),
+            "weight_decay": args.weight_decay,
+            "scheduler": args.scheduler,
+            "optimizer": optim_name,
             "loss": args.loss,
             "logit_tau": args.logit_tau,
             "patience": args.patience,
+            "drop_last_train": drop_last,
+            "hpo_config": hpo_src,
             "save_path": str(save_path),
         },
         metrics={

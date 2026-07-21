@@ -1,7 +1,48 @@
 # Progress log (results as they land)
 
 **Policy:** document everything; label pilot vs full; test sealed unless noted.  
-**Handoff snapshot:** 2026-07-21 (WP3 Optuna HPO DONE)
+**Handoff snapshot:** 2026-07-21 (package FT multirun ensemble+HPO DONE)
+
+---
+
+## 2026-07-21 — Package FT multirun: ensemble KD init + HPO HPs (science)
+
+Scripts: `scripts/train_protocol_ft.py` (HPO-aware AdamW/cosine/dropout), `scripts/run_package_ft_multirun.py`  
+Protocol: `botiot_v1` / **stage_b_ft** / seeds 42–46 / epochs≤10 patience=3 / **val only** (test sealed)  
+Init: `model/teachers_kd/kd_ensemble_a0.6_T10.0_g2.0_seed42.pth`  
+HPs: `config/hpo_best.yaml` (lr≈5.89e-5, batch=1024, γ≈1.92, drop≈0.148, att≈0.214, wd≈1.92e-4, cosine, AdamW)  
+Summary: `benchmarks/results/multirun_ensemble_hpo/summary.json` md5 `1fa206e34c50e799d531f5eee70629e8`  
+Wall ~84 min. Champion md5 **unchanged** `80a90f7cc210276300eaa90173a5a385`.  
+WP1b `multirun/` tree **not clobbered**.
+
+| Seed | Best val macro-F1 | Min-cls | Theft | Elapsed |
+|------|-------------------|---------|-------|---------|
+| 42 | 0.9741 | 0.9333 | 1.0000 | ~14 min |
+| 43 | 0.9328 | 0.8000 | 0.8000 | ~29 min |
+| 44 | 0.9699 | 0.8947 | 1.0000 | ~13 min |
+| 45 | **0.9803** | **0.9474** | **1.0000** | ~12 min |
+| 46 | 0.9623 | 0.9091 | 0.9091 | ~14 min |
+
+**Mean 0.9639 ± 0.0185** (n=5) · min 0.9328 · max 0.9803  
+
+**Comparators**
+- WP1b multirun (old distill + default HPs): **0.9714 ± 0.0109**
+- WP3 HPO full-train seed42: **0.9791**
+- Package seed45 max **0.9803** exceeds HPO seed42 point estimate
+
+**Interpretation**
+- Full CAD-CBA-v1 train path (ensemble KD → FT with Optuna HPs) is **run and documented**.
+- Aggregate mean is **slightly below** WP1b and **higher variance** (seed 43 drags).
+- Honest finding: HPO HPs optimized on old distill init do not transfer into a better multi-seed mean on ensemble KD init.
+- Early epochs often collapse Theft then recover by ep3–4 (documented dynamics, not a bug; zero-train KD eval still 0.9401).
+- **Decision: RUN_DOCUMENTED** for package multirun aggregate (not a mean win over WP1b). Component decisions unchanged (ensemble teacher, HPO HPs, focal, argmax).
+
+**Also this session (tooling, not yet run to completion)**
+- `model/ablation_variants.py` + `scripts/run_ablation_ladder.py` (WP5a ready)
+- `scripts/run_hpo_multiseed_confirm.py` (multi-seed HPO on original distill init)
+- Thermal guard `logs/thermal_guard.sh` (soft 85°C / hard pause 90°C)
+
+**Next science:** multi-seed HPO confirm (n≥5, original init) **or** WP5 ablations (A1–A7) **or** neural baselines. DICC only when user opens session.
 
 ---
 
