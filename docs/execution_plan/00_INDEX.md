@@ -11,13 +11,15 @@
 
 | Priority | Document |
 |----------|----------|
+| 0 | **`SESSION_CONTINUITY.md`** + **`RESULTS_DISK_MANIFEST.md`** + root **`HANDOFF.md`** — live handoff / disk numbers |
 | 1 | `docs/feedback1.docx` — Prof technical plan |
-| 2 | **This pack** (`docs/execution_plan/`) — operational plan |
-| 3 | `docs/PROF_FEEDBACK_ROADMAP.md` — short phase summary |
-| 4 | `docs/MOD_DECISION_TABLE.md` — modification IDs |
-| 5 | `docs/DESIGN_PLAN.md` Option A — CUDA claim rules (still binding) |
-| 6 | `docs/FINAL_PLAN.md` — DICC ops / numbers-match gates |
-| 7 | `docs/audit/` — evidence feedstock for frozen local numbers |
+| 2 | **`PROF_FEEDBACK_TRACKER.md`** — live checklist (update every session) |
+| 3 | **This pack** (`docs/execution_plan/`) — operational plan |
+| 4 | `docs/PROF_FEEDBACK_ROADMAP.md` — short phase summary |
+| 5 | `docs/MOD_DECISION_TABLE.md` — modification IDs |
+| 6 | `docs/DESIGN_PLAN.md` Option A — CUDA claim rules (still binding) |
+| 7 | `docs/FINAL_PLAN.md` — DICC ops / numbers-match gates |
+| 8 | `docs/audit/` — evidence feedstock for frozen local numbers |
 
 ---
 
@@ -26,7 +28,12 @@
 | File | Contents |
 |------|----------|
 | `00_INDEX.md` | This file |
+| **`SESSION_CONTINUITY.md`** | **Authoritative session handoff narrative** |
+| **`RESULTS_DISK_MANIFEST.md`** | **Committed md5s + headline metrics (results are gitignored)** |
 | **`PROF_FEEDBACK_TRACKER.md`** | **Live checklist of every Prof requirement (update always)** |
+| `PROGRESS_LOG.md` | Chronological experiment log |
+| `METHOD_PACKAGE_DECISION.md` | CAD-CBA-v1 signed method package |
+| `BASELINE_FREEZE_CARD.md` | Protocol / champion freeze |
 | `01_CODEBASE_INVENTORY.md` | Every major area of the repo; what each file family does |
 | `02_FEEDBACK_DEEP_ANALYSIS.md` | Line-by-line interpretation of Prof feedback + implications |
 | `03_GAP_MATRIX.md` | Prof requirement × current code/results × gap × severity |
@@ -49,19 +56,19 @@
 ## Golden path (do not reorder casually)
 
 ```text
-0 DICC multi-day UM          ← CURRENT BLOCKER (artifacts ABSENT)
-1 Baseline freeze + multi-run
-2 Choose ONE method package (decision table)
-3 HPO on validation only
-4 Imbalance + teacher under that method
-5 Ablations + baselines + Pareto
+0 DICC multi-day UM          ← STILL BLOCKED (artifacts ABSENT)
+1 Baseline freeze + multi-run   ← DONE (protocol + multirun mean 0.9714±0.0109)
+2 Choose ONE method package     ← DONE (CAD-CBA-v1; focal default)
+3 HPO on validation only        ← NEXT open
+4 Imbalance + teacher           ← loss compare DONE; teacher/thresholds open
+5 Ablations + baselines + Pareto← classical PARTIAL; neural/ablations open
 6 Deploy / CUDA re-bench (Option A)
 7 XAI quality (if title claims explainable)
 8 Second dataset (ToN)
-9 Numbers-match + manuscript
+9 Numbers-match + manuscript    ← not until tracker largely green
 ```
 
-**Parallel only while 0 waits:** inventory, scripts scaffolding, claim-JSON packaging, decision-table refinement — **not** bulk retrain, **not** manuscript freeze of cluster numbers.
+**Parallel only while 0 waits:** thresholds, teachers, HPO, ablations, claim-JSON packaging — **not** manuscript freeze of cluster numbers.
 
 ---
 

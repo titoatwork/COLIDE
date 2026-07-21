@@ -1,8 +1,9 @@
 # Baseline Freeze Card (Phase 1) — BoT-IoT
 
-**Status:** ACTIVE foundation (2026-07-19)  
+**Status:** ACTIVE foundation (2026-07-19); multirun baseline **DONE** 2026-07-19 (mean val macro-F1 0.9714±0.0109)  
 **Protocol ID:** `botiot_v1`  
-**Code:** `scripts/protocol/botiot.py`, `scripts/protocol/metrics.py`, `scripts/eval_checkpoint.py`
+**Code:** `scripts/protocol/botiot.py`, `scripts/protocol/metrics.py`, `scripts/eval_checkpoint.py`  
+**Handoff numbers:** see `RESULTS_DISK_MANIFEST.md`
 
 ---
 

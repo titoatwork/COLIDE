@@ -1,914 +1,114 @@
 # COLIDE — Session Handoff
 
-**MODE:** 🚀 **EXECUTION ACTIVE (this chat continues).** Skip nothing. Tracker is law.  
-**Goal:** Full Prof Por feedback → WoS-level contribution.  
-**Law:** `PROF_FEEDBACK_TRACKER.md` + `SESSION_CONTINUITY.md` + Option A.  
-**Policy:** run → JSON → INCORPORATED or RUN_DOCUMENTED. No silent skips.  
-**Retire only later** (~400k tokens or user says so) — not yet.
-
-**Do first each turn:** check multirun/classical jobs + JSON; advance next WP.  
-
-**Background:** multirun 5×10ep; classical full; queue imbalance after multirun summary.  
-**Done so far:** protocol, FT/multirun/classical/imbalance tooling, smoke 0.9755, champion val 0.9780, LR full 0.523. md5 `80a90f7…` safe. DICC **ABSENT**.
-
-**Standing process (every session forever):** see **Session lifecycle** below — close with
-verify → commit/push → next-session prompt; never leave uncommitted handoff work.
+**MODE:** 🚀 **EXECUTION — next chat continues Prof tracker.** This chat closed for continuity.  
+**Closed:** 2026-07-21 · **docs/handoff only** (no new experiments).  
+**Authority:** `docs/execution_plan/SESSION_CONTINUITY.md` + `RESULTS_DISK_MANIFEST.md` + `PROF_FEEDBACK_TRACKER.md` + Option A.  
+**Policy:** skip nothing → JSON → INCORPORATED or RUN_DOCUMENTED. No invent DICC numbers.  
+**Champion:** `model/best_model_botiot_twostage.pth` md5 **`80a90f7cc210276300eaa90173a5a385`** — no clobber without BACKUP.
 
 ---
 
-## Session lifecycle (HARD RULE — every session from 2026-07-14 onward)
+## This chat / arc delivered
 
-User-confirmed standing pattern. **Do this at the end of every agent chat**, not only
-design or deadline sessions.
+| Deliverable | Status |
+|-------------|--------|
+| Protocol `botiot_v1` + metrics/losses/thresholds | DONE |
+| Sealed `eval_checkpoint` (champion val **0.9780**) | DONE |
+| WP1b multirun 5 seeds | **DONE** mean **0.9714 ± 0.0109** |
+| Classical protocol-fair LR/RF/XGB/LGBM | DOCUMENTED (RF 0.978 / XGB 0.976) |
+| Imbalance loss compare 4 losses | **DONE** — **focal wins 0.9780** |
+| CAD-CBA-v1 method decision | Signed (status refreshed) |
+| Full execution plan + tracker | DONE + aligned 2026-07-21 |
+| `RESULTS_DISK_MANIFEST.md` | DONE (committed numbers + md5s) |
 
-### A. One major package ≈ one chat
-- Do not stack DICC + manuscript + claim rewrites in one thread.
-- Prefer correctness and design over speed.
+**DICC:** still **ABSENT** (`benchmarks/results/dicc/`).  
+**Jobs:** multirun + imbalance compare **finished** (2026-07-19); expect no train processes.
 
-### B. Before claiming “session done”
-Agent must **actually check** (not assume):
+---
 
-```bash
-cd /path/to/colide
-git status -sb          # clean, or only intentional leftovers documented
-git log -1 --oneline
-git rev-parse HEAD origin/master   # must match after push
-# if claim/README edits: PYTHONPATH=. python scripts/verify_claims.py
-```
+## Open with (next chat)
 
-Checklist:
+1. `HANDOFF.md` (this header)  
+2. **`docs/execution_plan/SESSION_CONTINUITY.md`**  
+3. **`docs/execution_plan/RESULTS_DISK_MANIFEST.md`**  
+4. **`docs/execution_plan/PROGRESS_LOG.md`**  
+5. **`docs/execution_plan/PROF_FEEDBACK_TRACKER.md`**
 
-| Gate | Requirement |
-|------|-------------|
-| HANDOFF header | Current mode, next package, open-with list updated |
-| Deliverables | On disk under repo (or explicitly “user-manual only”) |
-| Commit | Meaningful message; all session docs/code intended to keep |
-| Push | `master` → `origin/master` unless user forbade network |
-| Clean tree | `nothing to commit, working tree clean` (or list deferred files) |
-| Next prompt | Paste-ready block in HANDOFF **and** in the closing user message |
-| Champion ckpt | Never clobber `best_model_botiot_twostage.pth` without backup + user OK |
+---
 
-### C. Closing message to user (required format)
-1. **Session status table** (done / not done / deferred)  
-2. **Git:** commit hash, pushed yes/no, clean yes/no  
-3. **Paste-ready next-session prompt** (full text, not “see HANDOFF”)  
-4. What **user** must do offline (if any) before that chat  
-
-### D. Canonical next-session prompts (update when mode changes)
-
-**★ NEXT (default) — Close tracker rows (rock mode)**
+## Paste-ready next-session prompt
 
 ```text
 Continue COLIDE — FULL PROF FEEDBACK EXECUTION. Skip nothing. Exceptional quality.
-Option A CUDA locked. Authority: docs/execution_plan/PROF_FEEDBACK_TRACKER.md +
-00_INDEX.md + feedback1.docx.
+Option A CUDA locked. NO new jobs until you read continuity + verify disk.
 
-Read: HANDOFF.md header + Session lifecycle + PROF_FEEDBACK_TRACKER.md + 15_WORK_PACKAGES.md.
+Read first (in order):
+1) HANDOFF.md header + Session lifecycle
+2) docs/execution_plan/SESSION_CONTINUITY.md   ← authoritative handoff
+3) docs/execution_plan/RESULTS_DISK_MANIFEST.md
+4) docs/execution_plan/PROGRESS_LOG.md
+5) docs/execution_plan/PROF_FEEDBACK_TRACKER.md
+6) docs/execution_plan/METHOD_PACKAGE_DECISION.md
+7) docs/execution_plan/15_WORK_PACKAGES.md
 
-Policy: every significant Prof item must be RUN with JSON results; then INCORPORATED
-or RUN_DOCUMENTED (what happened). No silent skips. Protocol freeze enables fair
-improvements — still deliver HPO, method, imbalance, teachers, ablations, baselines,
-Pareto, DICC, XAI, ToN as tracked.
+Verify on disk (do not invent if missing):
+- benchmarks/results/multirun/summary.json  (mean ~0.9714±0.0109, n=5)
+- benchmarks/results/imbalance_loss/summary.json  (focal wins 0.9780)
+- benchmarks/results/baselines_classical/*_seed42.json + summary_handoff.json
+- model/multirun/ft_seed{42..46}.pth ; model/imbalance_loss/ft_*_seed42.pth
+- Champion md5 still 80a90f7cc210276300eaa90173a5a385
 
-Default next (no DICC required): WP1b multi-seed baseline under scripts/protocol
-OR implement train path on protocol + first imbalance/teacher experiments.
-If user has DICC SSH: WP0 in parallel/separate focus.
+Last session (2026-07-21): DOCUMENTATION / HANDOFF ONLY — no new experiments.
+Completed prior: protocol; WP1b multirun DONE; classical protocol-fair RF/XGB/LR;
+imbalance loss compare DONE (focal INCORPORATE; focal_cb/logit_adj RUN_DOCUMENTED).
 
-Rules: no invent multi-day numbers; no clobber best_model_botiot_twostage.pth without
-BACKUP + OK; update tracker statuses every session; commit/push; end lifecycle.
+Next (pick one, document JSON + update tracker):
+A) Val thresholds on model/imbalance_loss/ft_focal_seed42.pth
+B) Teacher/KD experiments under protocol
+C) Optuna HPO val-only
+D) Ablations / neural baselines
+E) Guided DICC if user has SSH
+
+Rules: no invent multi-day numbers; no clobber champion without BACKUP;
+update tracker every WP; commit/push; end per HANDOFF lifecycle.
 ```
 
-**Alternate — Guided UM DICC ops (when user has SSH time)**
-
-User drives SSH/scp; agent coaches live. Agent never invents cluster numbers.
-
-```text
-Continue COLIDE — GUIDED UM DICC. Option A locked.
-
-Read: HANDOFF.md header + Session lifecycle + docs/PROF_POR_3DAY.md + dicc_scripts/README.md
-+ docs/DESIGN_PLAN.md §6 + docs/FINAL_PLAN.md P0–P1.
-
-Role split:
-- I (user) have SSH/scp to login01.dicc.um.edu.my (ibteshamulhaque). I run every command.
-- You (agent) do NOT have DICC access. Guide step-by-step; wait for pasted output.
-
-Walk through: tarball → unpack → run_campaign Day1 → Day2 → compare → scp
-benchmarks/results/dicc/ home. Champion md5 80a90f7cc210276300eaa90173a5a385.
-
-Rules: no training; no invented DICC numbers; no full-pipeline CUDA vs full V3.
-End: verify, commit/push notes, next prompt (Prof pack if artifacts local).
-```
-
-**After DICC artifacts are already on the laptop (Prof pack + numbers match):**
-
-```text
-Continue COLIDE — Prof Por numbers pack + codebase numbers match. Option A locked.
-
-Read: HANDOFF.md header + Session lifecycle + docs/FINAL_PLAN.md P2 + docs/PROF_POR_3DAY.md
-+ docs/DESIGN_PLAN.md §5–§6.
-
-DICC results are under benchmarks/results/dicc/ on the laptop (I will correct if missing).
-
-Tasks (do not skip; do NOT email Prof until 4–5 are done):
-1) Inventory SUCCESS dirs / compare accept/reject for V100 and A100.
-2) Extract Block 3 CUDA + PyTorch same-GPU numbers (and absolute full V3 PT only) from JSON.
-3) Fill docs/PROF_POR_3DAY.md §4.
-4) Codebase-wide numbers match: README, docs, paper_text_blocks, HANDOFF, §4, draft email
-   must agree; fix stale strings; ranges not lucky points; June legacy labeled if used.
-5) PYTHONPATH=. python scripts/verify_claims.py must be green.
-6) Only then produce/send short Prof Por update with ALL locked numbers.
-7) Option A: NO full-pipeline Custom CUDA vs full V3 PyTorch speedup claims.
-8) End session per HANDOFF Session lifecycle: verify, commit, push, next prompt.
-
-Do NOT train, do NOT clobber best_model_botiot_twostage.pth, do NOT invent DICC numbers.
-```
-
-**★ NEXT while waiting on Prof:** no DICC ops required; resume with Prof decision.
-
-```text
-Continue COLIDE per docs/FINAL_PLAN.md. Option A locked. Numbers-match gate before any Prof send.
-
-Prof decision on Cheran/DICC: [agreed / declined / pending — fill in].
-If agreed: coach run card P0→P1; wait for paste-backs / results tarball.
-If results under benchmarks/results/dicc/: run Prof pack P2a–P2d (match + verify_claims before email).
-
-Rules: no training; no clobber champion; no invented numbers; no full-pipeline CUDA vs full V3.
-End per HANDOFF lifecycle.
-```
-
-**After Prof update is sent (later):** residual P3 / manuscript P4; keep lifecycle.
-
-### E. Also document in agent guides
-`CLAUDE.md` and `AGENTS.md` point here so every tool/session sees the rule.
-
 ---
 
-## Design plan checkpoint (2026-07-14) — **APPROVED**
+## Session lifecycle (standing)
 
-| Item | Value |
-|------|--------|
-| Deliverable | **`docs/DESIGN_PLAN.md`** |
-| User decision | **Approved everything** (2026-07-14) |
-| Strategy | **Option A** locked — per-block claims only; no full-pipeline CUDA vs full V3 PT |
-| Top invalid claim | Full-pipeline Custom CUDA vs full V3 (attn/LN/GAP; last-timestep vs GAP; pipeline skip B3) |
-| Top scientific risk | Rostam Day 1: B3 CUDA slower than PT on V100/A100 — confirm/refute on UM |
-| Deadline | **≤3 days:** Prof Por quick update **with all numbers incl. DICC** |
-| Playbook | **`docs/PROF_POR_3DAY.md`** |
-| Next session | **Guided UM DICC** (user SSH + agent step-by-step coaching) |
-| Then | Prof Por numbers pack from local `benchmarks/results/dicc/` |
-| Agent DICC access | **None** — guides only; user pastes command output |
-| Still forbidden | Invented DICC numbers; full-pipeline CUDA vs V3 claim; clobber champion ckpt |
-
----
-
-## Paused checkpoint (authoritative — 2026-07-14)
-
-### Laptop / GitHub
-| Item | Value |
-|------|--------|
-| Canonical branch | **`master` only** |
-| Laptop + `origin/master` | In sync @ **`fea5204`**+ (design plan / Prof Por playbook; see `git log -1`) |
-| Production model | `model/best_model_botiot_twostage.pth` md5 **`80a90f7cc210276300eaa90173a5a385`**, macro-F1 **0.9790** |
-| Published RF bar | **0.9864** (`rf_baseline_processed.json`) — do not silently raise to 0.9885 |
-| `verify_claims.py` | Green at last local checks |
-| `final-polish` remote | Fully contained in master; optional to delete later |
-
-### What was completed (local sessions, this arc)
-| Work | Status |
-|------|--------|
-| S4 baseline + multi-session roadmap + one-chat rule | **CLOSED** |
-| S5 ensemble Val-F1 fix + RF teacher strengthen | **CLOSED** (champion kept) |
-| S6 balanced-RF KD | **SKIPPED** (low EV) |
-| S7 threats-to-validity + numerical fidelity table | **CLOSED** |
-| S8 batch-size note | **SKIPPED** |
-| S9 simple DICC_RUNBOOK | **SUPERSEDED** by `dicc_scripts/README.md` + `run_campaign.sh` |
-| Branch unify (final-polish → master) | **DONE / pushed** |
-| Rostam Day 1 | **Trial only** (tooling); **not** paper-official UM campaign |
-| Historical UM DICC (2026-06-21) | **Exists** as `benchmarks/results/dicc_{v100,a100}_summary.txt` (single-shot; no multi-day / no same-GPU PyTorch) |
-
-### UM DICC discovery (in progress — paused mid-way)
-| Item | Finding |
-|------|---------|
-| Login | `login01.dicc.um.edu.my` |
-| User | `ibteshamulhaque` |
-| Home | `/home/user/ibteshamulhaque` |
-| **Actual clone path** | **`/home/user/ibteshamulhaque/colide`** (NOT `/scr/...`) |
-| Remote | `https://github.com/titoatwork/COLIDE.git` |
-| DICC git state when paused | `master` @ `956667f`, **ahead 8 / behind 32** vs origin; **no** `run_campaign.sh` |
-| Backup branch on DICC | `backup-dicc-before-sync-20260714` @ `956667f` |
-| Blocker | **`git fetch` from DICC freezes** (network path India→UM→GitHub). Do **not** rely on fetch-on-DICC. |
-| Recommended sync method | **Laptop tarball/scp** of current `master` → DICC (see below); leave old tree as `colide-old-diverged-*` |
-| Official campaign site | **UM DICC** (not Rostam) |
-| Paper multi-day campaign | **Not started** on current hardened stack at UM |
-
-### Science caveats (do not forget in design plan)
-1. **Full-pipeline Custom CUDA vs full PyTorch V3 speedup is not valid** until architecture parity (attention / LayerNorm / GAP missing on CUDA path; `fused_pipeline` issues). Prefer **Block 3** head-to-head.
-2. WSL2 RTX 3050 has real **session-to-session** latency drift → ranges, not lucky points.
-3. RF still beats CNN-BiLSTM on BoT-IoT hard labels (0.9864 vs 0.9790); systems story is the contribution.
-4. June 2026 DICC summaries are **legacy single-run**; new campaign needs Day1+Day2 + compare + PyTorch-on-same-GPU.
-
-### Process lesson (user-confirmed)
-Work was rushed across too many HANDOFF “sessions” in one heavy chat. Going forward:
-- **Slow down.** Prefer analysis and design before more execution.
-- **One focused chat per major work package.**
-- **Every session ends with:** verify → commit/push → paste-ready next prompt
-  (see **Session lifecycle** above). This is permanent, not one-off.
-
----
-
-## NEXT — ordered resume plan (do not skip ahead)
-
-### 1) Design & analysis plan — **APPROVED 2026-07-14**
-Deliverable: `docs/DESIGN_PLAN.md`. Option A locked.
-
-### 2–3) WP1–WP3 — UM DICC (**USER MANUAL ONLY**)
-
-Agents cannot reach `login01.dicc.um.edu.my`. Operator guide: `dicc_scripts/README.md`
-+ `docs/DESIGN_PLAN.md` §6/§10. Summary:
-
-```text
-# WP1 — sync (laptop → DICC tarball; no git fetch on DICC)
-cd /home/user/ibteshamulhaque
-mv colide colide-old-diverged-20260714   # if needed
-
-# On laptop:
-cd /home/titoisalive
-tar czf colide-master-for-dicc.tar.gz \
-  --exclude='colide/.venv' --exclude='colide/.venv-cluster' \
-  --exclude='colide/**/__pycache__' -C /home/titoisalive colide
-scp colide-master-for-dicc.tar.gz \
-  ibteshamulhaque@login01.dicc.um.edu.my:/home/user/ibteshamulhaque/
-
-# On DICC: unpack; verify run_campaign.sh + champion md5 80a90f7c...
-
-# WP2 Day 1:  bash dicc_scripts/run_campaign.sh
-# WP3 Day 2:  bash dicc_scripts/run_campaign.sh --day 2
-# Compare:    PYTHONPATH=. python scripts/compare_dicc_sessions.py ...
-# scp benchmarks/results/dicc/ back to laptop
-```
-
-### 4) Session 10 / WP4–5 — ingest + claim hygiene (new agent chat, after artifacts)
-Update README cross-hardware / claims only from accepted compare outputs. Option A rules.
-
-### 5) Session 11 / WP6 — manuscript spine (new chat)
-
----
-
-## Session roadmap (status at pause)
-
-| Work | Status |
-|------|--------|
-| Local S4–S5, S7 | **CLOSED** |
-| S6, S8 | **SKIPPED** |
-| DICC tooling on master | **DONE** |
-| Rostam | **Trial only** |
-| UM DICC path discovery | **PARTIAL** (path known; sync blocked by network) |
-| UM DICC multi-day campaign (hardened) | **NOT STARTED** |
-| Design plan deep-dive | **APPROVED** (`docs/DESIGN_PLAN.md`, Option A) |
-| WP1–WP3 UM DICC | **USER MANUAL** (agent has no DICC access) |
-| Design/planning phase | **CLOSED** |
-| S10 ingest / S11 manuscript | **Blocked on user DICC Day1/2 accept artifacts** |
-
-### Chat ↔ project session (HARD RULE)
-
-1. One major package ≈ one chat.
-2. Document in this file before stopping (**Session lifecycle** section is authoritative).
-3. **Correctness and design over speed.**
-4. Context does not carry — open a **new chat** with the paste-ready next prompt.
-5. **Every session:** check git clean + pushed; write next prompt in HANDOFF **and** in the reply.
-
-### Rules (always)
-
-- `verify_claims.py` before/after claim edits
-- Backup `best_model_botiot_twostage.pth` before `train_twostage.py`
-- Never use stale `best_model.pth` as production
-- Prefer Block 3 over invalid full-pipeline CUDA vs PyTorch claims
-- End-of-session lifecycle: verify → commit → push → next prompt (user-confirmed standing order)
-
----
-
-## Branch unify progress (2026-07-14)
-
-Merged `origin/final-polish` into `master` so GitHub has one tip with:
-- Grok local sessions (roadmap, ensemble/RF, fidelity, one-chat rule)
-- `run_campaign.sh`, V100 cuDNN / A100 fp16 retries, Rostam Day 1 documentation
-Production checkpoint unchanged (0.9790). Paper tables unchanged until UM multi-day campaign.
-
----
-
-## DICC tooling + Rostam Day 1 (from final-polish, 2026-07-11)
-
-**One-command entry:** `bash dicc_scripts/run_campaign.sh` (also `--day 2`, `--full`, `--dry-run`).
-
-Stack: `01_setup.sh`, `submit_session.sh`, isolated result dirs, n=100 strict CUDA stats with
-retries, `benchmark_pytorch_gpu_stats.py`, `compare_dicc_sessions.py`, offline validate suite.
-
-Result layout:
-```text
-benchmarks/results/dicc/<campaign>/<gpu>/<date>_job<id>/
-  manifest.json  environment.txt  kernel_SHA256SUMS
-  cuda_kernel_stats.json  pytorch_gpu_stats.json
-  raw/  logs/  exit_status  SUCCESS
-```
-
-**Rostam site facts:** no login CUDA modules → compile on GPU node; partitions `cuda-V100` /
-`cuda-A100`; GRES often null → `--gres none`; multi-GPU nodes → pin `CUDA_VISIBLE_DEVICES=0`;
-torch cu121 for V100 (not cu130); A100 fp16 may flake under n=100 → retries.
-
-**Rostam Day 1 SUCCESS (provisional means — not README-final):**
-
-| GPU | SUCCESS run dir | Notes |
-|-----|-----------------|-------|
-| V100 | `.../dicc/core/v100s/20260711_job167674/` | CUDA n=100 + PyTorch 20×1000 |
-| A100 | `.../dicc/core/a100/20260711_job167675/` | same |
-
-Ignore failed early dirs job167669–167672. Peek means: V100 block3_fp16 ~581 µs, A100 ~706 µs;
-PyTorch block3 V100 ~512 / A100 ~353; full pipeline CUDA/PT comparability **false**. Day 2 +
-compare required before paper updates.
-
----
-
-## Local Session 7 progress (2026-07-14)
-
-Threats-to-validity + numerical fidelity. Production md5 `80a90f7…` unchanged.
-`scripts/numerical_fidelity.py`; paper_text_blocks §15–§16; fidelity claims. Export bit-identical
-n=10; six CUDA self-checks PASS.
-
----
-
-## Local Session 5 progress (2026-07-14)
-
-Ensemble Val-F1 diagnostic fixed. RF strengthen: 0.9864 baseline; balanced → 0.9885; kept
-champion 0.9790 and published RF bar 0.9864. S6 KD skipped.
-
----
-
-## Local Session 4 progress (2026-07-14)
-
-Baseline verify + multi-session roadmap + one-chat rule.
-
----
-
-
-## Session 3 progress (2026-07-02)
-
-**Open item #0 — fabricated Sophimatics citation — RESOLVED.** Removed the false claim from
-`README.md` and `docs/paper_text_blocks.md` §14 immediately (before searching for a replacement,
-so the repo was never left citing something known-false). Searched for a real closest-prior-work
-replacement (8 WebSearch queries covering CNN-LSTM-IDS, FPGA-IDS, and general CUDA-vs-framework
-angles) and found one: **Ibrahim, Paolini, Cugini, Paolucci, "From packets to predictions on GPU:
-Accelerated graph-based intrusion detection system," *Computer Networks*, vol. 275, 2026, DOI
-`10.1016/j.comnet.2025.111954`.** Verified two ways this time (unlike the original, which was
-never checked at all): metadata confirmed via the Crossref API and cross-checked by resolving the
-DOI to the same ScienceDirect article ID (`S1389128625009193`) found independently via topical
-search; content (custom CUDA kernels for GNN graph construction/inference, memory coalescing,
-shared memory, 1.22x-1.48x vs. a CPU baseline) corroborated by two independent search queries.
-**Caveat, flagged in the manuscript text itself:** the actual abstract PDF could not be fetched
-(ScienceDirect blocks automated retrieval, 403), so this rests on corroborated secondary
-characterization, not a verbatim primary-source quote — worth a manual read of the real PDF before
-final submission if full certainty is wanted. The citation is honestly differentiated from our
-work rather than oversold: it's GNN (not CNN-BiLSTM) and benchmarks vs. CPU (not production
-frameworks) — see `docs/paper_text_blocks.md` §14 and README's Verified Research Gaps #1 for the
-exact framing used. Added a `verify_claims.py` regression guard on the fabricated claim's exact
-phrasing so it can't silently reappear. `scripts/verify_claims.py` passes all 63 claims, 0
-regressions, after this change.
-
-**Item #5 loose end — stale CUDA kernel weight exports — RESOLVED.** `model/weights_bin/` (via
-`scripts/validate_weights.py`) and `model/weights/` (gitignored `.npy` fp32/fp16 export, via
-`CNNBiLSTM.export_weights()` — not called by either validate script, has to be invoked directly)
-both still reflected the OLD 0.9639 checkpoint, because Phase 2.6's export (2026-07-01 05:11,
-session 2) happened *before* item #5's Phase B fine-tuning run later that same session
-(2026-07-02 02:50) overwrote `model/best_model_botiot_twostage.pth` in place with the new 0.9790
-weights — confirmed via file mtimes, not just assumed. Re-ran both exports against the current
-checkpoint and re-ran `scripts/validate_real_weights.py`: all 4 tests pass (weight integrity,
-reference consistency, block-by-block, classification accuracy 0.9800 on 1000 samples). Also fixed
-an untraced hardcoded comparison value in `validate_real_weights.py` (Test 4 compared against
-"~0.9697" with no stated source) — now compares against 0.9823, the real full-test-set accuracy
-from `benchmarks/results/twostage_botiot.json`. `scripts/verify_claims.py` still passes all 63
-claims, 0 regressions, after this change.
-
-**Focal-gamma sweep (item #5) — done, negative result, champion unchanged.** Ran alpha=0.6/T=10.0
-with focal_gamma in {1.0, 3.0, 4.0} (gamma=2.0, the existing champion, was already known). None beat
-gamma=2.0's test macro-F1 of 0.9763: gamma=1.0 -> 0.9426, gamma=3.0 -> 0.9504, gamma=4.0 -> 0.9693
-(gamma=4.0 had the *highest val F1* of the whole sweep, 0.9768, but a lower test F1 than the
-champion — a real val/test divergence worth knowing about, not just noise). Conclusion: gamma=2.0
-is a genuine local optimum in this region, not an accident. Checkpoints saved
-(`model/best_model_botiot_distill_a0.6_T10.0_focal{1,3,4}.pth`, committed) but no production
-checkpoint changed. Next unstarted item #5 sub-tasks per the original plan: strengthen the RF
-teacher (more trees, `class_weight='balanced'`, depth tuning) or fix+retune the ensemble teacher
-(`train_ensemble_distill.py` has a diagnostic-only bug at ~line 105, and underperforms solo RF
-untuned).
-
-**RTX3050 stability re-check (item #2's follow-on question) — done, two real findings.**
-
-1. **Found and fixed a bug that would have broken the actual DICC cluster run.**
-   `benchmark_cuda_kernels_stats.py`'s `run_trials()` did
-   `subprocess.run([str(binary_path)], cwd=binary_path.parent)` — passing a *relative* binary path
-   while also reassigning `cwd`, so Python re-resolves the relative path against the *new* cwd,
-   looking for `<kernels-dir>/<kernels-dir>/<binary>`. Both `dicc_scripts/02_benchmark_v100.sh` and
-   `03_benchmark_a100.sh` pass a relative `--kernels-dir` after `cd`-ing into the cluster path, so
-   they would have hit this exact crash on the very first kernel once submitted. Fixed the root
-   cause (resolve to an absolute path before the subprocess call, regardless of how the flag was
-   passed) rather than just working around it locally. Also fixed the script's docstring/default
-   `--suffix`, which described an `_official`-suffixed local-binary convention that was never
-   actually adopted (confirmed those binaries don't exist) — default suffix is now `""`, matching
-   the real unsuffixed binaries used everywhere (local and DICC).
-
-2. **Blocks 1, 2, 4 got their first-ever second-session comparison — confirmed the drift
-   phenomenon isn't Block-3-specific.** Previously only Block 3 had cross-session data. Fresh
-   n=100-trial run vs. the existing session-2 data: Block 1 +0.4% (stable), **Block 2 -9.8%**,
-   **Block 4 +24.7%**, Block 3 naive -3.8% (relatively stable). Folded this 3rd session into Block
-   3's range mechanism properly — previously `verify_claims.py` only ever compared a hardcoded
-   "session 1" constant against "whatever's in the file right now," which would have *silently
-   dropped session 2's contribution* the moment the file got overwritten again (caught this while
-   implementing the fix, not after). Now computes a true min/max across all 3 known sessions.
-   Updated range: Block 3 progression **8.08x-9.21x** (was 8.39x-9.21x), naive latency
-   **4,860-5,050** (was a single 5,050 point), propagated to README.md, `paper_text_blocks.md`,
-   `CLAUDE.md`, `verify_claims.py`.
-
-3. **Bigger finding: the paper's own headline ratios (the abstract's "4.40x over TensorRT" etc.)
-   also drift session-to-session — not just Block 3.** Discovered while re-running
-   `benchmark_stats_v2.py` for the Block 1/2/4 check: it derives its "Custom CUDA FP16" reference
-   from the *same* `cuda_kernel_stats_rtx3050.json` used above, so a stale/fresh mismatch there
-   silently broke 9 `verify_claims.py` checks the first time (caught immediately, reverted before
-   anything landed). Ran it twice more, cleanly: even two back-to-back runs (minutes apart, same
-   sitting) showed real variance — torch.compile and TensorRT swung 14-17% run to run. Combined
-   with the original historical measurement, all three data points give real ranges:
-   - vs Eager PyTorch: 3.33x point -> **3.04x-3.44x** range
-   - vs torch.compile: 2.63x point -> **2.25x-2.72x** range
-   - vs TensorRT: 4.40x point -> **3.60x-4.55x** range
-   - vs ORT GPU: 6.89x point -> **5.72x-7.13x** range
-
-   The old point values all sit near the *upper* (favorable) end of their real ranges — not
-   fabricated, just a somewhat lucky historical measurement rather than a representative one, the
-   same pattern Block 3 already showed. **Separately, ORT CPU's significance is NOT robust**:
-   not significantly different from Custom CUDA in the original session (p=0.483, ns), but
-   significantly *faster* in both fresh sessions (p<0.001) — its ratio range (0.72x-1.07x) genuinely
-   straddles parity, unlike the other four frameworks which stay p<0.001 significant in all 3
-   sessions. Propagated the range treatment everywhere the point values appeared: README.md
-   (abstract, Key Contributions #1, Framework Comparison table + new Measurement Stability note,
-   Cross-Hardware Pipeline table, Verified Research Gaps #1/#3), `paper_text_blocks.md` (5
-   locations), `verify_claims.py` (rewrote the framework-comparison claims to compute true 3-session
-   ranges the same way as the Block 3 fix, added 5 new regression guards on the superseded point
-   values). `scripts/verify_claims.py` passes all claims, 0 regressions, after this change.
-
-**4th/5th session re-verification — done, and found a real correction, not just confirmation.**
-User asked to fully re-verify all 4 CUDA kernel blocks: recompiled every kernel from source
-(`nvcc -arch=sm_86`, matching this GPU's compute capability 8.6 exactly, confirmed via
-`nvidia-smi`), ran each standalone binary once (all validations PASSED), then ran the full n=100
-statistical suite. Result: nothing regressed, but re-checking the numbers surfaced a real gap in
-the range-computation from the item above: **the Custom CUDA FP16 / derived-pipeline-total range
-only ever used Historical + the two back-to-back framework-side re-runs — it silently missed two
-already-captured intermediate derived-total measurements (614.5us, 594.0us) sitting in backup
-files from earlier the same session.** True range is **594-675us**, not 652-675us. This widens
-every downstream ratio (a lower Custom CUDA denominator means higher speedups):
-- vs Eager PyTorch: 3.04x-3.44x -> **3.04x-3.78x**
-- vs torch.compile: 2.25x-2.72x -> **2.25x-2.99x**
-- vs TensorRT: 3.60x-4.55x -> **3.60x-4.99x**
-- vs ORT GPU: 5.72x-7.13x -> **5.72x-7.83x**
-
-Also folded 2 more sessions into the Block 3 progression range (same missed-intermediate-data
-bug, same fix): **7.55x-9.50x** (was 8.08x-9.21x), naive latency **4,544-5,050us** (was
-4,860-5,050), FP16 **532-602us** (was 548-602). Propagated everywhere again (README, docs,
-CLAUDE.md, `verify_claims.py` -- both the framework-comparison AND Block-3-progression range
-mechanisms now fold in every known session's data, not just 2 hardcoded + 1 live). 8 more
-regression guards added for the now-superseded intermediate ranges (they'd already been committed
-once, so this matters). All 7 kernel binaries recompiled from source and committed (functionally
-unchanged, just rebuilt for full traceability). `scripts/verify_claims.py` passes all claims, 0
-regressions.
-
-**Lesson for future sessions:** when a "range across N sessions" claim is extended, audit for
-*every* already-known data point sitting in backup files or prior JSON snapshots before computing
-the new range -- it's easy to widen using only the newest 1-2 points and silently drop an
-intermediate one that was captured but never folded in. This happened twice in one session before
-being caught.
-
-**End-of-session status:** see the final message of this session for a full inventory of every
-verified number and what's still left to reverify before final submission.
-
-## Mandate (set by Ibteshamul, applies to all future sessions)
-
-- **Target: Q1 journal publication.** PI/supervisor is Prof. Dr. Por Lip Yee (FCSIT, Universiti
-  Malaya). README currently cites FGCS as the realistic target, IoT-J as a stretch.
-- **We are aiming for perfection, even knowing it's not fully reachable.** There is a lot of time
-  before submission — take it. Micro-gains matter and are worth pursuing (e.g. the naive-kernel
-  numerical issue below is low-stakes but still worth eventually fixing properly, not just
-  disclosing and moving on forever).
-- **No room for error.** Every number that goes into the manuscript must trace to a real,
-  reproducible measurement. Don't restate a number because it "looks right" — check it against
-  `benchmarks/results/*.json` or run `scripts/verify_claims.py`.
-- **Future sessions will also try to improve substantively weak numbers**, not just verify
-  existing ones — e.g. the accuracy gap vs the Random Forest baseline (was 2.25% on BoT-IoT,
-  session 2 got it to 0.74% — see open item #5) is a candidate for actual improvement (better
-  distillation recipe, more KD sweep points, etc.), not just accurate reporting.
-- **Check in with the user after each phase/major fix**, don't run long stretches silently —
-  this was explicitly requested and worked well last session.
-
-## Why this work exists
-
-A full-repo audit (including every gitignored file: `benchmarks/results/*.json`,
-`data/`, `model/*.pth`) found that several headline numbers in `README.md` and
-`docs/paper_text_blocks.md` were fabricated, stale, or had inconsistent provenance. Two were
-critical (would not survive a competent review): a "5.19us p99" LLM dispatch overhead that had
-never actually been computed anywhere (hardcoded placeholder, 25x off from the one real
-measurement that existed), and a "674us / 2.76x" pipeline speedup ratio built on an unsourced
-constant that didn't match any other PyTorch-GPU measurement in the repo. A phased roadmap was
-written and approved to fix these before manuscript writing begins. The roadmap plan file is at:
-
-`/home/titoisalive/.claude/plans/floating-coalescing-feigenbaum.md`
-
-(That plan file still has the original Phase 1-5 breakdown, useful as a reference, but this
-HANDOFF.md is the current source of truth for what's actually done vs. pending — some things
-were resolved differently than originally planned, described below.)
-
-## What's done (Phases 0-2, all complete)
-
-**Phase 0 — `scripts/verify_claims.py` (built, working, use this constantly).**
-Loads every `benchmarks/results/*.json`, defines a manifest of claims with their source and
-expected value, and checks README.md/docs/paper_text_blocks.md against them. Also has
-`REGRESSION_GUARDS` (a list of banned strings from fixed bugs, e.g. "5.19 us", "2.76x") so a
-fixed number can never silently reappear. Run it after ANY edit to README/docs/benchmark
-scripts:
-```
-source .venv/bin/activate && PYTHONPATH=. python3 scripts/verify_claims.py
-```
-Current status (end of session 2): **all 63 tracked claims pass, 0 regressions.** It also prints
-"orphan numbers" (bolded figures in README not yet covered by a manifest entry) — currently:
-`0.6, 0.9526, 1.00x, 10.0, 2.0, 3.3%, 675, 87`. These aren't necessarily wrong, just not yet
-cross-checked; add manifest entries for them opportunistically.
-
-**Phase 1.1 — Fixed the fabricated LLM dispatch overhead.**
-`scripts/llm_explainability.py` was rewritten with a proper `benchmark_dispatch_overhead()`
-function: 5,000 trials of the real classify+construct+push code path, computing actual
-p50/p95/p99 via `np.percentile`, decoupled from LLM generation timing (which is a separate,
-multi-second-scale measurement). Real result: **16.60us p99** (was fabricated as "5.19us p99").
-Propagated everywhere: README.md (abstract, key contributions, results table, verified-gaps
-section), `docs/paper_text_blocks.md`, `scripts/ablation_study.py`, `CLAUDE.md`.
-
-**Phase 1.2 — Fixed the pipeline-total/speedup-ratio provenance, and found a bigger bug while
-doing it.**
-The "674us total" itself turned out to be legitimate (real methodology, matches the same
-additive convention used in the DICC summary files — see below). But the "PyTorch GPU baseline"
-used to compute the "2.76x" ratio was a hardcoded, unsourced constant (`1864.0` in
-`inference/kernels/fused_pipeline.cu`) that matched none of the three other "PyTorch GPU total"
-numbers recorded elsewhere in the repo. **Bigger finding:** the V100S (3.39x) and A100 (3.15x)
-"vs PyTorch" ratios all divided out to that SAME ~1864-1867 constant — meaning they were
-comparing V100S/A100 custom-CUDA kernels against the RTX 3050's PyTorch baseline, a
-cross-hardware apples-to-oranges comparison. Fixed:
-- RTX 3050: realized "674us vs PyTorch" and "Custom CUDA vs eager PyTorch" (the framework
-  comparison table's headline number) are literally the same comparison. Consolidated to
-  **3.33x** (was inconsistently 2.76x in one place, 3.33x in another).
-- V100S/A100: removed the false ratio. README's cross-hardware table now reports real absolute
-  latencies with an explicit footnote that no same-hardware PyTorch baseline exists yet for
-  those machines (see Phase 3, below — this is exactly what the DICC re-run needs to produce).
-- Fixed `scripts/benchmark_pipeline.py` to tag its output JSON with the GPU name
-  (`pipeline_benchmark_<gpu_tag>.json`) instead of a fixed filename, so running it on V100S/A100
-  via DICC won't silently overwrite the RTX 3050 result the way it apparently did before (this
-  is *why* no per-hardware PyTorch baseline existed).
-
-**Phase 2.3 — Fixed a real transcription error.**
-KD sweep table, row alpha=0.5/T=3.0: Val F1 was listed as 0.9487, source JSON
-(`distill_botiot_a0.5_T3.0.json`) says `best_val_f1 = 0.9541`. Fixed in both README.md and
-`docs/paper_text_blocks.md` (it was duplicated in a second table there too).
-
-**Phase 2.4 — Rebuilt `scripts/ablation_study.py` to load from JSON instead of hardcoded
-literals.**
-Also caught another silent bug this way: Table G's ToN-IoT V3 numbers were stale
-(0.8029/0.8622) against the canonical 0.8254/0.8796 already used elsewhere — now consistent.
-The rebuilt script clearly labels which numbers are freshly loaded vs. historical-only (see
-"Open items" below for what's still historical).
-
-**Phase 2.5 — Fixed cuML "(A100)" table hardware-mixing.**
-The table's CNN-BiLSTM throughput (25,410 f/s) was actually the RTX 3050 number, sitting next
-to A100 cuML-RF numbers under an "(A100)" header. Now uses the real A100 CNN-BiLSTM throughput
-(87,791 f/s, derived from `a100_energy.json`'s batch timing). Also picked a canonical streaming
-throughput source (25,899 from `streaming_throughput.json`, the purpose-built benchmark) over a
-~2%-different incidental measurement from a different script (`cuml_rf_native.json`, 25,410) —
-both are real, just picked one as canonical everywhere.
-
-**Phase 2.6 — Re-exported CUDA kernel weights from the actual final model.**
-`scripts/validate_weights.py` and `scripts/validate_real_weights.py` were pointed at
-`model/best_model.pth` — a stale June 13 checkpoint (the pre-distillation "Original V3" model,
-0.9352 macro-F1), not the actual final published model
-(`model/best_model_botiot_twostage.pth`, 0.9639 macro-F1). Fixed both scripts, re-ran the
-export (`model/weights_bin/` and `model/weights/` are now current), and re-ran the correctness
-validation: classification accuracy on 1000 samples is now 0.979 (up from a stale 0.968 tied to
-the old checkpoint, and consistent with the real model's known ~0.979 accuracy).
-
-**Phase 2.7 — Fixed the statistical methodology, not just disclosed it.**
-`benchmark_stats_v2.py` was doing a one-sample t-test against a fixed Custom-CUDA constant
-(674.0, no variance). Built `scripts/benchmark_cuda_kernels_stats.py` — a proper N-trial harness
-for the compiled CUDA kernel binaries (parses stdout, computes mean/std/percentiles, saves
-JSON). Ran it at n=100 for the RTX 3050 locally (see "Key finding" below), then patched
-`statistical_significance_v2.json`'s "Custom CUDA FP16" entry to have a real mean/std/n derived
-from that data, and switched the significance tests to two-sample Welch's t-tests
-(`scipy.stats.ttest_ind_from_stats`). **The corrected mean (674.70) was within 0.1% of the old
-674.0 constant**, so no headline ratios needed to change — only exact p-values shifted slightly
-(same conclusions throughout). Two ratios crossed a rounding boundary and got corrected:
-torch.compile 2.64x→2.63x, ORT GPU 6.90x→6.89x.
-
-### Key finding from the n=100 re-benchmark (important context, don't re-derive this)
-
-Running every CUDA kernel binary 100 times (not just once) showed real run-to-run variance of
-5-20%+ CV on this WSL2/RTX 3050 dev box (some blocks — block2, block4, the b124-chained
-measurement — show 40-100%+ CV, almost certainly WSL2 scheduling/virtualization jitter, not real
-kernel behavior; visible as rare extreme outliers in the max values). At n=20 this looked
-alarming (one run showed the pipeline total 5% below the headline number). **At n=100 the mean
-converged back almost exactly to the original historical numbers** (601.65us vs 601.4us headline
-for Block 3 FP16; 674.70us vs 674us for the derived pipeline total). Conclusion: the original
-headline numbers were legitimate; a single run or small-N sample on this hardware is just noisy.
-Lesson for future sessions: **any new CUDA kernel benchmark should use n>=50-100 trials**, not a
-single run or n=20, because of this environment's noise floor.
-
-`scripts/benchmark_cuda_kernels_stats.py` supports both local dev use and DICC use:
 ```bash
-# Local (binaries suffixed _official, must be compiled without -O3 to match the Dockerfile):
-PYTHONPATH=. python scripts/benchmark_cuda_kernels_stats.py --tag rtx3050 --n-trials 100
-
-# DICC (already wired into dicc_scripts/02 and 03, see Phase 3 below):
-PYTHONPATH=. python scripts/benchmark_cuda_kernels_stats.py --kernels-dir inference/kernels/v100 --suffix "" --tag v100s
+cd /path/to/colide
+git status -sb
+git log -1 --oneline
+git rev-parse HEAD origin/master
+# after claim edits: PYTHONPATH=. python3 scripts/verify_claims.py
 ```
 
-## Open items — decisions not yet made, flagged rather than silently resolved
+| Gate | Requirement |
+|------|-------------|
+| HANDOFF header | Updated |
+| Deliverables | On disk / documented |
+| Commit + push | Meaningful message |
+| Clean tree | Or list deferred |
+| Next prompt | In HANDOFF **and** closing message |
+| Champion | Never clobber without backup + OK |
 
-0. **RESOLVED 2026-07-02 (session 3) — see "Session 3 progress" near the top of this file for the
-   fix.** Originally: a citation in the manuscript text blocks described a real paper's content as
-   completely fabricated. `docs/paper_text_blocks.md` §14 ("Sophimatics Phase 3
-   Citation Note") and README.md's "Verified Research Gaps" §1 cite "Sophimatics Phase 3"
-   (Applied Sciences 2025) as prior work claiming "custom CUDA kernels for a CNN-based IDS
-   achieving 2.7x speedup," used as the closest-prior-work comparator (4.40x vs their claimed
-   2.7x, etc.). **Verified via WebSearch + WebFetch this session: the paper is real and correctly
-   titled/dated (DOI `10.3390/app152211876`), but it has NOTHING to do with CUDA, CNNs, or
-   speedup benchmarking.** The actual paper — "Super Time-Cognitive Neural Networks (Phase 3 of
-   Sophimatics): Temporal-Philosophical Reasoning for Security-Critical AI Applications" — is
-   about a philosophical/temporal-cognitive AI architecture (complex-valued "time" representing
-   memory/present/imagination), evaluated across five unrelated security domains using
-   detection-rate/false-positive metrics (96.3% detection, 2.1% FP for its IDS use case specifically
-   — no latency, no CUDA, no CNN). The citation note's own text says "ChatGPT identified a
-   comparable paper... Search for full citation" — meaning this was **never actually verified**,
-   just carried forward as fact. This is more severe than any numeric provenance issue fixed this
-   session: a reviewer who looks up this citation (trivial, it's a real indexed paper) would find
-   it describes something unrelated, which reads as fabrication or serious carelessness either way.
-   **User explicitly deferred fixing this to session 3** (to avoid overloading session 2's context
-   window with a tangential fix while the KD sweep was running) — **not skipped, just deferred.**
-   Three options were on the table, undecided: (a) remove the comparison now, find a real
-   closest-prior-work citation later; (b) do a proper literature search now for an actual paper
-   about custom CUDA kernels for CNN/RNN-based IDS; (c) remove entirely, no replacement — the
-   paper's contribution (statistically validated speedups, torch.compile crash finding) stands on
-   its own without a named comparator. Recommend starting session 3 with a decision on this, then
-   executing it — it blocks manuscript submission regardless of which option is chosen.
+---
 
-1. **RESOLVED 2026-07-01 (session 2).** PyTorch cuDNN baseline for Block 3 used to be
-   inconsistent (740.7us historical single-run vs 943.6us from a fresh `benchmark_pipeline.py`
-   run). Built `scripts/benchmark_pytorch_block3_stats.py` — mirrors the CUDA kernel statistical
-   harness's approach (N independent subprocess trials, not intra-process repeats, so it captures
-   the same cross-process/GPU-state jitter) — and ran n=50 trials locally. Real result:
-   **mean 784.1us, std 88.6us, CV 11.3%** (`benchmarks/results/pytorch_block3_stats_rtx3050.json`),
-   sitting between the two old single-run numbers as expected for a noisy quantity now properly
-   characterized. This is the stable half of the ratio; see item 2 below for how the OTHER half
-   (the CUDA kernel side) turned out to need a range, not a point estimate.
+## Standing rules
 
-2. **RESOLVED 2026-07-01 (session 2) — the naive Block 3 kernel's failure was a genuine data
-   race, not FP32 rounding, and it's now fixed.** The original diagnosis ("accumulated FP32
-   rounding error over its unoptimized summation order") was wrong: re-running the SAME
-   `srand(42)`-seeded binary repeatedly produced *different* GPU output each time (e.g. index 3
-   read -0.0502, -0.0847, and -0.0774 across three separate runs) — impossible for deterministic
-   rounding-order error, only possible with an actual race. `compute-sanitizer --tool racecheck`
-   confirmed it: the per-timestep hidden-state write (`s_h_prev[h] = h_val`) raced against the next
-   timestep's read of it (`s_h_prev[j]`), despite an intervening `__syncthreads()` — thousands of
-   hazards reported. `synccheck` found no barrier misuse (so it wasn't a missing-sync bug); fixed
-   by double-buffering the hidden state in `fused_block3_naive.cu` (alternate shared arrays by
-   `t%2` so a timestep's read and write never target the same location). Verified: **0 hazards
-   under racecheck** (was thousands), **100/100 runs pass** at the standard 1e-2 tolerance (was
-   ~6/30), and **20/20 pass at a much tighter 1e-5 tolerance** — genuinely close to the CPU
-   reference, not just clearing a loose bar. The naive kernel's latency is now a real n=100-trial
-   mean of the fixed kernel (**5,050us**, replacing the old 5,698us historical single-run figure).
-   Recompiled and **committed the tracked binary** for it for the first time (previously
-   source-only, kept unbuilt because it was known-broken; now built like the other 6 kernels).
-   Propagated to `README.md` ("Naive Kernel Fix" subsection, was a disclosed limitation, now
-   marked resolved), `scripts/ablation_study.py`, and `scripts/verify_claims.py` (new
-   `block3_naive_latency` claim, regression guards on the superseded `5,698` and `9.47x` figures).
+- Option A: no full-pipeline Custom CUDA vs full V3  
+- Test sealed until final config  
+- Official cluster: UM DICC only  
+- Results under `benchmarks/results/` often **gitignored** — use `RESULTS_DISK_MANIFEST.md` + local paths  
+- Agents: no invented DICC numbers  
+- Classical: prefer `summary_handoff.json` over possibly stale `summary.json`  
 
-   **Getting this required a full re-run of `benchmark_cuda_kernels_stats.py` for ALL 7 kernels**
-   (not just the naive one) — otherwise re-running with only the naive binary present would have
-   silently overwritten `cuda_kernel_stats_rtx3050.json` and lost the other 6 kernels' data. That
-   fresh n=100 run surfaced a bigger, unplanned finding:
+---
 
-   **NEW — Measurement Stability finding.** The fresh re-run's means for the transposed-W_hh and
-   FP16 configs disagreed meaningfully with the SAME n=100-trial harness run earlier the SAME day
-   (session 1) — despite each individual session's own internal CV looking tight (6.8%-24.4%):
-   Block3 FP16 601.65us -> 548.34us (-9%), transposed no-graphs 803.91us -> 1022.62us (+27%),
-   transposed with-graphs 788.52us -> 904.92us (+15%). This means within-session CV understates
-   true measurement uncertainty on this WSL2 dev box — there's real session-to-session drift
-   (thermal state / background load / WSL2 scheduler) that no single n=100 run captures, however
-   tight its own std looks. **Decision (user, 2026-07-01): report both sessions' means as an
-   explicit range rather than picking one.** Done throughout `README.md` (Key Contributions #2,
-   Per-Block Performance table, Block 3 Optimization Progression section — now
-   **8.39x-9.21x** progression, **1.30x-1.43x** beating cuDNN, was a single "9.47x"/"1.30x"),
-   `docs/paper_text_blocks.md` (same range, was a stale "9.48x" that had already drifted from
-   README's old "9.47x" even before this finding), `CLAUDE.md`, `scripts/ablation_study.py` (prints
-   both sessions' contribution-percentage breakdowns side by side to make the instability
-   concrete), and `scripts/verify_claims.py` (range-based manifest claims, regression guards on
-   the superseded point estimates). Also fixed a related latent bug this surfaced:
-   `ablation_study.py`'s Table B/H printed an "FP16 pipeline total... same comparison as the
-   framework-comparison table" claim that was **not actually the same comparison** (it's an
-   additive reconstruction — mean b124_chained + mean block3_fp16 — vs. README's directly-measured
-   674.7us total from `statistical_significance_v2.json`; these are two different measurement
-   methodologies for conceptually the same quantity and can diverge, confirmed this session:
-   614.5us derived vs. 674.7us directly-measured). README's official 674.7us/3.33x headline was
-   NOT affected (it never used the derived total), but the script's comment was corrected so it
-   doesn't mislead a future reader into thinking the two numbers are interchangeable.
-   `scripts/verify_claims.py` passes all 49 claims, 0 regressions.
+## Older checkpoints (still valid)
 
-   **RESOLVED 2026-07-02 (session 3) — see "Session 3 progress" near the top of this file.** Yes,
-   it drifts, and by more than expected: the true range is 594-675us (not a single 674.7us point),
-   and the headline ratios widened to 3.04x-3.78x / 2.25x-2.99x / 3.60x-4.99x / 5.72x-7.83x
-   (Eager/torch.compile/TensorRT/ORT-GPU). Propagated everywhere.
+Design plan Option A approved; FINAL_PLAN P0–P5; audit pack `docs/audit/`; interim Word report sent to Prof; feedback in `docs/feedback1.docx`.
 
-3. **Phase 3 (cluster re-run) — tooling DONE; Rostam Day 1 SUCCESS; Day 2+paper still open
-   (session 4 / 2026-07-11).** Prefer **`bash dicc_scripts/run_campaign.sh`** (not raw
-   `sbatch 02`/`03`, not fixed JSON paths). Full detail in **"Session 4 progress"** above.
-   - Branch: `final-polish` with `run_campaign.sh` (`54c3dcd`+).
-   - Day 1 Rostam SUCCESS: `v100s/20260711_job167674`, `a100/20260711_job167675`.
-   - Day 2: `bash dicc_scripts/run_campaign.sh --day 2` (later UTC date; same SHA/binaries).
-   - Compare: `scripts/compare_dicc_sessions.py --gpu v100s|a100 --date-a … --date-b …`.
-   - PyTorch path: `benchmark_pytorch_gpu_stats.py` (not legacy `benchmark_pipeline.py` /
-     `statistical_confidence.json` for new campaigns).
-   - CUDA stats: n=100 strict + validation retries; results under
-     `benchmarks/results/dicc/<campaign>/<gpu>/<date>_job<id>/` only.
-   - **Full-pipeline CUDA/PyTorch ratio still invalid.** Per-block only until parity fixed.
-   - Stable multi-day cluster means → “consistent with WSL2-specific drift” (not proof).
-
-4. **Phase 4 (optional ceiling-raising items, not started, no urgency)** — from the original
-   plan, still relevant: batch-size sweep for TensorRT/torch.compile/ORT (currently batch=1
-   only), explicit TensorRT fairness documentation (partially already done — see
-   `docs/paper_text_blocks.md` section 9, "TensorRT Build Configuration," which already
-   discloses no INT8 calibration / no manual CUDA graph capture), a numerical-fidelity table
-   (max abs/relative error per block vs. PyTorch reference, pairs with item 2 above), narrative
-   reframing to lead with the torch.compile crash finding rather than raw speedups, and a
-   threats-to-validity section. **The Measurement Stability finding in item 2 above is a
-   ready-made, concrete candidate for that threats-to-validity section** — it's a real,
-   quantified (6-27% session-to-session drift) hardware/environment limitation, not a
-   hypothetical one.
-
-5. **SUBSTANTIAL PROGRESS 2026-07-01/02 (session 2): RF accuracy gap cut from 2.25% to 0.74%.**
-   Plan file (approved, followed): `/home/titoisalive/.claude/plans/nested-dancing-kazoo.md`.
-
-   **Step 1 — fixed two provenance gaps in the numbers the whole task is framed around, before
-   touching the actual ML work** (found while double-checking the "apples-to-apples with RF"
-   framing at the user's prompting):
-   - **README's 0.9864 RF figure had no traceable source.** Checked `DAILY_LOG.md` (no mention),
-     `scripts/rf_baseline.py` as-is (100 trees, independent undersample+SMOTE recipe -> 0.9768
-     test, which IS the well-documented Day-3 windowing-decision number, just a different RF), a
-     200-tree variant of that recipe (-> 0.9730, *lower* — ruled out "just add more trees"), and
-     `train_distill.py`'s inline 200-tree RF teacher with full-SMOTE (-> 0.9750 validation). None
-     matched. **User supplied the original ad-hoc terminal command**: a 200-tree RF
-     trained/evaluated directly on `data/processed/*.npy` — the SAME preprocessed splits the
-     CNN-BiLSTM itself trains/evaluates on (the methodologically correct apples-to-apples
-     comparison, unlike the other two scripts' independent resampling). Reproduced byte-for-byte:
-     0.9864 exactly. Saved permanently as `scripts/rf_baseline_processed.py` ->
-     `benchmarks/results/rf_baseline_processed.json` (was an unrepeatable terminal one-liner).
-   - **The final two-stage headline number (then 0.9639) ALSO had no JSON source** —
-     `train_twostage.py` never saved one, `verify_claims.py` had it as a second hand-typed
-     literal. Fixed: `train_twostage.py` now saves `benchmarks/results/twostage_botiot.json`;
-     `verify_claims.py`'s `rf_gap_botiot_final` claim now loads both sides from JSON instead of
-     two hardcoded numbers.
-   - **Verified the apples-to-apples framing itself is sound** (user asked directly, "is there a
-     catch hiding?"): confirmed RF and CNN-BiLSTM are scored on byte-identical test rows (same
-     733,705-row CSV, zero NaN/inf, no filtering differences) with near-identical MinMax scaling
-     (compared the two scalers' actual fitted min/max directly — differences are noise-level, e.g.
-     "mean" feature 4.9804 vs 4.9819, ~0.03%, from undersampling removing a handful of rows before
-     fitting). The gap is real, not a measurement artifact.
-
-   **Step 2 — Phase A: extended the KD temperature/alpha sweep.** Round 1 (existing, sparse: 6
-   points) had shown T=1->3->5 monotonically helping at alpha=0.7, never pushed past T=5. Ran 6
-   new configs (`scripts/train_distill.py --focal-gamma 2.0`, suffix per config), T in {7.0,
-   10.0} x alpha in {0.6, 0.7, 0.8}, sequentially in the background (~35-70 min each: RF teacher
-   +~204-212s/epoch, up to 50 epochs with patience=10):
-
-   | Config | Val F1 | Test F1 | Note |
-   |---|---|---|---|
-   | a=0.6, T=7.0 | 0.9780 | 0.9702 | |
-   | a=0.7, T=7.0 | 0.9728 | 0.9687 | |
-   | a=0.8, T=7.0 | 0.9751 | 0.9757 | |
-   | a=0.7, T=10.0 | 0.9482 | **0.9033** | Outlier — Normal/Theft precision collapsed (0.75/0.67) despite DDoS/DoS/Recon all >=0.97 F1. Real finding, not noise: macro-F1 weights all 5 classes equally, so 2 tiny classes (107 + 14 test samples) can swing the average 6-7 points even when 99%+ of traffic is classified excellently. Kept in the sweep table as a useful negative result. |
-   | a=0.8, T=10.0 | 0.9672 | 0.9745 | |
-   | **a=0.6, T=10.0** | **0.9757** | **0.9763** | **Winner — fed into Phase B** |
-
-   All 6 result JSONs saved to `benchmarks/results/distill_botiot_a<X>_T<Y>_focal2.json`, all 6
-   checkpoints saved to `model/best_model_botiot_distill_a<X>_T<Y>_focal2.pth` (both committed).
-
-   **Step 3 — Phase B: two-stage fine-tuned the winner.** `scripts/train_twostage.py
-   --checkpoint model/best_model_botiot_distill_a0.6_T10.0_focal2.pth` (same recipe as before:
-   real data, no SMOTE, focal_gamma=2.0, up to 10 epochs, patience=3). Result: **early stopped at
-   epoch 6 (best val F1 0.9780 at epoch 3), final test macro-F1 = 0.9790**
-   (`benchmarks/results/twostage_botiot.json`). Per-class: DDoS 0.9832, DoS 0.9805, Normal 0.9358,
-   Reconnaissance 0.9955, **Theft 1.0000** (was the weakest class before, now perfect).
-
-   **IMPORTANT — `train_twostage.py` hardcodes its save path to
-   `model/best_model_botiot_twostage.pth` (no suffix flag)**, i.e. it overwrites the production
-   checkpoint on every run. Backed up the pre-session champion before running Phase B:
-   `model/best_model_botiot_twostage_BACKUP_0.9639.pth` (verified byte-identical via md5sum before
-   the overwrite, and confirmed it still loads as a valid state dict). **If a future session runs
-   `train_twostage.py` again, back up the current best first** — this script will silently
-   clobber whatever's there.
-
-   **Result: RF gap 2.25% -> 0.74%** (0.9864 - 0.9790), a 67% relative reduction. Propagated
-   everywhere: README.md (abstract, Key Contributions #3, Detection Accuracy table, KD Sweep
-   table — now 14 configs, MLP Ablation table, cuML comparison table, Limitations),
-   `docs/paper_text_blocks.md` (MLP ablation para, Summary Table x8 rows, KD Sweep Documentation
-   table — now 14 rows, RF Defense para), `scripts/verify_claims.py` (new `twostage_final_test_f1`
-   claim + 6 new `kd_sweep_*` claims for the round-2 configs, regression guards on the superseded
-   "0.9639 vs 0.9864" and old abstract phrasing). `scripts/verify_claims.py` passes all 63 claims,
-   0 regressions.
-
-   **Not yet re-run after the model change (do this before citing anything CUDA-kernel-accuracy
-   related):** `model/weights/` and `model/weights_bin/` (exported via
-   `CNNBiLSTM.export_weights()`) and the validation numbers in Phase 2.6 above (0.979 accuracy on
-   1000 samples) all still reflect the OLD 0.9639 checkpoint. Per this repo's own established rule
-   ("if you retrain the model, re-export weights before re-benchmarking the kernels"), re-run
-   `scripts/validate_weights.py`/`scripts/validate_real_weights.py` against the new
-   `model/best_model_botiot_twostage.pth` before any future claim ties CUDA kernel correctness to
-   "the" model's accuracy.
-
-   **RESOLVED — reproducibility check confirmed exact.** To address a fair question raised at
-   end of session ("is this result stable, or could it drift like the CUDA latency numbers
-   did?"): `train_distill.py` has `cudnn.deterministic=True`, `cudnn.benchmark=False`, and full
-   seeding (`random`/`numpy`/`torch`/`cuda`, all `SEED=42`) — a materially different reliability
-   story than the CUDA kernels' wall-clock timing (no seed controls a physical clock/OS
-   scheduler; a deterministic, seeded training computation should reproduce, and empirically
-   should be checked rather than just asserted). Re-ran the winning config with a new suffix
-   (`distill_botiot_a0.6_T10.0_focal2_repro.json`) to verify: **all 35 epochs matched the
-   original run's train loss/train F1/val F1 to full printed precision** (only wall-clock
-   per-epoch timings differed, as expected), early stopping triggered at the identical epoch
-   (35), and the final test evaluation JSON is **byte-for-byte identical** to the original --
-   `macro_f1=0.9763373489452476`, `weighted_f1=0.9814373060928923`,
-   `accuracy=0.9814298662268895`, `best_val_f1=0.9756881295269905`, all matching exactly. Went
-   one level deeper than the metrics: the saved `.pth` files' raw byte checksums differed (a red
-   herring -- that's just `torch.save`'s zip-container metadata, e.g. timestamps), but loading
-   both and comparing every parameter tensor with `torch.equal()` showed **all weights are
-   bit-identical**, not merely close. This is real, checked evidence (not just "the flags are
-   present so it should be fine") that the KD sweep winner is a fully deterministic result down
-   to the last bit, not a lucky run. Deleted the duplicate repro checkpoint after confirming
-   identity (redundant ~2MB, no information lost -- the JSON result stays as the evidence
-   record). **Scope note: this
-   confirms Stage 1 (KD) reproducibility only.** `train_twostage.py` has the same determinism
-   flags so Stage 2 (fine-tuning) is *likely* similarly reproducible, but that specific claim
-   hasn't been empirically tested — if it matters before submission, re-run it the same way
-   (back up whatever's current in `model/best_model_botiot_twostage.pth` first, see above).
-
-   **Next steps for further improvement (not started, Phase C in the plan file), roughly in order
-   of expected payoff:**
-   - **Target the minority classes directly**, since the outlier run proved the gap concentrates
-     there, not in majority-class performance. Try focal_gamma sweep (1.0, 3.0, 4.0 — only 2.0 has
-     been tried), or explicit per-class loss weighting.
-   - **Strengthen the RF teacher on the same training-data pipeline** (more trees — currently only
-     200, untuned; `class_weight='balanced'`; depth tuning) so the student distills from better
-     soft labels, without confounding the ablation by also changing the data pipeline.
-   - **Fix and re-tune the ensemble teacher.** `train_ensemble_distill.py` has a diagnostic-only
-     bug (line ~105: compares `len(probs)` — the *training*-set size — against `len(y_val)`, so
-     the printed "Ensemble teacher Val F1" is actually solo-RF's score, not the ensemble's;
-     harmless to the actual KD loop, which correctly uses train-set probs, but misleading to read).
-     The ensemble (RF+XGB+LGB, equal 1/3 weighting) underperformed the single RF teacher (0.9529
-     vs 0.9601 in round 1) — untuned, worth a weighted-combination retry favoring RF.
-   - Consider whether Round 2's winning region (T=10.0, alpha~0.6) should be swept *further*
-     (T=12, 15?) given the trend wasn't obviously plateauing, balanced against the a=0.7/T=10.0
-     outlier showing this region isn't uniformly safe either.
-
-## Git state — session 3 CLOSED, all 6 commits pushed to origin/master
-
-Session 1 ended at `4dad75f` (pushed). Session 2 added 6 commits (`d85271c..2560348`), pushed at
-the start of session 3. Session 3 added 6 more commits on top, **all pushed to `origin/master`
-at session close** — working tree is clean, nothing pending. Commit range `2560348..d9e1f79`,
-oldest to newest:
-
-```
-df958f1 fix: replace fabricated Sophimatics citation with a verified closest-prior-work paper
-c27ac2a fix: re-export stale CUDA kernel weights against the current 0.9790 checkpoint
-bd3777e fix: extend headline framework-comparison numbers to session-verified ranges
-38b1ea6 feat: focal-gamma sweep (1.0, 3.0, 4.0) -- negative result, champion unchanged
-241bacb chore: add direct manifest claim for ToN-IoT clean CNN-BiLSTM macro-F1
-d9e1f79 fix: widen CUDA kernel/framework ranges after full 4-block re-verification
-```
-
-Each commit message has full detail on that piece of work — read `git show <hash>` if you need
-the exact reasoning instead of re-deriving it. `benchmarks/results/*.json` result files are still
-NOT committed (gitignored by policy, "keep plots, not raw data") except a handful of legacy files
-tracked from before that policy existed (`statistical_significance_v2.json`,
-`real_weight_validation.json` — both updated again this session, still tracked). **Model
-checkpoints (`model/*.pth`) ARE tracked**: 3 new focal-gamma sweep checkpoints committed in
-`38b1ea6` (no production checkpoint changed). **CUDA kernel binaries (`inference/kernels/*`) ARE
-tracked**: all 7 recompiled from source (`nvcc -arch=sm_86`) and committed in `d9e1f79`,
-functionally unchanged, rebuilt for full traceability during the 4-block re-verification pass.
-
-## Archival session-start markers (superseded)
-
-Use the **Session roadmap** and **NEXT ACTION** at the top of this file.
-Official DICC operator path: `dicc_scripts/README.md` (not the July-14 simple runbook alone).
-Production model: `best_model_botiot_twostage.pth` (0.9790). Range-claim discipline still in force.
-
-## Archival markers (superseded)
-
-Use **roadmap** + **NEXT ACTION** at top. Operator: `dicc_scripts/README.md` /
-`run_campaign.sh`. Production: `best_model_botiot_twostage.pth` (0.9790).
-
+**Next science priority after verify disk:** thresholds on focal **or** HPO/teachers/ablations per continuity §5.

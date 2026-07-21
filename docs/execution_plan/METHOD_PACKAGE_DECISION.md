@@ -1,6 +1,7 @@
 # Method package decision (Phase 2) — signed default
 
 **Date:** 2026-07-19  
+**Last status update:** 2026-07-21 (handoff)  
 **Rule:** one package first; other ideas still RUN_DOCUMENTED later.
 
 ## Chosen package (v1): **Class-aware distilled CNN–BiLSTM (CAD-CBA-v1)**
@@ -9,8 +10,8 @@
 |-----------|----------|---------|
 | Base arch | Keep V3 CNN–BiLSTM–Attention (`cnn_bilstm_v3_attention`) | F3 |
 | KD teacher | RF (n=200) then try ensemble / XGB if student lag | E2–E5 |
-| Loss | Compare CE / focal / focal_cb / logit_adj → pick best on **val** | D2–D5 |
-| Thresholds | Val-only per-class search after train | D7, C11 |
+| Loss | **Focal** wins 4-way val compare (CE / focal / focal_cb / logit_adj) | D2–D5 |
+| Thresholds | Val-only per-class search after train — **next** | D7, C11 |
 | Multi-scale CNN / new attention | **Later** only if CAD-CBA-v1 plateaus | C3–C4 |
 | SupCon / asymmetric / uncertainty | Bounded run later (skip-nothing) | C7–C10 |
 
@@ -26,6 +27,20 @@ Extreme class imbalance + minority (Theft) under neural deploy path; RF still st
 - Full V3 CUDA parity (Option B)  
 - Beating RF on every metric before multi-obj tables  
 
-## Status
-- Multirun baseline FT in progress (seed 42 done 0.9780; 43–46 running)  
-- Loss compare driver ready (`run_imbalance_loss_compare.py`) — after multirun GPU free  
+## Status (as of 2026-07-21 handoff)
+
+| Item | Status | Evidence |
+|------|--------|----------|
+| Multirun baseline FT (5 seeds) | **DONE** | mean **0.9714 ± 0.0109**; `benchmarks/results/multirun/summary.json` |
+| Loss compare CE / focal / focal_cb / logit_adj | **DONE** | focal **INCORPORATED** 0.9780; CB/logit_adj **RUN_DOCUMENTED** worse |
+| Default loss for CAD-CBA-v1 | **focal** | keep |
+| Val thresholds on best focal ckpt | **TODO** | `model/imbalance_loss/ft_focal_seed42.pth` + `thresholds.py` |
+| Teacher/KD under protocol | **TODO** | next science track |
+| Optuna HPO | **TODO** | |
+| Arch deltas (attention/multi-scale) | deferred | only if plateaus |
+
+## Negative results locked in (do not re-litigate without new protocol)
+- `focal_cb` val macro-F1 0.9121 — hurts macro  
+- `logit_adj` val macro-F1 0.9225 — hurts macro  
+
+See `RESULTS_DISK_MANIFEST.md` for md5s and paths.

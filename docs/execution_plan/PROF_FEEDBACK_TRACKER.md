@@ -23,7 +23,7 @@
 
 | ID | Requirement | Status | Evidence / notes |
 |----|-------------|--------|------------------|
-| A1 | Local progress acknowledged but not submission-ready | PARTIAL | Interim sent; reply planned |
+| A1 | Local progress acknowledged but not submission-ready | PARTIAL | Interim + reply sent; science ongoing |
 | A2 | 0.9790 &lt; RF 0.9864 — detection not sole headline unless improved | PARTIAL | Numbers frozen; improvement TODO |
 | A3 | CUDA mainly B3 local RTX 3050; V100S/A100 pending | BLOCKED | Need DICC |
 | A4 | Clear quantitative advantage on ≥1 major dimension | TODO | Need tables after science |
@@ -62,7 +62,7 @@
 | C3 | Lightweight temporal attention | TODO | Candidate |
 | C4 | Multi-scale temporal convolution | TODO | Candidate |
 | C5 | Gated CNN–BiLSTM fusion | TODO | Candidate |
-| C6 | Class-balanced or logit-adjusted loss | PARTIAL | `losses.py` implemented; not full train sweep |
+| C6 | Class-balanced or logit-adjusted loss | RUN_DOCUMENTED | 4-way FT compare: focal best; focal_cb/logit_adj worse macro (`imbalance_loss/`) |
 | C7 | Supervised contrastive (minority) | TODO | Later unless chosen |
 | C8 | Asymmetric loss minority | TODO | Later unless chosen |
 | C9 | Teacher ensemble distillation | PARTIAL | Script exists; student not final |
@@ -79,16 +79,16 @@
 
 | ID | Requirement | Status | Evidence / notes |
 |----|-------------|--------|------------------|
-| D1 | Imbalance first-class (not accuracy-only) | PARTIAL | Metrics; experiments TODO |
-| D2 | Weighted CE | TODO | |
-| D3 | Focal loss | PARTIAL | Exists |
-| D4 | Class-balanced focal | PARTIAL | CB weights helper; full CB-focal train TODO |
-| D5 | Logit adjustment | PARTIAL | Loss class exists; sweep TODO |
+| D1 | Imbalance first-class (not accuracy-only) | PARTIAL | Metrics + loss compare done; thresholds/stratified still open |
+| D2 | Weighted CE | RUN_DOCUMENTED | CE FT control val 0.9755 (`imbalance_loss/ft_ce_seed42.json`) |
+| D3 | Focal loss | INCORPORATED | Best in 4-way compare val **0.9780** — default CAD-CBA-v1 |
+| D4 | Class-balanced focal | RUN_DOCUMENTED | val 0.9121 — worse macro; JSON kept |
+| D5 | Logit adjustment | RUN_DOCUMENTED | val 0.9225 — worse macro; JSON kept |
 | D6 | Stratified batch sampling | TODO | |
-| D7 | Minority-aware threshold tuning | PARTIAL | Val search util |
-| D8 | Controlled oversampling | PARTIAL | SMOTE stage_a |
-| D9 | Supervised contrastive | TODO | Optional |
-| D10 | Select on macro-F1 + per-class rare attacks | TODO | |
+| D7 | Minority-aware threshold tuning | PARTIAL | util ready; run on `model/imbalance_loss/ft_focal_seed42.pth` next |
+| D8 | Controlled oversampling | PARTIAL | SMOTE stage_a in protocol |
+| D9 | Supervised contrastive | TODO | Optional bounded run later |
+| D10 | Select on macro-F1 + per-class rare attacks | PARTIAL | metrics logged; loss pick used val macro-F1 + min cls F1 |
 
 ---
 
@@ -129,10 +129,10 @@
 | ID | Requirement | Status | Evidence / notes |
 |----|-------------|--------|------------------|
 | G1 | Logistic Regression | DONE (val) | full stage_b_ft val_macro_f1=0.5231; test sealed |
-| G2 | SVM | TODO | LinearSVC still to run |
-| G3 | Random Forest | PARTIAL | protocol-fair val 0.9778; published 0.9864 is other path — both kept |
-| G4 | XGBoost | TODO | |
-| G5 | LightGBM | TODO | |
+| G2 | SVM | RUN_DOCUMENTED | pilot 150k failed (&lt;3 samples/class); full re-run TODO |
+| G3 | Random Forest | DONE (val) | protocol-fair val **0.9778**; published 0.9864 = other pipeline (`rf_baseline_processed`) |
+| G4 | XGBoost | DONE (val) | protocol-fair val **0.9762** (`xgb_seed42.json`) |
+| G5 | LightGBM | RUN_DOCUMENTED | full train val **0.5512** — weak; fix/re-run later |
 | G6 | MLP | PARTIAL | Historical |
 | G7 | 1D-CNN | TODO | |
 | G8 | LSTM | TODO | |
@@ -252,6 +252,8 @@
 | 2026-07-19 | Tracker created; protocol foundation DONE; all science items TODO/PARTIAL/BLOCKED as above |
 | 2026-07-19 | **Skip-nothing policy locked:** run significant items → record → incorporate or RUN_DOCUMENTED |
 | 2026-07-19 | User trust + **rock mode**: execute all tracker rows; protocol foundation DONE; next WP1b/method/DICC |
+| 2026-07-19 | **WP1b multirun DONE** mean 0.9714±0.0109 n=5; classical protocol-fair LR/RF/XGB/LGBM documented; **imbalance 4-way DONE** focal INCORPORATE |
+| 2026-07-21 | **Handoff-only session:** no new experiments. Tracker G3–G5/D*/C6/L5 aligned; `SESSION_CONTINUITY` + `RESULTS_DISK_MANIFEST` written; next chat continues from continuity §5 |
 
 ---
 
