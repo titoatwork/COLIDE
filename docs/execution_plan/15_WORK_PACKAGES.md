@@ -3,7 +3,8 @@
 **Rule:** Do not stack DICC + full HPO + manuscript in one chat.  
 **Order:** Respect phase dependencies.  
 **Playlist law:** every WP below must reach DONE / RUN_DOCUMENTED / BLOCKED(ops). No silent skips; “optional” experiments still get a bounded run.  
-**Live status:** update this board every session; authoritative narrative in `SESSION_CONTINUITY.md`.
+**Live status:** update this board every session; authoritative narrative in `SESSION_CONTINUITY.md`.  
+**Git:** land WPs on **`master`** (final). Open a branch only for a **true alternative option**; keep branch count low — `docs/BRANCHING_POLICY.md`.
 
 ---
 

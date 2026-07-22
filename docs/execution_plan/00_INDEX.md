@@ -19,7 +19,8 @@
 | 5 | `docs/MOD_DECISION_TABLE.md` — modification IDs |
 | 6 | `docs/DESIGN_PLAN.md` Option A — CUDA claim rules (still binding) |
 | 7 | `docs/FINAL_PLAN.md` + **`docs/DICC_OPS_METHOD.md`** — DICC ops (OnDemand VNC) / numbers-match gates |
-| 8 | `docs/audit/` — evidence feedstock for frozen local numbers |
+| 8 | **`docs/BRANCHING_POLICY.md`** — **`master` final**; branch only for true options; low branch count |
+| 9 | `docs/audit/` — evidence feedstock for frozen local numbers |
 
 ---
 
@@ -49,7 +50,8 @@
 | `13_PHASE9_MANUSCRIPT.md` | Paper structure, tables, RQs, abstract rules |
 | `14_EXCEPTIONAL_STANDARDS.md` | Quality bar: stats, repro, anti-sloppiness |
 | `15_WORK_PACKAGES.md` | Chat-sized packages, dependencies, exit criteria |
-| `16_SAFETY_AND_RULES.md` | Champion backup, no invented numbers, Option A |
+| `16_SAFETY_AND_RULES.md` | Champion backup, no invented numbers, Option A, branching §5b |
+| *(repo root)* `docs/BRANCHING_POLICY.md` | Git: master final; branch for real options only; strict low count |
 
 ---
 

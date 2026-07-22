@@ -1,7 +1,25 @@
 # Progress log (results as they land)
 
 **Policy:** document everything; label pilot vs full; test sealed unless noted.  
-**Handoff snapshot:** 2026-07-22 (**DICC ops method locked** OnDemand VNC; playlist closure; claims **64** green)
+**Handoff snapshot:** 2026-07-22 (**Branching policy locked** + DICC OnDemand VNC ops; claims **64** green)
+
+---
+
+## 2026-07-22 — Git branching policy lock (docs only)
+
+**Mode:** documentation · no train · no DICC jobs  
+**Primary artifact:** `docs/BRANCHING_POLICY.md`
+
+### Delivered
+| Item | Detail |
+|------|--------|
+| Final line | **`master` always final** (handoff, claims, manuscript tip) |
+| When to branch | **Must** when work is a **true alternative option** (could be discarded / isolated fork) |
+| Strict budget | Prefer 0–2 open feature branches; soft-cap ≤3 remote non-master; no vanity branches |
+| After merge | Delete local + remote feature branch |
+| Wired into | HANDOFF, SESSION_CONTINUITY, `16_SAFETY_AND_RULES` §5b, 00_INDEX, FINAL_PLAN pointers |
+
+**Decision: DONE (policy)** — historical single-branch arc OK; future option-forks use short-lived branches then merge to master.
 
 ---
 

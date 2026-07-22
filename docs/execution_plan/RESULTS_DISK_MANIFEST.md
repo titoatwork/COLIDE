@@ -1,7 +1,7 @@
 # Results Disk Manifest (handoff snapshot)
 
 **Generated (UTC):** 2026-07-21T11:01:25.771483+00:00  
-**Last append (UTC):** 2026-07-22T17:10:00 (DICC ops method lock: OnDemand VNC + screen + batch; no new train/result JSON)
+**Last append (UTC):** 2026-07-22T17:45:00 (branching policy lock: master final; no new train/result JSON)
 **Host path root:** `/home/titoisalive/colide`
 
 `benchmarks/results/` is **gitignored**. This file is committed so the next session can verify local artifacts without inventing numbers.
@@ -140,6 +140,13 @@
 
 **Table 1b means (from sealed_test ft_seed{42..46} test per_class F1):** DDoS **0.9838**, DoS **0.9813**, Normal **0.9292**, Recon **0.9958**, Theft **1.0000**.  
 **Still open for PI:** journal class file / BibTeX after venue choice. DICC cells still TBD.
+
+## Git branching policy lock (2026-07-22)
+
+| Path | exists | notes |
+|------|--------|-------|
+| `docs/BRANCHING_POLICY.md` | yes | **`master` final**; branch only for true options; keep count low |
+| `docs/execution_plan/16_SAFETY_AND_RULES.md` §5b | yes | Binding agent rules |
 
 ## DICC ops method lock (2026-07-22)
 

@@ -5,6 +5,7 @@
 **Authority:** `docs/execution_plan/SESSION_CONTINUITY.md` + `RESULTS_DISK_MANIFEST.md` + `PROF_FEEDBACK_TRACKER.md` + manuscript + Option A.  
 **Policy:** skip nothing → **complete every playlist/tracker row** → JSON → INCORPORATED or RUN_DOCUMENTED (BLOCKED only for ops). **Perfection over LOR hurry.** No invent DICC numbers. Context hygiene: flip statuses when evidence already exists.  
 **Champion:** `model/best_model_botiot_twostage.pth` md5 **`80a90f7cc210276300eaa90173a5a385`** — no clobber without BACKUP.  
+**Git:** **`master` is always final.** Branch **only** for true alternative options; keep branch count low — see `docs/BRANCHING_POLICY.md`.  
 **Session end:** always paste full next-session prompt in closing message (not only in this file).
 
 ---
@@ -44,10 +45,11 @@
 4. **`docs/execution_plan/PROGRESS_LOG.md`**  
 5. **`docs/execution_plan/PROF_FEEDBACK_TRACKER.md`**  
 6. **`docs/execution_plan/PLAYLIST_CLOSURE_AUDIT.md`**  
-7. **`docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md`** (or PDF)  
-8. `docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md`  
-9. `benchmarks/results/wp6b_local_ranges/summary.json`  
-10. `benchmarks/results/sealed_test/summary.json` (B14)
+7. **`docs/BRANCHING_POLICY.md`** (master final; branch only for real options)  
+8. **`docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md`** (or PDF)  
+9. `docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md`  
+10. `benchmarks/results/wp6b_local_ranges/summary.json`  
+11. `benchmarks/results/sealed_test/summary.json` (B14)
 
 ---
 
@@ -106,6 +108,7 @@ B) Else optional PI author/venue/BibTeX fill — no invent numbers
 C) Keep verify_claims green; rebuild PDF via scripts/build_manuscript_pdf.py after prose edits
 
 Rules: no invent multi-day numbers; no clobber champion without BACKUP;
+git: master always final; branch only for true options (docs/BRANCHING_POLICY.md); low branch count;
 thermal guard if sustained train; commit/push; end per HANDOFF lifecycle.
 ```
 
@@ -116,6 +119,7 @@ thermal guard if sustained train; commit/push; end per HANDOFF lifecycle.
 ```bash
 cd /path/to/colide
 git status -sb
+git branch -vv
 git log -1 --oneline
 git rev-parse HEAD origin/master
 # after claim edits:
@@ -129,7 +133,8 @@ PYTHONPATH=. python3 scripts/build_manuscript_pdf.py
 |------|-------------|
 | HANDOFF header | Updated |
 | Deliverables | On disk / documented |
-| Commit + push | Meaningful message |
+| Commit + push | Meaningful message on **`master`** (or merge to master before handoff) |
+| Branch policy | `docs/BRANCHING_POLICY.md` — master final; branch only for real options; few branches |
 | Clean tree | Or list deferred |
 | Next prompt | In HANDOFF **and** closing message |
 | Champion | Never clobber without backup + OK |
@@ -147,6 +152,7 @@ PYTHONPATH=. python3 scripts/build_manuscript_pdf.py
 - Official cluster: UM DICC only  
 - **DICC ops (locked):** `docs/DICC_OPS_METHOD.md` — OnDemand **VNC Desktop** + **`screen`** + **batch** `run_campaign.sh`  
 - **Superseded ops plans:** campus-stable runner; Cheran-as-default cluster operator; long interactive `srun`/`salloc` over VPN  
+- **Git branching (locked):** `docs/BRANCHING_POLICY.md` — **`master` always final**; create a branch when work is a **true alternative option**; **strict low branch count** (no spam branches); merge back then delete  
 - Results under `benchmarks/results/` often **gitignored** — use `RESULTS_DISK_MANIFEST.md` + local paths  
 - Agents: no invented DICC numbers; no DICC login  
 - Claims: rebuild with `build_claims_package.py`; verify with `verify_claims.py` (**64** claims)  

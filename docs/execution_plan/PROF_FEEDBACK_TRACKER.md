@@ -281,6 +281,7 @@
 | 2026-07-22 | **PI venue polish DONE** continuous journal abstract; author/affiliation/venue placeholders; Table 1b multi-seed test per-class means (from sealed_test seeds); Table 5b HPO Stage-B refine ranking; Table 6 std/CV/CI; data/ethics stubs; App D checklist; `scripts/build_manuscript_pdf.py` rebuild (~797 KB PDF); A6/L10 → DONE (PI polish); L11 notes 59 claims; verify_claims green; no train; champion unchanged; DICC still BLOCKED; final journal class file/BibTeX left for PI after venue choice |
 | 2026-07-22 | **Playlist closure audit + claims hygiene** — full tracker parse **133/133 terminal** (0 TODO/PARTIAL); Table 1b means re-verified from seed JSON; claims rebuild **64** (added `bot_sealed_test_pc_*`); open_gates trimmed to DICC + PI venue only; WP0/0b/6c → BLOCKED(ops/N/A); L7/B8 stale notes flipped; `PLAYLIST_CLOSURE_AUDIT.md`; verify_claims green; no train; champion unchanged |
 | 2026-07-22 | **DICC ops method lock** — guidance: OnDemand **VNC Desktop** + **`screen`** + batch campaign; remove campus-runner / Cheran-as-default cluster operator as primary plan; `docs/DICC_OPS_METHOD.md` + FINAL_PLAN / Phase0 / status packs / HANDOFF / WP0 / tracker A3+L1; no cluster run; champion unchanged |
+| 2026-07-22 | **Git branching policy lock** — `docs/BRANCHING_POLICY.md`: **`master` always final**; create a branch when work is a **true alternative option**; strict **low branch count**; merge then delete; wired into HANDOFF / continuity / safety §5b |
 
 ---
 

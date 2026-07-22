@@ -255,6 +255,7 @@ Minimum figures/tables: per-block latency (laptop + DICC); Block 3 CUDA vs PT; m
 | **`docs/DICC_OPS_METHOD.md`** | **Authoritative ops** (OnDemand VNC + screen + batch) |
 | `dicc_scripts/README.md` / `run_campaign.sh` | Cluster entry |
 | `HANDOFF.md` | Session lifecycle + status |
+| **`docs/BRANCHING_POLICY.md`** | **`master` final**; branch only for true options; low branch count |
 | `scripts/compare_dicc_sessions.py` | Cross-day gate |
 | `scripts/verify_claims.py` | Claim regression |
 

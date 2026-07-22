@@ -52,6 +52,23 @@
 
 ---
 
+## 5b. Git branching (binding — all agents)
+
+**Canonical:** `docs/BRANCHING_POLICY.md`
+
+| Rule | Detail |
+|------|--------|
+| **Final line** | **`master` is always final** — handoff, claims, manuscript tip, next-session resume |
+| **When to branch** | **Must** open a new branch when work is a **true alternative option** (could be discarded, Option-B-style fork, risky isolation) |
+| **When not to** | Continuity/docs/claims hygiene, locked-path incremental WPs — stay on **`master`** |
+| **Budget** | Keep branch count **low** (prefer **0–2** open feature branches; soft-cap **≤3** remote non-master); no vanity/`wip/agent-*` spam |
+| **After merge** | Delete local + remote feature branch; do not leave second “final” branches |
+| **Force-push** | Never force-push `master` without explicit user OK |
+
+Historical single-branch work on `master` was fine. Future option-forks use short-lived branches, then merge back to **`master`**.
+
+---
+
 ## 6. Venue honesty
 
 - RF may remain higher F1 — then **multi-objective** must be the win  

@@ -16,7 +16,8 @@ Complete **every** row in `PROF_FEEDBACK_TRACKER.md` for Prof Por / WoS path.
 **Context hygiene:** if evidence already exists, **update tracker**. Never invent numbers.  
 **Option A:** per-block CUDA only; no invent multi-day DICC numbers.  
 **Champion:** `model/best_model_botiot_twostage.pth` md5 **`80a90f7cc210276300eaa90173a5a385`** — never clobber without BACKUP + explicit OK.  
-**DICC:** deferred to a **dedicated session**; ops method **locked** in `docs/DICC_OPS_METHOD.md` (OnDemand VNC + `screen` + batch). **Not** campus-runner / Cheran-as-default.
+**DICC:** deferred to a **dedicated session**; ops method **locked** in `docs/DICC_OPS_METHOD.md` (OnDemand VNC + `screen` + batch). **Not** campus-runner / Cheran-as-default.  
+**Git:** **`master` is always final.** Branch only for true alternative options; keep branch count low — `docs/BRANCHING_POLICY.md`.
 
 ---
 
@@ -34,8 +35,9 @@ Complete **every** row in `PROF_FEEDBACK_TRACKER.md` for Prof Por / WoS path.
 10. `docs/execution_plan/CLAIMS_REGISTRY.md`  
 11. `docs/execution_plan/FINAL_CONFIG_FREEZE_CARD.md`  
 12. `config/hpo_best.yaml`  
-13. `benchmarks/results/wp6b_local_ranges/summary.json`  
-14. `benchmarks/results/sealed_test/summary.json`  
+13. `docs/BRANCHING_POLICY.md`  
+14. `benchmarks/results/wp6b_local_ranges/summary.json`  
+15. `benchmarks/results/sealed_test/summary.json`  
 
 ---
 
@@ -140,6 +142,7 @@ B) Else idle science: optional PI author/venue fill — do not invent numbers
 C) Keep verify_claims green after any prose/number edit; rebuild PDF if needed
 
 Rules: no invent multi-day numbers; no clobber champion without BACKUP;
+git: master always final; branch only for true options (docs/BRANCHING_POLICY.md); low branch count;
 thermal guard if sustained train; commit/push; end per HANDOFF lifecycle with paste-ready next prompt.
 ```
 
@@ -162,6 +165,7 @@ thermal guard if sustained train; commit/push; end per HANDOFF lifecycle with pa
 | B14 results | `benchmarks/results/sealed_test/summary.json` |
 | Claims registry | `docs/execution_plan/CLAIMS_REGISTRY.md` |
 | Freeze card | `docs/execution_plan/FINAL_CONFIG_FREEZE_CARD.md` |
+| Git branching | `docs/BRANCHING_POLICY.md` (**master** final; branch only for real options; low count) |
 
 **Note:** `benchmarks/results/` is largely **gitignored** — results live on this machine; next agent must use laptop paths or re-run. Manifest + CLAIMS_REGISTRY commit the **headlines + md5s**.
 
