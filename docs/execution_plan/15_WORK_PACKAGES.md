@@ -26,7 +26,7 @@
 | WP4a | Imbalance strategy sweep (beyond loss) | 4 | WP1–3 | Agent | PARTIAL (loss done; stratified/SupCon open) |
 | WP4b | Teacher sweep (RF/XGB/LGBM/ensemble) | 4 | WP1–3 | Agent | **DONE 2026-07-21** ensemble student 0.9401 INCORPORATE |
 | WP5a | Full ablation ladder | 5 | Final recipe | Agent | **DONE 2026-07-21** A1–A7 seed42; A7 0.9699 tops ladder; F1–F7 RUN_DOCUMENTED |
-| WP5b | Fair baseline suite | 5 | WP1a | Agent | PARTIAL (classical LR/RF/XGB/LGBM val; SVM/neural open) |
+| WP5b | Fair baseline suite | 5 | WP1a | Agent | **PARTIAL→ neural DONE 2026-07-22** G6–G12 protocol; classical G2 SVM full + G5 LGBM fix still open |
 | WP5c | Pareto figure + composite score | 5 | WP5a/b + systems | Agent | TODO |
 | WP6a | Re-export + fidelity | 6 | Final ckpt | Agent | TODO |
 | WP6b | Local re-bench ranges Option A | 6 | WP6a | Agent | TODO |
@@ -42,9 +42,9 @@
 
 | Priority | Action |
 |----------|--------|
-| 0 | Verify disk via `RESULTS_DISK_MANIFEST.md` (incl. ablation_ladder + HPO confirm + package) |
-| 1 | **WP5b** neural baselines (protocol-fair G6–G12) + G2/G5 fixes + G15 note |
-| 2 | D6 stratified batch / bounded C* tries / WP5c Pareto prep |
+| 0 | Verify disk via `RESULTS_DISK_MANIFEST.md` (incl. baselines_neural + ablation + HPO) |
+| 1 | **G2 SVM full** + **G5 LGBM fix** classical close-out + G13 note if applicable |
+| 2 | **D6** stratified batch / bounded C* (SupCon/asymm/uncertainty/multi-scale/gated) / **WP5c** Pareto |
 | Parallel | **WP0** only when user opens dedicated DICC session |
 | Never first | WP9b manuscript with empty cluster cells |
 

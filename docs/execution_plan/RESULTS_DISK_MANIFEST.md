@@ -1,7 +1,7 @@
 # Results Disk Manifest (handoff snapshot)
 
 **Generated (UTC):** 2026-07-21T11:01:25.771483+00:00  
-**Last append (UTC):** 2026-07-21T22:30:00 (WP5a ablation ladder A1–A7)
+**Last append (UTC):** 2026-07-22T01:10:00 (WP5b neural baselines G6–G12)
 **Host path root:** `/home/titoisalive/colide`
 
 `benchmarks/results/` is **gitignored**. This file is committed so the next session can verify local artifacts without inventing numbers.
@@ -71,6 +71,9 @@
 | WP3 Stage A best (subsampled train) | trial 11 **0.9787** | `hpo/summary.json` |
 | HPO multi-seed confirm (orig distill + hpo_best) | **0.9689 ± 0.0145** n=5 RUN_DOCUMENTED | `multirun_hpo_confirm/summary.json` |
 | HPO confirm seed42 (repro) | **0.9791** | `multirun_hpo_confirm/ft_seed42.json` |
+| WP5b neural baselines top (G11 cnn_bilstm CE) | **0.9493** | `baselines_neural/summary.json` |
+| WP5b protocol MLP (G6) | **0.9285** | `baselines_neural/G6_mlp_seed42.json` |
+| WP5b transformer (G12) | **0.5808** weak | `baselines_neural/G12_transformer_seed42.json` |
 | DICC multi-day tree | ABSENT | no `benchmarks/results/dicc/` |
 
 ## Trap warnings
@@ -314,4 +317,54 @@
 **Incremental story (honest):** A1≪A2≪A3; A4 (attn+CE) **hurts** vs A3 under seed42/8-ep budget; A5 focal recovers; A6 ensemble KD lifts further; A7 HPO HPs top the ladder at **0.9699**. Do **not** claim attention alone is free gain. Do **not** mix single-seed A7 with WP1b multirun mean 0.9714 or package multirun mean 0.9639.
 
 **Trap:** Ladder is seed **42 only**, epochs≤8 — not multi-seed stability. Systems latency is RTX 3050 batch-256 sync forward, not full energy table (F9 energy still open).
+
+## WP5b Protocol-fair neural baselines G6–G12 (2026-07-22)
+
+**Stage:** `stage_b_ft` · **seed 42** · epochs≤8 · patience=3 · **CE** · scratch · val-only · test sealed  
+**Script:** `scripts/run_neural_baselines.py` + `model/neural_baselines.py`  
+**Shared HPs:** lr=1e-3 Adam · batch=512 · equal budget (G15) · no per-baseline Optuna  
+**Tag:** `baselines_neural/` (does **not** clobber champion, multirun trees, or `ablation_ladder/`)  
+**Wall:** ~4816 s (~80 min)  
+**Champion md5 unchanged** `80a90f7cc210276300eaa90173a5a385`
+
+### Result JSON
+
+| Path | md5 | bytes | key metrics |
+|------|-----|-------|-------------|
+| `benchmarks/results/baselines_neural/summary.json` | `dc85077cb129c3209d6f6148c18e925b` | 8155 | n=7; G11 best 0.9493 |
+| `benchmarks/results/baselines_neural/G6_mlp_seed42.json` | `c2310b0fbc0201c95557baa702ce9cab` | 10993 | 0.9285 |
+| `benchmarks/results/baselines_neural/G7_cnn1d_seed42.json` | `5d9b4c98cabd7eafb51bf588f0563ba0` | 10895 | 0.6221 |
+| `benchmarks/results/baselines_neural/G8_lstm_seed42.json` | `e622891ba268f0e797a2fabfb0e81f3c` | 11018 | 0.8099 |
+| `benchmarks/results/baselines_neural/G9_bilstm_seed42.json` | `b88dc4d44623f071a2bcc6a62cb01dc0` | 11070 | 0.8058 |
+| `benchmarks/results/baselines_neural/G10_cnn_lstm_seed42.json` | `6e1a3c491fd8e02237437d3787109a13` | 11033 | 0.8159 |
+| `benchmarks/results/baselines_neural/G11_cnn_bilstm_seed42.json` | `04eef1820823f96046b00f32f5ba3803` | 11064 | **0.9493** |
+| `benchmarks/results/baselines_neural/G12_transformer_seed42.json` | `b2419843e5ecbfce8241e22094bf372b` | 10716 | 0.5808 |
+
+### Checkpoints
+
+| Path | md5 | bytes |
+|------|-----|-------|
+| `model/baselines_neural/G6_mlp_seed42.pth` | `eeacb365a384164c33c24571414dfc66` | 1607048 |
+| `model/baselines_neural/G7_cnn1d_seed42.pth` | `a3d5e9cee346856a0badbb883079a142` | 147738 |
+| `model/baselines_neural/G8_lstm_seed42.pth` | `02bca182152d6aa6f3616c1796648129` | 618388 |
+| `model/baselines_neural/G9_bilstm_seed42.pth` | `3c135ed63bdaa12ef157e09becc26430` | 1493676 |
+| `model/baselines_neural/G10_cnn_lstm_seed42.pth` | `62d8631f98f4710984382d70fa540723` | 859660 |
+| `model/baselines_neural/G11_cnn_bilstm_seed42.pth` | `1c34bd88eda022b0d1b4ab8d23feb945` | 1866368 |
+| `model/baselines_neural/G12_transformer_seed42.pth` | `ef3ea08d7abed4ca2ffdd2744918b19c` | 432710 |
+
+### Ranking (val macro-F1) + systems (batch=256 latency)
+
+| Rank | Row | Name | val macro-F1 | Min-cls | Theft | params | µs/sample | Decision |
+|------|-----|------|--------------|---------|-------|--------|-----------|----------|
+| 1 | **G11** | cnn_bilstm | **0.9493** | 0.8571 | 1.0000 | 463877 | 20.12 | **RUN_DOCUMENTED** suite top (= WP5a A3) |
+| 2 | G6 | mlp | 0.9285 | 0.7077 | 1.0000 | 400901 | 4.33 | RUN_DOCUMENTED protocol-fair (≠ historical 0.962) |
+| 3 | G10 | cnn_lstm | 0.8159 | 0.5000 | 0.5000 | 212485 | 16.25 | RUN_DOCUMENTED |
+| 4 | G8 | lstm | 0.8099 | 0.3556 | 0.8000 | 153605 | 10.39 | RUN_DOCUMENTED |
+| 5 | G9 | bilstm | 0.8058 | 0.5000 | 0.5000 | 372229 | 16.01 | RUN_DOCUMENTED (= WP5a A2) |
+| 6 | G7 | cnn1d | 0.6221 | 0.0000 | 0.0000 | 34821 | 6.15 | RUN_DOCUMENTED (= WP5a A1) |
+| 7 | G12 | transformer | 0.5808 | 0.0000 | 0.0000 | 105221 | 10.72 | RUN_DOCUMENTED **weak under equal budget** |
+
+**G15:** All rows share fixed HPs; CAD-CBA Optuna is separate (not applied to baselines). See `g15_hpo_budget_note` in summary JSON.
+
+**Trap:** Do not mix historical `ablation_mlp.json` / `mlp_twostage.json` with G6. Do not claim transformer beat CNN–BiLSTM. Suite is seed42 / CE / scratch only — not multi-seed package path.
 

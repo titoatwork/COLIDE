@@ -1,7 +1,7 @@
 # Session Continuity / Handoff Pack
 
-**Session closed for continuity:** 2026-07-21  
-**Mode this session:** **WP5a ablation ladder A1–A7** — protocol val-only component table  
+**Session closed for continuity:** 2026-07-22  
+**Mode this session:** **WP5b neural baselines G6–G12** — protocol-fair equal-budget table  
 **Git tip at handoff:** see latest commit after handoff push (`git log -1 --oneline`)  
 **Machine root:** `/home/titoisalive/colide`
 
@@ -36,29 +36,29 @@ Complete **every** row in `PROF_FEEDBACK_TRACKER.md` for Prof Por / WoS path.
 
 ## 3. Completed this arc (do not redo)
 
-### 3.1–3.10 Prior (still valid)
-Protocol foundation; WP1b **0.9714±0.0109**; classical protocol-fair; imbalance focal INCORPORATE; WP2d argmax; WP4b ensemble KD **0.9401**; WP3 HPO **0.9791** INCORPORATE; package ensemble+HPO **0.9639±0.0185**; HPO multi-seed confirm **0.9689±0.0145**.
+### 3.1–3.11 Prior (still valid)
+Protocol foundation; WP1b **0.9714±0.0109**; classical protocol-fair LR/RF/XGB/LGBM; imbalance focal INCORPORATE; WP2d argmax; WP4b ensemble KD **0.9401**; WP3 HPO **0.9791** INCORPORATE; package ensemble+HPO **0.9639±0.0185**; HPO multi-seed confirm **0.9689±0.0145**; WP5a ablation A7 **0.9699**.
 
-### 3.11 WP5a ablation ladder (DONE — this session)
-**Seed 42 · stage_b_ft · epochs≤8 · val only · test sealed**
+### 3.12 WP5b neural baselines G6–G12 (DONE — this session)
+**Seed 42 · stage_b_ft · CE · scratch · epochs≤8 · equal fixed HPs · val only · test sealed**
 
 | Rank | Row | val macro-F1 | Min-cls | Theft | params |
 |------|-----|--------------|---------|-------|--------|
-| 1 | **A7** full CAD-CBA-v1 | **0.9699** | 0.8974 | 1.0000 | 530181 |
-| 2 | A3 cnn_bilstm CE | 0.9493 | 0.8571 | 1.0000 | 463877 |
-| 3 | A6 attn+focal+ens KD | 0.9346 | 0.8462 | 1.0000 | 530181 |
-| 4 | A5 attn+focal scratch | 0.8684 | 0.7059 | 0.7059 | 530181 |
-| 5 | A2 bilstm_only | 0.8058 | 0.5000 | 0.5000 | 372229 |
-| 6 | A4 attn+CE | 0.7378 | 0.0000 | 0.0000 | 530181 |
-| 7 | A1 cnn_only | 0.6221 | 0.0000 | 0.0000 | 34821 |
+| 1 | **G11** cnn_bilstm | **0.9493** | 0.8571 | 1.0000 | 463877 |
+| 2 | G6 mlp | 0.9285 | 0.7077 | 1.0000 | 400901 |
+| 3 | G10 cnn_lstm | 0.8159 | 0.5000 | 0.5000 | 212485 |
+| 4 | G8 lstm | 0.8099 | 0.3556 | 0.8000 | 153605 |
+| 5 | G9 bilstm | 0.8058 | 0.5000 | 0.5000 | 372229 |
+| 6 | G7 cnn1d | 0.6221 | 0.0000 | 0.0000 | 34821 |
+| 7 | G12 transformer | 0.5808 | 0.0000 | 0.0000 | 105221 |
 
-Summary: `benchmarks/results/ablation_ladder/summary.json`  
-**Decision: RUN_DOCUMENTED** for F1–F7 ladder; A7 tops table.  
-**Honest finding:** A4 attention+CE **underperforms** A3 CNN–BiLSTM under this budget — package credit is composition (focal+KD+HPO), not attention alone.  
-Champion **unchanged**. Wall ~90 min.
+Summary: `benchmarks/results/baselines_neural/summary.json`  
+**Decision: RUN_DOCUMENTED** G6–G12; G15 equal-budget note **DONE**.  
+**Honest findings:** G11 tops pure neural CE suite (= A3); G12 transformer weak; G6 protocol MLP 0.9285 ≠ historical 0.962; G7=A1 G9=A2 consistency.  
+Champion **unchanged**. Wall ~80 min.
 
-### 3.12 Full remaining playlist
-- **WP5b** neural baselines (G6 re-protocol, G7–G12) + G2 SVM full + G5 LGBM fix + G15 ← **next recommended**
+### 3.13 Full remaining playlist
+- **G2** SVM full re-run + **G5** LGBM fix + G13 N/A note if needed
 - **WP5c** Pareto H8
 - **WP4a/D6** stratified batch; **C7/D9** SupCon; **C8** asymmetric; **C10** uncertainty; **C4/C5** multi-scale/gated
 - **B2–B4** bounded arch HPO or RUN_DOCUMENTED plateau reject
@@ -72,15 +72,15 @@ Champion **unchanged**. Wall ~90 min.
 
 ## 4. Background jobs at handoff
 
-**Expect idle** (ablation finished ~2026-07-21T22:29Z). GPU cool.  
+**Expect idle** (neural baselines finished ~2026-07-22T01:08Z). GPU cool.  
 Verify:
 
 ```bash
 cd /home/titoisalive/colide
-ps -eo pid,cmd | awk '/run_ablation_ladder|train_protocol|run_hpo/{print}'
-test -f benchmarks/results/ablation_ladder/summary.json && echo ablation_OK
-python3 -c "import json;s=json.load(open('benchmarks/results/ablation_ladder/summary.json'));print(s['n_success'], s['ranking_val_macro_f1'][0])"
-# expect n_success 7; top A7 ~0.9699
+ps -eo pid,cmd | awk '/run_neural_baselines|train_protocol|run_hpo/{print}'
+test -f benchmarks/results/baselines_neural/summary.json && echo neural_OK
+python3 -c "import json;s=json.load(open('benchmarks/results/baselines_neural/summary.json'));print(s['n_success'], s['ranking_val_macro_f1'][0])"
+# expect n_success 7; top G11 ~0.9493
 md5sum model/best_model_botiot_twostage.pth
 # expect: 80a90f7cc210276300eaa90173a5a385
 nvidia-smi --query-gpu=temperature.gpu,utilization.gpu,memory.used --format=csv
@@ -90,8 +90,8 @@ nvidia-smi --query-gpu=temperature.gpu,utilization.gpu,memory.used --format=csv
 
 ## 5. Next chat work order (strict)
 
-1. **Verify** disk vs `RESULTS_DISK_MANIFEST.md` (ablation + HPO confirm + package + prior + champion md5).  
-2. **Next science:** **WP5b neural baselines** (protocol-fair) **or** D6 stratified.  
+1. **Verify** disk vs `RESULTS_DISK_MANIFEST.md` (neural + ablation + HPO + package + champion md5).  
+2. **Next science:** **G2/G5 classical fixes** **or** **D6 stratified batch** **or** bounded C* / WP5c Pareto.  
 3. Thermal guard if sustained train (soft 85 / hard 90).  
 4. **DICC** only when user opens dedicated session.  
 5. Never start manuscript until tracker largely green.  
@@ -122,7 +122,8 @@ Read first (in order):
 8) config/hpo_best.yaml
 
 Verify on disk:
-- benchmarks/results/ablation_ladder/summary.json  (A7 top ~0.9699 n=7 RUN_DOCUMENTED)
+- benchmarks/results/baselines_neural/summary.json  (G11 top ~0.9493 n=7 RUN_DOCUMENTED)
+- benchmarks/results/ablation_ladder/summary.json  (A7 top ~0.9699 n=7)
 - benchmarks/results/multirun_hpo_confirm/summary.json  (mean ~0.9689±0.0145 n=5)
 - benchmarks/results/multirun_ensemble_hpo/summary.json  (mean ~0.9639±0.0185 n=5)
 - benchmarks/results/hpo/summary.json  (winner ~0.9791 INCORPORATE)
@@ -132,15 +133,16 @@ Verify on disk:
 - Champion md5 still 80a90f7cc210276300eaa90173a5a385
 - No train jobs; GPU cool before start
 
-Last session (2026-07-21): WP5a ablation ladder A1–A7 seed42 val-only ~90 min —
-A7 0.9699 > A3 0.9493 > A6 0.9346 > A5 0.8684 > A2 0.8058 > A4 0.7378 > A1 0.6221;
-F1–F7 RUN_DOCUMENTED; A4 attn+CE underperforms A3 (honest); F9 systems partial;
-champion unchanged. Git tip after push: check git log -1.
+Last session (2026-07-22): WP5b neural baselines G6–G12 seed42 CE scratch equal budget ~80 min —
+G11 0.9493 > G6 0.9285 > G10 0.8159 > G8 0.8099 > G9 0.8058 > G7 0.6221 > G12 0.5808;
+G15 HPO note DONE; transformer weak; G7=A1 G9=A2 G11=A3 consistency; champion unchanged.
+Git tip after push: check git log -1.
 
 Next (pick and fully finish with JSON + tracker flips):
-A) WP5b neural baselines protocol-fair (G6 re-run, G7–G12)  ← START HERE
-B) If early + thermal OK: D6 stratified batch or G2/G5 classical fixes
-C) DICC only if user opens dedicated session
+A) G2 SVM full + G5 LGBM classical fixes + G13 note  ← recommended if CPU-bound session
+B) D6 stratified batch FT compare  ← recommended if GPU science session
+C) Bounded C* (SupCon / multi-scale / gated / asymmetric / uncertainty) or WP5c Pareto prep
+D) DICC only if user opens dedicated session
 
 Rules: no invent multi-day numbers; no clobber champion without BACKUP;
 thermal guard if sustained train; commit/push; end per HANDOFF lifecycle with paste-ready next prompt.
@@ -158,9 +160,10 @@ thermal guard if sustained train; commit/push; end per HANDOFF lifecycle with pa
 | Progress | `docs/execution_plan/PROGRESS_LOG.md` |
 | Method decision | `docs/execution_plan/METHOD_PACKAGE_DECISION.md` |
 | HPO winner config | `config/hpo_best.yaml` |
+| Neural baselines summary | `benchmarks/results/baselines_neural/summary.json` |
+| Neural baselines driver | `scripts/run_neural_baselines.py` |
+| Neural baseline models | `model/neural_baselines.py` |
 | Ablation summary | `benchmarks/results/ablation_ladder/summary.json` |
-| Ablation driver | `scripts/run_ablation_ladder.py` |
-| Ablation models | `model/ablation_variants.py` |
 | HPO multi-seed confirm | `benchmarks/results/multirun_hpo_confirm/summary.json` |
 | Package multirun | `benchmarks/results/multirun_ensemble_hpo/summary.json` |
 | WP1b multirun | `benchmarks/results/multirun/summary.json` |
@@ -173,12 +176,12 @@ thermal guard if sustained train; commit/push; end per HANDOFF lifecycle with pa
 
 | Result | Assessment |
 |--------|------------|
-| A7 ladder top 0.9699 | Full package wins incremental table (seed42) |
-| A3 0.9493 | Strong CNN–BiLSTM without attention |
-| A4 0.7378 | Attention+CE alone is a **negative** under this budget |
-| WP1b multirun mean ~0.971 | Still best multi-seed mean |
-| Protocol RF 0.9778 | Neural multi-seed mean still does not beat RF |
+| G11 0.9493 | Strongest pure neural CE arch baseline (= A3) |
+| G6 protocol MLP 0.9285 | Honest protocol number; do not use historical 0.962 |
+| G12 0.5808 | Transformer not free gain under equal budget |
+| A7 package 0.9699 | Still above all pure CE neural baselines |
+| Protocol RF 0.9778 | Still above pure neural CE suite on detection |
 
 ---
 
-*End handoff. Next chat: verify disk → WP5b neural baselines (recommended).*
+*End handoff. Next chat: verify disk → G2/G5 classical fixes or D6 stratified (recommended).*

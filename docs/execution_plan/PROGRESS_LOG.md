@@ -1,7 +1,50 @@
 # Progress log (results as they land)
 
 **Policy:** document everything; label pilot vs full; test sealed unless noted.  
-**Handoff snapshot:** 2026-07-21 (WP5a ablation ladder DONE)
+**Handoff snapshot:** 2026-07-22 (WP5b neural baselines G6–G12 DONE)
+
+---
+
+## 2026-07-22 — WP5b protocol-fair neural baselines G6–G12 (science)
+
+Scripts: `scripts/run_neural_baselines.py`, `model/neural_baselines.py`  
+Protocol: `botiot_v1` / **stage_b_ft** / seed **42** / epochs≤8 / patience=3 / **CE** / scratch / **val only** (test sealed)  
+Shared HPs: lr=1e-3 Adam batch=512 (G15 equal budget; no per-baseline Optuna)  
+Tag: `baselines_neural/` (champion + multirun + ablation trees **not** clobbered)  
+Summary: `benchmarks/results/baselines_neural/summary.json` md5 `dc85077cb129c3209d6f6148c18e925b`  
+Wall ~4816 s (~80 min). Champion md5 **unchanged** `80a90f7cc210276300eaa90173a5a385`.  
+Thermal: soft 85 / hard 90; peak ~72°C; no hard trip.
+
+| Rank | Row | Config | val macro-F1 | Min-cls | Theft | params | µs/sample |
+|------|-----|--------|--------------|---------|-------|--------|-----------|
+| 1 | **G11** | cnn_bilstm CE | **0.9493** | 0.8571 | 1.0000 | 463877 | 20.12 |
+| 2 | G6 | mlp CE | 0.9285 | 0.7077 | 1.0000 | 400901 | 4.33 |
+| 3 | G10 | cnn_lstm CE | 0.8159 | 0.5000 | 0.5000 | 212485 | 16.25 |
+| 4 | G8 | lstm CE | 0.8099 | 0.3556 | 0.8000 | 153605 | 10.39 |
+| 5 | G9 | bilstm CE | 0.8058 | 0.5000 | 0.5000 | 372229 | 16.01 |
+| 6 | G7 | cnn1d CE | 0.6221 | 0.0000 | 0.0000 | 34821 | 6.15 |
+| 7 | G12 | transformer CE | 0.5808 | 0.0000 | 0.0000 | 105221 | 10.72 |
+
+**Comparators**
+- WP5a A3 cnn_bilstm CE: **0.9493** — G11 exact match (architecture consistency)
+- WP5a A1/A2: **0.6221 / 0.8058** — G7/G9 match
+- WP5a A7 full package: **0.9699** (diff loss/init/HPO — not same row)
+- WP1b multirun mean: **0.9714 ± 0.0109**
+- Protocol RF val: **0.9778**
+- Historical non-protocol MLP: ~0.962 — **do not mix**
+
+**Interpretation**
+- Under equal CE scratch budget, **CNN–BiLSTM (G11)** is the strongest pure neural architecture baseline.
+- Protocol-fair **MLP (G6)** is competitive (0.9285) but below G11; historical 0.962 was a different pipeline.
+- Lightweight **transformer (G12)** is weak under this budget (0.5808) — honest negative for free transformer claim.
+- Pure **1D-CNN (G7)** insufficient alone (matches ablation A1).
+- CAD-CBA-v1 package (A7 / multirun) remains above all pure CE baselines; RF still higher on protocol-fair detection.
+
+**Decision:** G6–G12 **RUN_DOCUMENTED** (arch table); G11 also confirms G11 DONE; G15 **DONE** (equal-budget note). Champion unchanged.
+
+**Also this session:** `scripts/finalize_neural_baselines_docs.py`; thermal `logs/thermal_guard_neural_baselines.sh`.
+
+**Next science:** G2 SVM full + G5 LGBM fix **or** D6 stratified batch **or** WP5c Pareto / bounded C*. DICC only when user opens session.
 
 ---
 

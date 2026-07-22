@@ -134,16 +134,16 @@
 | G3 | Random Forest | DONE (val) | protocol-fair val **0.9778**; published 0.9864 = other pipeline (`rf_baseline_processed`) |
 | G4 | XGBoost | DONE (val) | protocol-fair val **0.9762** (`xgb_seed42.json`) |
 | G5 | LightGBM | RUN_DOCUMENTED | full train val **0.5512** — weak; fix/re-run later |
-| G6 | MLP | RUN_DOCUMENTED (historical) | `ablation_mlp.json` macro_f1≈0.962; `mlp_twostage.json`≈0.954 — **protocol-fair re-run still required for fair table** |
-| G7 | 1D-CNN | TODO | **Playlist:** protocol-fair baseline (WP5b) |
-| G8 | LSTM | TODO | **Playlist:** protocol-fair baseline |
-| G9 | BiLSTM | TODO | **Playlist:** protocol-fair baseline |
-| G10 | CNN–LSTM | TODO | **Playlist:** protocol-fair baseline |
-| G11 | CNN–BiLSTM | DONE (val protocol) | WP1b multirun / V3 attention student path under `botiot_v1` |
-| G12 | Transformer / temporal-attention | TODO | **Playlist:** protocol-fair baseline or RUN_DOCUMENTED after try |
+| G6 | MLP | RUN_DOCUMENTED (protocol) | WP5b seed42 CE scratch val **0.9285** (min 0.7077 Theft 1.0; 400901 params; 4.33 µs/sample); historical non-protocol 0.962/0.954 must **not** be mixed |
+| G7 | 1D-CNN | RUN_DOCUMENTED | WP5b seed42 **0.6221** (min/Theft=0; matches WP5a A1); weak pure-CNN under equal budget |
+| G8 | LSTM | RUN_DOCUMENTED | WP5b seed42 **0.8099** (min 0.3556 Theft 0.8) |
+| G9 | BiLSTM | RUN_DOCUMENTED | WP5b seed42 **0.8058** (min/Theft 0.5; matches WP5a A2) |
+| G10 | CNN–LSTM | RUN_DOCUMENTED | WP5b seed42 **0.8159** (min/Theft 0.5) |
+| G11 | CNN–BiLSTM | DONE (val protocol) + WP5b arch ref | WP5b CE scratch **0.9493** tops neural suite (= WP5a A3); WP1b multirun package path mean 0.9714±0.0109 (diff init/loss) |
+| G12 | Transformer / temporal-attention | RUN_DOCUMENTED | WP5b lightweight temporal transformer seed42 **0.5808** (min/Theft=0) — underperforms under equal CE budget; not free win |
 | G13 | Reproducible lightweight IDS | TODO | **Playlist:** if public method available; else RUN_DOCUMENTED N/A with reason |
 | G14 | Same train/val/test partitions | DONE | Protocol `botiot_v1` + freeze card |
-| G15 | Comparable HPO effort | TODO | **Playlist:** document HPO budgets per baseline family |
+| G15 | Comparable HPO effort | DONE (documented) | WP5b equal fixed HPs (lr=1e-3 Adam bs=512 ep≤8 pat=3 CE scratch seed42); no per-baseline Optuna; CAD-CBA HPO separate (`summary.json` g15 note) |
 
 ---
 
@@ -262,6 +262,7 @@
 | 2026-07-21 | **Multi-seed HPO confirm DONE** original distill + hpo_best: mean **0.9689 ± 0.0145** n=5 (max 0.9797 seed44; min 0.9483 seed46; seed42 **0.9791** exact WP3 repro) RUN_DOCUMENTED — mean does not beat WP1b; train HPs stay INCORPORATED; next: WP5a ablations or neural baselines |
 | 2026-07-21 | **Context hygiene / full-playlist lock:** skip-nothing restated as complete **every** tracker row; flipped stale statuses from existing disk evidence (B10/B11, C13, D8/D10, F3/F4/F8, G6/G11/G14, H1/H5, J1, K1, L2–L4/L7/L9, etc.). Open rows marked **Playlist required**. No invented numbers. Next science still WP5a etc. |
 | 2026-07-21 | **WP5a ablation ladder DONE** A1–A7 seed42 val-only ~90 min: A7 **0.9699** &gt; A3 0.9493 &gt; A6 0.9346 &gt; A5 0.8684 &gt; A2 0.8058 &gt; A4 0.7378 &gt; A1 0.6221; F1–F7 RUN_DOCUMENTED; F9 systems partial; A4 attn+CE underperforms A3 (honest); champion unchanged; next WP5b neural baselines |
+| 2026-07-22 | **WP5b neural baselines DONE** G6–G12 seed42 CE scratch equal budget ~80 min: G11 **0.9493** &gt; G6 0.9285 &gt; G10 0.8159 &gt; G8 0.8099 &gt; G9 0.8058 &gt; G7 0.6221 &gt; G12 0.5808; G15 HPO budget note DONE; transformer weak under budget; G7=A1 G9=A2 G11=A3 consistency; champion unchanged; next D6/G2/G5 or WP5c/C* |
 
 ---
 
