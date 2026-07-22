@@ -1,6 +1,6 @@
 # 11 — Phase 7: Explainability Beyond Dispatch
 
-**Status:** NOT STARTED  
+**Status:** DONE 2026-07-22 — suite RUN_DOCUMENTED; J10 = drop full claim / keep structured+dispatch  
 **Depends on:** Final detector  
 **Prof:** §9  
 
@@ -46,16 +46,16 @@ Exceptional work requires **A** if the word explainable appears.
 
 ## 4. Acceptance criteria (Choice A)
 
-- [ ] Dispatch + generation reported separately  
-- [ ] ≥1 faithfulness metric  
-- [ ] Comparison table vs SHAP/LIME or attention  
-- [ ] Hallucination/consistency protocol documented  
-- [ ] Claims match measured results  
+- [x] Dispatch + generation reported separately (16.60 µs vs ~7400 ms)  
+- [x] ≥1 faithfulness metric (occlusion top-3 mass 0.5109)  
+- [x] Comparison vs attention + rules (shap/lime not installed — documented)  
+- [x] Hallucination/consistency protocol documented  
+- [x] Claims match measured results → **Choice B for title/abstract** + structured evidence kept  
 
-Choice B acceptance: abstract never claims explanation quality.
+Choice B acceptance: abstract never claims full explanation quality. **Locked.**
 
 ---
 
 ## 5. Exit
 
-Results 5.10 ready **or** XAI claims removed from paper spine.
+**DONE:** `benchmarks/results/xai/summary.json` · J10 `DROP_FULL_EXPLAINABLE_CLAIM_KEEP_STRUCTURED`.

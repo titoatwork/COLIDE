@@ -28,11 +28,11 @@
 | WP5a | Full ablation ladder | 5 | Final recipe | Agent | **DONE 2026-07-21** A1–A7 seed42; A7 0.9699 tops ladder; F1–F7 RUN_DOCUMENTED |
 | WP5b | Fair baseline suite | 5 | WP1a | Agent | **DONE 2026-07-22** neural G6–G12 + classical G1–G5 (SVM 0.4268; LGBM 0.9818) + G13 N/A |
 | WP5c | Pareto figure + composite score | 5 | WP5a/b + systems | Agent | **DONE 2026-07-22** `pareto/` + `pareto_h8/` systems rebench; G6 composite; classical refs |
-| WP6a | Re-export + fidelity | 6 | Final ckpt | Agent | TODO |
-| WP6b | Local re-bench ranges Option A | 6 | WP6a | Agent | TODO |
-| WP6c | Re-DICC if model changed | 6 | WP6a | User/ops | TODO |
-| WP7 | XAI suite **or** drop explainable claims | 7 | Final detector | Agent | TODO |
-| WP8 | ToN final-method eval | 8 | Final recipe | Agent | TODO |
+| WP6a | Re-export + fidelity | 6 | Final ckpt | Agent | **DONE 2026-07-22** re-export + bit-identical fidelity PASS |
+| WP6b | Local re-bench ranges Option A | 6 | WP6a | Agent | TODO (after sealed multi-seed test lock) |
+| WP6c | Re-DICC if model changed | 6 | WP6a | User/ops | TODO (user-scheduled; champion unchanged so optional) |
+| WP7 | XAI suite **or** drop explainable claims | 7 | Final detector | Agent | **DONE 2026-07-22** suite RUN_DOCUMENTED; J10 drop full claim keep structured+dispatch |
+| WP8 | ToN final-method eval | 8 | Final recipe | Agent | **DONE 2026-07-22** val 0.8080 test 0.8110 RF 0.9393 RUN_DOCUMENTED |
 | WP9a | Numbers-match + claim JSON packaging | 9 | All | Agent | TODO |
 | WP9b | Manuscript spine + figures | 9 | WP9a | User+agent | TODO (not before tracker green) |
 
@@ -42,11 +42,11 @@
 
 | Priority | Action |
 |----------|--------|
-| 0 | Verify disk via `RESULTS_DISK_MANIFEST.md` (incl. `cstar_bounded/` + `teachers_kd_neural/` + `pareto_h8/`) |
-| 1 | Final config freeze → sealed multi-seed **test** (B14) |
-| 2 | **WP7** XAI suite **or** J10 drop path |
-| 3 | **WP8** ToN final-method eval |
-| 4 | **WP6** re-export / local re-bench after lock |
+| 0 | Verify disk via `RESULTS_DISK_MANIFEST.md` (incl. `xai/` + `toniot_final/` + `energy_table/` + prior) |
+| 1 | Final config freeze → sealed multi-seed **test** (B14) — **needs explicit user lock** |
+| 2 | **WP6b** local multi-session ranges after lock (WP6a fidelity already DONE) |
+| 3 | **WP9a** claims packaging / numbers-match (manifest + verify_claims) |
+| 4 | **WP9b** manuscript only after tracker largely green |
 | Parallel | **WP0** only when user opens dedicated DICC session |
 | Never first | WP9b manuscript with empty cluster cells |
 

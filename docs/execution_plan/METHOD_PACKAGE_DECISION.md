@@ -1,7 +1,7 @@
 # Method package decision (Phase 2) — signed default
 
 **Date:** 2026-07-19  
-**Last status update:** 2026-07-22 (C*/E6/B2–B4 DONE — all novelty probes RUN_DOCUMENTED reject; CAD-CBA-v1 package locked; train HPs stay INCORPORATED)  
+**Last status update:** 2026-07-22 (WP7 XAI J10 drop-full-keep-structured; WP8 ToN RUN_DOCUMENTED; F9 energy; WP6a fidelity PASS; C*/E6/B2–B4 prior)  
 **Rule:** one package first; **every other playlist idea still gets a bounded run → RUN_DOCUMENTED** (skip-nothing).
 
 ## Chosen package (v1): **Class-aware distilled CNN–BiLSTM (CAD-CBA-v1)**
@@ -47,7 +47,11 @@ Extreme class imbalance + minority (Theft) under neural deploy path; RF still st
 | Default train HPs for CAD-CBA-v1 | **hpo_best.yaml** | lr 5.89e-5, batch 1024, γ≈1.92, cosine, … |
 | Arch deltas (attention/multi-scale) | deferred | only if plateaus |
 | Multi-seed confirm of HPO winner (val) | **RUN_DOCUMENTED** | mean **0.9689 ± 0.0145** n=5; seed42 **0.9791** repro; does **not** beat WP1b mean |
-| Sealed multi-seed **test** of final lock | **TODO** | only after final config freeze |
+| Sealed multi-seed **test** of final lock | **TODO** | only after **explicit user** final config freeze |
+| WP7 XAI suite | **RUN_DOCUMENTED** | J10 drop full LLM-XAI claim; keep dispatch + structured evidence |
+| WP8 ToN final method | **RUN_DOCUMENTED** | val 0.8080 / test 0.8110 vs RF test 0.9393 (13-feat); KD selected |
+| F9 energy table | **RUN_DOCUMENTED** | consolidated `energy_table/`; RTX ~0.786 mJ/flow |
+| WP6a re-export + fidelity | **DONE** | bit-identical; CUDA self-check PASS |
 | Package FT multirun (ensemble KD + HPO HPs) | **RUN_DOCUMENTED** | mean **0.9639 ± 0.0185** n=5; max 0.9803; does **not** beat WP1b mean 0.9714±0.0109 |
 | Ablation ladder A1–A7 (seed42) | **RUN_DOCUMENTED** | A7 **0.9699** tops; A3 0.9493; A4 attn+CE **0.7378** underperforms A3 — package composition credit |
 | Protocol-fair neural baselines G6–G12 (seed42 CE) | **RUN_DOCUMENTED** | G11 cnn_bilstm **0.9493** tops suite; G6 MLP 0.9285; G12 transformer **0.5808** weak; equal fixed HPs (G15) |
@@ -78,5 +82,8 @@ Extreme class imbalance + minority (Theft) under neural deploy path; RF still st
 - C10 MC-dropout selective — no robust high-coverage lift over argmax 0.9791
 - E6 G11 neural teacher → student **0.8513** ≪ ensemble KD student **0.9401** — keep tree ensemble teacher
 - B2–B4 full arch Optuna — plateau reject (`B2B4_ARCH_HPO_PLATEAU_REJECT.md`)
+- Free-form TinyLlama explanations — weak strict feature agreement (0.333); no full explainable title claim
+- ToN CAD-CBA mapped on 13-feat processed: test 0.8110 ≪ RF 0.9393; ≠ historical 26-feat clean 0.9526
+- ToN FT stage did not beat KD under ToN-scale HPs — keep KD checkpoint as selected
 
 See `RESULTS_DISK_MANIFEST.md` for md5s and paths.

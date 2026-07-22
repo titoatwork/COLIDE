@@ -1,7 +1,58 @@
 # Progress log (results as they land)
 
 **Policy:** document everything; label pilot vs full; test sealed unless noted.  
-**Handoff snapshot:** 2026-07-22 (C* + E6 + B2–B4 + pareto_h8 DONE; WP5c prior)
+**Handoff snapshot:** 2026-07-22 (WP7 XAI + WP8 ToN + F9 energy + WP6a fidelity DONE; C*/E6 prior)
+
+---
+
+## 2026-07-22 — WP7 XAI + F9 energy + WP8 ToN + WP6a re-export (science + systems)
+
+### WP7 XAI suite (BoT val, champion frozen)
+Scripts: `scripts/run_xai_suite.py`  
+Protocol: `botiot_v1` / stage_b_ft / seed 42 / **val only** (test sealed)  
+Checkpoint: production champion md5 **`80a90f7cc210276300eaa90173a5a385`** (unchanged)  
+Tag: `xai/` · Summary md5 `4e1d869af8cc994db31637603e4a5f5a` · wall ~19 s
+
+| Metric | Value | Tracker |
+|--------|-------|---------|
+| Occlusion top-3 | min, stddev, max | J2/J8 |
+| Faithfulness top-3 mass | **0.5109** | J2 |
+| Rank consistency (Spearman) | **0.9636** | J3 |
+| Structured usefulness mean | **1.0** (n=8 auto rubric) | J5/J9 |
+| LLM strict feature-mention | **0.333** (n=6 TinyLlama) | J6/J7 |
+| Dispatch p99 overhead | **16.60 µs** | J4 |
+| Generation mean | **~7400 ms** | J4 |
+
+**Decision: RUN_DOCUMENTED** · **J10 = DROP_FULL_EXPLAINABLE_CLAIM_KEEP_STRUCTURED**  
+Keep dispatch micro-result + structured evidence templates; do **not** title/abstract as full LLM-explainable IDS. shap/lime not installed (documented).
+
+### F9 energy / systems table
+Script: `scripts/run_energy_table_f9.py` (no retrain)  
+Tag: `energy_table/` · RTX batch128 **~0.786 mJ/flow**; consolidates A100/cuML/latency/params  
+**Decision: RUN_DOCUMENTED** — per-ablation mJ not re-measured (disclosed).
+
+### WP8 ToN final method (CAD-CBA-v1 mapped)
+Script: `scripts/run_toniot_final_method.py`  
+Data: `data/processed_toniot/` **13 features**, 10 classes · seed 42  
+Recipe: V3 dims + ensemble KD (α=0.6 T=10) + focal γ≈1.92 + dropouts/wd/cosine; ToN-scale kd_lr=1e-3 ft_lr=1e-4  
+Wall ~295 s · BoT champion **unchanged**
+
+| Model | val macro-F1 | test macro-F1 |
+|-------|--------------|---------------|
+| CAD-CBA-v1 (KD selected) | **0.8080** | **0.8110** |
+| RF same-split | 0.9400 (val) | **0.9393** |
+| Ensemble teacher val | 0.9618 | — |
+| Historical clean CNN (26-feat) | — | 0.9526 (≠ this protocol) |
+
+Pilot low-lr transfer (BoT FT lr) archived as `summary_pilot_lowlr.json` (test ~0.74).  
+FT did not beat KD → selected KD ckpt.  
+**Decision: RUN_DOCUMENTED** — honest RF gap; multi-dataset recipe evidence.
+
+### WP6a re-export + numerical fidelity
+`validate_weights.py` + `numerical_fidelity.py` · all blocks max|Δ|=0 · CUDA self-check all PASS  
+`wp6_reexport/summary.json` · champion md5 unchanged.
+
+**Next science:** sealed multi-seed **test** (B14) after explicit user lock; WP6b ranges; WP9 claims; DICC when user opens session.
 
 ---
 

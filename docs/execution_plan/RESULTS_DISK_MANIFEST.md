@@ -1,7 +1,7 @@
 # Results Disk Manifest (handoff snapshot)
 
 **Generated (UTC):** 2026-07-21T11:01:25.771483+00:00  
-**Last append (UTC):** 2026-07-22T09:30:00 (C* + E6 + B2B4 + pareto_h8)
+**Last append (UTC):** 2026-07-22T11:35:00 (WP7 XAI + WP8 ToN + F9 energy + WP6a fidelity)
 **Host path root:** `/home/titoisalive/colide`
 
 `benchmarks/results/` is **gitignored**. This file is committed so the next session can verify local artifacts without inventing numbers.
@@ -496,4 +496,41 @@ Complements analysis-only `pareto/`. Script: `scripts/run_pareto_multiobj.py`.
 |------|------|
 | `docs/execution_plan/B2B4_ARCH_HPO_PLATEAU_REJECT.md` | RUN_DOCUMENTED freeze V3 dims |
 
-**Last append (UTC):** 2026-07-22T09:30:00 (C* + E6 + B2B4 + pareto_h8)
+## WP7 XAI suite (2026-07-22)
+
+| Path | md5 | bytes | key |
+|------|-----|-------|-----|
+| `benchmarks/results/xai/summary.json` | `4e1d869af8cc994db31637603e4a5f5a` | 17264 | J10 DROP_FULL keep structured |
+| `benchmarks/results/xai/table.md` | `d28ffb49824520e7168ce5b61b4e0830` | 1236 | markdown |
+| `benchmarks/results/xai/structured_examples.json` | `d559139080e8ed418779bc37ee7b28e6` | 5820 | templates |
+
+**Headlines:** occlusion top3 min/stddev/max; faith mass 0.5109; rank corr 0.9636; LLM feature-mention 0.333; dispatch 16.60 µs; gen ~7400 ms.
+
+## F9 energy table (2026-07-22)
+
+| Path | md5 | bytes | key |
+|------|-----|-------|-----|
+| `benchmarks/results/energy_table/summary.json` | `ae6c9b74a81e199c3abd8e28cb52c761` | 8514 | RTX ~0.786 mJ/flow |
+| `benchmarks/results/energy_table/table.md` | `3c271e0174991ab7b83260635192a3fe` | 916 | markdown |
+
+## WP8 ToN final method (2026-07-22)
+
+| Path | md5 | bytes | key |
+|------|-----|-------|-----|
+| `benchmarks/results/toniot_final/summary.json` | `a30268122037008d59a36214b0108882` | 29433 | val 0.8080 test 0.8110 |
+| `benchmarks/results/toniot_final/table.md` | `e0dd394f20e95bc99b9cc4cc6e74f5e8` | 601 | markdown |
+| `benchmarks/results/toniot_final/classical_rf.json` | `1f8d05492a6e38a8d8d759d62a9aae76` | 5212 | RF test 0.9393 |
+| `benchmarks/results/toniot_final/summary_pilot_lowlr.json` | `6479aa2a1dfb869ecde9b95a8c6608f7` | 28707 | pilot under-tuned archive |
+| `model/toniot_final/kd_ensemble_seed42.pth` | `b258d4f822b4c27b8378e0539b30e611` | 2135458 | selected final |
+| `model/toniot_final/ft_cad_cba_v1_seed42.pth` | `b258d4f822b4c27b8378e0539b30e611` | 2135458 | = KD (FT no lift) |
+
+**Trap:** Do not mix with historical clean 26-feat CNN 0.9526. This is 13-feat `processed_toniot`.
+
+## WP6a re-export + fidelity (2026-07-22)
+
+| Path | md5 | bytes | key |
+|------|-----|-------|-----|
+| `benchmarks/results/numerical_fidelity.json` | `73d043da90ffc6f67ca28f39cc2f8c7e` | 2608 | bit-identical + CUDA PASS |
+| `benchmarks/results/wp6_reexport/summary.json` | (local) | — | DONE re-export |
+
+**Last append (UTC):** 2026-07-22T11:35:00 (WP7 + WP8 + F9 + WP6a)

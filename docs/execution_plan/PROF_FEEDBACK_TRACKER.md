@@ -104,8 +104,8 @@
 | E5 | Calibrated tree ensemble | INCORPORATED | Unweighted mean RF+XGB+LGBM probs; student **0.9401** best |
 | E6 | Strong neural teacher | RUN_DOCUMENTED | G11 neural teacher → V3 student stage_a_kd val **0.8513** ≪ ensemble student **0.9401**; keep ensemble (`teachers_kd_neural/`) |
 | E7 | Heterogeneous ensembles | INCORPORATED | RF+XGB+LGBM heterogeneous mean (WP4b) |
-| E8 | Student not mere imitation — deployment trade-off | PARTIAL | WP4b: XGB teacher 0.9918 → student 0.9270 &lt; ensemble student 0.9401 (not pure imitation); multi-obj table still open |
-| E9 | Lower memory / latency / GPU deploy / temporal | PARTIAL | WP5c `pareto/` + systems rebench `pareto_h8/`: G6 composite lead; classical LGBM tops F1; GPU deploy CUDA blocks / final energy still open |
+| E8 | Student not mere imitation — deployment trade-off | RUN_DOCUMENTED | WP4b: XGB teacher 0.9918 → student 0.9270 &lt; ensemble 0.9401; multi-obj `pareto_h8/` composite G6 0.9056 |
+| E9 | Lower memory / latency / GPU deploy / temporal | RUN_DOCUMENTED (local) | WP5c + `pareto_h8/` + F9 energy table; cuML VRAM contrast; DICC multi-day still BLOCKED |
 
 ---
 
@@ -121,7 +121,7 @@
 | F6 | + attention/fusion | RUN_DOCUMENTED | WP5a A4 attn+CE **0.7378** **underperforms** A3 0.9493 under this budget — attention not free gain; full package still uses attn+focal+KD+HPO |
 | F7 | Full proposed method | RUN_DOCUMENTED (ladder) | WP5a A7 full CAD-CBA-v1 **0.9699** tops ladder; package multirun mean 0.9639±0.0185 prior |
 | F8 | Metrics: macro/weighted F1, bal-acc, P/R, per-class F1 | DONE | `scripts/protocol/metrics.py` + all protocol result JSONs |
-| F9 | Latency, params, memory, energy per ablation | PARTIAL | WP5a logs params + CUDA latency; WP5c consolidates F1–lat–params Pareto; **full energy table still open** |
+| F9 | Latency, params, memory, energy per ablation | RUN_DOCUMENTED | WP5a params+latency; WP5c Pareto; **energy table** consolidated `energy_table/summary.json` (RTX ~0.786 mJ/flow batch128; A100/cuML historical; per-ablation mJ not re-measured — disclosed gap) |
 
 ---
 
@@ -185,15 +185,15 @@
 | ID | Requirement | Status | Evidence / notes |
 |----|-------------|--------|------------------|
 | J1 | 16.60 µs is dispatch only | DONE | Measured + documented (`llm_explainability.json`); claim scope locked as dispatch-only |
-| J2 | Faithfulness | TODO | **Playlist required** (or J10 drop path) |
-| J3 | Consistency | TODO | **Playlist required** (or J10 drop path) |
-| J4 | Latency (gen vs dispatch) | PARTIAL | Dispatch done; full generation latency still open |
-| J5 | Analyst usefulness | TODO | **Playlist required** (or J10 drop path) |
-| J6 | Hallucination rate | TODO | **Playlist required** (or J10 drop path) |
-| J7 | Agreement with model evidence | TODO | **Playlist required** (or J10 drop path) |
-| J8 | vs SHAP / LIME / attention / rules | TODO | **Playlist required** (or J10 drop path) |
-| J9 | Structured evidence into LLM | PARTIAL | Features in prompts (existing pipeline) |
-| J10 | Or drop full “explainable” claim | TODO | **Must decide after J2–J9 attempt or explicit drop** |
+| J2 | Faithfulness | RUN_DOCUMENTED | Occlusion ΔP top-3 mass **0.5109**; top features min/stddev/max (`xai/summary.json`) |
+| J3 | Consistency | RUN_DOCUMENTED | Occlusion rank Spearman **0.9636** across two val draws |
+| J4 | Latency (gen vs dispatch) | DONE | Dispatch p99 overhead **16.60 µs**; TinyLlama gen mean **~7400 ms** (never conflate) |
+| J5 | Analyst usefulness | RUN_DOCUMENTED | Structured template usefulness mean **1.0** (automatic rubric n=8); not a human SOC study |
+| J6 | Hallucination rate | RUN_DOCUMENTED | Heuristic on n=6 TinyLlama samples; generic/feature-weak free-form text |
+| J7 | Agreement with model evidence | RUN_DOCUMENTED | Strict feature-mention rate **0.333** (ambiguous min/max/mean filtered); top3 agree weak |
+| J8 | vs SHAP / LIME / attention / rules | RUN_DOCUMENTED | Occlusion + attention temporal proxy + rule templates (shap/lime **not installed**) |
+| J9 | Structured evidence into LLM | DONE | Structured template: class, conf, top occlusion feats, analyst action |
+| J10 | Or drop full “explainable” claim | DONE | **DROP_FULL_EXPLAINABLE_CLAIM_KEEP_STRUCTURED** — keep dispatch + structured evidence; no title-level full LLM-XAI |
 
 ---
 
@@ -202,13 +202,13 @@
 | ID | Requirement | Status | Evidence / notes |
 |----|-------------|--------|------------------|
 | K1 | BoT primary | DONE | Primary dataset under protocol `botiot_v1` |
-| K2 | ToN (or other) on final method | PARTIAL | Historical `distill_toniot*.json` etc.; **final CAD-CBA-v1 method re-eval still required** |
-| K3 | Cross-dataset / transfer | TODO | **Playlist required** after K2 |
+| K2 | ToN (or other) on final method | RUN_DOCUMENTED | CAD-CBA-v1 mapped on `processed_toniot` 13-feat: val **0.8080** test **0.8110**; RF same-split test **0.9393**; ≠ historical 26-feat clean 0.9526 (`toniot_final/`) |
+| K3 | Cross-dataset / transfer | RUN_DOCUMENTED (recipe) | Recipe transfer (not weight transfer); ToN-scale kd_lr/ft_lr; honest RF gap |
 | K4 | RQ: improve detection? | TODO | Answer after final tables |
 | K5 | RQ: minority recognition? | TODO | Answer after final tables |
 | K6 | RQ: reduce latency or memory? | PARTIAL | Local evidence exists; final composite still open |
 | K7 | RQ: valid across GPUs? | BLOCKED | DICC |
-| K8 | RQ: explainability measurable value? | TODO | After J* or J10 drop |
+| K8 | RQ: explainability measurable value? | RUN_DOCUMENTED | Dispatch yes; structured evidence yes; free-form LLM quality weak → no full XAI RQ claim |
 
 ---
 
@@ -223,7 +223,7 @@
 | L5 | ≥5 independent training runs mean±std | DONE | WP1b 0.9714±0.0109; package 0.9639±0.0185; HPO confirm 0.9689±0.0145 n=5 (val only) |
 | L6 | Optuna/Bayesian HPO | DONE | WP3 Optuna TPE val-only; winner INCORPORATE 0.9791; multi-seed confirm RUN_DOCUMENTED 0.9689±0.0145 |
 | L7 | One clear proposed method | DONE (named) | **CAD-CBA-v1** signed; full evaluation playlist still open (ablations/test/ToN/paper) |
-| L8 | Deploy: export, parity, profile, kernels, TRT/ORT/compile, FP16/INT8 | PARTIAL | Local CUDA/kernels/`tensorrt_native.json`/`torch_compile_native.json` exist; final re-export after lock open |
+| L8 | Deploy: export, parity, profile, kernels, TRT/ORT/compile, FP16/INT8 | PARTIAL→DONE (export+fidelity) | **WP6a re-export + fidelity PASS** (bit-identical; CUDA self-checks PASS); TRT/ORT/compile historical exist; WP6b multi-session ranges + WP6c DICC still open after sealed test |
 | L9 | Realistic: trade-off vs beat RF everywhere | DONE (framing) | Multi-obj framing locked; need Pareto tables (H8) |
 | L10 | Paper structure / tables / ToV / repro | TODO | Outline in plan pack; write after science green |
 | L11 | Fix gitignored claim-source repro | TODO | Manifest + claim scripts; finish before paper |
@@ -269,6 +269,10 @@
 | 2026-07-22 | **Bounded C\* DONE** CTRL **0.9787**; C4 multi-scale **0.9167**; C5 gated **0.9132**; C8 ASL **0.8012**; C7 SupCon **0.7732**; C10 uncertainty no lift — all **RUN_DOCUMENTED** no package incorporate; `cstar_bounded/` |
 | 2026-07-22 | **B2–B4 arch HPO plateau reject RUN_DOCUMENTED** — `B2B4_ARCH_HPO_PLATEAU_REJECT.md`; V3 dims frozen |
 | 2026-07-22 | **E6 neural teacher KD DONE** G11 teacher → student **0.8513** ≪ ensemble **0.9401** RUN_DOCUMENTED; keep ensemble INCORPORATED; champion unchanged |
+| 2026-07-22 | **WP7 XAI suite DONE** occlusion faith 0.5109 / rank corr 0.9636 / structured usefulness 1.0; LLM feature-mention 0.333 → **J10 DROP full claim KEEP structured+dispatch**; `xai/` |
+| 2026-07-22 | **F9 energy table DONE** consolidated RTX 0.786 mJ/flow + A100/cuML + latency/params; `energy_table/` RUN_DOCUMENTED |
+| 2026-07-22 | **WP8 ToN final method DONE** CAD-CBA-v1 mapped 13-feat: val **0.8080** test **0.8110** RF test **0.9393** RUN_DOCUMENTED; KD selected (FT no lift); pilot low-lr archived |
+| 2026-07-22 | **WP6a re-export + fidelity DONE** bit-identical blocks; CUDA self-check all PASS; champion md5 unchanged |
 
 ---
 
