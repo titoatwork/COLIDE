@@ -151,7 +151,7 @@
 
 | ID | Requirement | Status | Evidence / notes |
 |----|-------------|--------|------------------|
-| H1 | May not beat RF F1 if deployment better | DONE (framing) | METHOD + multi-obj framing locked; tables still need WP5c |
+| H1 | May not beat RF F1 if deployment better | DONE (framing) | METHOD + multi-obj framing locked; WP5c tables show classical LGBM/RF may still top pure F1 while neural owns deploy/size path |
 | H2 | Near-RF detection | PARTIAL | Protocol neural HPO 0.9791 / multirun mean 0.9714 vs protocol RF 0.9778 / published RF 0.9864 — keep honest dual bars |
 | H3 | Much lower GPU memory | PARTIAL | Historical `cuml_rf_resources.json` CNN ~2MB vs cuML RF ~444MB; protocol proxy via n_params/ckpt bytes in WP5c (`pareto/`); peak VRAM re-measure still open |
 | H4 | Faster neural inference | PARTIAL | Protocol batch256 µs/sample in WP5c: G6 MLP **4.33** vs A7 **26.02** vs A3 **19.96**; historical `baseline_latency.json` still secondary |
