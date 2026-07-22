@@ -23,10 +23,10 @@
 | WP3 | Optuna HPO study + sealed test | 3 | WP1–2 | Agent | **DONE 2026-07-21** train HPs INCORPORATE 0.9791 (test still sealed) |
 | WP3b | Package FT multirun ensemble KD + HPO HPs | 3/4 | WP3, WP4b | Agent | **DONE 2026-07-21** mean 0.9639±0.0185 RUN_DOCUMENTED (not mean-win vs WP1b) |
 | WP3c | Multi-seed HPO confirm (orig distill + hpo_best) | 3 | WP3 | Agent | **DONE 2026-07-21** mean 0.9689±0.0145 RUN_DOCUMENTED (seed42 0.9791 repro; not mean-win vs WP1b) |
-| WP4a | Imbalance strategy sweep (beyond loss) | 4 | WP1–3 | Agent | PARTIAL (loss done; stratified/SupCon open) |
+| WP4a | Imbalance strategy sweep (beyond loss) | 4 | WP1–3 | Agent | **PARTIAL→ D6 DONE** stratified hurts (keep shuffle); SupCon still open |
 | WP4b | Teacher sweep (RF/XGB/LGBM/ensemble) | 4 | WP1–3 | Agent | **DONE 2026-07-21** ensemble student 0.9401 INCORPORATE |
 | WP5a | Full ablation ladder | 5 | Final recipe | Agent | **DONE 2026-07-21** A1–A7 seed42; A7 0.9699 tops ladder; F1–F7 RUN_DOCUMENTED |
-| WP5b | Fair baseline suite | 5 | WP1a | Agent | **PARTIAL→ neural DONE 2026-07-22** G6–G12 protocol; classical G2 SVM full + G5 LGBM fix still open |
+| WP5b | Fair baseline suite | 5 | WP1a | Agent | **DONE 2026-07-22** neural G6–G12 + classical G1–G5 (SVM 0.4268; LGBM 0.9818) + G13 N/A |
 | WP5c | Pareto figure + composite score | 5 | WP5a/b + systems | Agent | TODO |
 | WP6a | Re-export + fidelity | 6 | Final ckpt | Agent | TODO |
 | WP6b | Local re-bench ranges Option A | 6 | WP6a | Agent | TODO |
@@ -42,9 +42,10 @@
 
 | Priority | Action |
 |----------|--------|
-| 0 | Verify disk via `RESULTS_DISK_MANIFEST.md` (incl. baselines_neural + ablation + HPO) |
-| 1 | **G2 SVM full** + **G5 LGBM fix** classical close-out + G13 note if applicable |
-| 2 | **D6** stratified batch / bounded C* (SupCon/asymm/uncertainty/multi-scale/gated) / **WP5c** Pareto |
+| 0 | Verify disk via `RESULTS_DISK_MANIFEST.md` (incl. classical G2/G5 + D6 + neural + ablation + HPO) |
+| 1 | **WP5c** Pareto F1–latency–memory (H8) after systems consolidation |
+| 2 | Bounded **C\*** (SupCon C7/D9, multi-scale C4, gated C5, asymmetric C8, uncertainty C10) or **B2–B4** arch HPO |
+| 3 | **E6** neural teacher KD (bounded) / **B9** already closed RUN_DOCUMENTED |
 | Parallel | **WP0** only when user opens dedicated DICC session |
 | Never first | WP9b manuscript with empty cluster cells |
 

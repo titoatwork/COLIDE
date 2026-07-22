@@ -1,7 +1,7 @@
 # COLIDE — Session Handoff
 
 **MODE:** 🚀 **EXECUTION — next chat continues Prof tracker.** This chat closed for continuity.  
-**Closed:** 2026-07-22 · **WP5b neural baselines G6–G12** (science + docs).  
+**Closed:** 2026-07-22 · **G2/G5 classical + D6 stratified + G13** (science + docs).  
 **Authority:** `docs/execution_plan/SESSION_CONTINUITY.md` + `RESULTS_DISK_MANIFEST.md` + `PROF_FEEDBACK_TRACKER.md` + Option A.  
 **Policy:** skip nothing → **complete every playlist/tracker row** → JSON → INCORPORATED or RUN_DOCUMENTED (BLOCKED only for ops). **Perfection over LOR hurry.** No invent DICC numbers. Context hygiene: flip statuses when evidence already exists.  
 **Champion:** `model/best_model_botiot_twostage.pth` md5 **`80a90f7cc210276300eaa90173a5a385`** — no clobber without BACKUP.  
@@ -19,11 +19,14 @@
 | Package FT multirun ensemble KD + hpo_best 0.9639±0.0185 | DONE (prior) |
 | Multi-seed HPO confirm 0.9689±0.0145 | DONE (prior) |
 | WP5a ablation ladder A1–A7 A7 0.9699 | DONE (prior) |
-| **WP5b neural baselines G6–G12** | **DONE** G11 **0.9493** tops suite; G6–G12 **RUN_DOCUMENTED**; G15 **DONE** |
-| Systems metrics per baseline (params/latency/mem) | DONE (suite); F9 energy still open |
+| WP5b neural baselines G6–G12 G11 0.9493 | DONE (prior) |
+| **G2 SVM full LinearSVC** | **DONE** val **0.4268** RUN_DOCUMENTED weak |
+| **G5 LGBM fix** | **DONE** val **0.9818** tops protocol classical |
+| **D6 stratified batch** | **DONE** stratified 0.9209 ≪ shuffle 0.9791 (Δ−0.058) RUN_DOCUMENTED keep shuffle |
+| **G13 N/A note** + **B9 class-weight close** | **DONE** |
 
 **DICC:** still **ABSENT** — dedicated session when user opens it.  
-**Jobs:** neural baselines **finished** (~80 min wall); expect idle GPU.
+**Jobs:** classical + D6 **finished**; expect idle GPU.
 
 ---
 
@@ -45,7 +48,7 @@ Perfection over LOR hurry. Option A CUDA locked. NO new jobs until you read cont
 
 FULL PLAYLIST LAW (user-locked):
 - Complete EVERY tracker / WP playlist item → DONE | INCORPORATED | RUN_DOCUMENTED | BLOCKED(ops only).
-- No silent skips of “optional” work (SupCon, arch HPO B2–B4, stratified D6, neural baselines, XAI, ToN, Pareto, sealed test, etc.).
+- No silent skips of “optional” work (SupCon, arch HPO B2–B4, neural baselines done, XAI, ToN, Pareto, sealed test, etc.).
 - If evidence already exists on disk/docs → flip tracker status + notes. Never invent numbers.
 - End session: update tracker/progress/manifest/HANDOFF + commit/push + paste full next-session prompt.
 
@@ -60,7 +63,9 @@ Read first (in order):
 8) config/hpo_best.yaml
 
 Verify on disk:
-- benchmarks/results/baselines_neural/summary.json  (G11 top ~0.9493 n=7 RUN_DOCUMENTED)
+- benchmarks/results/baselines_classical/summary_handoff.json  (LGBM ~0.9818 tops; SVM ~0.4268; RF 0.9778)
+- benchmarks/results/stratified_batch/summary.json  (shuffle ~0.9791 > stratified ~0.9209 Δ~-0.058 RUN_DOCUMENTED)
+- benchmarks/results/baselines_neural/summary.json  (G11 top ~0.9493 n=7)
 - benchmarks/results/ablation_ladder/summary.json  (A7 top ~0.9699 n=7)
 - benchmarks/results/multirun_hpo_confirm/summary.json  (mean ~0.9689±0.0145 n=5)
 - benchmarks/results/multirun_ensemble_hpo/summary.json  (mean ~0.9639±0.0185 n=5)
@@ -71,15 +76,15 @@ Verify on disk:
 - Champion md5 still 80a90f7cc210276300eaa90173a5a385
 - No train jobs; GPU cool before start
 
-Last session (2026-07-22): WP5b neural baselines G6–G12 seed42 CE scratch equal budget ~80 min —
-G11 0.9493 > G6 0.9285 > G10 0.8159 > G8 0.8099 > G9 0.8058 > G7 0.6221 > G12 0.5808;
-G15 HPO note DONE; transformer weak; G7=A1 G9=A2 G11=A3 consistency; champion unchanged.
+Last session (2026-07-22): G2 SVM full 0.4268 RUN_DOCUMENTED; G5 LGBM fix 0.9818 DONE (tops classical);
+D6 stratified 0.9209 vs shuffle 0.9791 (Δ-0.058) keep shuffle; G13 N/A; B9 closed; champion unchanged.
 
 Next:
-A) G2 SVM full + G5 LGBM classical fixes  ← recommended CPU
-B) D6 stratified batch FT compare  ← recommended GPU
-C) Bounded C* / WP5c Pareto / B2–B4 arch HPO if ready
-D) DICC only if user opens dedicated session
+A) WP5c Pareto H8 (F1–latency–memory)  ← systems + tables
+B) Bounded C* (SupCon / multi-scale / gated / asymmetric / uncertainty)
+C) B2–B4 arch HPO or RUN_DOCUMENTED plateau reject
+D) E6 neural teacher KD (bounded)
+E) DICC only if user opens dedicated session
 
 Rules: no invent multi-day numbers; no clobber champion without BACKUP;
 thermal guard if sustained train; commit/push; end per HANDOFF lifecycle.
@@ -115,11 +120,12 @@ git rev-parse HEAD origin/master
 - Official cluster: UM DICC only — **user will open a dedicated DICC session**  
 - Results under `benchmarks/results/` often **gitignored** — use `RESULTS_DISK_MANIFEST.md` + local paths  
 - Agents: no invented DICC numbers  
-- Classical: prefer `summary_handoff.json`  
+- Classical: prefer `summary_handoff.json` (LGBM official **0.9818** fixed; not legacy 0.5512)  
 - Teacher KD: stage_a KD ≠ stage_b FT numbers  
 - HPO: `hpo/summary.json` + `hpo_best.yaml`  
 - Ablation: `ablation_ladder/` ≠ multirun trees  
 - Neural baselines: `baselines_neural/` ≠ historical `ablation_mlp.json`  
+- D6 stratified: `stratified_batch/` — keep **shuffle** default  
 - HPO multi-seed confirm: `multirun_hpo_confirm/` ≠ package `multirun_ensemble_hpo/` ≠ WP1b `multirun/`  
 - Laptop thermal: soft 85 / hard 90  
 
@@ -129,4 +135,4 @@ git rev-parse HEAD origin/master
 
 Design plan Option A approved; FINAL_PLAN P0–P5; audit pack `docs/audit/`; interim Word report sent to Prof; feedback in `docs/feedback1.docx`.
 
-**Next science priority after verify disk:** G2/G5 classical fixes or D6 stratified. DICC only when user opens that session.
+**Next science priority after verify disk:** WP5c Pareto / bounded C* / B2–B4 arch HPO / E6. DICC only when user opens that session.

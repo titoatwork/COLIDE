@@ -1,7 +1,7 @@
 # Method package decision (Phase 2) — signed default
 
 **Date:** 2026-07-19  
-**Last status update:** 2026-07-22 (WP5b neural baselines G6–G12 RUN_DOCUMENTED; G11 0.9493 tops suite; train HPs stay INCORPORATED)  
+**Last status update:** 2026-07-22 (G2/G5 classical + D6 stratified DONE; train sampler stays **shuffle**; LGBM protocol 0.9818; train HPs stay INCORPORATED)  
 **Rule:** one package first; **every other playlist idea still gets a bounded run → RUN_DOCUMENTED** (skip-nothing).
 
 ## Chosen package (v1): **Class-aware distilled CNN–BiLSTM (CAD-CBA-v1)**
@@ -48,6 +48,10 @@ Extreme class imbalance + minority (Theft) under neural deploy path; RF still st
 | Package FT multirun (ensemble KD + HPO HPs) | **RUN_DOCUMENTED** | mean **0.9639 ± 0.0185** n=5; max 0.9803; does **not** beat WP1b mean 0.9714±0.0109 |
 | Ablation ladder A1–A7 (seed42) | **RUN_DOCUMENTED** | A7 **0.9699** tops; A3 0.9493; A4 attn+CE **0.7378** underperforms A3 — package composition credit |
 | Protocol-fair neural baselines G6–G12 (seed42 CE) | **RUN_DOCUMENTED** | G11 cnn_bilstm **0.9493** tops suite; G6 MLP 0.9285; G12 transformer **0.5808** weak; equal fixed HPs (G15) |
+| Classical G2 LinearSVC full | **RUN_DOCUMENTED** | val **0.4268** weak; pilot CV error fixed |
+| Classical G5 LGBM fix | **DONE (val)** | val **0.9818** (balanced multiclass) tops protocol classical |
+| D6 stratified batch vs shuffle | **RUN_DOCUMENTED** | stratified **0.9209** ≪ shuffle **0.9791** (Δ−0.058); **keep shuffle** |
+| Default train_sampler for CAD-CBA-v1 | **shuffle** | inv-freq stratified hurts under hpo_best |
 
 ## Negative results locked in (do not re-litigate without new protocol)
 - `focal_cb` val macro-F1 0.9121 — hurts macro  
@@ -61,5 +65,8 @@ Extreme class imbalance + minority (Theft) under neural deploy path; RF still st
 - Ablation A4 attn+CE **0.7378** < A3 cnn_bilstm CE **0.9493** under seed42/8-ep — attention alone is not a free gain; A7 package path still wins ladder (**0.9699**)
 - WP5b G12 lightweight temporal transformer CE scratch **0.5808** < G11 **0.9493** under equal budget — transformer not a free architecture win on BoT-IoT tabular protocol
 - WP5b G7 1D-CNN **0.6221** weak (matches A1); pure CNN insufficient under this budget
+- D6 inv-freq stratified batch **0.9209** ≪ shuffle **0.9791** (Δ−0.058) — do not add class-balanced batch sampling to CAD-CBA-v1
+- G2 LinearSVC full **0.4268** — linear SVM not competitive under protocol imbalance
+- G5 LGBM legacy **0.5512** superseded by balanced fix **0.9818** (document both; paper uses fixed)
 
 See `RESULTS_DISK_MANIFEST.md` for md5s and paths.

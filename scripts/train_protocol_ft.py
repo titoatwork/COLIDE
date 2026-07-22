@@ -32,7 +32,7 @@ import yaml
 from torch.amp import GradScaler, autocast
 from torch.optim import Adam, AdamW
 from torch.optim.lr_scheduler import CosineAnnealingLR, StepLR
-from torch.utils.data import DataLoader, TensorDataset
+from torch.utils.data import DataLoader, TensorDataset, WeightedRandomSampler
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -60,13 +60,51 @@ def set_seed(seed: int) -> None:
 
 
 def make_loader(
-    X, y, batch_size: int, shuffle: bool, device: torch.device, drop_last: bool = False
+    X,
+    y,
+    batch_size: int,
+    shuffle: bool,
+    device: torch.device,
+    drop_last: bool = False,
+    sampler: str = "shuffle",
 ) -> DataLoader:
+    """
+    sampler:
+      - shuffle: default random shuffle (no replacement within epoch)
+      - stratified: WeightedRandomSampler with inverse class-frequency weights
+        (D6 class-balanced / stratified batch sampling for imbalance)
+    """
     pin = device.type == "cuda"
+    y_arr = np.asarray(y, dtype=np.int64)
     ds = TensorDataset(
         torch.from_numpy(np.asarray(X, dtype=np.float32)),
-        torch.from_numpy(np.asarray(y, dtype=np.int64)),
+        torch.from_numpy(y_arr),
     )
+    if sampler == "stratified" and shuffle:
+        # Inverse-frequency weights → each class contributes roughly equally
+        # expected samples per epoch (class-balanced stratified batches).
+        classes, counts = np.unique(y_arr, return_counts=True)
+        freq = np.zeros(int(classes.max()) + 1, dtype=np.float64)
+        for c, n in zip(classes, counts):
+            freq[int(c)] = float(n)
+        w = np.array([1.0 / max(freq[int(yi)], 1.0) for yi in y_arr], dtype=np.float64)
+        # Normalize so sum(weights) is stable; replacement=True required for
+        # minority oversample to fill num_samples == N.
+        w_t = torch.as_tensor(w, dtype=torch.double)
+        ws = WeightedRandomSampler(
+            weights=w_t,
+            num_samples=len(y_arr),
+            replacement=True,
+        )
+        return DataLoader(
+            ds,
+            batch_size=batch_size,
+            sampler=ws,
+            shuffle=False,
+            num_workers=2,
+            pin_memory=pin,
+            drop_last=drop_last,
+        )
     return DataLoader(
         ds,
         batch_size=batch_size,
@@ -186,6 +224,16 @@ def main() -> int:
         action="store_true",
         help="drop_last on train loader (recommended for large batch + BN; HPO used this)",
     )
+    p.add_argument(
+        "--train-sampler",
+        type=str,
+        default="shuffle",
+        choices=["shuffle", "stratified"],
+        help=(
+            "Train loader sampling: shuffle (default) or stratified "
+            "(WeightedRandomSampler inverse class-frequency; D6)"
+        ),
+    )
     args = p.parse_args()
 
     # Merge HPO winner params when requested (CLI explicit values win after merge for
@@ -246,13 +294,31 @@ def main() -> int:
     # Match WP3 HPO: drop_last on train for large batches / BN stability
     drop_last = bool(args.drop_last_train) or args.batch_size >= 512
     train_loader = make_loader(
-        bundle.X_train, bundle.y_train, args.batch_size, True, device, drop_last=drop_last
+        bundle.X_train,
+        bundle.y_train,
+        args.batch_size,
+        True,
+        device,
+        drop_last=drop_last,
+        sampler=args.train_sampler,
     )
     val_loader = make_loader(
-        bundle.X_val, bundle.y_val, args.batch_size, False, device, drop_last=False
+        bundle.X_val,
+        bundle.y_val,
+        args.batch_size,
+        False,
+        device,
+        drop_last=False,
+        sampler="shuffle",
     )
     test_loader = make_loader(
-        bundle.X_test, bundle.y_test, args.batch_size, False, device, drop_last=False
+        bundle.X_test,
+        bundle.y_test,
+        args.batch_size,
+        False,
+        device,
+        drop_last=False,
+        sampler="shuffle",
     )
 
     config = load_config(PROJECT_ROOT / args.config)
@@ -311,7 +377,8 @@ def main() -> int:
         f"lr={args.lr} bs={args.batch_size} γ={args.focal_gamma} "
         f"drop={cfg['model'].get('dropout_rate')} att_drop={cfg['model'].get('attention_dropout')} "
         f"wd={args.weight_decay} sched={args.scheduler} optim={optim_name} "
-        f"epochs≤{args.epochs} patience={args.patience} drop_last_train={drop_last}",
+        f"epochs≤{args.epochs} patience={args.patience} drop_last_train={drop_last} "
+        f"train_sampler={args.train_sampler}",
         flush=True,
     )
 
@@ -397,6 +464,7 @@ def main() -> int:
             "logit_tau": args.logit_tau,
             "patience": args.patience,
             "drop_last_train": drop_last,
+            "train_sampler": args.train_sampler,
             "hpo_config": hpo_src,
             "save_path": str(save_path),
         },

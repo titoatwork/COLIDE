@@ -45,7 +45,7 @@
 | B6 | LR and LR scheduler | DONE | WP3: lr log 1e-5–3e-3; scheduler {none,cosine,step}; winner lr≈5.89e-5 cosine |
 | B7 | Batch size | DONE | WP3 categorical {128,256,512,1024}; winner **1024** |
 | B8 | Focal-loss parameters | DONE (γ) | WP3 γ∈[0.5,3.5]; winner **≈1.917** (α class-weights still open B9) |
-| B9 | Class weights | PARTIAL | npy exists; focal_cb used class-balanced weights (worse); plain focal wins — still need explicit weight-search experiment or RUN_DOCUMENTED close |
+| B9 | Class weights | RUN_DOCUMENTED | Explicit CB via `focal_cb` val **0.9121** ≪ plain focal **0.9780** (`imbalance_loss/`); keep **no class-weight** on neural focal. (Classical LGBM G5 uses balanced — separate tree baseline, not CAD-CBA loss) |
 | B10 | Distill T and α | DONE (recipe) + historical RUN_DOCUMENTED | **17** historical `distill_botiot_a*_T*.json` sweeps; CAD-CBA-v1 uses **α=0.6 T=10** (best historical + WP4b); protocol Optuna on T/α not required if recipe locked |
 | B11 | Sequence length | DONE (locked) | V3 reshape fixed **[2,32]** in freeze/config; design freeze (not a free search dim under CAD-CBA-v1 KD transfer) |
 | B12 | Decision thresholds minority | RUN_DOCUMENTED | WP2d on `ft_focal_seed42`: all decode variants = argmax val macro 0.9780 (Δ0); keep argmax (`thresholds_focal_seed42.json`) |
@@ -80,12 +80,12 @@
 
 | ID | Requirement | Status | Evidence / notes |
 |----|-------------|--------|------------------|
-| D1 | Imbalance first-class (not accuracy-only) | PARTIAL | Metrics + loss compare + thresholds done; stratified batch (D6) still open |
+| D1 | Imbalance first-class (not accuracy-only) | PARTIAL | Metrics + loss + thresholds + D6 stratified done; minority tables / final claims still open |
 | D2 | Weighted CE | RUN_DOCUMENTED | CE FT control val 0.9755 (`imbalance_loss/ft_ce_seed42.json`) |
 | D3 | Focal loss | INCORPORATED | Best in 4-way compare val **0.9780** — default CAD-CBA-v1 |
 | D4 | Class-balanced focal | RUN_DOCUMENTED | val 0.9121 — worse macro; JSON kept |
 | D5 | Logit adjustment | RUN_DOCUMENTED | val 0.9225 — worse macro; JSON kept |
-| D6 | Stratified batch sampling | TODO | **Playlist required:** implement + bounded FT compare vs shuffle |
+| D6 | Stratified batch sampling | RUN_DOCUMENTED | WP D6 seed42: shuffle **0.9791** &gt; stratified inv-freq **0.9209** (Δ−0.058); keep shuffle (`stratified_batch/summary.json`) |
 | D7 | Minority-aware threshold tuning | RUN_DOCUMENTED | WP2d DONE: macro/min/joint/class_f1 on focal seed42; Δmacro=0 Δmin=0 vs argmax; keep argmax |
 | D8 | Controlled oversampling | DONE (stage_a) | Protocol `stage_a_kd` SMOTE targets freeze card; stage_b_ft deliberately no SMOTE |
 | D9 | Supervised contrastive | TODO | **Playlist required:** bounded run + JSON (same as C7) |
@@ -130,10 +130,10 @@
 | ID | Requirement | Status | Evidence / notes |
 |----|-------------|--------|------------------|
 | G1 | Logistic Regression | DONE (val) | full stage_b_ft val_macro_f1=0.5231; test sealed |
-| G2 | SVM | RUN_DOCUMENTED | pilot 150k failed (&lt;3 samples/class); full re-run TODO |
+| G2 | SVM | RUN_DOCUMENTED | full LinearSVC dual=False hard labels val **0.4268** (Theft=0); pilot ERROR fixed; weak under extreme imbalance (`svm_seed42.json`) |
 | G3 | Random Forest | DONE (val) | protocol-fair val **0.9778**; published 0.9864 = other pipeline (`rf_baseline_processed`) |
 | G4 | XGBoost | DONE (val) | protocol-fair val **0.9762** (`xgb_seed42.json`) |
-| G5 | LightGBM | RUN_DOCUMENTED | full train val **0.5512** — weak; fix/re-run later |
+| G5 | LightGBM | DONE (val) | G5 fix multiclass+class_weight=balanced val **0.9818** (min/Theft 0.9231); tops protocol classical; legacy 0.5512 superseded (`lgbm_seed42.json`) |
 | G6 | MLP | RUN_DOCUMENTED (protocol) | WP5b seed42 CE scratch val **0.9285** (min 0.7077 Theft 1.0; 400901 params; 4.33 µs/sample); historical non-protocol 0.962/0.954 must **not** be mixed |
 | G7 | 1D-CNN | RUN_DOCUMENTED | WP5b seed42 **0.6221** (min/Theft=0; matches WP5a A1); weak pure-CNN under equal budget |
 | G8 | LSTM | RUN_DOCUMENTED | WP5b seed42 **0.8099** (min 0.3556 Theft 0.8) |
@@ -141,7 +141,7 @@
 | G10 | CNN–LSTM | RUN_DOCUMENTED | WP5b seed42 **0.8159** (min/Theft 0.5) |
 | G11 | CNN–BiLSTM | DONE (val protocol) + WP5b arch ref | WP5b CE scratch **0.9493** tops neural suite (= WP5a A3); WP1b multirun package path mean 0.9714±0.0109 (diff init/loss) |
 | G12 | Transformer / temporal-attention | RUN_DOCUMENTED | WP5b lightweight temporal transformer seed42 **0.5808** (min/Theft=0) — underperforms under equal CE budget; not free win |
-| G13 | Reproducible lightweight IDS | TODO | **Playlist:** if public method available; else RUN_DOCUMENTED N/A with reason |
+| G13 | Reproducible lightweight IDS | RUN_DOCUMENTED (N/A) | No external public method re-impl under protocol; use G6–G12 + classical G1–G5; note `G13_LIGHTWEIGHT_IDS_NOTE.md` |
 | G14 | Same train/val/test partitions | DONE | Protocol `botiot_v1` + freeze card |
 | G15 | Comparable HPO effort | DONE (documented) | WP5b equal fixed HPs (lr=1e-3 Adam bs=512 ep≤8 pat=3 CE scratch seed42); no per-baseline Optuna; CAD-CBA HPO separate (`summary.json` g15 note) |
 
@@ -263,6 +263,7 @@
 | 2026-07-21 | **Context hygiene / full-playlist lock:** skip-nothing restated as complete **every** tracker row; flipped stale statuses from existing disk evidence (B10/B11, C13, D8/D10, F3/F4/F8, G6/G11/G14, H1/H5, J1, K1, L2–L4/L7/L9, etc.). Open rows marked **Playlist required**. No invented numbers. Next science still WP5a etc. |
 | 2026-07-21 | **WP5a ablation ladder DONE** A1–A7 seed42 val-only ~90 min: A7 **0.9699** &gt; A3 0.9493 &gt; A6 0.9346 &gt; A5 0.8684 &gt; A2 0.8058 &gt; A4 0.7378 &gt; A1 0.6221; F1–F7 RUN_DOCUMENTED; F9 systems partial; A4 attn+CE underperforms A3 (honest); champion unchanged; next WP5b neural baselines |
 | 2026-07-22 | **WP5b neural baselines DONE** G6–G12 seed42 CE scratch equal budget ~80 min: G11 **0.9493** &gt; G6 0.9285 &gt; G10 0.8159 &gt; G8 0.8099 &gt; G9 0.8058 &gt; G7 0.6221 &gt; G12 0.5808; G15 HPO budget note DONE; transformer weak under budget; G7=A1 G9=A2 G11=A3 consistency; champion unchanged; next D6/G2/G5 or WP5c/C* |
+| 2026-07-22 | **G2/G5 classical + D6 + G13 DONE:** LinearSVC full **0.4268** RUN_DOCUMENTED; LGBM fix **0.9818** DONE (tops classical); D6 stratified **0.9209** vs shuffle **0.9791** (Δ−0.058) RUN_DOCUMENTED keep shuffle; G13 N/A note; B9 class-weight close RUN_DOCUMENTED; champion unchanged; next WP5c Pareto / C* / B2–B4 / E6 |
 
 ---
 

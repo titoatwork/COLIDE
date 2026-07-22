@@ -1,7 +1,49 @@
 # Progress log (results as they land)
 
 **Policy:** document everything; label pilot vs full; test sealed unless noted.  
-**Handoff snapshot:** 2026-07-22 (WP5b neural baselines G6–G12 DONE)
+**Handoff snapshot:** 2026-07-22 (G2/G5 classical + D6 stratified + G13 note DONE)
+
+---
+
+## 2026-07-22 — G2 SVM full + G5 LGBM fix + D6 stratified batch + G13 (science)
+
+### Classical G2/G5 (CPU)
+Scripts: `scripts/run_classical_baselines.py` (LinearSVC hard labels; LGBM multiclass+balanced fix)  
+Protocol: `botiot_v1` / **stage_b_ft** / seed **42** / full train (n=2,641,335) / **val only** (test sealed)  
+Handoff table: `benchmarks/results/baselines_classical/summary_handoff.json` md5 `b93899d2d019f72d8deb97bef2de3b9e`  
+Champion md5 **unchanged** `80a90f7cc210276300eaa90173a5a385`.
+
+| Model | val macro-F1 | Min-cls | Theft | train_sec | Decision |
+|-------|--------------|---------|-------|-----------|----------|
+| **LGBM (G5 fix)** | **0.9818** | 0.9231 | 0.9231 | 1131 | **DONE (val)** — class_weight=balanced + multiclass; tops protocol classical |
+| RF (prior) | 0.9778 | 0.9231 | 0.9231 | — | DONE (val) |
+| XGB (prior) | 0.9762 | 0.9231 | 0.9231 | — | DONE (val) |
+| LR (prior) | 0.5231 | 0.0000 | 0.0000 | — | DONE (val) |
+| **SVM LinearSVC (G2 full)** | **0.4268** | 0.0000 | 0.0000 | 44 | **RUN_DOCUMENTED** weak linear under imbalance; pilot ERROR fixed |
+
+**G2 notes:** Pilot failed (CalibratedClassifierCV cv=3 with non-stratified subsample). Full train uses **LinearSVC dual=False**, hard labels, `class_weight=None` (protocol-fair vs RF/XGB defaults). Weak is honest — not a competitive classical bar.
+
+**G5 notes:** Prior full run **0.5512** (Theft=0) was broken multi-class defaults. Fix: `objective=multiclass`, `class_weight=balanced`, `min_child_samples=5`, max_depth=8. **0.9818** now slightly above protocol RF. Report both legacy and fixed; official G5 = fixed.
+
+**G13:** `docs/execution_plan/G13_LIGHTWEIGHT_IDS_NOTE.md` — **RUN_DOCUMENTED N/A** (no external public method re-implemented under protocol; use G6–G12 + classical suite).
+
+### D6 stratified batch FT compare (GPU)
+Scripts: `scripts/run_stratified_batch_compare.py`, `train_protocol_ft.py --train-sampler {shuffle,stratified}`  
+Init: `model/best_model_botiot_distill_a0.6_T10.0_focal2.pth` · HPs: `config/hpo_best.yaml` · loss focal · seed 42 · epochs≤8 patience=3  
+Tag: `stratified_batch/` · Summary md5 `294669c7a7b2e3d318b54186a0ce917c` · Wall ~1479 s (~25 min)  
+Thermal: soft 85 / hard 90; peak ~85°C; no hard trip.
+
+| Sampler | val macro-F1 | Min-cls | Theft | elapsed |
+|---------|--------------|---------|-------|---------|
+| **shuffle** (control) | **0.9791** | 0.9351 | 1.0000 | 668 s |
+| stratified (WeightedRandomSampler inv-freq) | 0.9209 | 0.7500 | 0.7500 | 763 s |
+
+**Δ stratified − shuffle = −0.0582**  
+**Decision: RUN_DOCUMENTED** — class-balanced stratified batches **hurt** macro and min-cls vs shuffle under CAD-CBA-v1 HPs; **keep shuffle default**. Champion unchanged.
+
+**Also:** B9 class-weight close from existing `focal_cb` 0.9121 ≪ plain focal 0.9780 → RUN_DOCUMENTED keep no CB weights on neural focal.
+
+**Next science:** WP5c Pareto / bounded C* (SupCon, multi-scale, gated, asymmetric, uncertainty) / B2–B4 arch HPO / E6 neural teacher. DICC only when user opens session.
 
 ---
 

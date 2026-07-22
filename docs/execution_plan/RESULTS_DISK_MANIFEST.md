@@ -1,7 +1,7 @@
 # Results Disk Manifest (handoff snapshot)
 
 **Generated (UTC):** 2026-07-21T11:01:25.771483+00:00  
-**Last append (UTC):** 2026-07-22T01:10:00 (WP5b neural baselines G6–G12)
+**Last append (UTC):** 2026-07-22T01:45:00 (G2/G5 classical + D6 stratified + G13)
 **Host path root:** `/home/titoisalive/colide`
 
 `benchmarks/results/` is **gitignored**. This file is committed so the next session can verify local artifacts without inventing numbers.
@@ -28,12 +28,13 @@
 | `benchmarks/results/imbalance_loss/ft_focal_cb_seed42.json` | yes | `637c2d985a5ef74e93d6659c7fd8bcf1` | 6334 | best_val_macro_f1=0.9121 |
 | `benchmarks/results/imbalance_loss/ft_logit_adj_seed42.json` | yes | `56143d80bc55cbc86f27ea8721f311c6` | 6081 | best_val_macro_f1=0.9225 |
 | `benchmarks/results/imbalance_loss/thresholds_focal_seed42.json` | yes | `2a6bc98d967883efc53d326535cf9d5b` | 34114 | WP2d; all variants=argmax 0.9780; RUN_DOCUMENTED |
-| `benchmarks/results/baselines_classical/summary_handoff.json` | yes | `b4faee6d15c5c53cbc59faa44df89993` | 1786 | lr=0.5231; rf=0.9778; xgb=0.9762; lgbm=0.5512 |
-| `benchmarks/results/baselines_classical/TABLE_VAL.json` | yes | `6ff4f624ae0b3c8336e7f1abd733ac50` | 1248 | lr=0.5231; rf=0.9778; xgb=0.9762; lgbm=0.4951 |
+| `benchmarks/results/baselines_classical/summary_handoff.json` | yes | `b93899d2d019f72d8deb97bef2de3b9e` | 2978 | lr=0.5231; svm=0.4268; rf=0.9778; xgb=0.9762; **lgbm=0.9818** |
+| `benchmarks/results/baselines_classical/TABLE_VAL.json` | yes | `a97c155ccd879b55fb3273a0bc972061` | 250 | lr/svm/rf/xgb/lgbm val macros |
 | `benchmarks/results/baselines_classical/lr_seed42.json` | yes | `5c68972f00fedbd1308f0f7b6d82d3ff` | 4885 | val.macro_f1=0.5231 |
 | `benchmarks/results/baselines_classical/rf_seed42.json` | yes | `092d27bfc532041519bf950301042a7b` | 4885 | val.macro_f1=0.9778 |
 | `benchmarks/results/baselines_classical/xgb_seed42.json` | yes | `88d92ab3007d27b36f2aa676b9b3aa35` | 4956 | val.macro_f1=0.9762 |
-| `benchmarks/results/baselines_classical/lgbm_seed42.json` | yes | `af2820a196f33fe56bf5d6ae091e14fb` | 4896 | val.macro_f1=0.5512 |
+| `benchmarks/results/baselines_classical/lgbm_seed42.json` | yes | `575bf6ce9ede255d2a96d26f776588e6` | 5486 | val.macro_f1=**0.9818** (G5 fix) |
+| `benchmarks/results/baselines_classical/svm_seed42.json` | yes | `86f8596204d75f39ef3db81a590458d1` | 5350 | val.macro_f1=**0.4268** (G2 full LinearSVC) |
 | `benchmarks/results/protocol/eval_best_model_botiot_twostage_stage_b_ft.json` | yes | `40f1009cf8a5d39fd983e0f9c0e6874c` | 4448 |  |
 | `benchmarks/results/protocol/botiot_protocol_smoke.json` | yes | `36633eb8620af1c6e25830f98ef4a8c2` | 2608 |  |
 
@@ -62,6 +63,9 @@
 | Val thresholds on focal seed42 | no gain vs argmax (all variants 0.9780); keep argmax | `imbalance_loss/thresholds_focal_seed42.json` |
 | Protocol-fair RF val | 0.9778 | `baselines_classical/rf_seed42.json` |
 | Protocol-fair XGB val | 0.9762 | `baselines_classical/xgb_seed42.json` |
+| Protocol-fair LGBM val (G5 fix, balanced) | **0.9818** | `baselines_classical/lgbm_seed42.json` |
+| Protocol-fair LinearSVC val (G2 full) | **0.4268** | `baselines_classical/svm_seed42.json` |
+| D6 stratified batch (inv-freq) vs shuffle | stratified **0.9209** vs shuffle **0.9791** (Δ−0.058) RUN_DOCUMENTED | `stratified_batch/summary.json` |
 | Published RF (different pipeline) | 0.9864 | historical / freeze card — not protocol-fair |
 | Champion sealed val macro-F1 | 0.9780 | protocol eval JSON |
 | Champion md5 | 80a90f7cc210276300eaa90173a5a385 | `model/best_model_botiot_twostage.pth` |
@@ -367,4 +371,65 @@
 **G15:** All rows share fixed HPs; CAD-CBA Optuna is separate (not applied to baselines). See `g15_hpo_budget_note` in summary JSON.
 
 **Trap:** Do not mix historical `ablation_mlp.json` / `mlp_twostage.json` with G6. Do not claim transformer beat CNN–BiLSTM. Suite is seed42 / CE / scratch only — not multi-seed package path.
+
+## G2 SVM full + G5 LGBM fix (2026-07-22)
+
+**Stage:** `stage_b_ft` · **seed 42** · full train · val-only · test sealed  
+**Script:** `scripts/run_classical_baselines.py`  
+**Champion md5 unchanged** `80a90f7cc210276300eaa90173a5a385`
+
+### Result JSON
+
+| Path | md5 | bytes | key metrics |
+|------|-----|-------|-------------|
+| `benchmarks/results/baselines_classical/svm_seed42.json` | `86f8596204d75f39ef3db81a590458d1` | 5350 | LinearSVC 0.4268 |
+| `benchmarks/results/baselines_classical/lgbm_seed42.json` | `575bf6ce9ede255d2a96d26f776588e6` | 5486 | **0.9818** G5 fix |
+| `benchmarks/results/baselines_classical/summary_handoff.json` | `b93899d2d019f72d8deb97bef2de3b9e` | 2978 | full G1–G5 table |
+| `benchmarks/results/baselines_classical/TABLE_VAL.json` | `a97c155ccd879b55fb3273a0bc972061` | 250 | val macros |
+| `benchmarks/results/baselines_classical/summary.json` | `ab97f197e573c1a41f1417898d3900f8` | 1943 | last invocation svm+lgbm only |
+
+### Ranking (protocol-fair classical, val macro-F1)
+
+| Rank | Model | val macro-F1 | Min-cls | Theft | Decision |
+|------|-------|--------------|---------|-------|----------|
+| 1 | **LGBM (fixed)** | **0.9818** | 0.9231 | 0.9231 | **DONE (val)** G5 |
+| 2 | RF | 0.9778 | 0.9231 | 0.9231 | DONE (val) |
+| 3 | XGB | 0.9762 | 0.9231 | 0.9231 | DONE (val) |
+| 4 | LR | 0.5231 | 0.0000 | 0.0000 | DONE (val) |
+| 5 | LinearSVC | 0.4268 | 0.0000 | 0.0000 | RUN_DOCUMENTED G2 weak |
+
+**Trap:** Prefer `summary_handoff.json` over `summary.json`. LGBM official number is **0.9818** (class_weight=balanced fix); legacy 0.5512 is not the paper figure. SVM is hard-label LinearSVC (no CalibratedClassifierCV). LGBM used class_weight=balanced; RF/XGB did not — document that difference.
+
+## D6 stratified batch compare (2026-07-22)
+
+**Stage:** `stage_b_ft` · **seed 42** · epochs≤8 · patience=3 · focal · hpo_best · val-only  
+**Init:** `model/best_model_botiot_distill_a0.6_T10.0_focal2.pth`  
+**Script:** `scripts/run_stratified_batch_compare.py` + `--train-sampler`  
+**Wall:** ~1479 s · Champion unchanged
+
+### Result JSON / checkpoints
+
+| Path | md5 | bytes | key metrics |
+|------|-----|-------|-------------|
+| `benchmarks/results/stratified_batch/summary.json` | `294669c7a7b2e3d318b54186a0ce917c` | 2334 | Δ−0.058 RUN_DOCUMENTED |
+| `benchmarks/results/stratified_batch/ft_shuffle_seed42.json` | `75d225921e48010e4ff873aa213335ed` | 7534 | **0.9791** |
+| `benchmarks/results/stratified_batch/ft_stratified_seed42.json` | `ad1542c83d5e6b54c310821e4feb2bcd` | 8102 | 0.9209 |
+| `model/stratified_batch/ft_shuffle_seed42.pth` | `27089188f2369751e02aa083e391812b` | 2133378 | |
+| `model/stratified_batch/ft_stratified_seed42.pth` | `803f35c27dad15f5cb7ead81c2d05751` | 2133474 | |
+
+### Ranking
+
+| Rank | Sampler | val macro-F1 | Min-cls | Theft | Decision |
+|------|---------|--------------|---------|-------|----------|
+| 1 | **shuffle** | **0.9791** | 0.9351 | 1.0000 | keep default |
+| 2 | stratified (inv-freq WeightedRandomSampler) | 0.9209 | 0.7500 | 0.7500 | RUN_DOCUMENTED hurts |
+
+**Trap:** Do not claim stratified batch helps under CAD-CBA-v1 HPs. Shuffle control also reproduces WP3 HPO seed42 0.9791.
+
+## G13 lightweight IDS note
+
+| Path | md5 | note |
+|------|-----|------|
+| `docs/execution_plan/G13_LIGHTWEIGHT_IDS_NOTE.md` | `36f3b501a7017cc7d2f0cd6d648d6eea` | RUN_DOCUMENTED N/A |
+
 
