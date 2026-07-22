@@ -203,10 +203,11 @@ Each standalone kernel binary executes an internal numerical check at a fixed to
 
 The fused pipeline binary is timing-oriented and does not emit a separate validation line; end-to-end correctness is covered by per-block checks plus the real-weight export table above. FP16 BiLSTM uses a deliberately looser tolerance (5e-2) consistent with half-precision accumulation; FP32 blocks use 1e-3–1e-2.
 
-## 11. Protocol-era numbers (CAD-CBA-v1 / Prof feedback track) — WP9a + B14
+## 11. Protocol-era numbers (CAD-CBA-v1 / Prof feedback track) — WP9a + B14 + WP6b
 
 > Canonical registry: `docs/execution_plan/CLAIMS_REGISTRY.md` (rebuilt by `scripts/build_claims_package.py`).
 > BoT figures below are **val-only** unless marked **TEST**. B14 sealed multi-seed **test** is **DONE** (user lock path A, 2026-07-22).
+> WP6b local multi-session systems ranges **DONE** (RTX 3050 laptop; Option A; not DICC multi-day).
 
 ### Method lock (do not re-litigate without new protocol)
 
@@ -258,7 +259,12 @@ Do **not** claim neural supremacy on pure F1 over LGBM under protocol.
 | Claim | Number | Notes |
 |-------|--------|-------|
 | Pareto-H8 a priori composite #1 | G6 **0.9056** @ **4.33** µs, F1 0.9285 | efficiency-weighted |
-| RTX energy batch128 | **0.786** mJ/flow | `energy_table/` |
+| RTX energy batch128 (historical single-shot) | **0.786** mJ/flow | `energy_table/` HISTORICAL |
+| **WP6b multi-session energy** batch128 (n=5) | **0.920–0.943** mJ/flow (mean **0.933**) | `wp6b_local_ranges/` primary range |
+| **WP6b PT full V3** µs/sample @bs=256 (n=5) | **24.15–25.68** (mean **24.90**) | Option A absolute PT |
+| **WP6b CUDA** derived pipeline total µs (n=5) | **565.2–570.3** | Option A block sum; not full V3 parity |
+| **WP6b CUDA** block3 FP16 µs (n=5) | **503.2–508.5** | per-block |
+| **WP6b peak alloc VRAM** | **322.2** MiB | H3 across batches/sessions |
 | LLM dispatch p99 | **16.60** µs | dispatch only |
 | LLM generation mean | **~7400** ms | never conflate with dispatch |
 | XAI rank consistency | **0.9636** | occlusion Spearman |
@@ -280,7 +286,7 @@ Export path **bit-identical** (max abs error 0); CUDA self-checks all PASS. Cham
 
 ### Explicitly not yet claimable
 
-- BoT sealed multi-seed **test** (B14) — wait for user final-config lock  
-- DICC multi-day mean/median/std/CV/CI — dedicated session only  
-- Full LLM-explainable IDS title claim — **dropped** (J10)
+- DICC multi-day mean/median/std/CV/CI — dedicated session only (local WP6b ≠ multi-GPU multi-day)  
+- Full LLM-explainable IDS title claim — **dropped** (J10)  
+- Full custom CUDA pipeline vs full V3 PT speedup as **parity** — Option A forbids
 

@@ -1,6 +1,6 @@
 # 10 — Phase 6: Deployment Path & CUDA (Option A)
 
-**Status:** NOT STARTED (local harness DONE; cluster BLOCKED on Phase 0)  
+**Status:** LOCAL DONE (WP6a fidelity + WP6b multi-session ranges); cluster BLOCKED on Phase 0 / DICC  
 **Depends on:** Final weights from Phases 2–5; Phase 0 for cluster claims  
 **Prof:** staged Phase 4 deploy; §8 cluster; Option A  
 
@@ -43,12 +43,12 @@
 
 ## 4. Acceptance criteria
 
-- [ ] Final weights md5 + fidelity PASS  
-- [ ] Per-block tables Option A clean  
-- [ ] Full-model framework table separate  
-- [ ] Cluster stats if model final (re-DICC if arch changed)  
-- [ ] README/paper language audited for Option A  
-- [ ] Precision accuracy deltas reported  
+- [x] Final weights md5 + fidelity PASS (WP6a)  
+- [x] Per-block tables Option A clean (WP6b multi-session CUDA block ranges)  
+- [x] Full-model framework table separate (historical + WP6b full V3 PT absolute)  
+- [ ] Cluster stats if model final (re-DICC if arch changed) — BLOCKED until user DICC session  
+- [ ] README/paper language audited for Option A (WP9b)  
+- [x] Precision accuracy deltas reported (numerical_fidelity + historical FP16)
 
 ---
 

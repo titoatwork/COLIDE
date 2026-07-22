@@ -532,7 +532,7 @@ def build_claims():
         ("xai_faith_mass", "XAI faithfulness top-3 mass", "xai/summary.json"),
         ("xai_dispatch_p99_us", "XAI/LLM dispatch p99 µs", "xai/summary.json"),
         ("xai_llm_feature_mention", "XAI free-form feature mention rate", "xai/summary.json"),
-        ("f9_rtx_mj_per_flow", "RTX energy mJ/flow batch128", "energy_table/summary.json"),
+        ("f9_rtx_mj_per_flow", "RTX energy mJ/flow batch128 historical single-shot", "energy_table/summary.json"),
         ("pareto_h8_composite_g6", "Pareto-H8 composite G6 score", "pareto_h8/summary.json"),
         ("ton_test", "ToN CAD-CBA test macro-F1", "toniot_final/summary.json"),
         ("ton_rf_test", "ToN RF same-split test macro-F1", "toniot_final/summary.json"),
@@ -541,6 +541,15 @@ def build_claims():
         ("e6_neural_teacher_student_val", "E6 neural teacher student val", "teachers_kd_neural/"),
         ("cstar_ctrl_val", "C* CTRL val macro-F1", "cstar_bounded/"),
         ("champion_md5", "Production champion md5", "model/best_model_botiot_twostage.pth"),
+        ("wp6b_energy_mj_per_flow_mean", "WP6b multi-session energy mJ/flow mean", "wp6b_local_ranges/summary.json"),
+        ("wp6b_energy_mj_per_flow_range_low", "WP6b energy mJ/flow range low", "wp6b_local_ranges/summary.json"),
+        ("wp6b_energy_mj_per_flow_range_high", "WP6b energy mJ/flow range high", "wp6b_local_ranges/summary.json"),
+        ("wp6b_pt_batch256_us_mean", "WP6b PT batch256 µs/sample mean", "wp6b_local_ranges/summary.json"),
+        ("wp6b_pt_batch256_us_range_low", "WP6b PT batch256 µs range low", "wp6b_local_ranges/summary.json"),
+        ("wp6b_pt_batch256_us_range_high", "WP6b PT batch256 µs range high", "wp6b_local_ranges/summary.json"),
+        ("wp6b_cuda_pipeline_us_range_low", "WP6b CUDA derived pipeline µs low", "wp6b_local_ranges/summary.json"),
+        ("wp6b_cuda_pipeline_us_range_high", "WP6b CUDA derived pipeline µs high", "wp6b_local_ranges/summary.json"),
+        ("wp6b_peak_alloc_mb", "WP6b peak alloc VRAM MiB", "wp6b_local_ranges/summary.json"),
     ]
     for cid, desc, src in protocol_claim_ids:
         rend = proto_render(cid)

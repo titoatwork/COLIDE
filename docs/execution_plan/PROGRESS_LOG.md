@@ -1,7 +1,39 @@
 # Progress log (results as they land)
 
 **Policy:** document everything; label pilot vs full; test sealed unless noted.  
-**Handoff snapshot:** 2026-07-22 (**B14 sealed multi-seed TEST DONE** path A; test 0.9780±0.0033; claims 46 green)
+**Handoff snapshot:** 2026-07-22 (**WP6b multi-session ranges DONE**; B14 test 0.9780±0.0033; claims 59 green)
+
+---
+
+## 2026-07-22 — WP6b local multi-session latency/energy ranges (Option A)
+
+**Mode:** systems only · no train · champion frozen · wall **~147 s**  
+**Script:** `scripts/run_wp6b_local_ranges.py`  
+**Tag:** `wp6b_local_ranges/` + mirror `systems_i8_h3/`  
+**Platform:** NVIDIA GeForce RTX 3050 6GB Laptop GPU  
+**Sessions:** **5** · warm-up **50** · timed iters **100** · energy iters **400** · CUDA trials/session **20**  
+**Champion md5:** **unchanged** `80a90f7cc210276300eaa90173a5a385`
+
+| Metric | Session-mean range | Mean ± std | CV% | 95% CI |
+|--------|-------------------|------------|-----|--------|
+| PT µs/sample @bs=256 | **24.15–25.68** | **24.90 ± 0.55** | 2.22 | [24.21, 25.59] |
+| PT µs/sample @bs=128 | **29.61–31.32** | **30.59** | — | — |
+| PT µs/sample @bs=1 | **1806–2396** | **1977** | high session drift | — |
+| Energy mJ/flow @bs=128 | **0.920–0.943** | **0.933 ± 0.010** | 1.05 | [0.920, 0.945] |
+| Energy thrput flows/s | **42085–42709** | **42322** | 0.55 | — |
+| CUDA block3 FP16 µs | **503.2–508.5** | **505.6 ± 2.2** | 0.44 | — |
+| CUDA derived pipeline µs | **565.2–570.3** | **567.4 ± 1.9** | 0.34 | — |
+| Peak alloc VRAM (global max) | **322.2 MiB** | — | — | H3 |
+| Batch256 peak alloc mean | **103.2 MiB** | — | — | I8 |
+
+**I8 batch sensitivity:** bs∈{1,8,32,64,128,256,512,1024} multi-session µs/sample ranges written.  
+**I7 warm-up:** 50 discarded sync forwards before each timed block.  
+**Option A:** CUDA figures are per-block / derived pipeline sum — **not** full V3 parity.  
+**Historical single-shot energy 0.786** mJ/flow remains labeled **HISTORICAL**; WP6b range is primary for multi-session claims.  
+**Decision: DONE** — local ranges complete. DICC multi-day still BLOCKED.  
+**Claims:** rebuild → **59** claims; `verify_claims` all green.
+
+**Next:** WP9b manuscript spine when tracker largely green → DICC only when user opens session.
 
 ---
 

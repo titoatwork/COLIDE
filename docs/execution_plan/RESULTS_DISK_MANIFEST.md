@@ -1,7 +1,7 @@
 # Results Disk Manifest (handoff snapshot)
 
 **Generated (UTC):** 2026-07-21T11:01:25.771483+00:00  
-**Last append (UTC):** 2026-07-22T13:47:00 (B14 sealed multi-seed TEST path A DONE)
+**Last append (UTC):** 2026-07-22T15:05:00 (WP6b multi-session ranges DONE)
 **Host path root:** `/home/titoisalive/colide`
 
 `benchmarks/results/` is **gitignored**. This file is committed so the next session can verify local artifacts without inventing numbers.
@@ -84,6 +84,27 @@
 | WP5c F1–latency front | A7 / A3 / G6 | `pareto/summary.json` |
 | WP5c composite #1 | **G6 0.762** F1 0.9285 @4.33 µs | `pareto/summary.json` |
 | DICC multi-day tree | ABSENT | no `benchmarks/results/dicc/` |
+| **WP6b energy mJ/flow range (n=5)** | **0.920–0.943** (mean **0.933**) | `wp6b_local_ranges/summary.json` |
+| **WP6b PT @bs=256 µs/sample range** | **24.15–25.68** (mean **24.90**) | same |
+| **WP6b CUDA derived pipeline µs** | **565.2–570.3** | same (Option A) |
+| **WP6b peak alloc MiB** | **322.2** | same |
+| Historical single-shot energy | 0.786 mJ/flow | `energy_table/` HISTORICAL |
+
+## WP6b local multi-session ranges (2026-07-22)
+
+**Platform:** RTX 3050 laptop · sessions **5** · warm-up 50 · champion frozen  
+**Script:** `scripts/run_wp6b_local_ranges.py` · wall ~147 s  
+**Champion md5 unchanged** `80a90f7cc210276300eaa90173a5a385`
+
+| Path | exists | md5 | bytes | key metrics |
+|------|--------|-----|-------|-------------|
+| `benchmarks/results/wp6b_local_ranges/summary.json` | yes | `34c3ca9ab60f611c8ed2de56fc10fd8f` | 23740 | energy 0.920–0.943; PT@256 24.15–25.68; CUDA 565–570 |
+| `benchmarks/results/wp6b_local_ranges/table.md` | yes | — | — | markdown tables |
+| `benchmarks/results/wp6b_local_ranges/sessions/session_0.json` | yes | — | — | per-session raw |
+| `benchmarks/results/systems_i8_h3/summary.json` | yes | `17e42c269cef17f0d42c4ea14a366084` | 11468 | I8 multi-session mirror |
+| `scripts/run_wp6b_local_ranges.py` | yes | — | — | harness |
+
+**Trap:** Do not mix WP6b multi-session energy **0.933 mean** with historical single-shot **0.786**. Do not claim full CUDA vs full V3 PT parity. Local ≠ DICC multi-day.
 
 ## B14 sealed multi-seed BoT TEST (2026-07-22)
 

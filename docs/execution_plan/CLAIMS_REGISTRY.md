@@ -1,7 +1,7 @@
 # Protocol Claims Package (WP9a)
 
-**Generated (UTC):** 2026-07-22T13:58:09.205365+00:00
-**Git:** `ead77791409bae659b0e3fd8846ef7699999c638`
+**Generated (UTC):** 2026-07-22T15:04:00.342965+00:00
+**Git:** `d058030052824bd17f58dcae254d6ad3d0f75941`
 **Champion md5:** `80a90f7cc210276300eaa90173a5a385` (unchanged=True; expected `80a90f7cc210276300eaa90173a5a385`)
 **Method:** CAD-CBA-v1
 
@@ -41,8 +41,21 @@
 | `xai_llm_gen_mean_ms` | **7400** | LOCKED_VAL | `xai/summary.json` | never conflate with dispatch µs |
 | `xai_structured_usefulness` | **1.0** | LOCKED_VAL | `xai/summary.json` |  |
 | `xai_j10` | **DROP_FULL_EXPLAINABLE_CLAIM_KEEP_STRUCTURED** | LOCKED_VAL | `xai/summary.json` | DROP full claim keep structured+dispatch |
-| `f9_rtx_mj_per_flow` | **0.786** | LOCKED_VAL | `energy_table/summary.json` | batch128 |
+| `f9_rtx_mj_per_flow` | **0.786** | HISTORICAL | `energy_table/summary.json` | HISTORICAL single-shot batch128; prefer WP6b multi-session range |
 | `pareto_h8_composite_g6` | **0.9056** | LOCKED_VAL | `pareto_h8/summary.json` | a priori composite #1 G6 |
+| `wp6b_energy_mj_per_flow_mean` | **0.933** | LOCKED_SYSTEMS | `wp6b_local_ranges/summary.json` | multi-session n=5; supersedes single-shot for ranges |
+| `wp6b_energy_mj_per_flow_std` | **0.010** | LOCKED_SYSTEMS | `wp6b_local_ranges/summary.json` |  |
+| `wp6b_energy_mj_per_flow_range_low` | **0.920** | LOCKED_SYSTEMS | `wp6b_local_ranges/summary.json` | session-mean min |
+| `wp6b_energy_mj_per_flow_range_high` | **0.943** | LOCKED_SYSTEMS | `wp6b_local_ranges/summary.json` | session-mean max |
+| `wp6b_pt_batch256_us_mean` | **24.90** | LOCKED_SYSTEMS | `wp6b_local_ranges/summary.json` | full V3 PT absolute (Option A allowed) |
+| `wp6b_pt_batch256_us_range_low` | **24.15** | LOCKED_SYSTEMS | `wp6b_local_ranges/summary.json` |  |
+| `wp6b_pt_batch256_us_range_high` | **25.68** | LOCKED_SYSTEMS | `wp6b_local_ranges/summary.json` |  |
+| `wp6b_cuda_pipeline_us_range_low` | **565.2** | LOCKED_SYSTEMS | `wp6b_local_ranges/summary.json` | Option A derived sum; not full V3 parity |
+| `wp6b_cuda_pipeline_us_range_high` | **570.3** | LOCKED_SYSTEMS | `wp6b_local_ranges/summary.json` | Option A derived sum; not full V3 parity |
+| `wp6b_cuda_block3_fp16_us_range_low` | **503.2** | LOCKED_SYSTEMS | `wp6b_local_ranges/summary.json` | per-block Option A |
+| `wp6b_cuda_block3_fp16_us_range_high` | **508.5** | LOCKED_SYSTEMS | `wp6b_local_ranges/summary.json` | per-block Option A |
+| `wp6b_peak_alloc_mb` | **322.2** | LOCKED_SYSTEMS | `wp6b_local_ranges/summary.json` | H3 peak alloc across batches/sessions |
+| `wp6b_i8_batch256_us_mean` | **24.49** | LOCKED_SYSTEMS | `systems_i8_h3/summary.json` | I8 multi-session |
 | `ton_val` | **0.8080** | LOCKED_TEST | `toniot_final/summary.json` | 13-feat processed_toniot |
 | `ton_test` | **0.8110** | LOCKED_TEST | `toniot_final/summary.json` | WP8 ToN test allowed |
 | `ton_rf_test` | **0.9393** | LOCKED_TEST | `toniot_final/summary.json` |  |
@@ -90,7 +103,6 @@
 
 ## Open gates (do not claim as done)
 
-- WP6b local multi-session latency/energy ranges after lock
 - WP0 DICC multi-day (user-scheduled)
 - WP9b manuscript spine after tracker largely green
 

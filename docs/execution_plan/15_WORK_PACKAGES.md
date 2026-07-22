@@ -29,7 +29,7 @@
 | WP5b | Fair baseline suite | 5 | WP1a | Agent | **DONE 2026-07-22** neural G6–G12 + classical G1–G5 (SVM 0.4268; LGBM 0.9818) + G13 N/A |
 | WP5c | Pareto figure + composite score | 5 | WP5a/b + systems | Agent | **DONE 2026-07-22** `pareto/` + `pareto_h8/` systems rebench; G6 composite; classical refs |
 | WP6a | Re-export + fidelity | 6 | Final ckpt | Agent | **DONE 2026-07-22** re-export + bit-identical fidelity PASS |
-| WP6b | Local re-bench ranges Option A | 6 | WP6a | Agent | **TODO** (B14 done — next) |
+| WP6b | Local re-bench ranges Option A | 6 | WP6a | Agent | **DONE 2026-07-22** multi-session n=5; energy 0.920–0.943; PT@256 24.15–25.68 µs; CUDA pipe 565–570 µs |
 | WP6c | Re-DICC if model changed | 6 | WP6a | User/ops | TODO (user-scheduled; champion unchanged so optional) |
 | WP7 | XAI suite **or** drop explainable claims | 7 | Final detector | Agent | **DONE 2026-07-22** suite RUN_DOCUMENTED; J10 drop full claim keep structured+dispatch |
 | WP8 | ToN final-method eval | 8 | Final recipe | Agent | **DONE 2026-07-22** val 0.8080 test 0.8110 RF 0.9393 RUN_DOCUMENTED |
@@ -42,10 +42,9 @@
 
 | Priority | Action |
 |----------|--------|
-| 0 | Verify disk via `RESULTS_DISK_MANIFEST.md` + `sealed_test/summary.json` (B14 DONE) |
-| 1 | **WP6b** local multi-session latency/energy ranges (Option A) |
-| 2 | Keep `verify_claims` green after any new numbers |
-| 3 | **WP9b** manuscript spine when tracker largely green (science mostly closed) |
+| 0 | Verify disk via `RESULTS_DISK_MANIFEST.md` + `sealed_test/` + `wp6b_local_ranges/` |
+| 1 | **WP9b** manuscript spine (science largely closed; systems local ranges DONE) |
+| 2 | Keep `verify_claims` green after any prose/number edits |
 | Parallel | **WP0** only when user opens dedicated DICC session |
 | Never first | WP9b with empty cluster cells if claiming multi-GPU |
 

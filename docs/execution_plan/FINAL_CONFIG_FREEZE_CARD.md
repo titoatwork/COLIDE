@@ -100,11 +100,11 @@ Until that message appears, agents must **keep BoT test sealed**.
 
 ## After B14
 
-1. WP6b local multi-session latency/energy ranges  
-2. Finish any remaining WP9a claim flips for test numbers  
+1. ~~WP6b local multi-session latency/energy ranges~~ **DONE 2026-07-22** (energy 0.920–0.943; PT@256 24.15–25.68 µs; CUDA pipe 565–570)  
+2. ~~WP9a claim flips for test numbers~~ **DONE** (59 claims post-WP6b)  
 3. WP9b manuscript spine only when tracker largely green  
 4. DICC only in a dedicated user-opened session  
 
 ---
 
-*Card written 2026-07-22 (WP9a session). Not a substitute for user lock.*
+*Card written 2026-07-22 (WP9a session). User-locked + B14 + WP6b complete.*

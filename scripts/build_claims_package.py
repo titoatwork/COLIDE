@@ -187,6 +187,8 @@ def main() -> int:
     st_sh, _ = load_json("stratified_batch/ft_shuffle_seed42.json")
     st_st, _ = load_json("stratified_batch/ft_stratified_seed42.json")
     imb, _ = load_json("imbalance_loss/summary.json")
+    wp6b, _ = load_json("wp6b_local_ranges/summary.json")
+    i8h3, _ = load_json("systems_i8_h3/summary.json")
     rf_hist, _ = load_json("rf_baseline_processed.json")
     fid, _ = load_json("numerical_fidelity.json")
 
@@ -291,13 +293,152 @@ def main() -> int:
         dig(en, "headline", "rtx_gpu_batch128_mj_per_flow"),
         "energy_table/summary.json",
         "headline.rtx_gpu_batch128_mj_per_flow",
-        "batch128",
+        "HISTORICAL single-shot batch128; prefer WP6b multi-session range",
+        status="HISTORICAL",
         decimals=3,
     )
     comp = dig(en, "headline", "pareto_h8_composite_top", "composite_score")
     if comp is None:
         comp = dig(ph8, "headline", "top_composite", "score")
     add("pareto_h8_composite_g6", comp, "pareto_h8/summary.json", "headline.top_composite.score", "a priori composite #1 G6", decimals=4)
+
+    # WP6b local multi-session ranges (Option A) — only when summary present
+    if wp6b and wp6b.get("n_sessions") and dig(wp6b, "headline", "energy_mj_per_flow_range", "mean") is not None:
+        e_lo = dig(wp6b, "headline", "energy_mj_per_flow_range", "low")
+        e_hi = dig(wp6b, "headline", "energy_mj_per_flow_range", "high")
+        e_mean = dig(wp6b, "headline", "energy_mj_per_flow_range", "mean")
+        e_std = dig(wp6b, "headline", "energy_mj_per_flow_range", "std")
+        pt256_lo = dig(wp6b, "headline", "pt_batch256_us_per_sample_range", "low")
+        pt256_hi = dig(wp6b, "headline", "pt_batch256_us_per_sample_range", "high")
+        pt256_mean = dig(wp6b, "headline", "pt_batch256_us_per_sample_range", "mean")
+        cuda_lo = dig(wp6b, "headline", "cuda_derived_pipeline_total_us_range", "low")
+        cuda_hi = dig(wp6b, "headline", "cuda_derived_pipeline_total_us_range", "high")
+        b3_lo = dig(wp6b, "headline", "cuda_block3_fp16_us_range", "low")
+        b3_hi = dig(wp6b, "headline", "cuda_block3_fp16_us_range", "high")
+        peak = dig(wp6b, "headline", "peak_alloc_mb_global_max")
+        n_sess = int(wp6b.get("n_sessions") or 0)
+        add(
+            "wp6b_energy_mj_per_flow_mean",
+            e_mean,
+            "wp6b_local_ranges/summary.json",
+            "headline.energy_mj_per_flow_range.mean",
+            f"multi-session n={n_sess}; supersedes single-shot for ranges",
+            status="LOCKED_SYSTEMS",
+            decimals=3,
+        )
+        add(
+            "wp6b_energy_mj_per_flow_std",
+            e_std,
+            "wp6b_local_ranges/summary.json",
+            "headline.energy_mj_per_flow_range.std",
+            status="LOCKED_SYSTEMS",
+            decimals=3,
+        )
+        add(
+            "wp6b_energy_mj_per_flow_range_low",
+            e_lo,
+            "wp6b_local_ranges/summary.json",
+            "headline.energy_mj_per_flow_range.low",
+            "session-mean min",
+            status="LOCKED_SYSTEMS",
+            decimals=3,
+        )
+        add(
+            "wp6b_energy_mj_per_flow_range_high",
+            e_hi,
+            "wp6b_local_ranges/summary.json",
+            "headline.energy_mj_per_flow_range.high",
+            "session-mean max",
+            status="LOCKED_SYSTEMS",
+            decimals=3,
+        )
+        add(
+            "wp6b_pt_batch256_us_mean",
+            pt256_mean,
+            "wp6b_local_ranges/summary.json",
+            "headline.pt_batch256_us_per_sample_range.mean",
+            "full V3 PT absolute (Option A allowed)",
+            status="LOCKED_SYSTEMS",
+            decimals=2,
+        )
+        add(
+            "wp6b_pt_batch256_us_range_low",
+            pt256_lo,
+            "wp6b_local_ranges/summary.json",
+            "headline.pt_batch256_us_per_sample_range.low",
+            status="LOCKED_SYSTEMS",
+            decimals=2,
+        )
+        add(
+            "wp6b_pt_batch256_us_range_high",
+            pt256_hi,
+            "wp6b_local_ranges/summary.json",
+            "headline.pt_batch256_us_per_sample_range.high",
+            status="LOCKED_SYSTEMS",
+            decimals=2,
+        )
+        if cuda_lo is not None and cuda_hi is not None:
+            add(
+                "wp6b_cuda_pipeline_us_range_low",
+                cuda_lo,
+                "wp6b_local_ranges/summary.json",
+                "headline.cuda_derived_pipeline_total_us_range.low",
+                "Option A derived sum; not full V3 parity",
+                status="LOCKED_SYSTEMS",
+                decimals=1,
+            )
+            add(
+                "wp6b_cuda_pipeline_us_range_high",
+                cuda_hi,
+                "wp6b_local_ranges/summary.json",
+                "headline.cuda_derived_pipeline_total_us_range.high",
+                "Option A derived sum; not full V3 parity",
+                status="LOCKED_SYSTEMS",
+                decimals=1,
+            )
+        if b3_lo is not None and b3_hi is not None:
+            add(
+                "wp6b_cuda_block3_fp16_us_range_low",
+                b3_lo,
+                "wp6b_local_ranges/summary.json",
+                "headline.cuda_block3_fp16_us_range.low",
+                "per-block Option A",
+                status="LOCKED_SYSTEMS",
+                decimals=1,
+            )
+            add(
+                "wp6b_cuda_block3_fp16_us_range_high",
+                b3_hi,
+                "wp6b_local_ranges/summary.json",
+                "headline.cuda_block3_fp16_us_range.high",
+                "per-block Option A",
+                status="LOCKED_SYSTEMS",
+                decimals=1,
+            )
+        if peak is not None:
+            add(
+                "wp6b_peak_alloc_mb",
+                peak,
+                "wp6b_local_ranges/summary.json",
+                "headline.peak_alloc_mb_global_max",
+                "H3 peak alloc across batches/sessions",
+                status="LOCKED_SYSTEMS",
+                decimals=1,
+            )
+        # I8 batch256 multi-session mean if present
+        i8_bs256 = dig(wp6b, "aggregate_i8_batch_sensitivity", "256", "per_sample_us_median", "mean")
+        if i8_bs256 is None and i8h3:
+            i8_bs256 = dig(i8h3, "headline", "batch256_per_sample_us_mean")
+        if i8_bs256 is not None:
+            add(
+                "wp6b_i8_batch256_us_mean",
+                i8_bs256,
+                "systems_i8_h3/summary.json",
+                "headline.batch256_per_sample_us_mean",
+                "I8 multi-session",
+                status="LOCKED_SYSTEMS",
+                decimals=2,
+            )
 
     # ToN (test allowed for WP8 multi-dataset)
     assert ton is not None
@@ -529,8 +670,16 @@ def main() -> int:
                 )
                 else ["B14 sealed multi-seed TEST on BoT after explicit user final-config lock"]
             )
+            + (
+                []
+                if (
+                    wp6b
+                    and int(wp6b.get("n_sessions") or 0) >= 5
+                    and dig(wp6b, "headline", "energy_mj_per_flow_range", "mean") is not None
+                )
+                else ["WP6b local multi-session latency/energy ranges after lock"]
+            )
             + [
-                "WP6b local multi-session latency/energy ranges after lock",
                 "WP0 DICC multi-day (user-scheduled)",
                 "WP9b manuscript spine after tracker largely green",
             ]
@@ -550,9 +699,15 @@ def main() -> int:
             (
                 "WP9a claims package includes B14 sealed multi-seed BoT TEST numbers "
                 f"(init path {sealed.get('init_path')}; "
-                f"test mean {sealed.get('test_macro_f1_mean')}). "
-                "Do not mix test means with val-only multirun claims without labels. "
-                "DICC multi-day still BLOCKED."
+                f"test mean {sealed.get('test_macro_f1_mean')})"
+                + (
+                    f"; WP6b multi-session ranges n={wp6b.get('n_sessions')} "
+                    f"energy mean {dig(wp6b, 'headline', 'energy_mj_per_flow_range', 'mean')}"
+                    if wp6b and dig(wp6b, "headline", "energy_mj_per_flow_range", "mean") is not None
+                    else ""
+                )
+                + ". Do not mix test means with val-only multirun claims without labels. "
+                "Local systems ranges are RTX-only; DICC multi-day still BLOCKED."
             )
             if (
                 sealed

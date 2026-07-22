@@ -1,7 +1,7 @@
 # Method package decision (Phase 2) — signed default
 
 **Date:** 2026-07-19  
-**Last status update:** 2026-07-22 (WP9a claims package + freeze card; WP7 XAI J10; WP8 ToN; F9 energy; WP6a fidelity; C*/E6/B2–B4 prior)  
+**Last status update:** 2026-07-22 (WP6b multi-session ranges; B14 sealed test; WP9a claims 59; WP7 XAI J10; WP8 ToN; F9; WP6a)  
 **Rule:** one package first; **every other playlist idea still gets a bounded run → RUN_DOCUMENTED** (skip-nothing).
 
 ## Chosen package (v1): **Class-aware distilled CNN–BiLSTM (CAD-CBA-v1)**
@@ -53,6 +53,7 @@ Extreme class imbalance + minority (Theft) under neural deploy path; RF still st
 | WP8 ToN final method | **RUN_DOCUMENTED** | val 0.8080 / test 0.8110 vs RF test 0.9393 (13-feat); KD selected |
 | F9 energy table | **RUN_DOCUMENTED** | consolidated `energy_table/`; RTX ~0.786 mJ/flow |
 | WP6a re-export + fidelity | **DONE** | bit-identical; CUDA self-check PASS |
+| WP6b local multi-session ranges | **DONE** | energy **0.920–0.943** mJ/flow; PT@256 **24.15–25.68** µs; CUDA pipe **565–570** µs; peak **322.2** MiB; n=5 |
 | Package FT multirun (ensemble KD + HPO HPs) | **RUN_DOCUMENTED** | mean **0.9639 ± 0.0185** n=5; max 0.9803; does **not** beat WP1b mean 0.9714±0.0109 |
 | Ablation ladder A1–A7 (seed42) | **RUN_DOCUMENTED** | A7 **0.9699** tops; A3 0.9493; A4 attn+CE **0.7378** underperforms A3 — package composition credit |
 | Protocol-fair neural baselines G6–G12 (seed42 CE) | **RUN_DOCUMENTED** | G11 cnn_bilstm **0.9493** tops suite; G6 MLP 0.9285; G12 transformer **0.5808** weak; equal fixed HPs (G15) |

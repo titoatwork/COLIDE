@@ -27,7 +27,7 @@
 | A1 | Local progress acknowledged but not submission-ready | PARTIAL | Interim + reply sent; science ongoing |
 | A2 | 0.9790 &lt; RF 0.9864 — detection not sole headline unless improved | PARTIAL | Numbers frozen; improvement TODO |
 | A3 | CUDA mainly B3 local RTX 3050; V100S/A100 pending | BLOCKED | Need DICC |
-| A4 | Clear quantitative advantage on ≥1 major dimension | PARTIAL | Multi-obj packaged: G6 composite **0.9056** @4.33 µs; energy **0.786** mJ/flow; dispatch **16.60** µs; VRAM proxy cuML vs CNN; pure F1 still LGBM **0.9818** tops protocol — see `CLAIMS_REGISTRY.md` advantage table |
+| A4 | Clear quantitative advantage on ≥1 major dimension | PARTIAL | Multi-obj: G6 composite **0.9056** @4.33 µs; **WP6b** energy **0.920–0.943** mJ/flow; PT@256 **24.15–25.68** µs; CUDA pipe **565–570** µs; peak alloc **322.2** MiB; dispatch **16.60** µs; pure F1 still LGBM **0.9818** tops protocol |
 | A5 | Not rely mainly on implementation/docs quality | TODO | Ongoing discipline |
 | A6 | Strengthen before finalising manuscript | TODO | Manuscript after evidence |
 
@@ -105,7 +105,7 @@
 | E6 | Strong neural teacher | RUN_DOCUMENTED | G11 neural teacher → V3 student stage_a_kd val **0.8513** ≪ ensemble student **0.9401**; keep ensemble (`teachers_kd_neural/`) |
 | E7 | Heterogeneous ensembles | INCORPORATED | RF+XGB+LGBM heterogeneous mean (WP4b) |
 | E8 | Student not mere imitation — deployment trade-off | RUN_DOCUMENTED | WP4b: XGB teacher 0.9918 → student 0.9270 &lt; ensemble 0.9401; multi-obj `pareto_h8/` composite G6 0.9056 |
-| E9 | Lower memory / latency / GPU deploy / temporal | RUN_DOCUMENTED (local) | WP5c + `pareto_h8/` + F9 energy table; cuML VRAM contrast; DICC multi-day still BLOCKED |
+| E9 | Lower memory / latency / GPU deploy / temporal | RUN_DOCUMENTED (local) | WP5c + `pareto_h8/` + **WP6b multi-session ranges** (energy 0.920–0.943; PT@256 24.15–25.68 µs; peak 322.2 MiB); DICC multi-day still BLOCKED |
 
 ---
 
@@ -121,7 +121,7 @@
 | F6 | + attention/fusion | RUN_DOCUMENTED | WP5a A4 attn+CE **0.7378** **underperforms** A3 0.9493 under this budget — attention not free gain; full package still uses attn+focal+KD+HPO |
 | F7 | Full proposed method | RUN_DOCUMENTED (ladder) | WP5a A7 full CAD-CBA-v1 **0.9699** tops ladder; package multirun mean 0.9639±0.0185 prior |
 | F8 | Metrics: macro/weighted F1, bal-acc, P/R, per-class F1 | DONE | `scripts/protocol/metrics.py` + all protocol result JSONs |
-| F9 | Latency, params, memory, energy per ablation | RUN_DOCUMENTED | WP5a params+latency; WP5c Pareto; **energy table** consolidated `energy_table/summary.json` (RTX ~0.786 mJ/flow batch128; A100/cuML historical; per-ablation mJ not re-measured — disclosed gap) |
+| F9 | Latency, params, memory, energy per ablation | RUN_DOCUMENTED | WP5a params+latency; WP5c Pareto; energy_table historical **0.786**; **WP6b multi-session energy 0.920–0.943** mJ/flow n=5 (primary range); per-ablation mJ not re-measured — disclosed |
 
 ---
 
@@ -153,8 +153,8 @@
 |----|-------------|--------|------------------|
 | H1 | May not beat RF F1 if deployment better | DONE (framing) | METHOD + multi-obj framing locked; WP5c tables show classical LGBM/RF may still top pure F1 while neural owns deploy/size path |
 | H2 | Near-RF detection | DONE (honest dual bar) | **B14 test 0.9780±0.0033** ≈ protocol RF val 0.9778; LGBM val 0.9818 still tops pure F1; published RF 0.9864 other pipeline — dual bars locked |
-| H3 | Much lower GPU memory | PARTIAL | Historical `cuml_rf_resources.json` CNN ~2MB vs cuML RF ~444MB; protocol proxy via n_params/ckpt bytes in WP5c (`pareto/`); peak VRAM re-measure still open |
-| H4 | Faster neural inference | PARTIAL | Protocol batch256 µs/sample in WP5c: G6 MLP **4.33** vs A7 **26.02** vs A3 **19.96**; historical `baseline_latency.json` still secondary |
+| H3 | Much lower GPU memory | DONE (local peak) | **WP6b** peak alloc **322.2** MiB across batches/sessions; batch256 peak ~**103.2** MiB; ckpt ~2.0 MiB / n_params 530181; historical cuML RF ~444MB contrast kept; DICC peak still open |
+| H4 | Faster neural inference | DONE (local ranges) | **WP6b** full V3 PT @bs=256 **24.15–25.68** µs/sample (mean **24.90**, n=5); WP5c relative arch table still valid (G6 4.33 vs A7 ~26); CUDA Option A pipe **565–570** µs |
 | H5 | Low explanation dispatch | DONE (dispatch) | `llm_explainability.json` — 16.60 µs is **dispatch only** (not full LLM gen) |
 | H6 | Good minority detection | DONE (protocol) | Val + **B14 test Theft mean 1.0** / min-cls **0.9292**; classical Theft 0.9231 on val; paper table ready from claims |
 | H7 | Stable across GPU platforms | BLOCKED | DICC |
@@ -171,9 +171,9 @@
 | I3 | V100S results | BLOCKED | Legacy single-shot only |
 | I4 | A100 results | BLOCKED | Legacy single-shot only |
 | I5 | ≥2 different days | BLOCKED | |
-| I6 | mean, median, std, CV, CI | BLOCKED | Harness ready |
-| I7 | Warm-up protocol | PARTIAL | Tooling |
-| I8 | Batch-size sensitivity | TODO | |
+| I6 | mean, median, std, CV, CI | PARTIAL (local DONE) | **WP6b** local multi-session mean/median/std/CV/CI on energy + PT + CUDA (`wp6b_local_ranges/`); **DICC multi-day still BLOCKED** |
+| I7 | Warm-up protocol | DONE | WP6b warm-up **50** discarded sync forwards per timed block; documented in summary |
+| I8 | Batch-size sensitivity | DONE | WP6b multi-session I8 table bs∈{1,8,32,64,128,256,512,1024}; `systems_i8_h3/` + `wp6b_local_ranges/` |
 | I9 | Statistical significance + effect size | BLOCKED | compare script exists |
 | I10 | No generalise from RTX 3050 alone | TODO | Discipline |
 | I11 | Portability central | BLOCKED | Until I1–I5 |
@@ -206,7 +206,7 @@
 | K3 | Cross-dataset / transfer | RUN_DOCUMENTED (recipe) | Recipe transfer (not weight transfer); ToN-scale kd_lr/ft_lr; honest RF gap |
 | K4 | RQ: improve detection? | PARTIAL (answer draft) | Protocol: B14 test **0.9780±0.0033** near RF val 0.9778; does **not** beat LGBM 0.9818 or published RF 0.9864 — multi-obj / deploy is the contribution path |
 | K5 | RQ: minority recognition? | PARTIAL (answer draft) | B14 test Theft **1.0** mean; min-cls **0.9292** — strong minority under protocol; val tables support |
-| K6 | RQ: reduce latency or memory? | PARTIAL | Local multi-obj G6 composite 0.9056 @4.33 µs; energy 0.786 mJ/flow; **WP6b multi-session ranges** still open |
+| K6 | RQ: reduce latency or memory? | DONE (local answer draft) | WP6b ranges: energy **0.920–0.943** mJ/flow; PT@256 **24.15–25.68** µs; peak **322.2** MiB; G6 composite 0.9056 @4.33 µs; multi-GPU still BLOCKED |
 | K7 | RQ: valid across GPUs? | BLOCKED | DICC |
 | K8 | RQ: explainability measurable value? | RUN_DOCUMENTED | Dispatch yes; structured evidence yes; free-form LLM quality weak → no full XAI RQ claim |
 
@@ -223,7 +223,7 @@
 | L5 | ≥5 independent training runs mean±std | DONE | WP1b 0.9714±0.0109; package 0.9639±0.0185; HPO confirm 0.9689±0.0145 n=5 (val only) |
 | L6 | Optuna/Bayesian HPO | DONE | WP3 Optuna TPE val-only; winner INCORPORATE 0.9791; multi-seed confirm RUN_DOCUMENTED 0.9689±0.0145 |
 | L7 | One clear proposed method | DONE (named) | **CAD-CBA-v1** signed; full evaluation playlist still open (ablations/test/ToN/paper) |
-| L8 | Deploy: export, parity, profile, kernels, TRT/ORT/compile, FP16/INT8 | PARTIAL→DONE (export+fidelity) | **WP6a re-export + fidelity PASS** (bit-identical; CUDA self-checks PASS); TRT/ORT/compile historical exist; WP6b multi-session ranges + WP6c DICC still open after sealed test |
+| L8 | Deploy: export, parity, profile, kernels, TRT/ORT/compile, FP16/INT8 | DONE (local path) | WP6a fidelity PASS + **WP6b multi-session ranges DONE**; TRT/ORT/compile historical; WP6c DICC re-bench only if user opens DICC (champion unchanged → optional) |
 | L9 | Realistic: trade-off vs beat RF everywhere | DONE (framing) | Multi-obj framing locked; H8 + `CLAIMS_REGISTRY` advantage snapshot |
 | L10 | Paper structure / tables / ToV / repro | TODO | Outline in plan pack; write after science green + B14 |
 | L11 | Fix gitignored claim-source repro | DONE | WP9a + **post-B14 rebuild**: 46 claims; sealed test LOCKED_TEST; `verify_claims.py` all green |
@@ -275,6 +275,7 @@
 | 2026-07-22 | **WP6a re-export + fidelity DONE** bit-identical blocks; CUDA self-check all PASS; champion md5 unchanged |
 | 2026-07-22 | **WP9a claims packaging DONE** `scripts/build_claims_package.py` → `claims_package/` + `CLAIMS_REGISTRY.md` (42 claims, 11 minority rows); `verify_claims.py` protocol claims green; `FINAL_CONFIG_FREEZE_CARD.md` awaiting user lock for B14; A4/C12/D1/H6/L11 advanced from disk evidence; sealed test **not** run |
 | 2026-07-22 | **B14 sealed multi-seed BoT TEST DONE** user lock path **A**; seeds 42–46; **test macro-F1 0.9780 ± 0.0033**; min-cls 0.9292; Theft **1.0**; val 0.9689±0.0145; champion unchanged; wall ~79 min; claims rebuild 46 claims green; B14/C12/D1/H2/H6/L11 flipped |
+| 2026-07-22 | **WP6b local multi-session ranges DONE** n=5 sessions RTX 3050; energy **0.920–0.943** mJ/flow (mean 0.933); PT@256 **24.15–25.68** µs (mean 24.90); CUDA pipe **565–570** µs; block3 FP16 **503–509** µs; peak alloc **322.2** MiB; I7/I8/H3/H4/K6/L8 advanced; claims **59** green; historical energy 0.786 labeled HISTORICAL |
 
 ---
 
