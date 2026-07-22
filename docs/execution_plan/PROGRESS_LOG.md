@@ -1,7 +1,25 @@
 # Progress log (results as they land)
 
 **Policy:** document everything; label pilot vs full; test sealed unless noted.  
-**Handoff snapshot:** 2026-07-22 (**Playlist closure audit DONE**; claims **64** green; PI venue polish; WP9c; B14 0.9780±0.0033; WP6b ranges)
+**Handoff snapshot:** 2026-07-22 (**DICC ops method locked** OnDemand VNC; playlist closure; claims **64** green)
+
+---
+
+## 2026-07-22 — DICC ops method lock (docs only; no cluster run)
+
+**Mode:** documentation hygiene · **no train** · no DICC jobs · champion frozen  
+**Primary artifact:** `docs/DICC_OPS_METHOD.md`
+
+### Delivered
+| Item | Detail |
+|------|--------|
+| Authoritative ops | DICC **OnDemand → VNC Desktop** for interactive setup; **`screen`** for long tasks; prefer **batch** `run_campaign.sh` |
+| Superseded (removed as primary plan) | Campus-stable runner; Cheran-as-default cluster operator; long interactive `srun`/`salloc` over VPN |
+| Updated surfaces | `FINAL_PLAN`, `04_PHASE0_DICC`, `PROF_POR_STATUS_REPORT`, `STATUS_REPORT_DRAFT`, `PROF_POR_3DAY`, `DICC_RUNBOOK`, `dicc_scripts/README`, WP0, audit 07, HANDOFF/continuity, tracker A3/L1 |
+| Scientific DICC goals | Unchanged (V100S/A100, Day1+Day2, Block3 CUDA vs PT, full V3 PT absolute, Option A) |
+| SUCCESS tree | Still **ABSENT** — method locked; execution pending dedicated session |
+
+**Decision: DONE (docs)** — next dedicated DICC session executes under OnDemand VNC method only.
 
 ---
 

@@ -46,7 +46,7 @@ Locked strategy (do not reopen):
   - June 2026 DICC ~551 µs (V100S) / ~592 µs (A100) = LEGACY SINGLE-SHOT
     CUDA-only; not multi-day; no same-GPU PyTorch baseline that day.
   - Multi-day Day1+Day2 campaign with PyTorch baselines is SCRIPTED but NOT
-    COMPLETED (ops/access; waiting on Prof re possible Cheran help).
+    BLOCKED execution (ops method locked: OnDemand VNC + screen + batch; see docs/DICC_OPS_METHOD.md).
   - Hard gate before any "final" Prof numbers email: codebase-wide numbers
     match + scripts/verify_claims.py green (docs/FINAL_PLAN.md P2).
   - Champion: model/best_model_botiot_twostage.pth

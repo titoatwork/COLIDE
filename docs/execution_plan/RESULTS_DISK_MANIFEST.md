@@ -1,7 +1,7 @@
 # Results Disk Manifest (handoff snapshot)
 
 **Generated (UTC):** 2026-07-21T11:01:25.771483+00:00  
-**Last append (UTC):** 2026-07-22T16:36:00 (playlist closure audit + claims 64; Table 1b registered; no new train/result JSON)
+**Last append (UTC):** 2026-07-22T17:10:00 (DICC ops method lock: OnDemand VNC + screen + batch; no new train/result JSON)
 **Host path root:** `/home/titoisalive/colide`
 
 `benchmarks/results/` is **gitignored**. This file is committed so the next session can verify local artifacts without inventing numbers.
@@ -140,6 +140,19 @@
 
 **Table 1b means (from sealed_test ft_seed{42..46} test per_class F1):** DDoS **0.9838**, DoS **0.9813**, Normal **0.9292**, Recon **0.9958**, Theft **1.0000**.  
 **Still open for PI:** journal class file / BibTeX after venue choice. DICC cells still TBD.
+
+## DICC ops method lock (2026-07-22)
+
+**Mode:** documentation only · no cluster SUCCESS tree yet  
+
+| Path | exists | notes |
+|------|--------|-------|
+| `docs/DICC_OPS_METHOD.md` | yes | **Authoritative** ops: OnDemand VNC + screen + batch |
+| `docs/execution_plan/04_PHASE0_DICC.md` | yes | Phase 0 points to ops method; campus/Cheran-default removed |
+| `dicc_scripts/README.md` | yes | Connection method section added |
+| `benchmarks/results/dicc/` | **no** | Still ABSENT — do not invent multi-day numbers |
+
+**Superseded as primary plan:** campus-stable runner; Cheran-as-default cluster operator; long interactive `srun`/`salloc` over VPN.
 
 ## Playlist closure audit + claims hygiene (2026-07-22)
 

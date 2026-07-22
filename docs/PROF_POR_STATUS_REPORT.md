@@ -14,7 +14,7 @@
 
 ## 1. One-paragraph summary
 
-COLIDE is a **systems / performance** project: hand-written CUDA C++ inference kernels for a trained CNN-BiLSTM IoT IDS, plus an async on-device LLM explainability path. Accuracy is **competitive but not SOTA** versus a same-split Random Forest (we disclose the gap). Laptop (RTX 3050 / WSL2) measurements show Custom CUDA faster than eager PyTorch, torch.compile, TensorRT, and ORT-GPU when reported as **multi-session ranges**. Cross-hardware CUDA pipeline figures exist from a **June 2026 single-shot** on UM DICC (V100S / A100); a **multi-day** campaign with same-GPU PyTorch baselines is prepared but **blocked on cluster access / operational support** (awaiting your guidance re Cheran). We do **not** invent or over-claim DICC multi-day numbers.
+COLIDE is a **systems / performance** project: hand-written CUDA C++ inference kernels for a trained CNN-BiLSTM IoT IDS, plus an async on-device LLM explainability path. Accuracy is **competitive but not SOTA** versus a same-split Random Forest (we disclose the gap). Laptop (RTX 3050 / WSL2) measurements show Custom CUDA faster than eager PyTorch, torch.compile, TensorRT, and ORT-GPU when reported as **multi-session ranges**. Cross-hardware CUDA pipeline figures exist from a **June 2026 single-shot** on UM DICC (V100S / A100); a **multi-day** campaign with same-GPU PyTorch baselines is scripted and ready. **Ops method (locked):** DICC **OnDemand → VNC Desktop** for interactive setup, **`screen`** for long terminal tasks, and **batch** `run_campaign.sh` for Day1/Day2 (avoids loss of interactive `srun`/`salloc` allocations on VPN drops). We do **not** invent or over-claim DICC multi-day numbers.
 
 ---
 
@@ -112,7 +112,8 @@ Source files: `benchmarks/results/dicc_v100_summary.txt`, `dicc_a100_summary.txt
 | Block 3 CUDA / PyTorch ratio on V100 & A100 | **TBD** (only valid cluster speedup language under Option A) |
 | Day1 vs Day2 stability compare | **TBD** |
 
-**Blocker:** Remote SSH India→UM has been unstable; operational path was shifted to seek guidance on whether **Cheran** may run the campaign on **his own** DICC account (no credential sharing). Awaiting your reply.
+**Ops method (current):** Run interactive setup via **DICC OnDemand VNC Desktop**; use **`screen`** for long tasks; submit Day1/Day2 with **`bash dicc_scripts/run_campaign.sh`** (batch). Do **not** rely on long interactive `srun`/`salloc` over VPN. Canonical: `docs/DICC_OPS_METHOD.md`.  
+**Blocker remaining:** Campaign not yet executed — SUCCESS tree still absent on laptop (not a missing scientific design).
 
 **What we will add after multi-day SUCCESS (no invention until then):**
 
@@ -139,44 +140,44 @@ Full-pipeline Custom CUDA / full V3 PT ratio: **n/a** (invalid under Option A �
 
 ## 6. What is ready vs what needs you / cluster
 
-| Ready now | Needs multi-day DICC (or your OK for operator) |
-|-----------|-----------------------------------------------|
-| Accuracy freeze + md5 | V100/A100 Day1+Day2 SUCCESS dirs |
-| Laptop latency ranges + framework stats | Same-GPU PyTorch baselines on DICC |
-| LLM dispatch + streaming | Block 3 CUDA vs PT ratios on cluster |
-| Legacy June DICC CUDA totals (labeled) | Day1/Day2 stability accept/reject |
-| Claim verification script green | Optional Nsight / stretch work later |
-| Manuscript spine **not** started (by design) | Full paper draft after this status path |
+| Ready now | Needs multi-day DICC execution |
+|-----------|--------------------------------|
+| Local science playlist closed (B14, WP6b, claims, local-complete manuscript) | V100/A100 Day1+Day2 SUCCESS dirs |
+| Accuracy freeze + md5 | Same-GPU PyTorch baselines on DICC |
+| Laptop multi-session latency/energy ranges (WP6b) | Block 3 CUDA vs PT ratios on cluster |
+| LLM dispatch + structured XAI scope | Day1/Day2 stability accept/reject |
+| Legacy June DICC CUDA totals (labeled) | Manuscript §5.13 fill from JSON only |
+| Claim verification green (64 claims) | Optional Nsight / stretch work later |
+| Ops method locked (OnDemand VNC + screen + batch) | — |
 
 ---
 
-## 7. Decisions / guidance requested
+## 7. Decisions / status (ops)
 
-1. **Cheran / DICC:** May Cheran run the prepared `run_campaign.sh` (Day1+Day2) on **his own** account and return `benchmarks/results/dicc/`? (No password/key sharing.)  
-2. If not: we will retry from a more stable network / campus / `tmux` on the student account.  
-3. Venue emphasis: confirm FGCS-leaning **systems** framing is acceptable (accuracy secondary to measurement + CUDA engineering).
+1. **Connection method (locked):** DICC **OnDemand → VNC Desktop** for interactive setup; **`screen`** for long tasks; **batch** campaign for Day1/Day2. Avoid long interactive `srun`/`salloc` over VPN as the primary path.  
+2. **Stale plans removed:** campus-stable runner / third-party operator as default — not required by current guidance.  
+3. **Next action:** User executes campaign under `docs/DICC_OPS_METHOD.md`; agent ingests SUCCESS tree on laptop only.  
+4. Venue emphasis remains FGCS-leaning **systems** framing (accuracy secondary to measurement + multi-objective honesty).
 
 ---
 
 ## 8. Email-ready short version (copy/paste)
 
-> **Subject:** COLIDE — status pack (local results frozen; multi-day DICC pending)  
+> **Subject:** COLIDE — status pack (local results frozen; multi-day DICC pending execution)  
 >  
 > Dear Prof. Por,  
 >  
 > Please find a short numbered status for COLIDE. Contribution framing remains **systems/measurement** (custom CUDA inference + multi-platform protocol + on-device LLM dispatch), not SOTA accuracy.  
 >  
-> **Accuracy (frozen):** BoT-IoT two-stage CNN-BiLSTM **macro-F1 = 0.9790** (checkpoint md5 `80a90f7c…`). Same-split CPU RF **0.9864** → gap **0.74%**. ToN-IoT clean **0.9526**. We do **not** claim beating RF.  
+> **Accuracy (protocol-era):** sealed multi-seed BoT **test** macro-F1 **0.9780±0.0033** (champion md5 `80a90f7c…` unchanged). Protocol LGBM val still tops pure F1 (**0.9818**). We do **not** claim beating every classical model on F1 alone.  
 >  
-> **Latency (laptop RTX 3050 / WSL2):** Custom CUDA FP16 pipeline **594–675 µs** (multi-session range). Framework comparisons as ranges: eager PyTorch **3.04–3.78×**, torch.compile **2.25–2.99×**, TensorRT **3.60–4.99×**, ORT-GPU **5.72–7.83×** (ORT CPU not robust). Block 3 FP16 ladder **7.55–9.50×** vs naive.  
+> **Latency (laptop RTX 3050):** multi-session WP6b ranges — energy **0.920–0.943** mJ/flow; PT@256 **24.15–25.68** µs; Option A CUDA pipeline **565–570** µs. Historical framework ranges remain labeled separately.  
 >  
-> **Claim policy:** full-model Custom CUDA vs full PyTorch V3 speedup is **not** claimed (attention / LayerNorm / GAP parity gap). Valid head-to-head is **per-block**, especially **Block 3 (BiLSTM)**.  
+> **Claim policy:** full-model Custom CUDA vs full PyTorch V3 speedup is **not** claimed. Valid head-to-head is **per-block**, especially **Block 3 (BiLSTM)**.  
 >  
-> **LLM:** async TinyLlama; dispatch **16.60 µs p99**. **Throughput:** **25,899 flows/s** (batch=128).  
+> **UM DICC:** June 2026 **legacy single-shot** CUDA pipeline totals — V100S **~551 µs**, A100 **~592 µs** (no same-GPU PyTorch baseline that day). Multi-day campaign + PyTorch baselines are scripted. Ops path: **OnDemand VNC Desktop + screen + batch `run_campaign.sh`** (so interactive allocation loss on VPN drops is avoided). Day1/Day2 SUCCESS pending execution.  
 >  
-> **UM DICC:** June 2026 **legacy single-shot** CUDA pipeline totals — V100S **~551 µs**, A100 **~592 µs** (no same-GPU PyTorch baseline that day). Multi-day campaign + PyTorch baselines are scripted and ready; execution is blocked on access/ops (SSH instability). Kindly advise whether Cheran may run the campaign on his own DICC account.  
->  
-> Full tables and sources: `docs/PROF_POR_STATUS_REPORT.md` in the COLIDE repo.  
+> Full tables and sources: `docs/PROF_POR_STATUS_REPORT.md` / `docs/DICC_OPS_METHOD.md` in the COLIDE repo.  
 >  
 > Best regards,  
 > Ibteshamul Haque  

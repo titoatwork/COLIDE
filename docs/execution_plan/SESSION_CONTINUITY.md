@@ -16,7 +16,7 @@ Complete **every** row in `PROF_FEEDBACK_TRACKER.md` for Prof Por / WoS path.
 **Context hygiene:** if evidence already exists, **update tracker**. Never invent numbers.  
 **Option A:** per-block CUDA only; no invent multi-day DICC numbers.  
 **Champion:** `model/best_model_botiot_twostage.pth` md5 **`80a90f7cc210276300eaa90173a5a385`** — never clobber without BACKUP + explicit OK.  
-**DICC:** deferred to a **dedicated session** when user opens it.
+**DICC:** deferred to a **dedicated session**; ops method **locked** in `docs/DICC_OPS_METHOD.md` (OnDemand VNC + `screen` + batch). **Not** campus-runner / Cheran-as-default.
 
 ---
 
@@ -58,7 +58,8 @@ Protocol foundation through PI venue polish of camera-ready draft.
 - **Local science playlist:** **CLOSED**
 
 ### 3.31 Remaining playlist
-- **WP0** DICC (user-scheduled) — insert multi-GPU cells when SUCCESS tree exists  
+- **WP0** DICC via OnDemand VNC + screen + batch — insert multi-GPU cells when SUCCESS tree exists  
+- Ops canonical: `docs/DICC_OPS_METHOD.md` (stale campus/Cheran cluster plans removed)  
 - PI fills authors / venue / BibTeX when ready  
 - End every session with **paste-ready handoff prompt**
 
@@ -87,7 +88,7 @@ nvidia-smi --query-gpu=temperature.gpu,utilization.gpu,memory.used --format=csv
 ## 5. Next chat work order (strict)
 
 1. **Verify** disk + claims green (expect **64**).  
-2. **DICC** if user opens dedicated session — else no multi-GPU work.  
+2. **DICC** if user opens dedicated session: follow `docs/DICC_OPS_METHOD.md` (OnDemand VNC + screen + batch) — else no multi-GPU work.  
 3. Optional: PI fills author list / venue template / BibTeX (not invent numbers).  
 4. After any number edit: rebuild claims + verify_claims; rebuild PDF if prose changes.  
 5. Thermal guard if any sustained train (none expected).  
@@ -134,7 +135,7 @@ WP0/0b/6c BLOCKED hygiene; local science playlist CLOSED. Open ops: DICC only.
 Open PI: authors/venue/BibTeX after venue choice.
 
 Next:
-A) DICC only if user opens dedicated session — insert multi-GPU cells from SUCCESS tree
+A) DICC dedicated session: OnDemand VNC + screen + batch (docs/DICC_OPS_METHOD.md)
 B) Else idle science: optional PI author/venue fill — do not invent numbers
 C) Keep verify_claims green after any prose/number edit; rebuild PDF if needed
 
@@ -186,4 +187,4 @@ thermal guard if sustained train; commit/push; end per HANDOFF lifecycle with pa
 
 ---
 
-*End handoff. Next chat: verify disk → DICC if user opens it, else PI author/venue only.*
+*End handoff. Next chat: verify disk → DICC via OnDemand VNC method if user opens it, else PI author/venue only.*

@@ -1,9 +1,10 @@
 # COLIDE — Final execution plan (locked)
 
-**Date:** 2026-07-17  
-**Authority:** `docs/DESIGN_PLAN.md` (Option A) + this document.  
-**PI:** Prof. Dr. Por Lip Yee · Support: Cheran (manuscript; cluster ops only if Prof agrees).  
-**Operator constraint:** Remote SSH to DICC is unstable (India→UM). Prefer campus-stable runner or Cheran on his own account. **No credential sharing.**
+**Date:** 2026-07-17 · **Ops method updated:** 2026-07-22  
+**Authority:** `docs/DESIGN_PLAN.md` (Option A) + this document + **`docs/DICC_OPS_METHOD.md`**.  
+**PI:** Prof. Dr. Por Lip Yee  
+**Operator method (locked):** DICC **OnDemand → VNC Desktop** for interactive setup; **`screen`** for long terminal tasks; prefer **batch** (`run_campaign.sh`) for Day1/Day2 so jobs survive disconnects.  
+**Superseded ops plans (do not use):** campus-stable runner as primary path; Cheran-as-default cluster operator; long interactive `srun`/`salloc` over flaky VPN as the campaign babysitter.
 
 ---
 
@@ -30,13 +31,14 @@
 |------|--------|
 | Design plan Option A | **Approved** |
 | Local accuracy / laptop latency ranges / LLM / fidelity | **Frozen, ready** |
-| Laptop tarball | `~/colide-master-for-dicc.tar.gz` (~357 MB, master `@ e6f55f1`) |
-| User DICC home tree | Unpacked earlier; champion md5 verified |
+| Laptop tarball | `~/colide-master-for-dicc.tar.gz` (refresh before campaign) |
+| User DICC home tree | May need re-sync to current master; champion md5 must be `80a90f7…` |
 | Partitions (from `sacct` jobs 363046/363047) | **`gpu-v100s`**, **`gpu-a100`**; GRES **`gpu:1`** |
-| Day 1 / Day 2 new campaign | **Not completed** (SSH freezes; conda/`set -u`; then access strategy shifted) |
-| Prof email | Sent: bottleneck + ask guidance re Cheran helping on cluster if appropriate |
-| **Hard gate before any Prof “final” numbers email** | **Codebase-wide numbers match** + `verify_claims.py` green (see P2) |
-| Pre-manuscript clock | **~1–1.5 weeks typical** after DICC runner unblocked (best ~4–7 days incl. match pass) |
+| Day 1 / Day 2 new campaign | **Not completed** — SUCCESS tree absent on laptop |
+| Ops method | **OnDemand VNC + screen + batch** (`docs/DICC_OPS_METHOD.md`) — guidance received 2026-07 |
+| Local science + manuscript | **Local-complete** (B14, WP6b, WP9c, claims 64) — multi-GPU cells still TBD |
+| **Hard gate before any Prof “final” multi-day numbers email** | DICC SUCCESS on laptop + **codebase-wide numbers match** + `verify_claims.py` green (see P2) |
+| Pre-insert clock | **~2–5 days wall** once OnDemand campaign is running (queue-dominated) |
 
 ---
 
@@ -44,56 +46,60 @@
 
 ### Phase P0 — Unblock DICC (now)
 
-**Owner:** User + Prof decision; optional Cheran.
+**Owner:** User (DICC account holder).  
+**Authoritative ops:** `docs/DICC_OPS_METHOD.md`.
 
-1. Await Prof reply on whether Cheran may run campaign scripts (he was assigned mainly for manuscript writing).  
-2. If **yes** and Cheran has DICC: he runs on **his** account; returns `benchmarks/results/dicc/`.  
-3. If **no**: user retries on better network / campus / `tmux`, same commands.  
-4. Do **not** share passwords or keys.
+1. Open **DICC OnDemand → VNC Desktop** (not long interactive `srun`/`salloc` over VPN).  
+2. Inside VNC terminal: **`screen -S colide`**.  
+3. Sync tree (git or tarball); verify champion md5.  
+4. Setup `.venv-cluster`, install deps, compile as needed.  
+5. Submit Day1 (+ Day2 after SUCCESS) via **`bash dicc_scripts/run_campaign.sh`** (batch; survives disconnect).  
+6. Bring home entire `benchmarks/results/dicc/`.
 
-**Cheran / operator run card (copy-paste):**
+**Operator run card (abbreviated — full card in `DICC_OPS_METHOD.md`):**
 
 ```bash
-# Tree: git clone https://github.com/titoatwork/COLIDE.git  OR  tar xzf colide-master-for-dicc.tar.gz
-cd ~/colide   # or actual path
+# Inside OnDemand VNC Desktop terminal:
+screen -S colide
+cd ~/colide   # git clone OR tar xzf colide-master-for-dicc.tar.gz
 
 python3 -m venv .venv-cluster
 source .venv-cluster/bin/activate
 pip install -U pip
 pip install 'numpy>=2.0.0' 'scipy>=1.13.0' 'pyyaml>=6.0' 'scikit-learn>=1.5.0'
 pip install --upgrade 'torch>=2.5.0,<2.7' --index-url https://download.pytorch.org/whl/cu121
+md5sum model/best_model_botiot_twostage.pth   # expect 80a90f7cc210276300eaa90173a5a385
 
 export COLIDE_V100_PARTITION=gpu-v100s
 export COLIDE_A100_PARTITION=gpu-a100
 export COLIDE_SBATCH_GRES=gpu:1
 
 bash dicc_scripts/run_campaign.sh              # Day 1
-# after SUCCESS dirs exist:
-bash dicc_scripts/run_campaign.sh --day 2      # Day 2 (same calendar day OK via _d2)
+bash dicc_scripts/run_campaign.sh --day 2      # Day 2 after SUCCESS (_d2 label OK)
 
-# Deliverable: entire benchmarks/results/dicc/
+# Deliverable: entire benchmarks/results/dicc/ → laptop
 ```
 
-**Notes:** Prefer `.venv-cluster` (conda activate under script `set -u` breaks on DICC). Prefer **partitions** over fixed nodelists (`gpu05` / `gpu07` may change). Use `tmux` on DICC.
+**Notes:** Prefer `.venv-cluster` (conda + `set -u` breaks). Prefer **partitions** over fixed nodelists. Prefer **batch** for benchmarks; VNC+screen for setup/monitor.
 
 **Exit P0:** At least one GPU class has Day1 SUCCESS; ideally V100 **and** A100.
 
 ---
 
-### Phase P1 — Multi-day complete + artifacts home (pre-writing critical path)
+### Phase P1 — Multi-day complete + artifacts home
 
-**Owner:** DICC runner + user (scp).
+**Owner:** User (OnDemand VNC / login) + agent on laptop for compare only.
 
 1. Day 2 SUCCESS for same GPU class(es) as Day 1.  
-2. `scripts/compare_dicc_sessions.py` → **accept** (or document reject + partial use).  
-3. Copy to laptop:
+2. From VNC or login: rsync/scp results home.  
+3. Laptop: `scripts/compare_dicc_sessions.py` → **accept** (or document reject + partial use).
 
 ```bash
 # results tree → /home/titoisalive/colide/benchmarks/results/dicc/
 ```
 
 **Exit P1:** Local `benchmarks/results/dicc/**/SUCCESS` + compare outcome recorded.  
-**Clock:** ~2–5 days wall time (queue-dominated) once runner is active.
+**Clock:** ~2–5 days wall time (queue-dominated) once OnDemand campaign is active.
 
 ---
 
@@ -161,8 +167,8 @@ Stretch improvements (P5) and full manuscript (P4) stay **after** this send.
 
 ### Phase P4 — Manuscript spine (after pre-manuscript)
 
-**Owner:** User (+ Cheran on writing if that is his role).  
-**Not started until P2 complete (report sent + numbers matched).**
+**Owner:** User (local-complete draft already exists; multi-GPU cells after P1).  
+**Local-complete manuscript:** DONE (WP9c + PI polish). **Portability cells:** after DICC SUCCESS.
 
 Contribution spine:
 
@@ -212,9 +218,10 @@ Minimum figures/tables: per-block latency (laptop + DICC); Block 3 CUDA vs PT; m
 
 | Situation | Action |
 |-----------|--------|
-| Prof declines Cheran for cluster | User runs with `tmux` / better link; same run card |
-| Only Day 1 finishes | Provisional single-day DICC + local pack; label clearly; **still run numbers-match gate** before send |
-| Queue blocked entire window | Local pack + June legacy labeled **legacy, not multi-day** + “campaign in flight”; **still match local numbers across codebase** before send |
+| VPN/SSH drops during setup | Use **OnDemand VNC**; work continues on remote desktop; reattach `screen` |
+| Interactive `srun`/`salloc` dies | Do **not** rely on them for long work; switch to VNC + batch campaign |
+| Only Day 1 finishes | Provisional single-day DICC + local pack; label clearly; **still run numbers-match gate** before multi-day claims |
+| Queue blocked entire window | Local pack + June legacy labeled **legacy, not multi-day** + “campaign in flight”; **still match local numbers** |
 | Compare rejects | Report both days; no “stable multi-day” claim until fixed or explained |
 | One partition missing | Document; publish the GPU that completed |
 
@@ -224,20 +231,17 @@ Minimum figures/tables: per-block latency (laptop + DICC); Block 3 CUDA vs PT; m
 
 | Who | Does |
 |-----|------|
-| **User (Ibteshamul)** | Science ownership, Prof communication, final pack, manuscript direction |
-| **Cheran** | Manuscript support; cluster runs **only if Prof approves** and he has DICC |
-| **Agent** | Step coaching, ingest/pack from local artifacts, claim edits; **no DICC login**; **no invented numbers** |
-| **Prof. Por** | Scope/approval, guidance |
+| **User (Ibteshamul)** | OnDemand VNC ops, campaign submit, SUCCESS tree home, Prof communication, manuscript direction |
+| **Agent** | Step coaching, ingest/pack from local artifacts, claim/manuscript insert; **no DICC login**; **no invented numbers** |
+| **Prof. Por / DICC guidance** | Scope; ops resilience (OnDemand VNC + screen) |
 
 ---
 
 ## 7. Next concrete action
 
-1. Wait for Prof’s reply on the access plan.  
-2. If approved → send Cheran the **run card** in §3 P0 + tarball/repo link.  
-3. When `benchmarks/results/dicc/` is on the laptop → chat: **“Prof Por pack — DICC results landed.”**  
-4. Agent/user run **P2a → P2b numbers match → P2c verify_claims → P2d send** (no skip).  
-5. Only then P3 residual closeout / P4 manuscript / P5 stretch.
+1. User: OnDemand VNC + `screen` + run card in **`docs/DICC_OPS_METHOD.md`**.  
+2. When `benchmarks/results/dicc/` is on the laptop → chat: **“Prof Por pack — DICC results landed.”**  
+3. Agent/user run **P2a → P2b numbers match → P2c verify_claims → P2d send / manuscript §5.13 insert** (no skip).
 
 ---
 
@@ -248,6 +252,7 @@ Minimum figures/tables: per-block latency (laptop + DICC); Block 3 CUDA vs PT; m
 | `docs/DESIGN_PLAN.md` | Full solid/weak/invalid + WP list |
 | `docs/PROF_POR_3DAY.md` | Prof pack tables + draft text |
 | `docs/FINAL_PLAN.md` | **This document** |
+| **`docs/DICC_OPS_METHOD.md`** | **Authoritative ops** (OnDemand VNC + screen + batch) |
 | `dicc_scripts/README.md` / `run_campaign.sh` | Cluster entry |
 | `HANDOFF.md` | Session lifecycle + status |
 | `scripts/compare_dicc_sessions.py` | Cross-day gate |
@@ -259,5 +264,6 @@ Minimum figures/tables: per-block latency (laptop + DICC); Block 3 CUDA vs PT; m
 
 | Date | Note |
 |------|------|
-| 2026-07-17 | Final plan from guided DICC session: partitions locked, Cheran path, pre-manuscript vs manuscript clocks, Option A freeze. |
-| 2026-07-17 | **Hard gate:** codebase-wide numbers match + `verify_claims.py` green **before** any final Prof numbers email; P2 restructured (P2a–P2d); clocks +1–2 days for match pass. |
+| 2026-07-17 | Final plan from guided DICC session: partitions locked, Option A freeze. |
+| 2026-07-17 | **Hard gate:** codebase-wide numbers match + `verify_claims.py` green **before** any final Prof numbers email; P2 restructured (P2a–P2d). |
+| 2026-07-22 | **Ops method lock:** OnDemand VNC + `screen` + batch campaign. **Removed** campus-runner / Cheran-as-default cluster operator as primary plan. Canonical: `docs/DICC_OPS_METHOD.md`. |

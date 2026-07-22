@@ -48,7 +48,7 @@
 - One major WP per chat when possible  
 - End: `git status`, commit, push, update HANDOFF  
 - `verify_claims` after public number edits  
-- Agents: no DICC invent; no credential sharing  
+- Agents: no DICC invent; no DICC login; ops method = OnDemand VNC + screen + batch (`docs/DICC_OPS_METHOD.md`) 
 
 ---
 

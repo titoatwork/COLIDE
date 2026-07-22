@@ -26,7 +26,7 @@
 |----|-------------|--------|------------------|
 | A1 | Local progress acknowledged but not submission-ready | DONE (framing) | Interim+reply sent; local science + PI venue polish closed; **submission** still needs PI journal class/BibTeX + DICC if multi-GPU claimed |
 | A2 | 0.9790 &lt; RF 0.9864 — detection not sole headline unless improved | DONE (framing) | Dual bars locked; pure F1 not sole headline; multi-obj + sealed test **0.9780±0.0033** near RF protocol; LGBM **0.9818** still tops pure F1 |
-| A3 | CUDA mainly B3 local RTX 3050; V100S/A100 pending | BLOCKED | Need DICC (local WP6b DONE) |
+| A3 | CUDA mainly B3 local RTX 3050; V100S/A100 pending | BLOCKED | Need DICC SUCCESS tree; ops: OnDemand VNC + screen + batch (`DICC_OPS_METHOD.md`); local WP6b DONE |
 | A4 | Clear quantitative advantage on ≥1 major dimension | DONE (local multi-obj) | G6 composite **0.9056** @4.33 µs; WP6b energy **0.920–0.943** mJ/flow; PT@256 **24.15–25.68** µs; CUDA pipe **565–570** µs; peak **322.2** MiB; dispatch **16.60** µs; pure F1 still LGBM **0.9818** |
 | A5 | Not rely mainly on implementation/docs quality | DONE | 59 claims from disk JSON; sealed test + ablations + negatives RUN_DOCUMENTED — science not docs-only |
 | A6 | Strengthen before finalising manuscript | DONE (PI polish) | WP9b spine + WP9c draft + **PI venue polish** (continuous abstract, Table 1b per-class, Table 5b HPO refine, systems CI/CV, front-matter placeholders, PDF rebuild); journal class file/BibTeX = PI after venue; DICC if multi-GPU claimed |
@@ -166,11 +166,11 @@
 
 | ID | Requirement | Status | Evidence / notes |
 |----|-------------|--------|------------------|
-| I1 | B3 CUDA vs matching PT same GPU | BLOCKED | No dicc/ tree |
-| I2 | Full PT model latency same GPU | BLOCKED | |
-| I3 | V100S results | BLOCKED | Legacy single-shot only |
-| I4 | A100 results | BLOCKED | Legacy single-shot only |
-| I5 | ≥2 different days | BLOCKED | |
+| I1 | B3 CUDA vs matching PT same GPU | BLOCKED | No dicc/ tree; ops=`DICC_OPS_METHOD.md` (OnDemand VNC) |
+| I2 | Full PT model latency same GPU | BLOCKED | Same |
+| I3 | V100S results | BLOCKED | Legacy single-shot only until multi-day SUCCESS |
+| I4 | A100 results | BLOCKED | Legacy single-shot only until multi-day SUCCESS |
+| I5 | ≥2 different days | BLOCKED | Day1+Day2 via batch campaign |
 | I6 | mean, median, std, CV, CI | DONE (local) | **WP6b** local multi-session mean/median/std/CV/CI on energy + PT + CUDA (`wp6b_local_ranges/`); **DICC multi-day still BLOCKED** (I1–I5) |
 | I7 | Warm-up protocol | DONE | WP6b warm-up **50** discarded sync forwards per timed block; documented in summary |
 | I8 | Batch-size sensitivity | DONE | WP6b multi-session I8 table bs∈{1,8,32,64,128,256,512,1024}; `systems_i8_h3/` + `wp6b_local_ranges/` |
@@ -216,7 +216,7 @@
 
 | ID | Requirement | Status | Evidence / notes |
 |----|-------------|--------|------------------|
-| L1 | DICC first, then focused improvement | DONE (order policy) | Order locked; DICC deferred to **dedicated user session**; local Option A science+systems closed without inventing multi-day numbers |
+| L1 | DICC first, then focused improvement | DONE (order policy) | Order locked; DICC deferred to **dedicated user session** under **OnDemand VNC + screen + batch** (`DICC_OPS_METHOD.md`); local science closed without inventing multi-day numbers; campus/Cheran-default ops **superseded** |
 | L2 | Mod table before final model | DONE | `docs/MOD_DECISION_TABLE.md` + CAD-CBA-v1 signed |
 | L3 | Avoid changing many parts at once | DONE | Sequential WPs (loss → thresholds → KD → HPO → package → confirm) |
 | L4 | Phase: freeze preprocess/split/metrics/seeds/hardware/baseline | DONE | Protocol + `BASELINE_FREEZE_CARD.md` + multirun baseline |
@@ -280,6 +280,7 @@
 | 2026-07-22 | **WP9c camera-ready draft DONE** `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.{md,pdf}` + figures (arch, class-dist, dual bars, ablation, B14 CM seed42, WP6b ranges, Pareto); related-work gap table; results→methods→intro from spine; A6/L10 flipped to draft; claims 59 green; no train; champion unchanged; DICC still BLOCKED |
 | 2026-07-22 | **PI venue polish DONE** continuous journal abstract; author/affiliation/venue placeholders; Table 1b multi-seed test per-class means (from sealed_test seeds); Table 5b HPO Stage-B refine ranking; Table 6 std/CV/CI; data/ethics stubs; App D checklist; `scripts/build_manuscript_pdf.py` rebuild (~797 KB PDF); A6/L10 → DONE (PI polish); L11 notes 59 claims; verify_claims green; no train; champion unchanged; DICC still BLOCKED; final journal class file/BibTeX left for PI after venue choice |
 | 2026-07-22 | **Playlist closure audit + claims hygiene** — full tracker parse **133/133 terminal** (0 TODO/PARTIAL); Table 1b means re-verified from seed JSON; claims rebuild **64** (added `bot_sealed_test_pc_*`); open_gates trimmed to DICC + PI venue only; WP0/0b/6c → BLOCKED(ops/N/A); L7/B8 stale notes flipped; `PLAYLIST_CLOSURE_AUDIT.md`; verify_claims green; no train; champion unchanged |
+| 2026-07-22 | **DICC ops method lock** — guidance: OnDemand **VNC Desktop** + **`screen`** + batch campaign; remove campus-runner / Cheran-as-default cluster operator as primary plan; `docs/DICC_OPS_METHOD.md` + FINAL_PLAN / Phase0 / status packs / HANDOFF / WP0 / tracker A3+L1; no cluster run; champion unchanged |
 
 ---
 

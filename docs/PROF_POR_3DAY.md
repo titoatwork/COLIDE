@@ -218,7 +218,7 @@ Summary (local half locked; DICC multi-day honest TBD):
 >  
 > **Throughput:** **25,899 flows/s** streaming (batch=128, RTX 3050).  
 >  
-> **UM DICC:** June 2026 **legacy single-shot** pipeline totals — V100S **~551 µs**, A100 **~592 µs** (CUDA only; no same-GPU PT baseline). Multi-day Day1+Day2 + PT baselines are scripted; execution pending access/ops (guidance re Cheran appreciated).  
+> **UM DICC:** June 2026 **legacy single-shot** pipeline totals — V100S **~551 µs**, A100 **~592 µs** (CUDA only; no same-GPU PT baseline). Multi-day Day1+Day2 + PT baselines are scripted; ops method locked: **OnDemand VNC + screen + batch `run_campaign.sh`** (`docs/DICC_OPS_METHOD.md`); SUCCESS tree still pending execution.  
 >  
 > **Next after multi-day lands:** fill §4 ratios from JSON + residual claim hygiene + manuscript spine.
 
@@ -243,10 +243,9 @@ Summary (local half locked; DICC multi-day honest TBD):
 **Every agent session** must end per `HANDOFF.md` **Session lifecycle**:
 verify → update HANDOFF → commit → push → paste-ready next-session prompt.
 
-**DICC is not “user alone.”** Default next chat is **Guided UM DICC** (HANDOFF §D):
-agent coaches WP1→WP3 live; user pastes outputs. After `benchmarks/results/dicc/` is
-on the laptop, same chat may start the Prof pack if time allows, or a follow-up
-“Prof Por numbers pack” chat.
+**DICC ops:** User runs OnDemand **VNC + screen + batch** (`docs/DICC_OPS_METHOD.md`).
+Agent coaches live and ingests laptop artifacts only (no DICC login, no invented numbers).
+After `benchmarks/results/dicc/` is on the laptop, run compare + claims + §5.13 insert.
 
 Agent will **not** invent cluster numbers and will **not** start manuscript-deep work
 that delays DICC + Prof update.
@@ -255,7 +254,8 @@ that delays DICC + Prof update.
 
 ## 8. Single checklist (print this)
 
-- [ ] scp tarball to DICC (or Cheran runs on his account after Prof OK)  
+- [ ] OnDemand VNC Desktop + `screen -S colide`  
+- [ ] scp/rsync tarball or git sync to DICC  
 - [ ] unpack; `run_campaign.sh` present; md5 `80a90f7c…`  
 - [ ] Day 1 jobs → both GPUs `SUCCESS` (or document missing partition)  
 - [ ] Day 2 jobs → `SUCCESS`  

@@ -3,6 +3,19 @@
 Hardened multi-day GPU latency campaigns. **No hardcoded site paths**, **no
 hardcoded hostnames**. Works on DICC, LSU Rostam, laptops, or any SLURM site.
 
+## DICC connection method (locked)
+
+**Authoritative ops:** `docs/DICC_OPS_METHOD.md`
+
+| Do | Do not |
+|----|--------|
+| **DICC OnDemand → VNC Desktop** for interactive setup/downloads/compile | Rely on long interactive **`srun`/`salloc`** over VPN/SSH as the primary path |
+| Use **`screen`** (or equivalent) inside the VNC terminal for long tasks | Expect bare SSH sessions to survive network drops |
+| Prefer **batch** submit via this directory’s scripts so jobs keep running after disconnect | Babysit multi-hour GPU work only in a flaky interactive allocation |
+| Official paper cluster = **UM DICC** | Treat Rostam as UM paper-final |
+
+**Why:** interactive allocations can die on temporary VPN/network interruption and lose resources. VNC keeps the remote desktop alive; reconnect later. `screen` keeps long shell work attached. Batch Day1/Day2 is the preferred campaign path.
+
 ## One command (preferred)
 
 ```bash

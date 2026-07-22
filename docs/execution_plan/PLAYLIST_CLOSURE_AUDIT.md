@@ -41,11 +41,13 @@ Automated parse of status column (IDs `A*`…`M*`):
 
 | ID | Why BLOCKED | Unblock path |
 |----|-------------|--------------|
-| A3 | V100S/A100 multi-day pending | Dedicated DICC session |
-| H7 | Stable across GPU platforms | DICC |
+| A3 | V100S/A100 multi-day pending | DICC campaign via **OnDemand VNC + screen + batch** (`docs/DICC_OPS_METHOD.md`) |
+| H7 | Stable across GPU platforms | DICC SUCCESS tree |
 | I1–I5 | Same-GPU / multi-day / multi-GPU cells | DICC SUCCESS tree |
 | I11 | Portability central | After I1–I5 |
-| K7 | RQ across GPUs | DICC |
+| K7 | RQ across GPUs | DICC SUCCESS tree |
+
+**Ops method note:** campus-runner / Cheran-as-default cluster operator plans are **superseded**.
 
 **Open PI (not science; do not invent):**
 

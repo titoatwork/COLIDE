@@ -11,7 +11,7 @@
 
 | ID | Name | Phase | Depends | Owner | Status |
 |----|------|-------|---------|-------|--------|
-| WP0 | UM DICC Day1+Day2+compare+scp | 0 | — | User/ops + coach | **BLOCKED (ops)** — no `benchmarks/results/dicc/`; dedicated user session only |
+| WP0 | UM DICC Day1+Day2+compare+scp | 0 | — | User (OnDemand VNC) + agent coach | **BLOCKED (ops)** — no `benchmarks/results/dicc/`; method: `docs/DICC_OPS_METHOD.md` |
 | WP0b | Extract DICC JSON tables + fork decision | 0 | WP0 | Agent+user | **BLOCKED (ops)** — depends WP0 SUCCESS tree |
 | WP1a | Unified protocol + freeze card | 1 | — (prep ok) | Agent | **DONE 2026-07-19** |
 | WP1b | Multi-run baseline driver (5 seeds) | 1 | WP1a | Agent | **DONE 2026-07-19** mean 0.9714±0.0109 |
@@ -53,7 +53,13 @@
 
 ## WP0 detail (highest priority when unblocked)
 
-**Inputs:** tarball or git tree on DICC, champion md5  
+**Ops method (locked):** `docs/DICC_OPS_METHOD.md`  
+- Browser → **DICC OnDemand → VNC Desktop**  
+- Terminal → **`screen -S colide`**  
+- Prefer **batch** `bash dicc_scripts/run_campaign.sh` (Day1 then Day2)  
+- **Superseded:** campus-stable runner / third-party operator as default; long interactive `srun`/`salloc` over VPN  
+
+**Inputs:** tarball or git tree on DICC, champion md5 `80a90f7…`  
 **Outputs:** `benchmarks/results/dicc/**/SUCCESS`, compare outcome, laptop copy  
 **Exit:** Phase 0 checklist in `04_PHASE0_DICC.md` complete  
 

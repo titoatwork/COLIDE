@@ -45,10 +45,10 @@ COLIDE is a **systems / measurement** project for **custom CUDA inference** of a
 
 - Official **multi-day UM DICC** campaign (Day1 + Day2 + compare) **not completed**.  
 - Path `benchmarks/results/dicc/` on laptop → **ABSENT**.  
-- Remote ops path (India→UM) unstable; **Prof decision** on Cheran / campus runner pending.
+- **Ops method locked:** OnDemand **VNC Desktop** + **`screen`** + batch `run_campaign.sh` (`docs/DICC_OPS_METHOD.md`). Campaign execution pending.
 
-**Leftover (critical path):** Unblock runner → Day1/Day2 SUCCESS → artifacts home → extract → codebase numbers match → final numbered Prof update.  
-**Then:** residual hygiene (P3) → manuscript spine (P4). Stretch (P5) optional.
+**Leftover (critical path):** OnDemand VNC setup → Day1/Day2 SUCCESS → artifacts home → extract → codebase numbers match → multi-day cells + Prof update.  
+**Local science + local-complete manuscript:** already done; only multi-GPU/portability cells remain.
 
 ---
 
@@ -79,11 +79,11 @@ Build and measure a **hand-written CUDA inference path** for a production-style 
 | **June 551/592 µs** | **LEGACY single-shot** only |
 | **Invented numbers** | Never |
 
-### 1.4 PI / support roles (as in FINAL_PLAN)
+### 1.4 PI / ops roles (as in FINAL_PLAN + DICC_OPS_METHOD)
 
 - **PI:** Prof. Dr. Por Lip Yee  
-- **Cheran:** assigned mainly for **manuscript writing**; **cluster ops only if Prof agrees**  
-- **No credential sharing**
+- **Operator:** User account holder via **DICC OnDemand VNC + screen + batch**  
+- **Agent:** laptop-side compare/claims only — no DICC login, no invented numbers
 
 ---
 
@@ -245,9 +245,9 @@ Sources: `benchmarks/results/dicc_v100_summary.txt`, `dicc_a100_summary.txt`. Va
 |------|--------|
 | **Blocker name** | Multi-day **UM DICC** campaign incomplete; artifacts not on laptop |
 | **Path checked** | `benchmarks/results/dicc/` → **ABSENT** |
-| **Why** | SSH/network path India→UM unstable; earlier DICC tree diverged; strategy shifted to tarball + optional Cheran; **Prof decision pending** |
-| **What is ready despite blocker** | Campaign scripts, Option A, local frozen numbers, audit pack, this interim report |
-| **What is not ready** | Day1/Day2 SUCCESS means, compare accept, same-GPU PT on cluster, final multi-day Prof pack |
+| **Why** | Campaign not yet executed under locked ops method (OnDemand VNC + screen + batch). Earlier interactive SSH/`srun` path was fragile; campus-runner/Cheran defaults **superseded**. |
+| **What is ready despite blocker** | Campaign scripts, Option A, local science closed, local-complete manuscript, claims package, this interim report |
+| **What is not ready** | Day1/Day2 SUCCESS means, compare accept, same-GPU PT on cluster, manuscript §5.13 multi-day cells |
 
 ### Multi-day cells (intentionally EMPTY)
 
@@ -273,7 +273,7 @@ These are **planned remaining tasks** from `FINAL_PLAN` / audit `07`. They are *
 
 | ID | Phase | Work | Depends on | Clock (plan) |
 |----|-------|------|------------|--------------|
-| **L1** | **P0** | Unblock runner: Prof decision on Cheran **or** user runs with stable path/`tmux` | Human | now |
+| **L1** | **P0** | OnDemand VNC Desktop + `screen` + sync tree + verify champion md5 | Human | now |
 | **L2** | **P0 exit** | ≥1 GPU class Day1 SUCCESS (ideally V100 **and** A100) | L1 | queue-bound |
 | **L3** | **P1** | Day2 SUCCESS same GPU class(es); `compare_dicc_sessions.py` accept (or document reject) | L2 | ~2–5 days wall typical |
 | **L4** | **P1** | scp entire `benchmarks/results/dicc/` to laptop | L3 | hours |
@@ -285,9 +285,13 @@ These are **planned remaining tasks** from `FINAL_PLAN` / audit `07`. They are *
 **Hard gate:** Do **not** send a final multi-day numbers email until **L6–L7** pass.  
 **Total after unblock (plan):** ~**5–7 days typical** (buffer ~1–1.5 weeks) for P0→P2.
 
-### 4.2 Operator run card (for when unblocked)
+### 4.2 Operator run card (for when executing)
+
+**Full method:** `docs/DICC_OPS_METHOD.md`  
+**Connection:** OnDemand → VNC Desktop → `screen -S colide` (not long interactive `srun`/`salloc` over VPN).
 
 ```bash
+# Inside OnDemand VNC + screen:
 # Tree: clone OR tar xzf colide-master-for-dicc.tar.gz
 cd ~/colide
 
@@ -296,6 +300,7 @@ source .venv-cluster/bin/activate
 pip install -U pip
 pip install 'numpy>=2.0.0' 'scipy>=1.13.0' 'pyyaml>=6.0' 'scikit-learn>=1.5.0'
 pip install --upgrade 'torch>=2.5.0,<2.7' --index-url https://download.pytorch.org/whl/cu121
+md5sum model/best_model_botiot_twostage.pth   # expect 80a90f7…
 
 export COLIDE_V100_PARTITION=gpu-v100s
 export COLIDE_A100_PARTITION=gpu-a100
@@ -306,15 +311,16 @@ bash dicc_scripts/run_campaign.sh --day 2      # Day 2
 # Deliverable: entire benchmarks/results/dicc/
 ```
 
-Prefer partitions over fixed nodelists; prefer venv over conda under `set -u`; use `tmux` on DICC. Full notes: `dicc_scripts/README.md`, `docs/FINAL_PLAN.md`.
+Prefer partitions over fixed nodelists; prefer venv over conda under `set -u`; prefer **batch** for Day1/Day2. Full notes: `docs/DICC_OPS_METHOD.md`, `dicc_scripts/README.md`.
 
 ### 4.3 Contingencies (from FINAL_PLAN)
 
 | Situation | Action |
 |-----------|--------|
-| Prof declines Cheran for cluster | User runs same card with better link/`tmux` |
-| Only Day 1 finishes | Provisional single-day DICC + local pack; **label clearly**; still numbers-match before send |
-| Queue blocked entire window | Local pack + June **legacy** + “campaign in flight”; match local numbers before interim send |
+| VPN/SSH drops during setup | OnDemand VNC keeps desktop; reattach `screen` |
+| Interactive allocation lost | Do not use long `srun`/`salloc` as primary; batch campaign instead |
+| Only Day 1 finishes | Provisional single-day DICC + local pack; **label clearly**; still numbers-match before multi-day claims |
+| Queue blocked entire window | Local pack + June **legacy** + “campaign in flight”; match local numbers |
 | Compare rejects | Report both days; no “stable multi-day” claim until fixed/explained |
 | One partition missing | Document; publish the GPU that completed |
 
@@ -370,7 +376,7 @@ Prefer partitions over fixed nodelists; prefer venv over conda under `set -u`; u
 
 **Clock (plan):** ~**1.5–3 months** calendar for solid FGCS-leaning draft + PI feedback (separate from P0–P3).
 
-**Writing role:** User + Cheran on manuscript if that remains his assignment.
+**Writing role:** User (and any writing collaborators assigned by PI); cluster ops are the account holder via OnDemand VNC.
 
 ### 5.4 STRETCH after pre-manuscript (P5) — optional, not v1 path
 
@@ -429,10 +435,10 @@ Prefer partitions over fixed nodelists; prefer venv over conda under `set -u`; u
 
 1. Local accuracy, latency ranges, fidelity, claim hygiene, and Option A scope are **frozen and ready**.  
 2. Early July delivered the bulk of scientific and systems evidence; mid-July locked design and tooling.  
-3. Remaining **critical path** is multi-day **UM DICC** (leftover / blocked): Day1+Day2+compare → extract → numbers match → final numbered update.  
-4. Guidance whether **Cheran** (or another campus-stable runner) may run campaign scripts would unblock L1–L8.  
-5. No credential sharing; run card and tarball path are prepared.  
-6. Manuscript writing remains **after** that pack — not before inventing cluster numbers.
+3. Remaining **critical path** is multi-day **UM DICC** execution: OnDemand VNC + Day1+Day2+compare → extract → numbers match → §5.13 + final multi-day update.  
+4. Ops method locked: **OnDemand VNC Desktop + screen + batch `run_campaign.sh`** (`docs/DICC_OPS_METHOD.md`).  
+5. Run card and tarball path prepared; no inventing cluster numbers.  
+6. Local-complete manuscript already exists; multi-GPU cells filled only after SUCCESS tree lands.
 
 ---
 

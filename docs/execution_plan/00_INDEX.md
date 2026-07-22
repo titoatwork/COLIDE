@@ -18,7 +18,7 @@
 | 4 | `docs/PROF_FEEDBACK_ROADMAP.md` — short phase summary |
 | 5 | `docs/MOD_DECISION_TABLE.md` — modification IDs |
 | 6 | `docs/DESIGN_PLAN.md` Option A — CUDA claim rules (still binding) |
-| 7 | `docs/FINAL_PLAN.md` — DICC ops / numbers-match gates |
+| 7 | `docs/FINAL_PLAN.md` + **`docs/DICC_OPS_METHOD.md`** — DICC ops (OnDemand VNC) / numbers-match gates |
 | 8 | `docs/audit/` — evidence feedstock for frozen local numbers |
 
 ---
@@ -37,7 +37,7 @@
 | `01_CODEBASE_INVENTORY.md` | Every major area of the repo; what each file family does |
 | `02_FEEDBACK_DEEP_ANALYSIS.md` | Line-by-line interpretation of Prof feedback + implications |
 | `03_GAP_MATRIX.md` | Prof requirement × current code/results × gap × severity |
-| `04_PHASE0_DICC.md` | Multi-day UM DICC — full protocol (HARD GATE) |
+| `04_PHASE0_DICC.md` | Multi-day UM DICC — full protocol (HARD GATE); ops → `docs/DICC_OPS_METHOD.md` |
 | `05_PHASE1_BASELINE.md` | Reproducible baseline freeze, multi-run protocol |
 | `06_PHASE2_METHOD.md` | One clear methodological contribution |
 | `07_PHASE3_HPO.md` | Systematic hyperparameter optimisation |
@@ -56,7 +56,7 @@
 ## Golden path (do not reorder casually)
 
 ```text
-0 DICC multi-day UM          ← STILL BLOCKED (artifacts ABSENT)
+0 DICC multi-day UM          ← STILL BLOCKED (artifacts ABSENT; ops=OnDemand VNC+screen+batch)
 1 Baseline freeze + multi-run   ← DONE (protocol + multirun mean 0.9714±0.0109)
 2 Choose ONE method package     ← DONE (CAD-CBA-v1; focal default)
 3 HPO on validation only        ← NEXT open

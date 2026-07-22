@@ -105,7 +105,7 @@
 
 ## Open questions for human
 
-1. Prof decision on Cheran/DICC access?  
+1. DICC campaign executed under OnDemand VNC + screen + batch (`docs/DICC_OPS_METHOD.md`)? 
 2. When will Day1+Day2 SUCCESS land on laptop?  
 3. Should report-writer fix Option A wording in README as part of P2, or only in email prose?  
 4. Disclose Rostam provisional B3 loss in status update or wait for UM confirm?  

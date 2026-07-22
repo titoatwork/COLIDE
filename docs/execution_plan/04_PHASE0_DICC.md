@@ -1,9 +1,12 @@
 # 04 — Phase 0: UM DICC Multi-Day Campaign (HARD GATE)
 
-**Status:** **BLOCKED (ops)** — artifacts ABSENT (`benchmarks/results/dicc/` missing); user must open a **dedicated DICC session**  
-**Authority:** feedback §8; FINAL_PLAN P0–P1; dicc_scripts  
+**Status:** **BLOCKED (ops)** — artifacts ABSENT (`benchmarks/results/dicc/` missing); user opens a **dedicated DICC session**  
+**Authority:** feedback §8; `docs/DICC_OPS_METHOD.md` (ops); `dicc_scripts/`  
 **Blocking:** All cluster claims, portability RQ (K7), final multi-objective cluster cells  
 **Local path note:** WP6b multi-session ranges on RTX 3050 are DONE and must not be re-labeled as DICC multi-day.  
+
+**Ops method (locked):** **DICC OnDemand → VNC Desktop** for interactive setup; **`screen`** for long terminal tasks; prefer **batch** (`run_campaign.sh`) for Day1/Day2.  
+**Stale (do not use as plan):** campus-stable runner, Cheran-as-default cluster operator, long interactive `srun`/`salloc` over flaky VPN as the primary path. See `docs/DICC_OPS_METHOD.md`.
 
 ---
 
@@ -39,7 +42,16 @@ Produce **paper-grade** multi-day, same-GPU evidence on **UM DICC** for:
 
 ## 3. Operator procedure (exceptional)
 
-### 3.1 Sync code (prefer tarball; fetch may freeze)
+**Full run card:** `docs/DICC_OPS_METHOD.md` §3–4.
+
+### 3.0 Connection (required)
+
+1. Open **DICC OnDemand** in a browser → start **VNC Desktop**.  
+2. Open a terminal **inside** VNC.  
+3. Start **`screen -S colide`** (detach with `Ctrl-a d`; reattach `screen -r colide`).  
+4. Do **not** rely on long interactive `srun`/`salloc` over VPN/SSH for setup or multi-hour work — session loss can drop the allocation.
+
+### 3.1 Sync code (prefer tarball if git fetch is slow)
 
 ```bash
 # Laptop
@@ -47,10 +59,10 @@ cd /home/titoisalive
 tar czf colide-master-for-dicc.tar.gz \
   --exclude='colide/.venv' --exclude='colide/.venv-cluster' \
   --exclude='colide/**/__pycache__' -C /home/titoisalive colide
-# scp to login01.dicc.um.edu.my home
+# Copy into DICC home (scp/rsync/OnDemand file transfer as available)
 ```
 
-### 3.2 Environment on DICC
+### 3.2 Environment on DICC (inside VNC + screen)
 
 ```bash
 cd ~/colide   # or unpack path
@@ -58,23 +70,25 @@ python3 -m venv .venv-cluster && source .venv-cluster/bin/activate
 pip install -U pip
 pip install 'numpy>=2.0.0' 'scipy>=1.13.0' 'pyyaml>=6.0' 'scikit-learn>=1.5.0'
 pip install --upgrade 'torch>=2.5.0,<2.7' --index-url https://download.pytorch.org/whl/cu121
+md5sum model/best_model_botiot_twostage.pth
+# expect: 80a90f7cc210276300eaa90173a5a385
 ```
 
-### 3.3 Run
+### 3.3 Run campaign (prefer batch; survives disconnect)
 
 ```bash
 export COLIDE_V100_PARTITION=gpu-v100s
 export COLIDE_A100_PARTITION=gpu-a100
 export COLIDE_SBATCH_GRES=gpu:1
 bash dicc_scripts/run_campaign.sh           # Day 1
-bash dicc_scripts/run_campaign.sh --day 2   # Day 2
-# Prefer tmux; prefer partitions over fixed nodes
+bash dicc_scripts/run_campaign.sh --day 2   # Day 2 after Day1 SUCCESS
+# Prefer partitions over fixed nodes
 ```
 
 ### 3.4 Compare + bring home
 
 ```bash
-# On laptop after scp of benchmarks/results/dicc/
+# On laptop after rsync/scp of benchmarks/results/dicc/
 PYTHONPATH=. python3 scripts/compare_dicc_sessions.py ...  # per README args
 ```
 
@@ -95,8 +109,8 @@ Fill only from JSON:
 
 | Outcome | Next exceptional action |
 |---------|-------------------------|
-| CUDA B3 ≤ PT on both GPUs (win/tie band) | Systems latency primary; proceed Phase 1–6 with confidence |
-| CUDA B3 > PT (slower) on servers | **M12** kernel optim or protocol audit **before** claiming portable speedups; strengthen multi-objective memory story |
+| CUDA B3 ≤ PT on both GPUs (win/tie band) | Systems latency primary; document multi-day ranges |
+| CUDA B3 > PT (slower) on servers | Kernel optim or protocol audit **before** claiming portable speedups; strengthen multi-objective memory story |
 | Compare reject | Report both days honestly; no “stable multi-day” until fixed |
 | Only one GPU class | Document; publish complete class; schedule other |
 
@@ -104,6 +118,7 @@ Fill only from JSON:
 
 ## 5. Scripts / files involved
 
+- **`docs/DICC_OPS_METHOD.md`** — connection + run card (authoritative ops)  
 - `dicc_scripts/run_campaign.sh`, `submit_session.sh`, `lib/*`  
 - `scripts/benchmark_cuda_kernels_stats.py`  
 - `scripts/benchmark_pytorch_gpu_stats.py`  
@@ -114,7 +129,9 @@ Fill only from JSON:
 
 ## 6. Status checklist
 
+- [ ] OnDemand VNC Desktop usable; `screen` session established  
 - [ ] Tarball/sync current master to DICC  
+- [ ] Champion md5 verified on cluster  
 - [ ] Day1 V100S SUCCESS  
 - [ ] Day1 A100 SUCCESS  
 - [ ] Day2 V100S SUCCESS  
@@ -123,6 +140,7 @@ Fill only from JSON:
 - [ ] Tree on laptop under `benchmarks/results/dicc/`  
 - [ ] Extraction table filled from JSON only  
 - [ ] Fork decision recorded in `MOD_DECISION_TABLE.md` footer  
+- [ ] Manuscript §5.13 + claims insert (no invent)  
 
 ---
 
@@ -132,4 +150,4 @@ Phase 0 complete when checklist done and no cluster number appears in paper/docs
 
 ---
 
-*Do not start large HPO or architecture rewrites until Phase 0 exit — Prof order.*
+*Local science playlist is closed; this phase is the remaining ops gate for multi-GPU / multi-day claims.*

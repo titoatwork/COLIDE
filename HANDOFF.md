@@ -27,7 +27,7 @@
 | **Playlist closure audit** | **DONE** `PLAYLIST_CLOSURE_AUDIT.md` — **133/133** tracker rows terminal; 0 TODO/PARTIAL |
 | Open ops BLOCKED | A3, H7, I1–I5, I11, K7, **WP0/WP0b DICC**, WP6c N/A |
 | Open PI (not science) | Authors / venue class file / BibTeX after venue choice |
-| DICC | **ABSENT** — dedicated session when user opens it |
+| DICC | **ABSENT** SUCCESS tree — ops method **locked**: OnDemand VNC + `screen` + batch (`docs/DICC_OPS_METHOD.md`) |
 
 **CAD-CBA-v1 locked (science + sealed test + local systems + spine + draft + PI polish + playlist closed):** V3 + focal + ensemble KD + hpo_best + shuffle + argmax.  
 **XAI paper path:** dispatch + structured only — no full LLM-explainable title.  
@@ -100,7 +100,8 @@ Open ops BLOCKED: DICC (A3/H7/I1–I5/I11/K7/WP0). Open PI: authors/venue/BibTeX
 Local science playlist is CLOSED.
 
 Next:
-A) DICC only if user opens dedicated session
+A) DICC dedicated session: OnDemand VNC Desktop + screen + batch run_campaign.sh
+   (docs/DICC_OPS_METHOD.md) — NOT campus-runner / Cheran-as-default; NOT long srun/salloc VPN
 B) Else optional PI author/venue/BibTeX fill — no invent numbers
 C) Keep verify_claims green; rebuild PDF via scripts/build_manuscript_pdf.py after prose edits
 
@@ -143,9 +144,11 @@ PYTHONPATH=. python3 scripts/build_manuscript_pdf.py
 - Manuscript spine **DONE** (WP9b) — `WP9b_MANUSCRIPT_SPINE.md`  
 - Camera-ready **local-complete draft + PI venue polish DONE** — `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.{md,pdf}`  
 - Full local playlist **CLOSED** — `PLAYLIST_CLOSURE_AUDIT.md` (133/133 terminal)  
-- Official cluster: UM DICC only — **user will open a dedicated DICC session**  
+- Official cluster: UM DICC only  
+- **DICC ops (locked):** `docs/DICC_OPS_METHOD.md` — OnDemand **VNC Desktop** + **`screen`** + **batch** `run_campaign.sh`  
+- **Superseded ops plans:** campus-stable runner; Cheran-as-default cluster operator; long interactive `srun`/`salloc` over VPN  
 - Results under `benchmarks/results/` often **gitignored** — use `RESULTS_DISK_MANIFEST.md` + local paths  
-- Agents: no invented DICC numbers  
+- Agents: no invented DICC numbers; no DICC login  
 - Claims: rebuild with `build_claims_package.py`; verify with `verify_claims.py` (**64** claims)  
 - Classical: prefer `summary_handoff.json` (LGBM official **0.9818**)  
 - B14 test **0.9780±0.0033** — label as **test**; do not mix with val multirun  
@@ -160,4 +163,4 @@ PYTHONPATH=. python3 scripts/build_manuscript_pdf.py
 
 Design plan Option A approved; FINAL_PLAN P0–P5; audit pack `docs/audit/`; interim Word report sent to Prof; feedback in `docs/feedback1.docx`.
 
-**Next science priority after verify disk:** **DICC** when user opens dedicated session (only remaining BLOCKED ops). PI author/venue fill is non-science.
+**Next ops priority after verify disk:** **DICC** under `docs/DICC_OPS_METHOD.md` (OnDemand VNC + screen + batch). PI author/venue fill is non-science.
