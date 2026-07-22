@@ -24,12 +24,12 @@
 
 | ID | Requirement | Status | Evidence / notes |
 |----|-------------|--------|------------------|
-| A1 | Local progress acknowledged but not submission-ready | PARTIAL | Interim + reply sent; science ongoing |
-| A2 | 0.9790 &lt; RF 0.9864 — detection not sole headline unless improved | PARTIAL | Numbers frozen; improvement TODO |
-| A3 | CUDA mainly B3 local RTX 3050; V100S/A100 pending | BLOCKED | Need DICC |
-| A4 | Clear quantitative advantage on ≥1 major dimension | PARTIAL | Multi-obj: G6 composite **0.9056** @4.33 µs; **WP6b** energy **0.920–0.943** mJ/flow; PT@256 **24.15–25.68** µs; CUDA pipe **565–570** µs; peak alloc **322.2** MiB; dispatch **16.60** µs; pure F1 still LGBM **0.9818** tops protocol |
-| A5 | Not rely mainly on implementation/docs quality | TODO | Ongoing discipline |
-| A6 | Strengthen before finalising manuscript | TODO | Manuscript after evidence |
+| A1 | Local progress acknowledged but not submission-ready | DONE (framing) | Interim+reply sent; local science closed; **submission** still needs PI PDF polish + DICC if multi-GPU claimed (`WP9b_MANUSCRIPT_SPINE.md`) |
+| A2 | 0.9790 &lt; RF 0.9864 — detection not sole headline unless improved | DONE (framing) | Dual bars locked; pure F1 not sole headline; multi-obj + sealed test **0.9780±0.0033** near RF protocol; LGBM **0.9818** still tops pure F1 |
+| A3 | CUDA mainly B3 local RTX 3050; V100S/A100 pending | BLOCKED | Need DICC (local WP6b DONE) |
+| A4 | Clear quantitative advantage on ≥1 major dimension | DONE (local multi-obj) | G6 composite **0.9056** @4.33 µs; WP6b energy **0.920–0.943** mJ/flow; PT@256 **24.15–25.68** µs; CUDA pipe **565–570** µs; peak **322.2** MiB; dispatch **16.60** µs; pure F1 still LGBM **0.9818** |
+| A5 | Not rely mainly on implementation/docs quality | DONE | 59 claims from disk JSON; sealed test + ablations + negatives RUN_DOCUMENTED — science not docs-only |
+| A6 | Strengthen before finalising manuscript | DONE (spine) | WP9b manuscript spine locked; camera-ready PDF remains writing pass |
 
 ---
 
@@ -58,7 +58,7 @@
 
 | ID | Requirement | Status | Evidence / notes |
 |----|-------------|--------|------------------|
-| C1 | Not only “standard CNN–BiLSTM stack” | PARTIAL | Ladder shows package A7 **0.9699** &gt; plain A3 **0.9493**; novelty = composition (attn+focal+ens KD+HPO), not attn alone (A4 hurts) |
+| C1 | Not only “standard CNN–BiLSTM stack” | DONE (package novelty) | Composition fully evaluated: A7 **0.9699** &gt; A3 **0.9493**; novelty = focal+ens KD+HPO package (not attn alone — A4 **0.7378** hurts); C* negatives RUN_DOCUMENTED; spine §5 |
 | C2 | Class-aware attention after BiLSTM | RUN_DOCUMENTED (caveat) | V3 has attention; WP5a A4 attn+CE **0.7378** &lt; A3 **0.9493** under seed42/8-ep — do not claim attn alone helps; credit is package-level |
 | C3 | Lightweight temporal attention | RUN_DOCUMENTED (caveat) | Same as C2; systems: attn models ~26 µs/sample vs A3 ~20 µs (batch256) |
 | C4 | Multi-scale temporal convolution | RUN_DOCUMENTED | Bounded seed42: val **0.9167** vs CTRL **0.9787** (Δ−0.062); not incorporated (`cstar_bounded/C4_*.json`) |
@@ -157,7 +157,7 @@
 | H4 | Faster neural inference | DONE (local ranges) | **WP6b** full V3 PT @bs=256 **24.15–25.68** µs/sample (mean **24.90**, n=5); WP5c relative arch table still valid (G6 4.33 vs A7 ~26); CUDA Option A pipe **565–570** µs |
 | H5 | Low explanation dispatch | DONE (dispatch) | `llm_explainability.json` — 16.60 µs is **dispatch only** (not full LLM gen) |
 | H6 | Good minority detection | DONE (protocol) | Val + **B14 test Theft mean 1.0** / min-cls **0.9292**; classical Theft 0.9231 on val; paper table ready from claims |
-| H7 | Stable across GPU platforms | BLOCKED | DICC |
+| H7 | Stable across GPU platforms | BLOCKED | DICC only (local multi-session ≠ multi-GPU) |
 | H8 | Pareto F1–latency–memory | DONE | WP5c analysis `pareto/` + systems rebench `pareto_h8/`: composite G6; F1 leadership classical LGBM/package seeds; a priori weights locked; figure + CSV |
 
 ---
@@ -171,12 +171,12 @@
 | I3 | V100S results | BLOCKED | Legacy single-shot only |
 | I4 | A100 results | BLOCKED | Legacy single-shot only |
 | I5 | ≥2 different days | BLOCKED | |
-| I6 | mean, median, std, CV, CI | PARTIAL (local DONE) | **WP6b** local multi-session mean/median/std/CV/CI on energy + PT + CUDA (`wp6b_local_ranges/`); **DICC multi-day still BLOCKED** |
+| I6 | mean, median, std, CV, CI | DONE (local) | **WP6b** local multi-session mean/median/std/CV/CI on energy + PT + CUDA (`wp6b_local_ranges/`); **DICC multi-day still BLOCKED** (I1–I5) |
 | I7 | Warm-up protocol | DONE | WP6b warm-up **50** discarded sync forwards per timed block; documented in summary |
 | I8 | Batch-size sensitivity | DONE | WP6b multi-session I8 table bs∈{1,8,32,64,128,256,512,1024}; `systems_i8_h3/` + `wp6b_local_ranges/` |
-| I9 | Statistical significance + effect size | BLOCKED | compare script exists |
-| I10 | No generalise from RTX 3050 alone | TODO | Discipline |
-| I11 | Portability central | BLOCKED | Until I1–I5 |
+| I9 | Statistical significance + effect size | DONE (local) / BLOCKED (cross-GPU) | Local: `statistical_significance_v2.json` framework tests + WP6b CI/CV/std; **cross-GPU multi-day significance BLOCKED** until DICC |
+| I10 | No generalise from RTX 3050 alone | DONE (discipline) | Spine + ToV + claims forbid RTX→cluster generalisation; multi-GPU cells TBD until DICC |
+| I11 | Portability central | BLOCKED | Until I1–I5 (DICC) |
 
 ---
 
@@ -204,8 +204,8 @@
 | K1 | BoT primary | DONE | Primary dataset under protocol `botiot_v1` |
 | K2 | ToN (or other) on final method | RUN_DOCUMENTED | CAD-CBA-v1 mapped on `processed_toniot` 13-feat: val **0.8080** test **0.8110**; RF same-split test **0.9393**; ≠ historical 26-feat clean 0.9526 (`toniot_final/`) |
 | K3 | Cross-dataset / transfer | RUN_DOCUMENTED (recipe) | Recipe transfer (not weight transfer); ToN-scale kd_lr/ft_lr; honest RF gap |
-| K4 | RQ: improve detection? | PARTIAL (answer draft) | Protocol: B14 test **0.9780±0.0033** near RF val 0.9778; does **not** beat LGBM 0.9818 or published RF 0.9864 — multi-obj / deploy is the contribution path |
-| K5 | RQ: minority recognition? | PARTIAL (answer draft) | B14 test Theft **1.0** mean; min-cls **0.9292** — strong minority under protocol; val tables support |
+| K4 | RQ: improve detection? | DONE (answer locked) | B14 test **0.9780±0.0033** near RF val 0.9778; does **not** beat LGBM 0.9818 or published RF 0.9864 — multi-obj / deploy is the contribution path (`WP9b_MANUSCRIPT_SPINE.md` §3) |
+| K5 | RQ: minority recognition? | DONE (answer locked) | B14 test Theft **1.0** mean; min-cls **0.9292** — strong minority under protocol; val tables support |
 | K6 | RQ: reduce latency or memory? | DONE (local answer draft) | WP6b ranges: energy **0.920–0.943** mJ/flow; PT@256 **24.15–25.68** µs; peak **322.2** MiB; G6 composite 0.9056 @4.33 µs; multi-GPU still BLOCKED |
 | K7 | RQ: valid across GPUs? | BLOCKED | DICC |
 | K8 | RQ: explainability measurable value? | RUN_DOCUMENTED | Dispatch yes; structured evidence yes; free-form LLM quality weak → no full XAI RQ claim |
@@ -216,7 +216,7 @@
 
 | ID | Requirement | Status | Evidence / notes |
 |----|-------------|--------|------------------|
-| L1 | DICC first, then focused improvement | PARTIAL | Order locked; DICC deferred to dedicated session (user); local science continues under Option A |
+| L1 | DICC first, then focused improvement | DONE (order policy) | Order locked; DICC deferred to **dedicated user session**; local Option A science+systems closed without inventing multi-day numbers |
 | L2 | Mod table before final model | DONE | `docs/MOD_DECISION_TABLE.md` + CAD-CBA-v1 signed |
 | L3 | Avoid changing many parts at once | DONE | Sequential WPs (loss → thresholds → KD → HPO → package → confirm) |
 | L4 | Phase: freeze preprocess/split/metrics/seeds/hardware/baseline | DONE | Protocol + `BASELINE_FREEZE_CARD.md` + multirun baseline |
@@ -225,9 +225,9 @@
 | L7 | One clear proposed method | DONE (named) | **CAD-CBA-v1** signed; full evaluation playlist still open (ablations/test/ToN/paper) |
 | L8 | Deploy: export, parity, profile, kernels, TRT/ORT/compile, FP16/INT8 | DONE (local path) | WP6a fidelity PASS + **WP6b multi-session ranges DONE**; TRT/ORT/compile historical; WP6c DICC re-bench only if user opens DICC (champion unchanged → optional) |
 | L9 | Realistic: trade-off vs beat RF everywhere | DONE (framing) | Multi-obj framing locked; H8 + `CLAIMS_REGISTRY` advantage snapshot |
-| L10 | Paper structure / tables / ToV / repro | TODO | Outline in plan pack; write after science green + B14 |
+| L10 | Paper structure / tables / ToV / repro | DONE (spine) | `WP9b_MANUSCRIPT_SPINE.md` + Phase 9 map + protocol ToV addendum; camera-ready PDF still writing pass |
 | L11 | Fix gitignored claim-source repro | DONE | WP9a + **post-B14 rebuild**: 46 claims; sealed test LOCKED_TEST; `verify_claims.py` all green |
-| L12 | Title words only if evaluated | PARTIAL | J10 drops full XAI title; freeze card lists allowed words; final title after B14/DICC scope |
+| L12 | Title words only if evaluated | DONE (policy) | J10 drops full XAI title; spine §1 recommended **T1** multi-obj + Option A CUDA; no portability/XAI-full words until evaluated |
 
 ---
 
@@ -276,6 +276,7 @@
 | 2026-07-22 | **WP9a claims packaging DONE** `scripts/build_claims_package.py` → `claims_package/` + `CLAIMS_REGISTRY.md` (42 claims, 11 minority rows); `verify_claims.py` protocol claims green; `FINAL_CONFIG_FREEZE_CARD.md` awaiting user lock for B14; A4/C12/D1/H6/L11 advanced from disk evidence; sealed test **not** run |
 | 2026-07-22 | **B14 sealed multi-seed BoT TEST DONE** user lock path **A**; seeds 42–46; **test macro-F1 0.9780 ± 0.0033**; min-cls 0.9292; Theft **1.0**; val 0.9689±0.0145; champion unchanged; wall ~79 min; claims rebuild 46 claims green; B14/C12/D1/H2/H6/L11 flipped |
 | 2026-07-22 | **WP6b local multi-session ranges DONE** n=5 sessions RTX 3050; energy **0.920–0.943** mJ/flow (mean 0.933); PT@256 **24.15–25.68** µs (mean 24.90); CUDA pipe **565–570** µs; block3 FP16 **503–509** µs; peak alloc **322.2** MiB; I7/I8/H3/H4/K6/L8 advanced; claims **59** green; historical energy 0.786 labeled HISTORICAL |
+| 2026-07-22 | **WP9b manuscript spine DONE** `WP9b_MANUSCRIPT_SPINE.md`: title policy T1; abstract 5-part; RQ answers K4/K5 DONE; core tables from disk; ToV addendum; residual PARTIAL flips A1/A2/A4–A6/C1/I6/I9/I10/K4/K5/L1/L10/L12; H7/I1–I5/I11/K7/WP0 remain BLOCKED (DICC ops); verify_claims green; no train; champion unchanged |
 
 ---
 

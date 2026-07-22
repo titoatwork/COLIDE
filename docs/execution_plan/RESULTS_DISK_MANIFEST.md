@@ -1,7 +1,7 @@
 # Results Disk Manifest (handoff snapshot)
 
 **Generated (UTC):** 2026-07-21T11:01:25.771483+00:00  
-**Last append (UTC):** 2026-07-22T15:05:00 (WP6b multi-session ranges DONE)
+**Last append (UTC):** 2026-07-22T16:30:00 (WP9b manuscript spine DONE; no new result JSON)
 **Host path root:** `/home/titoisalive/colide`
 
 `benchmarks/results/` is **gitignored**. This file is committed so the next session can verify local artifacts without inventing numbers.
@@ -591,3 +591,16 @@ Complements analysis-only `pareto/`. Script: `scripts/run_pareto_multiobj.py`.
 **Decision: DONE (packaging)** — sealed-test / DICC claims remain PENDING/BLOCKED rows in the registry. Re-run builder after B14.
 
 **Last append (UTC):** 2026-07-22T11:55:00 (WP9a)
+
+## WP9b manuscript spine (2026-07-22) — docs only
+
+No new `benchmarks/results/` JSON this session (prose + tracker hygiene only).
+
+| Path | exists | key |
+|------|--------|-----|
+| `docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md` | yes | title T1; abstract; RQs; core tables; ToV |
+| `docs/execution_plan/13_PHASE9_MANUSCRIPT.md` | yes | gate checklist updated |
+| Champion md5 | unchanged | `80a90f7cc210276300eaa90173a5a385` |
+| Claims package | 59 green | no rebuild required (no new numbers) |
+
+**Trap:** Spine tables copy locked registry numbers only — do not invent DICC multi-day cells.

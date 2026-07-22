@@ -290,3 +290,14 @@ Export path **bit-identical** (max abs error 0); CUDA self-checks all PASS. Cham
 - Full LLM-explainable IDS title claim — **dropped** (J10)  
 - Full custom CUDA pipeline vs full V3 PT speedup as **parity** — Option A forbids
 
+
+## 12. Protocol-era manuscript spine pointers (WP9b)
+
+Canonical spine: `docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md` (2026-07-22).
+
+**Recommended title (T1):** CAD-CBA: A Class-Aware Distilled CNN–BiLSTM for Multi-Objective IoT Intrusion Detection with Operation-Matched CUDA Acceleration.
+
+**Contribution one-liner:** Under sealed multi-seed BoT test (**0.9780±0.0033** macro-F1; Theft **1.0**), CAD-CBA-v1 is near protocol-fair RF while **not** beating protocol LGBM pure F1 (**0.9818**); the primary claim is a **protocol-fair multi-objective accuracy–efficiency** package with local multi-session systems ranges (energy **0.920–0.943** mJ/flow; PT@256 **24.15–25.68** µs; peak **322.2** MiB) and Option A CUDA — not multi-GPU portability and not full free-form LLM explainability.
+
+**RQ answers (locked):** see spine §3. **ToV protocol addendum:** spine §9 (val≠test labels; dual bars; local≠portable; Option A construct; XAI scope; ToN 13-feat honesty).
+

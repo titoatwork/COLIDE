@@ -34,7 +34,7 @@
 | WP7 | XAI suite **or** drop explainable claims | 7 | Final detector | Agent | **DONE 2026-07-22** suite RUN_DOCUMENTED; J10 drop full claim keep structured+dispatch |
 | WP8 | ToN final-method eval | 8 | Final recipe | Agent | **DONE 2026-07-22** val 0.8080 test 0.8110 RF 0.9393 RUN_DOCUMENTED |
 | WP9a | Numbers-match + claim JSON packaging | 9 | All | Agent | **DONE 2026-07-22** + post-B14 rebuild (46 claims, sealed LOCKED_TEST, verify green) |
-| WP9b | Manuscript spine + figures | 9 | WP9a | User+agent | TODO (not before tracker green; freeze card ready) |
+| WP9b | Manuscript spine + figures | 9 | WP9a | User+agent | **DONE 2026-07-22** spine `WP9b_MANUSCRIPT_SPINE.md` (title/abstract/RQs/tables/ToV); figure art PARTIAL (Pareto exist; arch/class-dist TODO); PDF later |
 
 ---
 
@@ -42,11 +42,11 @@
 
 | Priority | Action |
 |----------|--------|
-| 0 | Verify disk via `RESULTS_DISK_MANIFEST.md` + `sealed_test/` + `wp6b_local_ranges/` |
-| 1 | **WP9b** manuscript spine (science largely closed; systems local ranges DONE) |
+| 0 | Verify disk + `verify_claims` green |
+| 1 | **Camera-ready writing** from `WP9b_MANUSCRIPT_SPINE.md` (results→methods→intro) + remaining figures |
 | 2 | Keep `verify_claims` green after any prose/number edits |
 | Parallel | **WP0** only when user opens dedicated DICC session |
-| Never first | WP9b with empty cluster cells if claiming multi-GPU |
+| Never | Invent multi-day / multi-GPU numbers; full CUDA vs full V3 parity |
 
 ---
 

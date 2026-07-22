@@ -1,82 +1,85 @@
 # 13 — Phase 9: Manuscript (After Evidence Complete)
 
-**Status:** BLOCKED until Phases 0–6 (+7/8 as claimed)  
+**Status:** **WP9b SPINE DONE** (2026-07-22) · camera-ready PDF still open · DICC cells open  
 **Prof:** Full outline in feedback1.docx  
+**Authority spine:** `docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md`
 
 ---
 
-## 1. Entry gate (all required)
+## 1. Entry gate (honest)
 
-- [ ] Phase 0 DICC complete  
-- [ ] Final method + sealed test  
-- [ ] Ablations + baselines + Pareto  
-- [ ] CUDA Option A clean on local + cluster  
-- [ ] Numbers-match across README/docs/claims  
-- [ ] `verify_claims.py` green  
-- [ ] Claim-source artifacts packaged  
-- [ ] Title words match evaluated components only  
-
----
-
-## 2. Suggested titles (conditional)
-
-1. `COLIDE: A Class-Aware Distilled CNN–BiLSTM with CUDA-Optimized Inference and Low-Overhead LLM Explanations for IoT Intrusion Detection` — only if class-aware + XAI evaluated  
-2. `A CUDA-Optimized and Explainable CNN–BiLSTM Framework for Imbalanced IoT Intrusion Detection` — only if explainable evaluated  
-3. Safer systems title if XAI light: emphasise multi-objective + operation-matched CUDA  
+- [ ] Phase 0 DICC complete — **BLOCKED (ops)** user-scheduled  
+- [x] Final method + sealed test — B14 **0.9780±0.0033**  
+- [x] Ablations + baselines + Pareto  
+- [x] CUDA Option A clean on **local** (cluster open)  
+- [x] Numbers-match across claims / registry  
+- [x] `verify_claims.py` green (59 claims)  
+- [x] Claim-source artifacts packaged (WP9a)  
+- [x] Title words match evaluated components only (J10 + spine §1)  
 
 ---
 
-## 3. Abstract five-part structure (Prof)
+## 2. Locked titles (from WP9b)
+
+1. **Recommended T1:** `CAD-CBA: A Class-Aware Distilled CNN–BiLSTM for Multi-Objective IoT Intrusion Detection with Operation-Matched CUDA Acceleration`  
+2. Detection-fairness lead (T2) / systems lead (T3) — see spine  
+3. ~~Full LLM-explainable title~~ **Rejected** (J10)
+
+---
+
+## 3. Abstract five-part structure (Prof) — drafted in spine §2
 
 1. Background/problem (imbalance + low-latency)  
 2. Gap (accuracy vs acceleration silos; unfair kernel comparisons; weak multi-platform)  
-3. Method (only what exists)  
-4. Results (macro-F1, minority, B3, full-model, memory, thr, energy, dispatch)  
-5. Contribution: **valid** accuracy–efficiency advantage; no unsupported full-pipeline claims  
+3. Method (CAD-CBA-v1 only)  
+4. Results (sealed test, dual bars, multi-obj, WP6b ranges, scoped XAI, ToN honesty)  
+5. Contribution: **valid** accuracy–efficiency advantage; no unsupported full-pipeline / multi-GPU claims  
 
 ---
 
 ## 4. Section map → our evidence
 
-| Section | Evidence phase |
-|---------|----------------|
-| Intro RQs 1–5 | All |
-| RW 2.1–2.7 + gap table | Literature pass |
-| Method 3.x | Phase 2–4, 6–7 |
-| Experiments 4.x | Phase 1 protocol |
-| Results 5.1–5.11 | Phases 0,5,6,7,8 |
-| Discussion 6.x | Synthesis |
-| ToV 7 | Honest limits |
-| Repro 8 | Packaging |
-| Conclusion 9 | Summary |
+| Section | Evidence phase | Spine ref |
+|---------|----------------|-----------|
+| Intro RQs 1–5 | All | WP9b §3 |
+| RW 2.1–2.7 + gap table | Literature pass | TODO write |
+| Method 3.x | Phase 2–4, 6–7 | freeze card |
+| Experiments 4.x | Phase 1 protocol | protocol scripts |
+| Results 5.1–5.11 | Phases 0*,5,6,7,8 | WP9b §8 tables |
+| Discussion 6.x | Synthesis | spine §4–5 |
+| ToV 7 | Honest limits | paper_text_blocks §15 + protocol addendum |
+| Repro 8 | Packaging | claims registry |
+| Conclusion 9 | Summary | abstract part 5 |
+
+\*Phase 0 multi-GPU results remain TBD cells until DICC.
 
 ---
 
 ## 5. Essential tables/figures checklist (Prof)
 
-- [ ] Architecture diagram  
-- [ ] Class distribution  
-- [ ] Related-work comparison table  
-- [ ] Overall predictive table  
-- [ ] Per-class table  
-- [ ] Ablation table  
-- [ ] HPO sensitivity figure  
-- [ ] Per-block CUDA latency  
-- [ ] Full-model framework latency  
-- [ ] Cross-GPU multi-day stability  
-- [ ] Pareto accuracy–latency–memory  
-- [ ] Energy/throughput  
-- [ ] Explanation pipeline + quality (if claimed)  
-- [ ] Confusion matrices  
+- [ ] Architecture diagram (draw)  
+- [ ] Class distribution (plot)  
+- [ ] Related-work comparison table (write)  
+- [x] Overall predictive table (numbers ready)  
+- [x] Per-class table (claims + B14)  
+- [x] Ablation table (A1–A7)  
+- [x] HPO sensitivity table (hpo/)  
+- [x] Per-block CUDA latency (WP6b)  
+- [x] Full-model framework latency (local historical + ranges)  
+- [ ] Cross-GPU multi-day stability (**DICC**)  
+- [x] Pareto accuracy–latency–memory (plots exist)  
+- [x] Energy/throughput (WP6b primary)  
+- [x] Explanation pipeline + quality **scoped** (J10)  
+- [ ] Confusion matrices (export if needed)  
 
 ---
 
 ## 6. Writing process (exceptional)
 
-1. Lock number table (single source)  
-2. Draft results first  
+1. ~~Lock number table~~ DONE  
+2. Draft results first — **next writing session**  
 3. Methods second  
-4. Intro/abstract last  
+4. Intro/abstract last (use spine draft)  
 5. PI review cycles  
 6. No new experiments hidden in writing phase without protocol  
 
@@ -84,4 +87,5 @@
 
 ## 7. Exit
 
-Submission-ready PDF + artifact appendix + green verify_claims.
+- [x] Manuscript **spine** + artifact pointers + green verify_claims  
+- [ ] Submission-ready PDF + full figure art + DICC cells (if claimed)  

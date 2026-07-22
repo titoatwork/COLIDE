@@ -1,7 +1,7 @@
 # Method package decision (Phase 2) — signed default
 
 **Date:** 2026-07-19  
-**Last status update:** 2026-07-22 (WP6b multi-session ranges; B14 sealed test; WP9a claims 59; WP7 XAI J10; WP8 ToN; F9; WP6a)  
+**Last status update:** 2026-07-22 (WP9b manuscript spine; WP6b ranges; B14 sealed test; claims 59; XAI J10; ToN; F9; WP6a)  
 **Rule:** one package first; **every other playlist idea still gets a bounded run → RUN_DOCUMENTED** (skip-nothing).
 
 ## Chosen package (v1): **Class-aware distilled CNN–BiLSTM (CAD-CBA-v1)**
@@ -48,7 +48,8 @@ Extreme class imbalance + minority (Theft) under neural deploy path; RF still st
 | Arch deltas (attention/multi-scale) | deferred | only if plateaus |
 | Multi-seed confirm of HPO winner (val) | **RUN_DOCUMENTED** | mean **0.9689 ± 0.0145** n=5; seed42 **0.9791** repro; does **not** beat WP1b mean |
 | Sealed multi-seed **test** of final lock | **DONE** | User lock path **A** 2026-07-22; test **0.9780 ± 0.0033** n=5; Theft 1.0; `sealed_test/summary.json` |
-| WP9a claims packaging | **DONE** | post-B14: 46 claims; sealed LOCKED_TEST; verify green |
+| WP9a claims packaging | **DONE** | post-WP6b: **59** claims; sealed LOCKED_TEST; verify green |
+| WP9b manuscript spine | **DONE** | `WP9b_MANUSCRIPT_SPINE.md` title/abstract/RQs/tables; PDF later |
 | WP7 XAI suite | **RUN_DOCUMENTED** | J10 drop full LLM-XAI claim; keep dispatch + structured evidence |
 | WP8 ToN final method | **RUN_DOCUMENTED** | val 0.8080 / test 0.8110 vs RF test 0.9393 (13-feat); KD selected |
 | F9 energy table | **RUN_DOCUMENTED** | consolidated `energy_table/`; RTX ~0.786 mJ/flow |

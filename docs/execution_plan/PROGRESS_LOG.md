@@ -1,7 +1,30 @@
 # Progress log (results as they land)
 
 **Policy:** document everything; label pilot vs full; test sealed unless noted.  
-**Handoff snapshot:** 2026-07-22 (**WP6b multi-session ranges DONE**; B14 test 0.9780±0.0033; claims 59 green)
+**Handoff snapshot:** 2026-07-22 (**WP9b manuscript spine DONE**; WP6b ranges; B14 test 0.9780±0.0033; claims 59 green)
+
+---
+
+## 2026-07-22 — WP9b manuscript spine + residual PARTIAL tracker flips
+
+**Mode:** documentation / packaging only · **no train** · GPU idle · champion frozen  
+**Primary artifact:** `docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md`
+
+### Delivered
+| Item | Detail |
+|------|--------|
+| Title policy | T1 multi-obj + Option A CUDA; full LLM-XAI title rejected (J10) |
+| Abstract | Five-part Prof structure drafted from locked numbers |
+| RQ answers | K4/K5 **DONE**; K6 local DONE; K7 BLOCKED DICC; K8 RUN_DOCUMENTED |
+| Core tables | B14, classical, ablation, WP6b, XAI, ToN — all from disk |
+| ToV addendum | Protocol-era threats (val/test, dual bars, local≠portable, Option A) |
+| Tracker flips | A1/A2/A4–A6, C1, I6/I9/I10, K4/K5, L1/L10/L12 → terminal statuses |
+| Still BLOCKED (ops) | A3, H7, I1–I5, I11, K7, WP0 DICC |
+| Claims | **59** — `verify_claims` green (no number invention) |
+| Champion | **unchanged** `80a90f7cc210276300eaa90173a5a385` |
+
+**Decision: DONE (spine)** — camera-ready PDF + arch/class-dist figures remain writing pass.  
+**Next:** PDF drafting from spine **or** DICC when user opens dedicated session.
 
 ---
 

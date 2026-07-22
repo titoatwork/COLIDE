@@ -103,8 +103,8 @@
 
 ## Open gates (do not claim as done)
 
-- WP0 DICC multi-day (user-scheduled)
-- WP9b manuscript spine after tracker largely green
+- WP0 DICC multi-day (user-scheduled) — I1–I5, H7, K7, I11
+- Camera-ready PDF + arch/class-dist figures (spine DONE: `WP9b_MANUSCRIPT_SPINE.md`)
 
 ## Usage
 
