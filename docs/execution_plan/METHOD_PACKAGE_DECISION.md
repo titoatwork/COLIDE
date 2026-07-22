@@ -1,7 +1,7 @@
 # Method package decision (Phase 2) — signed default
 
 **Date:** 2026-07-19  
-**Last status update:** 2026-07-22 (WP7 XAI J10 drop-full-keep-structured; WP8 ToN RUN_DOCUMENTED; F9 energy; WP6a fidelity PASS; C*/E6/B2–B4 prior)  
+**Last status update:** 2026-07-22 (WP9a claims package + freeze card; WP7 XAI J10; WP8 ToN; F9 energy; WP6a fidelity; C*/E6/B2–B4 prior)  
 **Rule:** one package first; **every other playlist idea still gets a bounded run → RUN_DOCUMENTED** (skip-nothing).
 
 ## Chosen package (v1): **Class-aware distilled CNN–BiLSTM (CAD-CBA-v1)**
@@ -47,7 +47,8 @@ Extreme class imbalance + minority (Theft) under neural deploy path; RF still st
 | Default train HPs for CAD-CBA-v1 | **hpo_best.yaml** | lr 5.89e-5, batch 1024, γ≈1.92, cosine, … |
 | Arch deltas (attention/multi-scale) | deferred | only if plateaus |
 | Multi-seed confirm of HPO winner (val) | **RUN_DOCUMENTED** | mean **0.9689 ± 0.0145** n=5; seed42 **0.9791** repro; does **not** beat WP1b mean |
-| Sealed multi-seed **test** of final lock | **TODO** | only after **explicit user** final config freeze |
+| Sealed multi-seed **test** of final lock | **TODO** | `FINAL_CONFIG_FREEZE_CARD.md` ready — only after **explicit user** lock text |
+| WP9a claims packaging | **DONE** | `CLAIMS_REGISTRY.md` + `claims_package/` + `verify_claims` protocol green |
 | WP7 XAI suite | **RUN_DOCUMENTED** | J10 drop full LLM-XAI claim; keep dispatch + structured evidence |
 | WP8 ToN final method | **RUN_DOCUMENTED** | val 0.8080 / test 0.8110 vs RF test 0.9393 (13-feat); KD selected |
 | F9 energy table | **RUN_DOCUMENTED** | consolidated `energy_table/`; RTX ~0.786 mJ/flow |

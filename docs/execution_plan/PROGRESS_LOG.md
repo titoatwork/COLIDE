@@ -1,7 +1,35 @@
 # Progress log (results as they land)
 
 **Policy:** document everything; label pilot vs full; test sealed unless noted.  
-**Handoff snapshot:** 2026-07-22 (WP7 XAI + WP8 ToN + F9 energy + WP6a fidelity DONE; C*/E6 prior)
+**Handoff snapshot:** 2026-07-22 (WP9a claims packaging DONE; freeze card awaiting lock; prior WP7/8/F9/WP6a)
+
+---
+
+## 2026-07-22 — WP9a claims packaging + freeze card (no train / no sealed test)
+
+**Mode:** packaging + tracker hygiene only. GPU idle. Champion md5 unchanged.
+
+### Deliverables
+| Artifact | Path |
+|----------|------|
+| Builder | `scripts/build_claims_package.py` |
+| Claims JSON | `benchmarks/results/claims_package/protocol_claims.json` (42 claims, 11 minority rows) |
+| Table (local) | `benchmarks/results/claims_package/table.md` |
+| Registry (committed) | `docs/execution_plan/CLAIMS_REGISTRY.md` |
+| Freeze gate | `docs/execution_plan/FINAL_CONFIG_FREEZE_CARD.md` **AWAITING USER LOCK** |
+| Verifier | `scripts/verify_claims.py` extended with protocol claims → **all green** |
+| Prose | `docs/paper_text_blocks.md` §11 Protocol-era numbers |
+
+### Headlines locked (from disk; not invented)
+WP1b **0.9714±0.0109** · HPO **0.9791** · LGBM **0.9818** · ensemble KD **0.9401** · XAI rank **0.9636** / faith **0.5109** / feature-mention **0.333** · energy **0.786** mJ/flow · composite G6 **0.9056** · ToN test **0.8110** vs RF **0.9393** · J10 DROP full XAI claim.
+
+### Explicitly not done this session
+- B14 sealed multi-seed BoT **test** (needs user lock text on freeze card)
+- WP6b multi-session ranges (after lock)
+- WP9b manuscript spine
+- DICC
+
+**Next science:** user pastes lock → B14 sealed test (init path A recommended) → WP6b → re-run claims builder.
 
 ---
 

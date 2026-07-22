@@ -21,6 +21,7 @@ RESULTS_DIR = PROJECT_ROOT / "benchmarks" / "results"
 DOC_FILES = {
     "README.md": PROJECT_ROOT / "README.md",
     "paper_text_blocks.md": PROJECT_ROOT / "docs" / "paper_text_blocks.md",
+    "CLAIMS_REGISTRY.md": PROJECT_ROOT / "docs" / "execution_plan" / "CLAIMS_REGISTRY.md",
 }
 
 
@@ -498,6 +499,81 @@ def build_claims():
             "the canonical source for this claim)",
             "streaming_throughput.json",
             [f"{max_gpu:,.0f}"],
+        )
+
+    # ------------------------------------------------------------------
+    # WP9a protocol-era claims (CAD-CBA-v1). Prefer live claims_package JSON;
+    # fall back to reading individual summary files. Prose must appear in
+    # paper_text_blocks.md §11 and/or CLAIMS_REGISTRY.md.
+    # ------------------------------------------------------------------
+    proto_path = RESULTS_DIR / "claims_package" / "protocol_claims.json"
+    proto = None
+    if proto_path.exists():
+        with open(proto_path) as f:
+            proto = json.load(f)
+
+    def proto_render(claim_id):
+        if not proto:
+            return None
+        for c in proto.get("claims") or []:
+            if c.get("id") == claim_id and c.get("value") is not None:
+                return c.get("render")
+        return None
+
+    protocol_claim_ids = [
+        ("wp1b_multirun_mean", "WP1b multirun mean val macro-F1", "multirun/summary.json"),
+        ("wp1b_multirun_std", "WP1b multirun std", "multirun/summary.json"),
+        ("wp3_hpo_winner_val", "WP3 HPO winner val macro-F1", "hpo/summary.json"),
+        ("g5_lgbm_val", "Protocol-fair LGBM val macro-F1", "baselines_classical/lgbm_seed42.json"),
+        ("g3_rf_val", "Protocol-fair RF val macro-F1", "baselines_classical/rf_seed42.json"),
+        ("wp4b_ensemble_student_val", "Ensemble KD student val macro-F1", "teachers_kd/"),
+        ("wp5a_a7_val", "Ablation A7 full package val macro-F1", "ablation_ladder/"),
+        ("xai_rank_corr", "XAI occlusion rank Spearman", "xai/summary.json"),
+        ("xai_faith_mass", "XAI faithfulness top-3 mass", "xai/summary.json"),
+        ("xai_dispatch_p99_us", "XAI/LLM dispatch p99 µs", "xai/summary.json"),
+        ("xai_llm_feature_mention", "XAI free-form feature mention rate", "xai/summary.json"),
+        ("f9_rtx_mj_per_flow", "RTX energy mJ/flow batch128", "energy_table/summary.json"),
+        ("pareto_h8_composite_g6", "Pareto-H8 composite G6 score", "pareto_h8/summary.json"),
+        ("ton_test", "ToN CAD-CBA test macro-F1", "toniot_final/summary.json"),
+        ("ton_rf_test", "ToN RF same-split test macro-F1", "toniot_final/summary.json"),
+        ("d6_shuffle_val", "D6 shuffle sampler val macro-F1", "stratified_batch/"),
+        ("d6_stratified_val", "D6 stratified sampler val macro-F1", "stratified_batch/"),
+        ("e6_neural_teacher_student_val", "E6 neural teacher student val", "teachers_kd_neural/"),
+        ("cstar_ctrl_val", "C* CTRL val macro-F1", "cstar_bounded/"),
+        ("champion_md5", "Production champion md5", "model/best_model_botiot_twostage.pth"),
+    ]
+    for cid, desc, src in protocol_claim_ids:
+        rend = proto_render(cid)
+        if rend is None:
+            continue
+        variants = [rend]
+        # also accept common 4-decimal / compact forms already in prose
+        if rend.replace(".", "", 1).isdigit() or (
+            rend.count(".") == 1 and rend.replace(".", "").isdigit()
+        ):
+            try:
+                fv = float(rend)
+                variants.append(f"{fv:.4f}")
+                variants.append(f"{fv:.3f}")
+                variants.append(f"{fv:.2f}")
+            except ValueError:
+                pass
+        # multirun mean±std composite often written together
+        if cid == "wp1b_multirun_mean":
+            std = proto_render("wp1b_multirun_std")
+            if std:
+                variants.append(f"{rend}±{std}")
+                variants.append(f"{rend} ± {std}")
+        add(f"protocol_{cid}", desc, f"claims_package + {src}", variants)
+
+    # J10 path string must appear if we claim the drop decision
+    j10 = proto_render("xai_j10")
+    if j10:
+        add(
+            "protocol_xai_j10",
+            "XAI J10 decision path",
+            "xai/summary.json via claims_package",
+            [j10, "DROP_FULL_EXPLAINABLE_CLAIM_KEEP_STRUCTURED"],
         )
 
     # Session 7 — numerical fidelity (real-weight export + CUDA self-checks)

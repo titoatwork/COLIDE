@@ -203,3 +203,75 @@ Each standalone kernel binary executes an internal numerical check at a fixed to
 
 The fused pipeline binary is timing-oriented and does not emit a separate validation line; end-to-end correctness is covered by per-block checks plus the real-weight export table above. FP16 BiLSTM uses a deliberately looser tolerance (5e-2) consistent with half-precision accumulation; FP32 blocks use 1e-3–1e-2.
 
+## 11. Protocol-era numbers (CAD-CBA-v1 / Prof feedback track) — WP9a
+
+> Canonical registry: `docs/execution_plan/CLAIMS_REGISTRY.md` (rebuilt by `scripts/build_claims_package.py`).
+> All figures below are **val-only on BoT** unless marked ToN-test or historical. BoT multi-seed **test** remains **PENDING** until final config lock (B14).
+
+### Method lock (do not re-litigate without new protocol)
+
+**CAD-CBA-v1:** V3 CNN–BiLSTM–Attention + ensemble KD (α=0.6, T=10) + focal (γ≈1.92 from HPO) + `config/hpo_best.yaml` train HPs + shuffle sampler + argmax decode. Champion production weights md5 **80a90f7cc210276300eaa90173a5a385**.
+
+### Detection (protocol `botiot_v1`, val)
+
+| Claim | Number | Source |
+|-------|--------|--------|
+| WP1b multirun FT mean±std (n=5) | **0.9714±0.0109** | `multirun/summary.json` |
+| WP3 HPO full-train refine winner | **0.9791** | `hpo/summary.json` |
+| HPO multi-seed confirm mean±std | **0.9689±0.0145** | `multirun_hpo_confirm/summary.json` |
+| Package ensemble+HPO multirun mean±std | **0.9639±0.0185** | `multirun_ensemble_hpo/summary.json` (not mean-win vs WP1b) |
+| Focal FT seed42 | **0.9780** | `imbalance_loss/ft_focal_seed42.json` |
+| Ensemble KD student (stage_a) | **0.9401** | `teachers_kd/kd_ensemble_seed42.json` |
+| A7 full package ladder | **0.9699** | `ablation_ladder/` |
+| A3 cnn_bilstm CE / G11 | **0.9493** | ladder / neural baselines |
+| A4 attn+CE (underperforms A3) | **0.7378** | ladder honesty |
+| CTRL cstar | **0.9787** | `cstar_bounded/` |
+| E6 neural teacher → student | **0.8513** | ≪ ensemble 0.9401 |
+
+### Classical protocol-fair (val)
+
+| Model | val macro-F1 |
+|-------|--------------|
+| LGBM (G5 fixed, balanced) | **0.9818** |
+| RF | **0.9778** |
+| XGB | **0.9762** |
+| LinearSVC (G2) | **0.4268** |
+| Published RF (different pipeline) | **0.9864** historical dual bar only |
+
+### Minority honesty (val Theft / min-cls examples)
+
+HPO winner seed42: Theft **1.0000**, min-cls **0.9351** (Normal), macro **0.9791**.  
+Protocol LGBM: Theft **0.9231**, min-cls **0.9231**, macro **0.9818**.  
+Do **not** claim neural supremacy on pure F1 over LGBM under protocol.
+
+### Multi-objective / systems
+
+| Claim | Number | Notes |
+|-------|--------|-------|
+| Pareto-H8 a priori composite #1 | G6 **0.9056** @ **4.33** µs, F1 0.9285 | efficiency-weighted |
+| RTX energy batch128 | **0.786** mJ/flow | `energy_table/` |
+| LLM dispatch p99 | **16.60** µs | dispatch only |
+| LLM generation mean | **~7400** ms | never conflate with dispatch |
+| XAI rank consistency | **0.9636** | occlusion Spearman |
+| XAI faithfulness top-3 mass | **0.5109** | occlusion proxy |
+| XAI free-form feature mention | **0.333** | TinyLlama n=6 |
+| XAI J10 path | **DROP_FULL_EXPLAINABLE_CLAIM_KEEP_STRUCTURED** | keep structured+dispatch |
+
+### ToN final method (13-feat `processed_toniot`; test allowed for WP8)
+
+CAD-CBA-v1 mapped: val **0.8080**, test **0.8110**; same-split RF test **0.9393**. ≠ historical clean 26-feat CNN **0.9526**.
+
+### D6 stratified batch
+
+Shuffle **0.9791** ≫ stratified inv-freq **0.9209** (Δ−0.058) — keep **shuffle**.
+
+### Fidelity (WP6a)
+
+Export path **bit-identical** (max abs error 0); CUDA self-checks all PASS. Champion md5 unchanged.
+
+### Explicitly not yet claimable
+
+- BoT sealed multi-seed **test** (B14) — wait for user final-config lock  
+- DICC multi-day mean/median/std/CV/CI — dedicated session only  
+- Full LLM-explainable IDS title claim — **dropped** (J10)
+

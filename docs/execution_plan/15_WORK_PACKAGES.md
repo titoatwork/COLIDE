@@ -33,8 +33,8 @@
 | WP6c | Re-DICC if model changed | 6 | WP6a | User/ops | TODO (user-scheduled; champion unchanged so optional) |
 | WP7 | XAI suite **or** drop explainable claims | 7 | Final detector | Agent | **DONE 2026-07-22** suite RUN_DOCUMENTED; J10 drop full claim keep structured+dispatch |
 | WP8 | ToN final-method eval | 8 | Final recipe | Agent | **DONE 2026-07-22** val 0.8080 test 0.8110 RF 0.9393 RUN_DOCUMENTED |
-| WP9a | Numbers-match + claim JSON packaging | 9 | All | Agent | TODO |
-| WP9b | Manuscript spine + figures | 9 | WP9a | User+agent | TODO (not before tracker green) |
+| WP9a | Numbers-match + claim JSON packaging | 9 | All | Agent | **DONE 2026-07-22** packaging: `CLAIMS_REGISTRY.md` + `claims_package/` + `verify_claims` protocol claims green; re-run builder after B14 |
+| WP9b | Manuscript spine + figures | 9 | WP9a | User+agent | TODO (not before tracker green; freeze card ready) |
 
 ---
 
@@ -42,10 +42,10 @@
 
 | Priority | Action |
 |----------|--------|
-| 0 | Verify disk via `RESULTS_DISK_MANIFEST.md` (incl. `xai/` + `toniot_final/` + `energy_table/` + prior) |
-| 1 | Final config freeze → sealed multi-seed **test** (B14) — **needs explicit user lock** |
+| 0 | Verify disk via `RESULTS_DISK_MANIFEST.md` + rebuild claims if needed (`build_claims_package.py`) |
+| 1 | **User lock** on `FINAL_CONFIG_FREEZE_CARD.md` → sealed multi-seed **test** (B14) |
 | 2 | **WP6b** local multi-session ranges after lock (WP6a fidelity already DONE) |
-| 3 | **WP9a** claims packaging / numbers-match (manifest + verify_claims) |
+| 3 | Re-run WP9a builder after B14 test numbers land; keep `verify_claims` green |
 | 4 | **WP9b** manuscript only after tracker largely green |
 | Parallel | **WP0** only when user opens dedicated DICC session |
 | Never first | WP9b manuscript with empty cluster cells |

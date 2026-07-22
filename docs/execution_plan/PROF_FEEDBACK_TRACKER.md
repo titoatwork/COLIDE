@@ -27,7 +27,7 @@
 | A1 | Local progress acknowledged but not submission-ready | PARTIAL | Interim + reply sent; science ongoing |
 | A2 | 0.9790 &lt; RF 0.9864 — detection not sole headline unless improved | PARTIAL | Numbers frozen; improvement TODO |
 | A3 | CUDA mainly B3 local RTX 3050; V100S/A100 pending | BLOCKED | Need DICC |
-| A4 | Clear quantitative advantage on ≥1 major dimension | TODO | Need tables after science |
+| A4 | Clear quantitative advantage on ≥1 major dimension | PARTIAL | Multi-obj packaged: G6 composite **0.9056** @4.33 µs; energy **0.786** mJ/flow; dispatch **16.60** µs; VRAM proxy cuML vs CNN; pure F1 still LGBM **0.9818** tops protocol — see `CLAIMS_REGISTRY.md` advantage table |
 | A5 | Not rely mainly on implementation/docs quality | TODO | Ongoing discipline |
 | A6 | Strengthen before finalising manuscript | TODO | Manuscript after evidence |
 
@@ -69,7 +69,7 @@
 | C9 | Teacher ensemble distillation | INCORPORATED | WP4b: ensemble student val **0.9401** best among 5 teachers (`teachers_kd/`) |
 | C10 | Uncertainty-aware detection | RUN_DOCUMENTED | MC-dropout + entropy selective on HPO confirm: det **0.9791**, no high-coverage lift; keep argmax (`cstar_bounded/C10_*.json`) |
 | C11 | Adaptive per-class thresholds | RUN_DOCUMENTED | Val grid search macro/min/joint/Theft/Normal — no lift vs argmax on focal FT; not in package |
-| C12 | Component addresses named weakness | PARTIAL | Named weakness = imbalance/Theft; package uses focal+ensemble KD; **ablation/minority tables still open** |
+| C12 | Component addresses named weakness | PARTIAL | Named weakness = imbalance/Theft; package uses focal+ensemble KD; **minority/per-class val table** now in `CLAIMS_REGISTRY.md` (HPO Theft=1.0 min-cls 0.9351; LGBM Theft 0.9231); sealed-test minority still PENDING |
 | C13 | Mod comparison table before lock | DONE | `docs/MOD_DECISION_TABLE.md` + `METHOD_PACKAGE_DECISION.md` CAD-CBA-v1 |
 
 **Rule:** Not every C2–C11 is mandatory; **at least one clear package** must be fully evaluated. Tracker keeps all options until chosen/rejected in writing.
@@ -80,7 +80,7 @@
 
 | ID | Requirement | Status | Evidence / notes |
 |----|-------------|--------|------------------|
-| D1 | Imbalance first-class (not accuracy-only) | PARTIAL | Metrics + loss + thresholds + D6 stratified done; minority tables / final claims still open |
+| D1 | Imbalance first-class (not accuracy-only) | PARTIAL | Metrics + loss + thresholds + D6 stratified done; **val minority table packaged** (`CLAIMS_REGISTRY.md`); final sealed-test minority claims still open |
 | D2 | Weighted CE | RUN_DOCUMENTED | CE FT control val 0.9755 (`imbalance_loss/ft_ce_seed42.json`) |
 | D3 | Focal loss | INCORPORATED | Best in 4-way compare val **0.9780** — default CAD-CBA-v1 |
 | D4 | Class-balanced focal | RUN_DOCUMENTED | val 0.9121 — worse macro; JSON kept |
@@ -156,7 +156,7 @@
 | H3 | Much lower GPU memory | PARTIAL | Historical `cuml_rf_resources.json` CNN ~2MB vs cuML RF ~444MB; protocol proxy via n_params/ckpt bytes in WP5c (`pareto/`); peak VRAM re-measure still open |
 | H4 | Faster neural inference | PARTIAL | Protocol batch256 µs/sample in WP5c: G6 MLP **4.33** vs A7 **26.02** vs A3 **19.96**; historical `baseline_latency.json` still secondary |
 | H5 | Low explanation dispatch | DONE (dispatch) | `llm_explainability.json` — 16.60 µs is **dispatch only** (not full LLM gen) |
-| H6 | Good minority detection | PARTIAL | Theft/min-cls logged (HPO seed42 Theft=1.0); systematic minority claim needs ablation/final tables |
+| H6 | Good minority detection | PARTIAL | Val minority table packaged (HPO Theft=1.0 / min-cls 0.9351; classical Theft 0.9231); sealed-test + paper table still after B14 |
 | H7 | Stable across GPU platforms | BLOCKED | DICC |
 | H8 | Pareto F1–latency–memory | DONE | WP5c analysis `pareto/` + systems rebench `pareto_h8/`: composite G6; F1 leadership classical LGBM/package seeds; a priori weights locked; figure + CSV |
 
@@ -224,10 +224,10 @@
 | L6 | Optuna/Bayesian HPO | DONE | WP3 Optuna TPE val-only; winner INCORPORATE 0.9791; multi-seed confirm RUN_DOCUMENTED 0.9689±0.0145 |
 | L7 | One clear proposed method | DONE (named) | **CAD-CBA-v1** signed; full evaluation playlist still open (ablations/test/ToN/paper) |
 | L8 | Deploy: export, parity, profile, kernels, TRT/ORT/compile, FP16/INT8 | PARTIAL→DONE (export+fidelity) | **WP6a re-export + fidelity PASS** (bit-identical; CUDA self-checks PASS); TRT/ORT/compile historical exist; WP6b multi-session ranges + WP6c DICC still open after sealed test |
-| L9 | Realistic: trade-off vs beat RF everywhere | DONE (framing) | Multi-obj framing locked; need Pareto tables (H8) |
-| L10 | Paper structure / tables / ToV / repro | TODO | Outline in plan pack; write after science green |
-| L11 | Fix gitignored claim-source repro | TODO | Manifest + claim scripts; finish before paper |
-| L12 | Title words only if evaluated | TODO | Discipline until J/XAI/CUDA claims closed |
+| L9 | Realistic: trade-off vs beat RF everywhere | DONE (framing) | Multi-obj framing locked; H8 + `CLAIMS_REGISTRY` advantage snapshot |
+| L10 | Paper structure / tables / ToV / repro | TODO | Outline in plan pack; write after science green + B14 |
+| L11 | Fix gitignored claim-source repro | DONE (packaging) | WP9a: `CLAIMS_REGISTRY.md` + `claims_package/protocol_claims.json` + `build_claims_package.py`; `verify_claims.py` protocol claims green; re-run after B14 |
+| L12 | Title words only if evaluated | PARTIAL | J10 drops full XAI title; freeze card lists allowed words; final title after B14/DICC scope |
 
 ---
 
@@ -273,6 +273,7 @@
 | 2026-07-22 | **F9 energy table DONE** consolidated RTX 0.786 mJ/flow + A100/cuML + latency/params; `energy_table/` RUN_DOCUMENTED |
 | 2026-07-22 | **WP8 ToN final method DONE** CAD-CBA-v1 mapped 13-feat: val **0.8080** test **0.8110** RF test **0.9393** RUN_DOCUMENTED; KD selected (FT no lift); pilot low-lr archived |
 | 2026-07-22 | **WP6a re-export + fidelity DONE** bit-identical blocks; CUDA self-check all PASS; champion md5 unchanged |
+| 2026-07-22 | **WP9a claims packaging DONE** `scripts/build_claims_package.py` → `claims_package/` + `CLAIMS_REGISTRY.md` (42 claims, 11 minority rows); `verify_claims.py` protocol claims green; `FINAL_CONFIG_FREEZE_CARD.md` awaiting user lock for B14; A4/C12/D1/H6/L11 advanced from disk evidence; sealed test **not** run |
 
 ---
 

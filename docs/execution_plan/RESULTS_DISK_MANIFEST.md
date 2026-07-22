@@ -1,7 +1,7 @@
 # Results Disk Manifest (handoff snapshot)
 
 **Generated (UTC):** 2026-07-21T11:01:25.771483+00:00  
-**Last append (UTC):** 2026-07-22T11:35:00 (WP7 XAI + WP8 ToN + F9 energy + WP6a fidelity)
+**Last append (UTC):** 2026-07-22T11:55:00 (WP9a claims packaging + freeze card)
 **Host path root:** `/home/titoisalive/colide`
 
 `benchmarks/results/` is **gitignored**. This file is committed so the next session can verify local artifacts without inventing numbers.
@@ -533,4 +533,17 @@ Complements analysis-only `pareto/`. Script: `scripts/run_pareto_multiobj.py`.
 | `benchmarks/results/numerical_fidelity.json` | `73d043da90ffc6f67ca28f39cc2f8c7e` | 2608 | bit-identical + CUDA PASS |
 | `benchmarks/results/wp6_reexport/summary.json` | (local) | — | DONE re-export |
 
-**Last append (UTC):** 2026-07-22T11:35:00 (WP7 + WP8 + F9 + WP6a)
+## WP9a claims packaging (2026-07-22)
+
+| Path | exists | md5 | key |
+|------|--------|-----|-----|
+| `scripts/build_claims_package.py` | yes | (source) | rebuilds claims from disk JSON |
+| `benchmarks/results/claims_package/protocol_claims.json` | yes | (local gitignored) | 42 claims + minority tables |
+| `benchmarks/results/claims_package/table.md` | yes | (local) | markdown twin |
+| `docs/execution_plan/CLAIMS_REGISTRY.md` | yes | (committed) | committed numbers registry |
+| `docs/execution_plan/FINAL_CONFIG_FREEZE_CARD.md` | yes | (committed) | B14 gate — AWAITING USER LOCK |
+| `scripts/verify_claims.py` | yes | (source) | historical + protocol claims green |
+
+**Decision: DONE (packaging)** — sealed-test / DICC claims remain PENDING/BLOCKED rows in the registry. Re-run builder after B14.
+
+**Last append (UTC):** 2026-07-22T11:55:00 (WP9a)
