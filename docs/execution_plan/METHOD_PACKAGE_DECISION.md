@@ -1,7 +1,7 @@
 # Method package decision (Phase 2) — signed default
 
 **Date:** 2026-07-19  
-**Last status update:** 2026-07-22 (G2/G5 classical + D6 stratified DONE; train sampler stays **shuffle**; LGBM protocol 0.9818; train HPs stay INCORPORATED)  
+**Last status update:** 2026-07-22 (C*/E6/B2–B4 DONE — all novelty probes RUN_DOCUMENTED reject; CAD-CBA-v1 package locked; train HPs stay INCORPORATED)  
 **Rule:** one package first; **every other playlist idea still gets a bounded run → RUN_DOCUMENTED** (skip-nothing).
 
 ## Chosen package (v1): **Class-aware distilled CNN–BiLSTM (CAD-CBA-v1)**
@@ -14,8 +14,11 @@
 | Loss | **Focal** wins 4-way val compare (CE / focal / focal_cb / logit_adj) | D2–D5 |
 | Train HPs | **Optuna WP3 winner** → `config/hpo_best.yaml` (val 0.9791) | B1, B6–B8, L6 |
 | Thresholds | Val search on focal seed42: **no gain** → keep **argmax** (RUN_DOCUMENTED) | D7, C11 |
-| Multi-scale CNN / new attention | **Later** only if CAD-CBA-v1 plateaus | C3–C4 |
-| SupCon / asymmetric / uncertainty | Bounded run later (skip-nothing) | C7–C10 |
+| Multi-scale CNN / new attention | **Rejected** (C4 0.9167 / A4 hurts; keep V3) | C3–C4 |
+| SupCon / asymmetric / uncertainty | **Rejected** bounded (C7 0.7732 / C8 0.8012 / C10 no lift) | C7–C10 |
+| Gated fusion | **Rejected** (C5 0.9132 ≪ CTRL) | C5 |
+| Neural teacher KD | **Rejected** (E6 student 0.8513 ≪ ensemble 0.9401) | E6 |
+| Arch HPO B2–B4 | **Plateau reject** — freeze V3 dims | B2–B4 |
 
 ## Named weakness
 Extreme class imbalance + minority (Theft) under neural deploy path; RF still stronger on published path — student must win on **trade-off** and/or close minority gap under **same protocol**.
@@ -68,5 +71,12 @@ Extreme class imbalance + minority (Theft) under neural deploy path; RF still st
 - D6 inv-freq stratified batch **0.9209** ≪ shuffle **0.9791** (Δ−0.058) — do not add class-balanced batch sampling to CAD-CBA-v1
 - G2 LinearSVC full **0.4268** — linear SVM not competitive under protocol imbalance
 - G5 LGBM legacy **0.5512** superseded by balanced fix **0.9818** (document both; paper uses fixed)
+- C4 multi-scale **0.9167** ≪ CTRL **0.9787** — not free arch win
+- C5 gated fusion **0.9132** ≪ CTRL — not free fusion win
+- C7 SupCon+focal **0.7732** (Theft=0) — hurts under budget
+- C8 asymmetric **0.8012** — hurts vs focal
+- C10 MC-dropout selective — no robust high-coverage lift over argmax 0.9791
+- E6 G11 neural teacher → student **0.8513** ≪ ensemble KD student **0.9401** — keep tree ensemble teacher
+- B2–B4 full arch Optuna — plateau reject (`B2B4_ARCH_HPO_PLATEAU_REJECT.md`)
 
 See `RESULTS_DISK_MANIFEST.md` for md5s and paths.

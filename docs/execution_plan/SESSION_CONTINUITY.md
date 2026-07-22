@@ -1,7 +1,7 @@
 # Session Continuity / Handoff Pack
 
 **Session closed for continuity:** 2026-07-22  
-**Mode this session:** **WP5c Pareto H8** (analysis-only consolidation)  
+**Mode this session:** **C\* playlist + E6 neural teacher + B2–B4 plateau + pareto_h8 systems**  
 **Git tip at handoff:** see latest commit after handoff push (`git log -1 --oneline`)  
 **Machine root:** `/home/titoisalive/colide`
 
@@ -37,29 +37,39 @@ Complete **every** row in `PROF_FEEDBACK_TRACKER.md` for Prof Por / WoS path.
 ## 3. Completed this arc (do not redo)
 
 ### 3.1–3.14 Prior (still valid)
-Protocol foundation; WP1b **0.9714±0.0109**; classical LR/RF/XGB; imbalance focal INCORPORATE; WP2d argmax; WP4b ensemble KD **0.9401**; WP3 HPO **0.9791** INCORPORATE; package ensemble+HPO **0.9639±0.0185**; HPO multi-seed confirm **0.9689±0.0145**; WP5a ablation A7 **0.9699**; WP5b neural G11 **0.9493**; G2 SVM **0.4268** RUN_DOCUMENTED; G5 LGBM **0.9818**; D6 stratified **0.9209** vs shuffle **0.9791** keep shuffle; G13 N/A; B9 closed.
+Protocol foundation; WP1b **0.9714±0.0109**; classical LGBM **0.9818** / RF 0.9778 / SVM 0.4268; imbalance focal INCORPORATE; WP2d argmax; WP4b ensemble KD **0.9401**; WP3 HPO **0.9791** INCORPORATE; package ensemble+HPO **0.9639±0.0185**; HPO multi-seed **0.9689±0.0145**; WP5a A7 **0.9699**; WP5b G11 **0.9493**; D6 stratified keep shuffle; WP5c analysis Pareto H8 DONE.
 
-### 3.15 WP5c Pareto H8 (DONE — this session)
-**Analysis-only** (no retrain). Script: `scripts/run_pareto_wp5c.py`  
-**Sources:** ablation A1–A7 + neural G6–G12 systems metrics (CUDA batch=256) + classical val-F1 refs  
-**Outputs:** `benchmarks/results/pareto/summary.json` + `table.md` + plots
+### 3.15 Bounded C* playlist (DONE — this session)
+**Seed 42 · stage_b_ft · val only · test sealed**
 
-| Headline | Value |
-|----------|-------|
-| Protocol points | 14 |
-| Best val macro-F1 | **A7 0.9699** @ 26.02 µs · 530181 params |
-| F1–latency front | **A7, A3, G6** |
-| Composite #1 | **G6 MLP 0.762** · F1 0.9285 @ **4.33** µs |
-| Classical LGBM / RF (val ref) | **0.9818** / 0.9778 |
-| Decision | **DONE** (H8 tables); CAD-CBA-v1 package not replaced by composite |
-| Champion | **unchanged** `80a90f7…` |
+| Row | val macro-F1 | vs CTRL | Decision |
+|-----|--------------|---------|----------|
+| CTRL V3 focal | **0.9787** | — | CONTROL |
+| C4 multi-scale | 0.9167 | −0.062 | RUN_DOCUMENTED |
+| C5 gated | 0.9132 | −0.065 | RUN_DOCUMENTED |
+| C8 asymmetric | 0.8012 | −0.178 | RUN_DOCUMENTED |
+| C7 SupCon | 0.7732 | −0.206 | RUN_DOCUMENTED |
+| C10 uncertainty | det 0.9791 | flat | RUN_DOCUMENTED keep argmax |
 
-### 3.16 Full remaining playlist
-- **C4/C5/C7/C8/C10** multi-scale / gated / SupCon / asymmetric / uncertainty  
-- **B2–B4** bounded arch HPO or RUN_DOCUMENTED plateau reject  
-- **E6** neural teacher KD  
+Summary: `benchmarks/results/cstar_bounded/summary.json`  
+**None incorporated.** CAD-CBA-v1 package unchanged.
+
+### 3.16 B2–B4 arch HPO plateau reject (DONE)
+`docs/execution_plan/B2B4_ARCH_HPO_PLATEAU_REJECT.md` — freeze V3 dims; C4/C5 are the bounded probes.
+
+### 3.17 E6 neural teacher KD (DONE)
+G11 teacher → V3 student stage_a_kd val **0.8513** ≪ ensemble **0.9401** → **RUN_DOCUMENTED**.  
+`benchmarks/results/teachers_kd_neural/summary.json`
+
+### 3.18 WP5c systems rebench pareto_h8 (DONE)
+`benchmarks/results/pareto_h8/` — classical systems + package rebench; composite G6 **0.9056**; complements `pareto/`.
+
+### 3.19 Full remaining playlist
 - Sealed multi-seed **test** after final config lock (B14)  
-- **WP6** re-export; **WP7** XAI or J10; **WP8** ToN; **WP9** claims + manuscript  
+- **WP6** re-export  
+- **WP7** XAI or J10 drop  
+- **WP8** ToN  
+- **WP9** claims + manuscript  
 - **WP0** DICC (user-scheduled)  
 - End every session with **paste-ready handoff prompt**
 
@@ -67,14 +77,16 @@ Protocol foundation; WP1b **0.9714±0.0109**; classical LR/RF/XGB; imbalance foc
 
 ## 4. Background jobs at handoff
 
-**Expect idle** (analysis-only session). GPU cool.  
+**Expect idle** (C* + E6 finished). GPU cool.  
 Verify:
 
 ```bash
 cd /home/titoisalive/colide
-test -f benchmarks/results/pareto/summary.json && echo pareto_OK
-python3 -c "import json;s=json.load(open('benchmarks/results/pareto/summary.json'));print(s['decision'], s['headlines']['best_f1_id'], round(s['headlines']['best_f1'],4), s['pareto_front_f1_latency'])"
-# expect DONE, A7, 0.9699, front A7/A3/G6
+ps -eo pid,cmd | awk '/run_bounded|run_neural_teacher|train_protocol|run_hpo/{print}'
+test -f benchmarks/results/cstar_bounded/summary.json && echo cstar_OK
+test -f benchmarks/results/teachers_kd_neural/summary.json && echo e6_OK
+python3 -c "import json;s=json.load(open('benchmarks/results/cstar_bounded/summary.json'));print(s['decisions'])"
+python3 -c "import json;s=json.load(open('benchmarks/results/teachers_kd_neural/summary.json'));print(s['student_val_macro_f1'], s['decision'])"
 md5sum model/best_model_botiot_twostage.pth
 # expect: 80a90f7cc210276300eaa90173a5a385
 nvidia-smi --query-gpu=temperature.gpu,utilization.gpu,memory.used --format=csv
@@ -84,8 +96,8 @@ nvidia-smi --query-gpu=temperature.gpu,utilization.gpu,memory.used --format=csv
 
 ## 5. Next chat work order (strict)
 
-1. **Verify** disk vs `RESULTS_DISK_MANIFEST.md` (incl. pareto).  
-2. **Next science:** bounded **C\*** (SupCon / multi-scale / gated / asymm / uncertainty) **or** **B2–B4** arch HPO **or** **E6** neural teacher.  
+1. **Verify** disk vs `RESULTS_DISK_MANIFEST.md` (cstar + e6 + pareto_h8 + prior).  
+2. **Next science:** sealed multi-seed **test** (only after explicit final lock) **or** WP7 XAI/J10 **or** WP8 ToN.  
 3. Thermal guard if sustained train (soft 85 / hard 90).  
 4. **DICC** only when user opens dedicated session.  
 5. Never start manuscript until tracker largely green.  
@@ -101,7 +113,7 @@ Perfection over LOR hurry. Option A CUDA locked. NO new jobs until you read cont
 
 FULL PLAYLIST LAW (user-locked):
 - Complete EVERY tracker / WP playlist item → DONE | INCORPORATED | RUN_DOCUMENTED | BLOCKED(ops only).
-- No silent skips of “optional” work (SupCon, arch HPO B2–B4, XAI, ToN, sealed test, etc.).
+- No silent skips of “optional” work (XAI, ToN, sealed test, re-export, energy table, etc.).
 - If evidence already exists on disk/docs → flip tracker status + notes. Never invent numbers.
 - End session: update tracker/progress/manifest/HANDOFF + commit/push + paste full next-session prompt.
 
@@ -116,30 +128,28 @@ Read first (in order):
 8) config/hpo_best.yaml
 
 Verify on disk:
-- benchmarks/results/pareto/summary.json  (H8 DONE; A7 best F1 ~0.9699; front A7/A3/G6; composite G6 ~0.762)
-- benchmarks/results/pareto/table.md + benchmarks/plots/pareto_f1_*.png
-- benchmarks/results/baselines_classical/summary_handoff.json  (LGBM ~0.9818 tops; SVM ~0.4268; RF 0.9778)
-- benchmarks/results/stratified_batch/summary.json  (shuffle ~0.9791 > stratified ~0.9209 Δ~-0.058)
-- benchmarks/results/baselines_neural/summary.json  (G11 top ~0.9493 n=7)
-- benchmarks/results/ablation_ladder/summary.json  (A7 top ~0.9699 n=7)
-- benchmarks/results/multirun_hpo_confirm/summary.json  (mean ~0.9689±0.0145 n=5)
-- benchmarks/results/multirun_ensemble_hpo/summary.json  (mean ~0.9639±0.0185 n=5)
+- benchmarks/results/cstar_bounded/summary.json  (CTRL ~0.9787; C4 0.9167; C5 0.9132; C7 0.7732; C8 0.8012; C10 RUN_DOCUMENTED)
+- benchmarks/results/teachers_kd_neural/summary.json  (E6 student ~0.8513 ≪ ensemble 0.9401)
+- benchmarks/results/pareto_h8/summary.json  (systems rebench; composite G6)
+- benchmarks/results/pareto/summary.json  (analysis H8)
+- docs/execution_plan/B2B4_ARCH_HPO_PLATEAU_REJECT.md
+- benchmarks/results/baselines_classical/summary_handoff.json  (LGBM ~0.9818; SVM ~0.4268; RF 0.9778)
 - benchmarks/results/hpo/summary.json  (winner ~0.9791 INCORPORATE)
 - config/hpo_best.yaml
-- benchmarks/results/teachers_kd/summary.json  (ensemble ~0.9401)
 - benchmarks/results/multirun/summary.json  (WP1b ~0.9714±0.0109)
 - Champion md5 still 80a90f7cc210276300eaa90173a5a385
 - No train jobs; GPU cool before start
 
-Last session (2026-07-22): WP5c Pareto H8 DONE — A7 0.9699 best F1; G6 composite #1 0.762 @4.33µs;
-fronts A7/A3/G6; classical LGBM/RF refs; champion unchanged. Prior: G2/G5/D6 closed.
-Git tip after push: check git log -1.
+Last session (2026-07-22): C* all RUN_DOCUMENTED (none beat CTRL 0.9787); B2–B4 plateau reject;
+E6 neural teacher student 0.8513 RUN_DOCUMENTED keep ensemble; pareto_h8 systems rebench;
+package CAD-CBA-v1 locked (V3+focal+ens KD+hpo_best+shuffle+argmax); champion unchanged.
 
-Next (pick and fully finish with JSON + tracker flips):
-A) Bounded C* SupCon / multi-scale / gated / asymmetric / uncertainty  ← recommended science
-B) B2–B4 arch HPO or RUN_DOCUMENTED plateau reject
-C) E6 neural teacher KD (bounded)
-D) DICC only if user opens dedicated session
+Next:
+A) Final config freeze → sealed multi-seed TEST (B14)  ← only if user confirms lock
+B) WP7 XAI suite or J10 drop path
+C) WP8 ToN final-method eval
+D) WP6 re-export / systems polish
+E) DICC only if user opens dedicated session
 
 Rules: no invent multi-day numbers; no clobber champion without BACKUP;
 thermal guard if sustained train; commit/push; end per HANDOFF lifecycle with paste-ready next prompt.
@@ -156,13 +166,13 @@ thermal guard if sustained train; commit/push; end per HANDOFF lifecycle with pa
 | Tracker | `docs/execution_plan/PROF_FEEDBACK_TRACKER.md` |
 | Progress | `docs/execution_plan/PROGRESS_LOG.md` |
 | Method decision | `docs/execution_plan/METHOD_PACKAGE_DECISION.md` |
+| B2–B4 reject | `docs/execution_plan/B2B4_ARCH_HPO_PLATEAU_REJECT.md` |
 | HPO winner config | `config/hpo_best.yaml` |
-| Pareto summary | `benchmarks/results/pareto/summary.json` |
-| Classical handoff | `benchmarks/results/baselines_classical/summary_handoff.json` |
-| D6 stratified summary | `benchmarks/results/stratified_batch/summary.json` |
-| Neural baselines summary | `benchmarks/results/baselines_neural/summary.json` |
-| Ablation summary | `benchmarks/results/ablation_ladder/summary.json` |
-| Pareto driver | `scripts/run_pareto_wp5c.py` |
+| C* summary | `benchmarks/results/cstar_bounded/summary.json` |
+| E6 summary | `benchmarks/results/teachers_kd_neural/summary.json` |
+| Pareto systems | `benchmarks/results/pareto_h8/summary.json` |
+| C* driver | `scripts/run_bounded_cstar.py` |
+| E6 driver | `scripts/run_neural_teacher_kd.py` |
 
 **Note:** `benchmarks/results/` is largely **gitignored** — results live on this machine; next agent must use laptop paths or re-run. Manifest commits the **headlines + md5s**.
 
@@ -172,12 +182,12 @@ thermal guard if sustained train; commit/push; end per HANDOFF lifecycle with pa
 
 | Result | Assessment |
 |--------|------------|
-| A7 package F1 0.9699 | Best neural package under systems set |
-| G6 MLP composite | Efficiency win; not full CAD-CBA detection story |
-| LGBM 0.9818 | Still tops pure detection among protocol classical |
-| D6 stratified 0.9209 | Negative — keep shuffle |
-| HPO train HPs 0.9791 | INCORPORATED; multi-seed mean weaker |
+| CTRL / package path ~0.9787 | Still the neural reference |
+| C* novelty probes | All negative — honest; do not re-litigate without new protocol |
+| E6 neural teacher | Weaker than tree ensemble — keep ensemble |
+| LGBM 0.9818 | Detection ceiling under protocol |
+| Multi-obj | Primary publishable angle (not F1 supremacy) |
 
 ---
 
-*End handoff. Next chat: verify disk → bounded C* / B2–B4 / E6 (recommended).*
+*End handoff. Next chat: verify disk → sealed test / XAI / ToN (recommended).*

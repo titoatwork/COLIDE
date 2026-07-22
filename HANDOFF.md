@@ -1,7 +1,7 @@
 # COLIDE — Session Handoff
 
 **MODE:** 🚀 **EXECUTION — next chat continues Prof tracker.** This chat closed for continuity.  
-**Closed:** 2026-07-22 · **WP5c Pareto H8** (analysis).  
+**Closed:** 2026-07-22 · **C\* + E6 + B2–B4 + pareto_h8** (science + docs).  
 **Authority:** `docs/execution_plan/SESSION_CONTINUITY.md` + `RESULTS_DISK_MANIFEST.md` + `PROF_FEEDBACK_TRACKER.md` + Option A.  
 **Policy:** skip nothing → **complete every playlist/tracker row** → JSON → INCORPORATED or RUN_DOCUMENTED (BLOCKED only for ops). **Perfection over LOR hurry.** No invent DICC numbers. Context hygiene: flip statuses when evidence already exists.  
 **Champion:** `model/best_model_botiot_twostage.pth` md5 **`80a90f7cc210276300eaa90173a5a385`** — no clobber without BACKUP.  
@@ -16,15 +16,16 @@
 | Protocol + sealed eval + WP1b multirun 0.9714±0.0109 | DONE (prior) |
 | Classical / imbalance / thresholds / WP4b ensemble KD 0.9401 | DONE (prior) |
 | WP3 Optuna HPO 0.9791 INCORPORATE train HPs | DONE (prior) |
-| Package FT multirun ensemble KD + hpo_best 0.9639±0.0185 | DONE (prior) |
-| Multi-seed HPO confirm 0.9689±0.0145 | DONE (prior) |
-| WP5a ablation ladder A1–A7 A7 0.9699 | DONE (prior) |
-| WP5b neural baselines G6–G12 G11 0.9493 | DONE (prior) |
-| G2 SVM full / G5 LGBM fix / D6 stratified / G13 | DONE (prior) |
-| **WP5c Pareto H8** | **DONE** A7 best F1 **0.9699**; front A7/A3/G6; composite G6 **0.762** |
+| Package / HPO confirm / ablation / neural baselines | DONE (prior) |
+| G2/G5 classical + D6 stratified + WP5c analysis Pareto | DONE (prior) |
+| **WP5c systems rebench `pareto_h8/`** | **DONE** composite G6 **0.9056**; classical systems |
+| **Bounded C\*** CTRL 0.9787; C4 0.9167; C5 0.9132; C8 0.8012; C7 0.7732; C10 no lift | **DONE** all RUN_DOCUMENTED |
+| **B2–B4 arch HPO plateau reject** | **DONE** RUN_DOCUMENTED |
+| **E6 neural teacher KD** student **0.8513** ≪ ensemble 0.9401 | **DONE** RUN_DOCUMENTED |
 
+**CAD-CBA-v1 locked:** V3 + focal + ensemble KD + hpo_best + shuffle + argmax.  
 **DICC:** still **ABSENT** — dedicated session when user opens it.  
-**Jobs:** analysis-only; expect idle GPU.
+**Jobs:** C* + E6 **finished**; expect idle GPU.
 
 ---
 
@@ -46,7 +47,7 @@ Perfection over LOR hurry. Option A CUDA locked. NO new jobs until you read cont
 
 FULL PLAYLIST LAW (user-locked):
 - Complete EVERY tracker / WP playlist item → DONE | INCORPORATED | RUN_DOCUMENTED | BLOCKED(ops only).
-- No silent skips of “optional” work (SupCon, arch HPO B2–B4, XAI, ToN, sealed test, etc.).
+- No silent skips of “optional” work (XAI, ToN, sealed test, re-export, energy table, etc.).
 - If evidence already exists on disk/docs → flip tracker status + notes. Never invent numbers.
 - End session: update tracker/progress/manifest/HANDOFF + commit/push + paste full next-session prompt.
 
@@ -61,29 +62,28 @@ Read first (in order):
 8) config/hpo_best.yaml
 
 Verify on disk:
-- benchmarks/results/pareto/summary.json  (H8 DONE; A7 best F1 ~0.9699; front A7/A3/G6; composite G6 ~0.762)
-- benchmarks/results/pareto/table.md + benchmarks/plots/pareto_f1_*.png
-- benchmarks/results/baselines_classical/summary_handoff.json  (LGBM ~0.9818 tops; SVM ~0.4268; RF 0.9778)
-- benchmarks/results/stratified_batch/summary.json  (shuffle ~0.9791 > stratified ~0.9209 Δ~-0.058 RUN_DOCUMENTED)
-- benchmarks/results/baselines_neural/summary.json  (G11 top ~0.9493 n=7)
-- benchmarks/results/ablation_ladder/summary.json  (A7 top ~0.9699 n=7)
-- benchmarks/results/multirun_hpo_confirm/summary.json  (mean ~0.9689±0.0145 n=5)
-- benchmarks/results/multirun_ensemble_hpo/summary.json  (mean ~0.9639±0.0185 n=5)
+- benchmarks/results/cstar_bounded/summary.json  (CTRL ~0.9787; C4 0.9167; C5 0.9132; C7 0.7732; C8 0.8012; C10 RUN_DOCUMENTED)
+- benchmarks/results/teachers_kd_neural/summary.json  (E6 student ~0.8513 ≪ ensemble 0.9401)
+- benchmarks/results/pareto_h8/summary.json  (systems rebench; composite G6 ~0.9056)
+- benchmarks/results/pareto/summary.json  (analysis H8; A7 best F1 ~0.9699; composite G6 ~0.762)
+- docs/execution_plan/B2B4_ARCH_HPO_PLATEAU_REJECT.md
+- benchmarks/results/baselines_classical/summary_handoff.json  (LGBM ~0.9818; SVM ~0.4268; RF 0.9778)
 - benchmarks/results/hpo/summary.json  (winner ~0.9791 INCORPORATE)
 - config/hpo_best.yaml
-- benchmarks/results/teachers_kd/summary.json  (ensemble ~0.9401)
 - benchmarks/results/multirun/summary.json  (WP1b ~0.9714±0.0109)
 - Champion md5 still 80a90f7cc210276300eaa90173a5a385
 - No train jobs; GPU cool before start
 
-Last session (2026-07-22): WP5c Pareto H8 DONE — A7 0.9699 best F1 @26.0µs; G6 composite #1 0.762 @4.33µs;
-fronts A7/A3/G6; classical LGBM/RF refs; champion unchanged.
+Last session (2026-07-22): C* all RUN_DOCUMENTED (none beat CTRL 0.9787); B2–B4 plateau reject;
+E6 neural teacher student 0.8513 RUN_DOCUMENTED keep ensemble; pareto_h8 systems rebench;
+CAD-CBA-v1 locked; champion unchanged.
 
 Next:
-A) Bounded C* (SupCon / multi-scale / gated / asymmetric / uncertainty)  ← recommended science
-B) B2–B4 arch HPO or RUN_DOCUMENTED plateau reject
-C) E6 neural teacher KD (bounded)
-D) DICC only if user opens dedicated session
+A) Final config freeze → sealed multi-seed TEST (B14)  ← only if user confirms lock
+B) WP7 XAI suite or J10 drop path
+C) WP8 ToN final-method eval
+D) WP6 re-export / systems polish
+E) DICC only if user opens dedicated session
 
 Rules: no invent multi-day numbers; no clobber champion without BACKUP;
 thermal guard if sustained train; commit/push; end per HANDOFF lifecycle.
@@ -122,11 +122,10 @@ git rev-parse HEAD origin/master
 - Classical: prefer `summary_handoff.json` (LGBM official **0.9818** fixed; not legacy 0.5512)  
 - Teacher KD: stage_a KD ≠ stage_b FT numbers  
 - HPO: `hpo/summary.json` + `hpo_best.yaml`  
-- Ablation: `ablation_ladder/` ≠ multirun trees  
-- Neural baselines: `baselines_neural/` ≠ historical `ablation_mlp.json`  
-- D6 stratified: `stratified_batch/` — keep **shuffle** default  
-- HPO multi-seed confirm: `multirun_hpo_confirm/` ≠ package `multirun_ensemble_hpo/` ≠ WP1b `multirun/`  
-- Pareto: `pareto/` — analysis-only; composite ≠ method lock  
+- C*: `cstar_bounded/` — all negative vs CTRL; not package  
+- E6: `teachers_kd_neural/` — weaker than ensemble  
+- Pareto: `pareto/` analysis + `pareto_h8/` systems rebench  
+- D6 stratified: keep **shuffle** default  
 - Laptop thermal: soft 85 / hard 90  
 
 ---
@@ -135,4 +134,4 @@ git rev-parse HEAD origin/master
 
 Design plan Option A approved; FINAL_PLAN P0–P5; audit pack `docs/audit/`; interim Word report sent to Prof; feedback in `docs/feedback1.docx`.
 
-**Next science priority after verify disk:** bounded C* / B2–B4 arch HPO / E6. DICC only when user opens that session.
+**Next science priority after verify disk:** sealed multi-seed test (user lock) / XAI or J10 / ToN. DICC only when user opens that session.

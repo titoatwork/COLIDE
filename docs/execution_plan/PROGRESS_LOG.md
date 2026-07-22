@@ -1,7 +1,47 @@
 # Progress log (results as they land)
 
 **Policy:** document everything; label pilot vs full; test sealed unless noted.  
-**Handoff snapshot:** 2026-07-22 (WP5c Pareto H8 DONE; G2/G5/D6 prior)
+**Handoff snapshot:** 2026-07-22 (C* + E6 + B2–B4 + pareto_h8 DONE; WP5c prior)
+
+---
+
+## 2026-07-22 — Bounded C* playlist + E6 neural teacher + B2–B4 plateau (science)
+
+### C* bounded (GPU)
+Scripts: `scripts/run_bounded_cstar.py`, `model/method_variants.py`, losses ASL/SupCon in `scripts/protocol/losses.py`  
+Protocol: `botiot_v1` / **stage_b_ft** / seed **42** / epochs≤8 / patience=3 / **val only** (test sealed)  
+CTRL/C7/C8: distill init + hpo_best-ish; C4/C5: scratch; C10: post-hoc MC-dropout on HPO confirm  
+Tag: `cstar_bounded/` · Summary md5 `498241338cb114ae4010809302386191`  
+Champion md5 **unchanged** `80a90f7cc210276300eaa90173a5a385`.
+
+| Rank | Row | Config | val macro-F1 | Min-cls | Theft | Decision |
+|------|-----|--------|--------------|---------|-------|----------|
+| — | **CTRL** | V3 focal distill+HPO | **0.9787** | 0.9333 | 1.0000 | CONTROL |
+| 1 | C4 | multi-scale CNN–BiLSTM | 0.9167 | 0.7848 | 0.9091 | **RUN_DOCUMENTED** Δ−0.062 |
+| 2 | C5 | gated CNN–BiLSTM | 0.9132 | 0.7442 | 1.0000 | **RUN_DOCUMENTED** Δ−0.065 |
+| 3 | C8 | asymmetric multi-class loss | 0.8012 | 0.2857 | 0.2857 | **RUN_DOCUMENTED** Δ−0.178 |
+| 4 | C7 | SupCon + focal (λ=0.1) | 0.7732 | 0.0000 | 0.0000 | **RUN_DOCUMENTED** Δ−0.206 |
+| — | C10 | MC-dropout + entropy selective | det 0.9791 / mc 0.9767 | — | — | **RUN_DOCUMENTED** no high-cov lift; keep argmax |
+
+**None incorporated into CAD-CBA-v1.** Package stays V3 + focal + ensemble KD + hpo_best + shuffle + argmax.
+
+### B2–B4 arch HPO
+Doc: `docs/execution_plan/B2B4_ARCH_HPO_PLATEAU_REJECT.md`  
+**Decision: RUN_DOCUMENTED** — multi-seed plateau vs WP1b + KD transfer freeze + C4/C5 negative probes. No full arch Optuna.
+
+### E6 neural teacher KD
+Script: `scripts/run_neural_teacher_kd.py`  
+Stage: **stage_a_kd** · teacher G11 cnn_bilstm (val 0.9494) · student V3 · α=0.6 T=10 γ=2 · epochs≤10  
+Student best val macro-F1 **0.8513** ≪ WP4b ensemble **0.9401**  
+**Decision: RUN_DOCUMENTED** — keep ensemble teacher INCORPORATED.  
+Summary: `benchmarks/results/teachers_kd_neural/summary.json` wall ~1436 s.
+
+### WP5c systems rebench (same day)
+`scripts/run_pareto_multiobj.py` → `benchmarks/results/pareto_h8/`  
+Rebench package ckpts + classical RF/XGB/LGBM CPU systems; composite G6 **0.9056**; mixed front includes LGBM/XGB.  
+Complements analysis-only `pareto/` (already committed).
+
+**Next science:** sealed multi-seed **test** (B14) after final lock; WP7 XAI or J10 drop; WP8 ToN; WP6 re-export; DICC when user opens session.
 
 ---
 

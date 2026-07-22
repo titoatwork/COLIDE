@@ -38,9 +38,9 @@
 | ID | Requirement | Status | Evidence / notes |
 |----|-------------|--------|------------------|
 | B1 | Controlled HPO (not manual few params) | DONE | WP3 Optuna TPE study `botiot_stage_b_ft_hpo_v1`; 20 trials + full-train refine; `hpo/summary.json` |
-| B2 | CNN layers and filters | TODO | **Still required (playlist):** bounded WP2c arch search or explicit RUN_DOCUMENTED reject after package plateau test; currently frozen for KD weight transfer |
-| B3 | Convolution kernel sizes | TODO | **Still required:** same as B2; padding=1 k=3 frozen interim only |
-| B4 | BiLSTM hidden dims and layers | TODO | **Still required:** same as B2 |
+| B2 | CNN layers and filters | RUN_DOCUMENTED | Plateau reject: multi-seed package means do not beat WP1b; KD transfer freezes V3 dims; C4 multi-scale probe 0.9167 ≪ CTRL 0.9787; see `B2B4_ARCH_HPO_PLATEAU_REJECT.md` |
+| B3 | Convolution kernel sizes | RUN_DOCUMENTED | k=3 frozen in package; C4 multi-scale k∈{3,5,7} bounded probe RUN_DOCUMENTED (no lift); full kernel Optuna rejected |
+| B4 | BiLSTM hidden dims and layers | RUN_DOCUMENTED | BiLSTM dims frozen for V3 package; plateau + KD transfer; see B2B4 note |
 | B5 | Dropout rate | DONE (train) | WP3 searched dropout 0.10–0.50 + attention_dropout 0–0.30; winner dropout≈0.148 att≈0.214 |
 | B6 | LR and LR scheduler | DONE | WP3: lr log 1e-5–3e-3; scheduler {none,cosine,step}; winner lr≈5.89e-5 cosine |
 | B7 | Batch size | DONE | WP3 categorical {128,256,512,1024}; winner **1024** |
@@ -61,13 +61,13 @@
 | C1 | Not only “standard CNN–BiLSTM stack” | PARTIAL | Ladder shows package A7 **0.9699** &gt; plain A3 **0.9493**; novelty = composition (attn+focal+ens KD+HPO), not attn alone (A4 hurts) |
 | C2 | Class-aware attention after BiLSTM | RUN_DOCUMENTED (caveat) | V3 has attention; WP5a A4 attn+CE **0.7378** &lt; A3 **0.9493** under seed42/8-ep — do not claim attn alone helps; credit is package-level |
 | C3 | Lightweight temporal attention | RUN_DOCUMENTED (caveat) | Same as C2; systems: attn models ~26 µs/sample vs A3 ~20 µs (batch256) |
-| C4 | Multi-scale temporal convolution | TODO | **Playlist required:** bounded experiment or RUN_DOCUMENTED reject after try |
-| C5 | Gated CNN–BiLSTM fusion | TODO | **Playlist required:** bounded experiment or RUN_DOCUMENTED reject after try |
+| C4 | Multi-scale temporal convolution | RUN_DOCUMENTED | Bounded seed42: val **0.9167** vs CTRL **0.9787** (Δ−0.062); not incorporated (`cstar_bounded/C4_*.json`) |
+| C5 | Gated CNN–BiLSTM fusion | RUN_DOCUMENTED | Bounded seed42: val **0.9132** vs CTRL 0.9787 (Δ−0.065); not incorporated (`cstar_bounded/C5_*.json`) |
 | C6 | Class-balanced or logit-adjusted loss | RUN_DOCUMENTED | 4-way FT compare: focal best; focal_cb/logit_adj worse macro (`imbalance_loss/`) |
-| C7 | Supervised contrastive (minority) | TODO | **Playlist required:** bounded run + JSON even if not selected |
-| C8 | Asymmetric loss minority | TODO | **Playlist required:** bounded run + JSON even if not selected |
+| C7 | Supervised contrastive (minority) | RUN_DOCUMENTED | Bounded SupCon+focal: val **0.7732** (Theft=0) ≪ CTRL 0.9787; not incorporated (`cstar_bounded/C7_*.json`) |
+| C8 | Asymmetric loss minority | RUN_DOCUMENTED | Bounded ASL: val **0.8012** ≪ CTRL 0.9787; not incorporated (`cstar_bounded/C8_*.json`) |
 | C9 | Teacher ensemble distillation | INCORPORATED | WP4b: ensemble student val **0.9401** best among 5 teachers (`teachers_kd/`) |
-| C10 | Uncertainty-aware detection | TODO | **Playlist required:** bounded run + JSON even if not selected |
+| C10 | Uncertainty-aware detection | RUN_DOCUMENTED | MC-dropout + entropy selective on HPO confirm: det **0.9791**, no high-coverage lift; keep argmax (`cstar_bounded/C10_*.json`) |
 | C11 | Adaptive per-class thresholds | RUN_DOCUMENTED | Val grid search macro/min/joint/Theft/Normal — no lift vs argmax on focal FT; not in package |
 | C12 | Component addresses named weakness | PARTIAL | Named weakness = imbalance/Theft; package uses focal+ensemble KD; **ablation/minority tables still open** |
 | C13 | Mod comparison table before lock | DONE | `docs/MOD_DECISION_TABLE.md` + `METHOD_PACKAGE_DECISION.md` CAD-CBA-v1 |
@@ -88,7 +88,7 @@
 | D6 | Stratified batch sampling | RUN_DOCUMENTED | WP D6 seed42: shuffle **0.9791** &gt; stratified inv-freq **0.9209** (Δ−0.058); keep shuffle (`stratified_batch/summary.json`) |
 | D7 | Minority-aware threshold tuning | RUN_DOCUMENTED | WP2d DONE: macro/min/joint/class_f1 on focal seed42; Δmacro=0 Δmin=0 vs argmax; keep argmax |
 | D8 | Controlled oversampling | DONE (stage_a) | Protocol `stage_a_kd` SMOTE targets freeze card; stage_b_ft deliberately no SMOTE |
-| D9 | Supervised contrastive | TODO | **Playlist required:** bounded run + JSON (same as C7) |
+| D9 | Supervised contrastive | RUN_DOCUMENTED | Same as C7: SupCon+focal **0.7732** ≪ CTRL; not in package |
 | D10 | Select on macro-F1 + per-class rare attacks | DONE | Protocol selection + HPO/loss pick use val macro-F1; min-cls/Theft logged every run |
 
 ---
@@ -102,10 +102,10 @@
 | E3 | XGBoost teacher | RUN_DOCUMENTED | Teacher val 0.9918 but student 0.9270 — does not win student |
 | E4 | LightGBM teacher | RUN_DOCUMENTED | Teacher val 0.5928; student 0.8829 — weak path |
 | E5 | Calibrated tree ensemble | INCORPORATED | Unweighted mean RF+XGB+LGBM probs; student **0.9401** best |
-| E6 | Strong neural teacher | TODO | **Playlist required:** bounded neural-teacher KD or RUN_DOCUMENTED reject after try |
+| E6 | Strong neural teacher | RUN_DOCUMENTED | G11 neural teacher → V3 student stage_a_kd val **0.8513** ≪ ensemble student **0.9401**; keep ensemble (`teachers_kd_neural/`) |
 | E7 | Heterogeneous ensembles | INCORPORATED | RF+XGB+LGBM heterogeneous mean (WP4b) |
 | E8 | Student not mere imitation — deployment trade-off | PARTIAL | WP4b: XGB teacher 0.9918 → student 0.9270 &lt; ensemble student 0.9401 (not pure imitation); multi-obj table still open |
-| E9 | Lower memory / latency / GPU deploy / temporal | PARTIAL | WP5c consolidated table (`pareto/`); A7 tops F1, G6 wins composite/latency; historical cuML ~2MB vs 444MB; deploy CUDA blocks still separate |
+| E9 | Lower memory / latency / GPU deploy / temporal | PARTIAL | WP5c `pareto/` + systems rebench `pareto_h8/`: G6 composite lead; classical LGBM tops F1; GPU deploy CUDA blocks / final energy still open |
 
 ---
 
@@ -158,7 +158,7 @@
 | H5 | Low explanation dispatch | DONE (dispatch) | `llm_explainability.json` — 16.60 µs is **dispatch only** (not full LLM gen) |
 | H6 | Good minority detection | PARTIAL | Theft/min-cls logged (HPO seed42 Theft=1.0); systematic minority claim needs ablation/final tables |
 | H7 | Stable across GPU platforms | BLOCKED | DICC |
-| H8 | Pareto F1–latency–memory | DONE | WP5c: 14 protocol points (A1–A7 + G6–G12); F1–lat front **A7/A3/G6**; composite #1 G6 0.762; best F1 A7 **0.9699**; classical LGBM/RF ref 0.9818/0.9778; `pareto/summary.json` + plots |
+| H8 | Pareto F1–latency–memory | DONE | WP5c analysis `pareto/` + systems rebench `pareto_h8/`: composite G6; F1 leadership classical LGBM/package seeds; a priori weights locked; figure + CSV |
 
 ---
 
@@ -265,6 +265,10 @@
 | 2026-07-22 | **WP5b neural baselines DONE** G6–G12 seed42 CE scratch equal budget ~80 min: G11 **0.9493** &gt; G6 0.9285 &gt; G10 0.8159 &gt; G8 0.8099 &gt; G9 0.8058 &gt; G7 0.6221 &gt; G12 0.5808; G15 HPO budget note DONE; transformer weak under budget; G7=A1 G9=A2 G11=A3 consistency; champion unchanged; next D6/G2/G5 or WP5c/C* |
 | 2026-07-22 | **G2/G5 classical + D6 + G13 DONE:** LinearSVC full **0.4268** RUN_DOCUMENTED; LGBM fix **0.9818** DONE (tops classical); D6 stratified **0.9209** vs shuffle **0.9791** (Δ−0.058) RUN_DOCUMENTED keep shuffle; G13 N/A note; B9 class-weight close RUN_DOCUMENTED; champion unchanged; next WP5c Pareto / C* / B2–B4 / E6 |
 | 2026-07-22 | **WP5c Pareto H8 DONE** analysis-only: 14 protocol points A1–A7+G6–G12; F1–lat front A7/A3/G6; best F1 A7 **0.9699** @26.0 µs; composite #1 G6 **0.762** @4.33 µs F1 0.9285; classical LGBM/RF ref 0.9818/0.9778; `pareto/summary.json` + `table.md` + plots; champion unchanged; next C* / B2–B4 / E6 |
+| 2026-07-22 | **WP5c systems rebench `pareto_h8/`** + classical RF/XGB/LGBM CPU systems; composite G6 **0.9056**; front G6/HPO/WP1b-s44/XGB/LGBM; champion unchanged |
+| 2026-07-22 | **Bounded C\* DONE** CTRL **0.9787**; C4 multi-scale **0.9167**; C5 gated **0.9132**; C8 ASL **0.8012**; C7 SupCon **0.7732**; C10 uncertainty no lift — all **RUN_DOCUMENTED** no package incorporate; `cstar_bounded/` |
+| 2026-07-22 | **B2–B4 arch HPO plateau reject RUN_DOCUMENTED** — `B2B4_ARCH_HPO_PLATEAU_REJECT.md`; V3 dims frozen |
+| 2026-07-22 | **E6 neural teacher KD DONE** G11 teacher → student **0.8513** ≪ ensemble **0.9401** RUN_DOCUMENTED; keep ensemble INCORPORATED; champion unchanged |
 
 ---
 

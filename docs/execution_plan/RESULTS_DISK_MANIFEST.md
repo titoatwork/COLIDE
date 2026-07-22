@@ -1,7 +1,7 @@
 # Results Disk Manifest (handoff snapshot)
 
 **Generated (UTC):** 2026-07-21T11:01:25.771483+00:00  
-**Last append (UTC):** 2026-07-22T07:31:00 (WP5c Pareto H8)
+**Last append (UTC):** 2026-07-22T09:30:00 (C* + E6 + B2B4 + pareto_h8)
 **Host path root:** `/home/titoisalive/colide`
 
 `benchmarks/results/` is **gitignored**. This file is committed so the next session can verify local artifacts without inventing numbers.
@@ -446,3 +446,54 @@
 | `docs/execution_plan/G13_LIGHTWEIGHT_IDS_NOTE.md` | `36f3b501a7017cc7d2f0cd6d648d6eea` | RUN_DOCUMENTED N/A |
 
 
+
+## Bounded C* playlist (2026-07-22)
+
+**Stage:** `stage_b_ft` · seed 42 · epochs≤8 · val-only · test sealed  
+**Script:** `scripts/run_bounded_cstar.py` · variants `model/method_variants.py`  
+**Tag:** `cstar_bounded/` · Champion md5 **unchanged** `80a90f7cc210276300eaa90173a5a385`
+
+| Path | md5 | bytes | key |
+|------|-----|-------|-----|
+| `benchmarks/results/cstar_bounded/summary.json` | `498241338cb114ae4010809302386191` | 6903 | all RUN_DOCUMENTED |
+| `benchmarks/results/cstar_bounded/CTRL_control_v3_focal_seed42.json` | `c378542a216b50300d3774f1c07b6c33` | 10235 | **0.9787** control |
+| `benchmarks/results/cstar_bounded/C4_multi_scale_seed42.json` | `be1be008713af43ab56da7dbb3f04bbc` | 10702 | 0.9167 |
+| `benchmarks/results/cstar_bounded/C5_gated_fusion_seed42.json` | `dc6c8c8435da487015abf587905d383d` | 10095 | 0.9132 |
+| `benchmarks/results/cstar_bounded/C7_supcon_focal_seed42.json` | `8878bb3ccc892a68833d4951f38f3a3a` | 10456 | 0.7732 |
+| `benchmarks/results/cstar_bounded/C8_asymmetric_seed42.json` | `07955b3863ca6d894c03d141dfe1e0e8` | 9923 | 0.8012 |
+| `benchmarks/results/cstar_bounded/C10_uncertainty_mc_dropout_seed42.json` | `1ca9c691bf4e1b3a18b8bfff08286b19` | 11889 | det 0.9791 no lift |
+
+**Decisions:** C4/C5/C7/C8/C10 **RUN_DOCUMENTED** — none beat CTRL; not in CAD-CBA-v1.
+
+## E6 neural teacher KD (2026-07-22)
+
+**Stage:** `stage_a_kd` · seed 42 · G11 teacher · V3 student · α=0.6 T=10 γ=2  
+**Script:** `scripts/run_neural_teacher_kd.py` · wall ~1436 s
+
+| Path | md5 | bytes | key |
+|------|-----|-------|-----|
+| `benchmarks/results/teachers_kd_neural/summary.json` | `e40d997e4cd8b2e4566eae2e2d59a287` | 763 | student **0.8513** RUN_DOCUMENTED |
+| `benchmarks/results/teachers_kd_neural/kd_neural_cnn_bilstm_seed42.json` | `0b951c8bb5d24de0021242431192abd0` | 11080 | vs ensemble 0.9401 |
+
+**Decision:** RUN_DOCUMENTED — keep ensemble teacher INCORPORATED.
+
+## WP5c systems rebench pareto_h8 (2026-07-22)
+
+Complements analysis-only `pareto/`. Script: `scripts/run_pareto_multiobj.py`.
+
+| Path | md5 | bytes | key |
+|------|-----|-------|-----|
+| `benchmarks/results/pareto_h8/summary.json` | `699f86e93a815b53f07f16f60366b33a` | 48256 | composite G6 0.9056 |
+| `benchmarks/results/pareto_h8/multiobj_table.csv` | `a305965ae422b175bcb379de61a1c97c` | 5825 | table |
+| `benchmarks/results/pareto_h8/pareto_f1_latency.png` | `837011fd738b407690697ac47d483e81` | 111321 | figure |
+| `benchmarks/results/pareto_h8/rows.json` | `7a95d68cece0544abb2f097d05b50f3a` | 30505 | raw rows |
+
+**Headline claims:** LGBM tops protocol F1 0.9818; package/HPO near-RF; G6 wins a priori composite; classical CPU latency ≠ GPU µs — label carefully.
+
+## B2–B4 plateau reject
+
+| Path | note |
+|------|------|
+| `docs/execution_plan/B2B4_ARCH_HPO_PLATEAU_REJECT.md` | RUN_DOCUMENTED freeze V3 dims |
+
+**Last append (UTC):** 2026-07-22T09:30:00 (C* + E6 + B2B4 + pareto_h8)

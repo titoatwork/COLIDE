@@ -18,16 +18,16 @@
 | WP2a | Sign method package (MOD table) | 2 | — | User+agent | **DONE** CAD-CBA-v1 |
 | WP2b | Implement losses + thresholds modules | 2 | WP1a | Agent | **DONE** |
 | WP2b-run | Imbalance loss 4-way compare | 4 | WP2b | Agent | **DONE** focal INCORPORATE |
-| WP2c | Architecture delta if any (attention/multi-scale) | 2 | WP2a | Agent | TODO (only if plateaus) |
+| WP2c | Architecture delta if any (attention/multi-scale) | 2 | WP2a | Agent | **DONE 2026-07-22** B2–B4 plateau reject + C4/C5 bounded probes RUN_DOCUMENTED |
 | WP2d | Val threshold search on focal best | 2/4 | WP2b-run | Agent | **DONE 2026-07-21** RUN_DOCUMENTED keep argmax |
 | WP3 | Optuna HPO study + sealed test | 3 | WP1–2 | Agent | **DONE 2026-07-21** train HPs INCORPORATE 0.9791 (test still sealed) |
 | WP3b | Package FT multirun ensemble KD + HPO HPs | 3/4 | WP3, WP4b | Agent | **DONE 2026-07-21** mean 0.9639±0.0185 RUN_DOCUMENTED (not mean-win vs WP1b) |
 | WP3c | Multi-seed HPO confirm (orig distill + hpo_best) | 3 | WP3 | Agent | **DONE 2026-07-21** mean 0.9689±0.0145 RUN_DOCUMENTED (seed42 0.9791 repro; not mean-win vs WP1b) |
-| WP4a | Imbalance strategy sweep (beyond loss) | 4 | WP1–3 | Agent | **PARTIAL→ D6 DONE** stratified hurts (keep shuffle); SupCon still open |
+| WP4a | Imbalance strategy sweep (beyond loss) | 4 | WP1–3 | Agent | **DONE 2026-07-22** D6 stratified RUN_DOCUMENTED; C7/C8/D9 SupCon/ASL RUN_DOCUMENTED |
 | WP4b | Teacher sweep (RF/XGB/LGBM/ensemble) | 4 | WP1–3 | Agent | **DONE 2026-07-21** ensemble student 0.9401 INCORPORATE |
 | WP5a | Full ablation ladder | 5 | Final recipe | Agent | **DONE 2026-07-21** A1–A7 seed42; A7 0.9699 tops ladder; F1–F7 RUN_DOCUMENTED |
 | WP5b | Fair baseline suite | 5 | WP1a | Agent | **DONE 2026-07-22** neural G6–G12 + classical G1–G5 (SVM 0.4268; LGBM 0.9818) + G13 N/A |
-| WP5c | Pareto figure + composite score | 5 | WP5a/b + systems | Agent | **DONE 2026-07-22** A7 best F1 0.9699; G6 composite #1; fronts A7/A3/G6 |
+| WP5c | Pareto figure + composite score | 5 | WP5a/b + systems | Agent | **DONE 2026-07-22** `pareto/` + `pareto_h8/` systems rebench; G6 composite; classical refs |
 | WP6a | Re-export + fidelity | 6 | Final ckpt | Agent | TODO |
 | WP6b | Local re-bench ranges Option A | 6 | WP6a | Agent | TODO |
 | WP6c | Re-DICC if model changed | 6 | WP6a | User/ops | TODO |
@@ -42,10 +42,11 @@
 
 | Priority | Action |
 |----------|--------|
-| 0 | Verify disk via `RESULTS_DISK_MANIFEST.md` (incl. pareto + classical + D6 + neural + ablation + HPO) |
-| 1 | Bounded **C\*** (SupCon C7/D9, multi-scale C4, gated C5, asymmetric C8, uncertainty C10) |
-| 2 | **B2–B4** arch HPO or RUN_DOCUMENTED plateau reject |
-| 3 | **E6** neural teacher KD (bounded) |
+| 0 | Verify disk via `RESULTS_DISK_MANIFEST.md` (incl. `cstar_bounded/` + `teachers_kd_neural/` + `pareto_h8/`) |
+| 1 | Final config freeze → sealed multi-seed **test** (B14) |
+| 2 | **WP7** XAI suite **or** J10 drop path |
+| 3 | **WP8** ToN final-method eval |
+| 4 | **WP6** re-export / local re-bench after lock |
 | Parallel | **WP0** only when user opens dedicated DICC session |
 | Never first | WP9b manuscript with empty cluster cells |
 
