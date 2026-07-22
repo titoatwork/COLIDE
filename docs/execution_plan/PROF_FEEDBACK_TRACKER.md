@@ -50,7 +50,7 @@
 | B11 | Sequence length | DONE (locked) | V3 reshape fixed **[2,32]** in freeze/config; design freeze (not a free search dim under CAD-CBA-v1 KD transfer) |
 | B12 | Decision thresholds minority | RUN_DOCUMENTED | WP2d on `ft_focal_seed42`: all decode variants = argmax val macro 0.9780 (Δ0); keep argmax (`thresholds_focal_seed42.json`) |
 | B13 | Objectives: val macro-F1, bal-acc, minority recall | DONE (logged) | Primary max val macro-F1; min-cls / bal-acc / Theft logged per trial |
-| B14 | Test untouched until final config | PARTIAL | WP3 + package + HPO multi-seed confirm test SEALED; sealed multi-seed **test** of final lock still TODO |
+| B14 | Test untouched until final config | **DONE** | User lock 2026-07-22 path **A**; sealed multi-seed test n=5: **test 0.9780±0.0033**; min-cls 0.9292; Theft **1.0**; champion unchanged (`sealed_test/summary.json`) |
 
 ---
 
@@ -69,7 +69,7 @@
 | C9 | Teacher ensemble distillation | INCORPORATED | WP4b: ensemble student val **0.9401** best among 5 teachers (`teachers_kd/`) |
 | C10 | Uncertainty-aware detection | RUN_DOCUMENTED | MC-dropout + entropy selective on HPO confirm: det **0.9791**, no high-coverage lift; keep argmax (`cstar_bounded/C10_*.json`) |
 | C11 | Adaptive per-class thresholds | RUN_DOCUMENTED | Val grid search macro/min/joint/Theft/Normal — no lift vs argmax on focal FT; not in package |
-| C12 | Component addresses named weakness | PARTIAL | Named weakness = imbalance/Theft; package uses focal+ensemble KD; **minority/per-class val table** now in `CLAIMS_REGISTRY.md` (HPO Theft=1.0 min-cls 0.9351; LGBM Theft 0.9231); sealed-test minority still PENDING |
+| C12 | Component addresses named weakness | DONE (val+test) | Named weakness = imbalance/Theft; package focal+ensemble KD; val minority table in claims; **B14 test Theft mean 1.0**, min-cls mean **0.9292** (`sealed_test/`) |
 | C13 | Mod comparison table before lock | DONE | `docs/MOD_DECISION_TABLE.md` + `METHOD_PACKAGE_DECISION.md` CAD-CBA-v1 |
 
 **Rule:** Not every C2–C11 is mandatory; **at least one clear package** must be fully evaluated. Tracker keeps all options until chosen/rejected in writing.
@@ -80,7 +80,7 @@
 
 | ID | Requirement | Status | Evidence / notes |
 |----|-------------|--------|------------------|
-| D1 | Imbalance first-class (not accuracy-only) | PARTIAL | Metrics + loss + thresholds + D6 stratified done; **val minority table packaged** (`CLAIMS_REGISTRY.md`); final sealed-test minority claims still open |
+| D1 | Imbalance first-class (not accuracy-only) | DONE | Metrics + loss + thresholds + D6 + val minority table; **B14 sealed test** min-cls 0.9292 / Theft 1.0 packaged (`sealed_test/` + claims) |
 | D2 | Weighted CE | RUN_DOCUMENTED | CE FT control val 0.9755 (`imbalance_loss/ft_ce_seed42.json`) |
 | D3 | Focal loss | INCORPORATED | Best in 4-way compare val **0.9780** — default CAD-CBA-v1 |
 | D4 | Class-balanced focal | RUN_DOCUMENTED | val 0.9121 — worse macro; JSON kept |
@@ -152,11 +152,11 @@
 | ID | Requirement | Status | Evidence / notes |
 |----|-------------|--------|------------------|
 | H1 | May not beat RF F1 if deployment better | DONE (framing) | METHOD + multi-obj framing locked; WP5c tables show classical LGBM/RF may still top pure F1 while neural owns deploy/size path |
-| H2 | Near-RF detection | PARTIAL | Protocol neural HPO 0.9791 / multirun mean 0.9714 vs protocol RF 0.9778 / published RF 0.9864 — keep honest dual bars |
+| H2 | Near-RF detection | DONE (honest dual bar) | **B14 test 0.9780±0.0033** ≈ protocol RF val 0.9778; LGBM val 0.9818 still tops pure F1; published RF 0.9864 other pipeline — dual bars locked |
 | H3 | Much lower GPU memory | PARTIAL | Historical `cuml_rf_resources.json` CNN ~2MB vs cuML RF ~444MB; protocol proxy via n_params/ckpt bytes in WP5c (`pareto/`); peak VRAM re-measure still open |
 | H4 | Faster neural inference | PARTIAL | Protocol batch256 µs/sample in WP5c: G6 MLP **4.33** vs A7 **26.02** vs A3 **19.96**; historical `baseline_latency.json` still secondary |
 | H5 | Low explanation dispatch | DONE (dispatch) | `llm_explainability.json` — 16.60 µs is **dispatch only** (not full LLM gen) |
-| H6 | Good minority detection | PARTIAL | Val minority table packaged (HPO Theft=1.0 / min-cls 0.9351; classical Theft 0.9231); sealed-test + paper table still after B14 |
+| H6 | Good minority detection | DONE (protocol) | Val + **B14 test Theft mean 1.0** / min-cls **0.9292**; classical Theft 0.9231 on val; paper table ready from claims |
 | H7 | Stable across GPU platforms | BLOCKED | DICC |
 | H8 | Pareto F1–latency–memory | DONE | WP5c analysis `pareto/` + systems rebench `pareto_h8/`: composite G6; F1 leadership classical LGBM/package seeds; a priori weights locked; figure + CSV |
 
@@ -204,9 +204,9 @@
 | K1 | BoT primary | DONE | Primary dataset under protocol `botiot_v1` |
 | K2 | ToN (or other) on final method | RUN_DOCUMENTED | CAD-CBA-v1 mapped on `processed_toniot` 13-feat: val **0.8080** test **0.8110**; RF same-split test **0.9393**; ≠ historical 26-feat clean 0.9526 (`toniot_final/`) |
 | K3 | Cross-dataset / transfer | RUN_DOCUMENTED (recipe) | Recipe transfer (not weight transfer); ToN-scale kd_lr/ft_lr; honest RF gap |
-| K4 | RQ: improve detection? | TODO | Answer after final tables |
-| K5 | RQ: minority recognition? | TODO | Answer after final tables |
-| K6 | RQ: reduce latency or memory? | PARTIAL | Local evidence exists; final composite still open |
+| K4 | RQ: improve detection? | PARTIAL (answer draft) | Protocol: B14 test **0.9780±0.0033** near RF val 0.9778; does **not** beat LGBM 0.9818 or published RF 0.9864 — multi-obj / deploy is the contribution path |
+| K5 | RQ: minority recognition? | PARTIAL (answer draft) | B14 test Theft **1.0** mean; min-cls **0.9292** — strong minority under protocol; val tables support |
+| K6 | RQ: reduce latency or memory? | PARTIAL | Local multi-obj G6 composite 0.9056 @4.33 µs; energy 0.786 mJ/flow; **WP6b multi-session ranges** still open |
 | K7 | RQ: valid across GPUs? | BLOCKED | DICC |
 | K8 | RQ: explainability measurable value? | RUN_DOCUMENTED | Dispatch yes; structured evidence yes; free-form LLM quality weak → no full XAI RQ claim |
 
@@ -226,7 +226,7 @@
 | L8 | Deploy: export, parity, profile, kernels, TRT/ORT/compile, FP16/INT8 | PARTIAL→DONE (export+fidelity) | **WP6a re-export + fidelity PASS** (bit-identical; CUDA self-checks PASS); TRT/ORT/compile historical exist; WP6b multi-session ranges + WP6c DICC still open after sealed test |
 | L9 | Realistic: trade-off vs beat RF everywhere | DONE (framing) | Multi-obj framing locked; H8 + `CLAIMS_REGISTRY` advantage snapshot |
 | L10 | Paper structure / tables / ToV / repro | TODO | Outline in plan pack; write after science green + B14 |
-| L11 | Fix gitignored claim-source repro | DONE (packaging) | WP9a: `CLAIMS_REGISTRY.md` + `claims_package/protocol_claims.json` + `build_claims_package.py`; `verify_claims.py` protocol claims green; re-run after B14 |
+| L11 | Fix gitignored claim-source repro | DONE | WP9a + **post-B14 rebuild**: 46 claims; sealed test LOCKED_TEST; `verify_claims.py` all green |
 | L12 | Title words only if evaluated | PARTIAL | J10 drops full XAI title; freeze card lists allowed words; final title after B14/DICC scope |
 
 ---
@@ -274,6 +274,7 @@
 | 2026-07-22 | **WP8 ToN final method DONE** CAD-CBA-v1 mapped 13-feat: val **0.8080** test **0.8110** RF test **0.9393** RUN_DOCUMENTED; KD selected (FT no lift); pilot low-lr archived |
 | 2026-07-22 | **WP6a re-export + fidelity DONE** bit-identical blocks; CUDA self-check all PASS; champion md5 unchanged |
 | 2026-07-22 | **WP9a claims packaging DONE** `scripts/build_claims_package.py` → `claims_package/` + `CLAIMS_REGISTRY.md` (42 claims, 11 minority rows); `verify_claims.py` protocol claims green; `FINAL_CONFIG_FREEZE_CARD.md` awaiting user lock for B14; A4/C12/D1/H6/L11 advanced from disk evidence; sealed test **not** run |
+| 2026-07-22 | **B14 sealed multi-seed BoT TEST DONE** user lock path **A**; seeds 42–46; **test macro-F1 0.9780 ± 0.0033**; min-cls 0.9292; Theft **1.0**; val 0.9689±0.0145; champion unchanged; wall ~79 min; claims rebuild 46 claims green; B14/C12/D1/H2/H6/L11 flipped |
 
 ---
 

@@ -47,8 +47,8 @@ Extreme class imbalance + minority (Theft) under neural deploy path; RF still st
 | Default train HPs for CAD-CBA-v1 | **hpo_best.yaml** | lr 5.89e-5, batch 1024, γ≈1.92, cosine, … |
 | Arch deltas (attention/multi-scale) | deferred | only if plateaus |
 | Multi-seed confirm of HPO winner (val) | **RUN_DOCUMENTED** | mean **0.9689 ± 0.0145** n=5; seed42 **0.9791** repro; does **not** beat WP1b mean |
-| Sealed multi-seed **test** of final lock | **TODO** | `FINAL_CONFIG_FREEZE_CARD.md` ready — only after **explicit user** lock text |
-| WP9a claims packaging | **DONE** | `CLAIMS_REGISTRY.md` + `claims_package/` + `verify_claims` protocol green |
+| Sealed multi-seed **test** of final lock | **DONE** | User lock path **A** 2026-07-22; test **0.9780 ± 0.0033** n=5; Theft 1.0; `sealed_test/summary.json` |
+| WP9a claims packaging | **DONE** | post-B14: 46 claims; sealed LOCKED_TEST; verify green |
 | WP7 XAI suite | **RUN_DOCUMENTED** | J10 drop full LLM-XAI claim; keep dispatch + structured evidence |
 | WP8 ToN final method | **RUN_DOCUMENTED** | val 0.8080 / test 0.8110 vs RF test 0.9393 (13-feat); KD selected |
 | F9 energy table | **RUN_DOCUMENTED** | consolidated `energy_table/`; RTX ~0.786 mJ/flow |

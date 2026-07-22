@@ -1,7 +1,21 @@
 # Final Config Freeze Card — CAD-CBA-v1 (B14 gate)
 
 **Purpose:** Explicit user lock before **BoT sealed multi-seed TEST** (tracker B14).  
-**Status:** **AWAITING USER CONFIRMATION** — do **not** unseal BoT test until this card is signed in chat.
+**Status:** **USER-LOCKED 2026-07-22** · Init path **A** · B14 **DONE**  
+**User lock text (verbatim):** *I LOCK CAD-CBA-v1 for sealed multi-seed BoT TEST (B14). Init path: A. Champion md5 must remain 80a90f7cc210276300eaa90173a5a385 unless I say BACKUP+replace. Proceed with sealed test only.*
+
+### B14 sealed multi-seed TEST result (path A)
+
+| Metric | Value | Source |
+|--------|-------|--------|
+| Init | distill `a0.6_T10.0_focal2` + `hpo_best` FT | path A |
+| Seeds | 42–46 (n=5) | `sealed_test/` |
+| **Test macro-F1 mean±std** | **0.9780 ± 0.0033** | `sealed_test/summary.json` |
+| Test min-cls mean | **0.9292** | same |
+| Test Theft mean | **1.0000** | same |
+| Val macro-F1 mean±std | 0.9689 ± 0.0145 | same (matches HPO confirm) |
+| Champion md5 after | `80a90f7cc210276300eaa90173a5a385` **unchanged** | |
+| Wall | ~4768 s (~79 min) | |
 
 ---
 

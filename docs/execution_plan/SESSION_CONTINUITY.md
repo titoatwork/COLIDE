@@ -1,7 +1,7 @@
 # Session Continuity / Handoff Pack
 
 **Session closed for continuity:** 2026-07-22  
-**Mode this session:** **WP9a claims packaging + FINAL_CONFIG_FREEZE_CARD** (no train)  
+**Mode this session:** **B14 sealed multi-seed BoT TEST** (user lock path A) + claims rebuild  
 **Git tip at handoff:** see latest commit after handoff push (`git log -1 --oneline`)  
 **Machine root:** `/home/titoisalive/colide`
 
@@ -32,32 +32,27 @@ Complete **every** row in `PROF_FEEDBACK_TRACKER.md` for Prof Por / WoS path.
 8. `docs/execution_plan/CLAIMS_REGISTRY.md`  
 9. `docs/execution_plan/FINAL_CONFIG_FREEZE_CARD.md`  
 10. `config/hpo_best.yaml`  
-11. `docs/feedback1.docx` (when interpreting Prof requirements)
+11. `benchmarks/results/sealed_test/summary.json`  
+12. `docs/feedback1.docx` (when interpreting Prof requirements)
 
 ---
 
 ## 3. Completed this arc (do not redo)
 
-### 3.1–3.22 Prior (still valid)
-Protocol foundation; WP1b **0.9714±0.0109**; classical LGBM **0.9818** / RF 0.9778 / SVM 0.4268; imbalance focal INCORPORATE; WP2d argmax; WP4b ensemble KD **0.9401**; WP3 HPO **0.9791** INCORPORATE; package ensemble+HPO **0.9639±0.0185**; HPO multi-seed **0.9689±0.0145**; WP5a A7 **0.9699**; WP5b G11 **0.9493**; D6 stratified keep shuffle; WP5c Pareto H8; C* all negative; B2–B4 plateau reject; E6 neural teacher 0.8513; WP7 XAI J10 drop full; F9 energy; WP8 ToN 0.8080/0.8110; WP6a fidelity PASS.
+### 3.1–3.24 Prior (still valid)
+Protocol foundation through WP9a claims packaging; freeze card written; full science playlist prior to B14.
 
-### 3.23 WP9a claims packaging (DONE — this session)
-- `scripts/build_claims_package.py`  
-- `benchmarks/results/claims_package/protocol_claims.json` (42 claims + 11 minority rows)  
-- `docs/execution_plan/CLAIMS_REGISTRY.md` (committed)  
-- `docs/paper_text_blocks.md` §11 Protocol-era  
-- `scripts/verify_claims.py` extended — **all claims green**  
-- Tracker flips: L11 DONE packaging; A4/C12/D1/H6 PARTIAL advanced from disk  
+### 3.25 B14 sealed multi-seed BoT TEST (DONE — this session)
+- **User lock:** CAD-CBA-v1, init path **A**, champion frozen  
+- **Script:** `scripts/run_sealed_test_b14.py`  
+- **Result:** test macro-F1 **0.9780 ± 0.0033** (n=5); min-cls **0.9292**; Theft **1.0000**  
+- **Artifacts:** `benchmarks/results/sealed_test/` + `model/sealed_test/`  
+- **Claims:** rebuild → **46** claims; sealed LOCKED_TEST; `verify_claims` green  
+- **Champion:** unchanged  
 
-### 3.24 Freeze card (written — not yet locked)
-`docs/execution_plan/FINAL_CONFIG_FREEZE_CARD.md`  
-User must paste lock text before B14 sealed multi-seed BoT test.
-
-### 3.25 Full remaining playlist
-- Sealed multi-seed **test** after **user lock** (B14)  
-- **WP6b** local multi-session ranges after lock  
-- Rebuild claims package after B14  
-- **WP9b** manuscript when tracker largely green  
+### 3.26 Remaining playlist
+- **WP6b** local multi-session latency/energy ranges  
+- **WP9b** manuscript spine when tracker largely green  
 - **WP0** DICC (user-scheduled)  
 - End every session with **paste-ready handoff prompt**
 
@@ -70,12 +65,12 @@ Verify:
 
 ```bash
 cd /home/titoisalive/colide
-ps -eo pid,cmd | awk '/run_xai|run_toniot|train_protocol|run_hpo|sealed/{print}'
-test -f benchmarks/results/claims_package/protocol_claims.json && echo claims_OK
-test -f docs/execution_plan/CLAIMS_REGISTRY.md && echo registry_OK
+ps -eo pid,cmd | awk '/run_sealed|train_protocol|run_hpo/{print}'
+test -f benchmarks/results/sealed_test/summary.json && echo sealed_OK
 PYTHONPATH=. python3 scripts/verify_claims.py | tail -5
 md5sum model/best_model_botiot_twostage.pth
 # expect: 80a90f7cc210276300eaa90173a5a385
+python3 -c "import json; s=json.load(open('benchmarks/results/sealed_test/summary.json')); print(s['test_macro_f1_mean'], s['test_macro_f1_std'], s['champion_unchanged'])"
 nvidia-smi --query-gpu=temperature.gpu,utilization.gpu,memory.used --format=csv
 ```
 
@@ -83,14 +78,13 @@ nvidia-smi --query-gpu=temperature.gpu,utilization.gpu,memory.used --format=csv
 
 ## 5. Next chat work order (strict)
 
-1. **Verify** disk vs `RESULTS_DISK_MANIFEST.md` + claims package.  
-2. **If user pastes lock** from freeze card → run B14 sealed multi-seed test (init path A default).  
-3. Else: do **not** unseal BoT test; optional hygiene only.  
-4. After B14: WP6b ranges + rebuild claims.  
-5. Thermal guard if sustained train (soft 85 / hard 90).  
+1. **Verify** disk vs manifest + sealed_test summary.  
+2. **WP6b** local multi-session latency/energy ranges (Option A).  
+3. Rebuild claims if new systems numbers land; keep verify green.  
+4. **WP9b** manuscript only when tracker largely green.  
+5. Thermal guard if sustained load (soft 85 / hard 90).  
 6. **DICC** only when user opens dedicated session.  
-7. Never start full manuscript until tracker largely green.  
-8. End session: update tracker + progress + HANDOFF + commit/push + **paste next prompt in closing message**.
+7. End session: update tracker + progress + HANDOFF + commit/push + **paste next prompt in closing message**.
 
 ---
 
@@ -102,8 +96,7 @@ Perfection over LOR hurry. Option A CUDA locked. NO new jobs until you read cont
 
 FULL PLAYLIST LAW (user-locked):
 - Complete EVERY tracker / WP playlist item → DONE | INCORPORATED | RUN_DOCUMENTED | BLOCKED(ops only).
-- No silent skips of “optional” work (sealed test, WP6b ranges, claims packaging, manuscript gates, etc.).
-- If evidence already exists on disk/docs → flip tracker status + notes. Never invent numbers.
+- No silent skips. If evidence exists → flip tracker. Never invent numbers.
 - End session: update tracker/progress/manifest/HANDOFF + commit/push + paste full next-session prompt.
 
 Read first (in order):
@@ -119,25 +112,17 @@ Read first (in order):
 10) config/hpo_best.yaml
 
 Verify on disk:
-- benchmarks/results/claims_package/protocol_claims.json
-- benchmarks/results/xai/summary.json  (J10 DROP_FULL; rank_corr ~0.9636; faith ~0.5109)
-- benchmarks/results/toniot_final/summary.json  (val ~0.8080; test ~0.8110; RF ~0.9393)
-- benchmarks/results/energy_table/summary.json  (RTX ~0.786 mJ/flow)
-- benchmarks/results/numerical_fidelity.json  (bit-identical PASS)
-- benchmarks/results/hpo/summary.json + config/hpo_best.yaml
-- benchmarks/results/multirun/summary.json
+- benchmarks/results/sealed_test/summary.json  (B14; test ~0.9780±0.0033)
+- claims_package + verify_claims green
 - Champion md5 still 80a90f7cc210276300eaa90173a5a385
-- No train jobs; GPU cool; verify_claims green
+- No train jobs; GPU cool
 
-Last session (2026-07-22): WP9a claims packaging DONE; freeze card AWAITING USER LOCK;
-B14 sealed test NOT run; champion unchanged.
+Last session (2026-07-22): B14 DONE path A test 0.9780±0.0033; claims 46 green; WP6b next.
 
 Next:
-A) User lock → sealed multi-seed TEST (B14)  ← only if user pastes lock
-B) WP6b local multi-session ranges after lock
-C) Re-run build_claims_package after B14
-D) WP9b manuscript only when tracker green
-E) DICC only if user opens dedicated session
+A) WP6b local multi-session ranges
+B) WP9b manuscript when tracker green
+C) DICC only if user opens dedicated session
 
 Rules: no invent multi-day numbers; no clobber champion without BACKUP;
 thermal guard if sustained train; commit/push; end per HANDOFF lifecycle with paste-ready next prompt.
@@ -153,13 +138,10 @@ thermal guard if sustained train; commit/push; end per HANDOFF lifecycle with pa
 | Disk numbers + md5s | `docs/execution_plan/RESULTS_DISK_MANIFEST.md` |
 | Tracker | `docs/execution_plan/PROF_FEEDBACK_TRACKER.md` |
 | Progress | `docs/execution_plan/PROGRESS_LOG.md` |
-| Method decision | `docs/execution_plan/METHOD_PACKAGE_DECISION.md` |
+| B14 results | `benchmarks/results/sealed_test/summary.json` |
+| B14 driver | `scripts/run_sealed_test_b14.py` |
 | Claims registry | `docs/execution_plan/CLAIMS_REGISTRY.md` |
-| Freeze / B14 gate | `docs/execution_plan/FINAL_CONFIG_FREEZE_CARD.md` |
-| HPO winner config | `config/hpo_best.yaml` |
-| Claims builder | `scripts/build_claims_package.py` |
-| Claims verifier | `scripts/verify_claims.py` |
-| XAI / ToN / Energy / Fidelity | `benchmarks/results/{xai,toniot_final,energy_table}/` + `numerical_fidelity.json` |
+| Freeze card | `docs/execution_plan/FINAL_CONFIG_FREEZE_CARD.md` |
 
 **Note:** `benchmarks/results/` is largely **gitignored** — results live on this machine; next agent must use laptop paths or re-run. Manifest + CLAIMS_REGISTRY commit the **headlines + md5s**.
 
@@ -169,13 +151,14 @@ thermal guard if sustained train; commit/push; end per HANDOFF lifecycle with pa
 
 | Result | Assessment |
 |--------|------------|
-| CTRL / package path ~0.9787 | Still the neural reference on BoT |
-| LGBM 0.9818 | Detection ceiling under BoT protocol |
+| **B14 test 0.9780±0.0033** | Strong multi-seed sealed result; Theft 1.0 |
+| ≈ protocol RF val 0.9778 | Near-RF on protocol bar |
+| LGBM val 0.9818 | Still pure-F1 ceiling under protocol |
 | Multi-obj G6 composite 0.9056 | Publishable efficiency angle |
-| XAI free-form LLM | Weak — drop full claim; keep structured+dispatch |
+| XAI free-form LLM | Weak — drop full claim |
 | ToN 13-feat neural 0.811 | Lags RF 0.939 — honest multi-dataset gap |
-| Claims package | Green verifier; sealed-test still PENDING |
+| Claims package | Green verifier; B14 locked |
 
 ---
 
-*End handoff. Next chat: verify disk → user lock for B14 / WP6b / claims rebuild.*
+*End handoff. Next chat: verify disk → WP6b ranges → manuscript when green.*

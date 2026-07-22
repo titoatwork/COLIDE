@@ -350,15 +350,68 @@ def main() -> int:
         "never clobber without BACKUP + OK",
     )
 
-    # open gates
-    add(
-        "bot_sealed_test_multiseed",
-        None,
-        "PENDING",
-        "—",
-        "B14 only after explicit user final-config lock",
-        status="PENDING_SEALED_TEST",
-    )
+    # B14 sealed multi-seed BoT TEST (only when summary exists after user lock)
+    sealed, sealed_meta = load_json("sealed_test/summary.json")
+    if (
+        sealed
+        and sealed.get("allow_test")
+        and sealed.get("user_lock_confirmed")
+        and isinstance(sealed.get("test_macro_f1_mean"), (int, float))
+        and int(sealed.get("n_success") or 0) >= 5
+    ):
+        add(
+            "bot_sealed_test_mean",
+            sealed["test_macro_f1_mean"],
+            "sealed_test/summary.json",
+            "test_macro_f1_mean",
+            f"B14 init path {sealed.get('init_path')}; n={sealed.get('n_success')}",
+            status="LOCKED_TEST",
+            decimals=4,
+        )
+        add(
+            "bot_sealed_test_std",
+            sealed.get("test_macro_f1_std"),
+            "sealed_test/summary.json",
+            "test_macro_f1_std",
+            "B14 multi-seed std",
+            status="LOCKED_TEST",
+            decimals=4,
+        )
+        add(
+            "bot_sealed_test_min_cls_mean",
+            sealed.get("test_min_per_class_f1_mean"),
+            "sealed_test/summary.json",
+            "test_min_per_class_f1_mean",
+            "B14 test min-cls mean",
+            status="LOCKED_TEST",
+            decimals=4,
+        )
+        add(
+            "bot_sealed_test_theft_mean",
+            sealed.get("test_theft_f1_mean"),
+            "sealed_test/summary.json",
+            "test_theft_f1_mean",
+            "B14 test Theft mean",
+            status="LOCKED_TEST",
+            decimals=4,
+        )
+        add(
+            "bot_sealed_test_multiseed",
+            f"{sealed['test_macro_f1_mean']:.4f}±{float(sealed.get('test_macro_f1_std') or 0):.4f}",
+            "sealed_test/summary.json",
+            "test_macro_f1_mean±std",
+            f"B14 path {sealed.get('init_path')}; champion_unchanged={sealed.get('champion_unchanged')}",
+            status="LOCKED_TEST",
+        )
+    else:
+        add(
+            "bot_sealed_test_multiseed",
+            None,
+            "PENDING",
+            "—",
+            "B14 only after explicit user final-config lock",
+            status="PENDING_SEALED_TEST",
+        )
     add(
         "dicc_multiday_stats",
         None,
@@ -465,21 +518,66 @@ def main() -> int:
         "claims": claims,
         "minority_tables_val": minority_rows,
         "quantitative_advantage_snapshot": advantage,
-        "open_gates": [
-            "B14 sealed multi-seed TEST on BoT after explicit user final-config lock",
-            "WP6b local multi-session latency/energy ranges after lock",
-            "WP0 DICC multi-day (user-scheduled)",
-            "WP9b manuscript spine after tracker largely green",
-        ],
+        "open_gates": (
+            (
+                []
+                if (
+                    sealed
+                    and sealed.get("allow_test")
+                    and isinstance(sealed.get("test_macro_f1_mean"), (int, float))
+                    and int(sealed.get("n_success") or 0) >= 5
+                )
+                else ["B14 sealed multi-seed TEST on BoT after explicit user final-config lock"]
+            )
+            + [
+                "WP6b local multi-session latency/energy ranges after lock",
+                "WP0 DICC multi-day (user-scheduled)",
+                "WP9b manuscript spine after tracker largely green",
+            ]
+        ),
         "missing_sources": missing,
-        "decision": "PARTIAL_DONE",
+        "decision": (
+            "DONE"
+            if (
+                sealed
+                and sealed.get("allow_test")
+                and isinstance(sealed.get("test_macro_f1_mean"), (int, float))
+                and int(sealed.get("n_success") or 0) >= 5
+            )
+            else "PARTIAL_DONE"
+        ),
         "decision_note": (
-            "WP9a numbers-match package built from on-disk protocol JSON. "
-            "BoT sealed multi-seed TEST claims remain PENDING. Historical README "
-            "claims still verified by scripts/verify_claims.py. Do not quote "
-            "PENDING or BLOCKED as final paper numbers."
+            (
+                "WP9a claims package includes B14 sealed multi-seed BoT TEST numbers "
+                f"(init path {sealed.get('init_path')}; "
+                f"test mean {sealed.get('test_macro_f1_mean')}). "
+                "Do not mix test means with val-only multirun claims without labels. "
+                "DICC multi-day still BLOCKED."
+            )
+            if (
+                sealed
+                and sealed.get("allow_test")
+                and isinstance(sealed.get("test_macro_f1_mean"), (int, float))
+                and int(sealed.get("n_success") or 0) >= 5
+            )
+            else (
+                "WP9a numbers-match package built from on-disk protocol JSON. "
+                "BoT sealed multi-seed TEST claims remain PENDING. Historical README "
+                "claims still verified by scripts/verify_claims.py. Do not quote "
+                "PENDING or BLOCKED as final paper numbers."
+            )
         ),
     }
+    # Keep test_sealed_botiot honest: False once B14 summary is locked
+    if (
+        sealed
+        and sealed.get("allow_test")
+        and isinstance(sealed.get("test_macro_f1_mean"), (int, float))
+        and int(sealed.get("n_success") or 0) >= 5
+    ):
+        package["policy"]["test_sealed_botiot"] = False
+        package["policy"]["bot_test_unsealed_b14"] = True
+        package["policy"]["b14_init_path"] = sealed.get("init_path")
 
     out_json = OUT / "protocol_claims.json"
     with open(out_json, "w") as f:

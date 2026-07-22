@@ -203,14 +203,23 @@ Each standalone kernel binary executes an internal numerical check at a fixed to
 
 The fused pipeline binary is timing-oriented and does not emit a separate validation line; end-to-end correctness is covered by per-block checks plus the real-weight export table above. FP16 BiLSTM uses a deliberately looser tolerance (5e-2) consistent with half-precision accumulation; FP32 blocks use 1e-3–1e-2.
 
-## 11. Protocol-era numbers (CAD-CBA-v1 / Prof feedback track) — WP9a
+## 11. Protocol-era numbers (CAD-CBA-v1 / Prof feedback track) — WP9a + B14
 
 > Canonical registry: `docs/execution_plan/CLAIMS_REGISTRY.md` (rebuilt by `scripts/build_claims_package.py`).
-> All figures below are **val-only on BoT** unless marked ToN-test or historical. BoT multi-seed **test** remains **PENDING** until final config lock (B14).
+> BoT figures below are **val-only** unless marked **TEST**. B14 sealed multi-seed **test** is **DONE** (user lock path A, 2026-07-22).
 
 ### Method lock (do not re-litigate without new protocol)
 
 **CAD-CBA-v1:** V3 CNN–BiLSTM–Attention + ensemble KD (α=0.6, T=10) + focal (γ≈1.92 from HPO) + `config/hpo_best.yaml` train HPs + shuffle sampler + argmax decode. Champion production weights md5 **80a90f7cc210276300eaa90173a5a385**.
+
+### Sealed multi-seed TEST (B14, protocol `botiot_v1`, init path A)
+
+| Claim | Number | Source |
+|-------|--------|--------|
+| Test macro-F1 mean±std (n=5, seeds 42–46) | **0.9780±0.0033** | `sealed_test/summary.json` |
+| Test min-cls mean | **0.9292** | same |
+| Test Theft mean | **1.0000** | same |
+| Val mean±std (same runs) | 0.9689±0.0145 | same |
 
 ### Detection (protocol `botiot_v1`, val)
 

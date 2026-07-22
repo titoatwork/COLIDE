@@ -1,7 +1,7 @@
 # Protocol Claims Package (WP9a)
 
-**Generated (UTC):** 2026-07-22T11:52:34.551091+00:00
-**Git:** `ff63c055648c4986e88b145def7b3bef758b2f63`
+**Generated (UTC):** 2026-07-22T13:58:09.205365+00:00
+**Git:** `ead77791409bae659b0e3fd8846ef7699999c638`
 **Champion md5:** `80a90f7cc210276300eaa90173a5a385` (unchanged=True; expected `80a90f7cc210276300eaa90173a5a385`)
 **Method:** CAD-CBA-v1
 
@@ -51,7 +51,11 @@
 | `d3_focal_val` | **0.9780** | LOCKED_VAL | `imbalance_loss/ft_focal_seed42.json` | INCORPORATED CAD-CBA loss |
 | `fidelity_bit_identical` | **true** | LOCKED_VAL | `numerical_fidelity.json` | WP6a re-export |
 | `champion_md5` | **80a90f7cc210276300eaa90173a5a385** | LOCKED_VAL | `model/best_model_botiot_twostage.pth` | never clobber without BACKUP + OK |
-| `bot_sealed_test_multiseed` | **PENDING** | PENDING_SEALED_TEST | `PENDING` | B14 only after explicit user final-config lock |
+| `bot_sealed_test_mean` | **0.9780** | LOCKED_TEST | `sealed_test/summary.json` | B14 init path A; n=5 |
+| `bot_sealed_test_std` | **0.0033** | LOCKED_TEST | `sealed_test/summary.json` | B14 multi-seed std |
+| `bot_sealed_test_min_cls_mean` | **0.9292** | LOCKED_TEST | `sealed_test/summary.json` | B14 test min-cls mean |
+| `bot_sealed_test_theft_mean` | **1.0000** | LOCKED_TEST | `sealed_test/summary.json` | B14 test Theft mean |
+| `bot_sealed_test_multiseed` | **0.9780±0.0033** | LOCKED_TEST | `sealed_test/summary.json` | B14 path A; champion_unchanged=True |
 | `dicc_multiday_stats` | **PENDING** | BLOCKED_DICC | `PENDING` | WP0 / I1–I6 user-scheduled DICC session |
 
 ## Minority / per-class F1 (val only)
@@ -86,7 +90,6 @@
 
 ## Open gates (do not claim as done)
 
-- B14 sealed multi-seed TEST on BoT after explicit user final-config lock
 - WP6b local multi-session latency/energy ranges after lock
 - WP0 DICC multi-day (user-scheduled)
 - WP9b manuscript spine after tracker largely green

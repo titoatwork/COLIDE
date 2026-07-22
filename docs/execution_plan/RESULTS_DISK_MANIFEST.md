@@ -1,7 +1,7 @@
 # Results Disk Manifest (handoff snapshot)
 
 **Generated (UTC):** 2026-07-21T11:01:25.771483+00:00  
-**Last append (UTC):** 2026-07-22T11:55:00 (WP9a claims packaging + freeze card)
+**Last append (UTC):** 2026-07-22T13:47:00 (B14 sealed multi-seed TEST path A DONE)
 **Host path root:** `/home/titoisalive/colide`
 
 `benchmarks/results/` is **gitignored**. This file is committed so the next session can verify local artifacts without inventing numbers.
@@ -57,6 +57,8 @@
 
 | Claim | Value | Source |
 |-------|-------|--------|
+| **B14 sealed multi-seed TEST mean±std** | **0.9780 ± 0.0033 (n=5)** | `sealed_test/summary.json` |
+| B14 test min-cls / Theft means | 0.9292 / **1.0000** | `sealed_test/summary.json` |
 | Protocol multirun FT mean±std val macro-F1 | 0.9714 ± 0.0109 (n=5) | `multirun/summary.json` |
 | Multirun best seed | 0.9840 seed44 | `multirun/ft_seed44.json` |
 | Loss compare winner | focal 0.9780 | `imbalance_loss/summary.json` |
@@ -82,6 +84,27 @@
 | WP5c F1–latency front | A7 / A3 / G6 | `pareto/summary.json` |
 | WP5c composite #1 | **G6 0.762** F1 0.9285 @4.33 µs | `pareto/summary.json` |
 | DICC multi-day tree | ABSENT | no `benchmarks/results/dicc/` |
+
+## B14 sealed multi-seed BoT TEST (2026-07-22)
+
+**User lock:** CAD-CBA-v1 init path **A** · distill + `hpo_best` FT · seeds 42–46 · `--allow-test`  
+**Wall:** ~4768 s · Champion **unchanged** `80a90f7cc210276300eaa90173a5a385`
+
+| Path | exists | md5 | bytes | key metrics |
+|------|--------|-----|-------|-------------|
+| `benchmarks/results/sealed_test/summary.json` | yes | `8958860625b484c5c84eb15da1f9ea3f` | 10194 | test **0.9780±0.0033** n=5; Theft 1.0 |
+| `benchmarks/results/sealed_test/ft_seed42.json` | yes | `aac59b6957baf9c506c3905fa1a22163` | 10563 | test 0.9787 |
+| `benchmarks/results/sealed_test/ft_seed43.json` | yes | `1182641b36155a0af7ecc501134befca` | 12130 | test 0.9798 |
+| `benchmarks/results/sealed_test/ft_seed44.json` | yes | `fe2ba2f58e4048393e844898311aee30` | 10472 | test 0.9798 |
+| `benchmarks/results/sealed_test/ft_seed45.json` | yes | `799063fd215e95e35364bf35b77cea60` | 9907 | test 0.9722 |
+| `benchmarks/results/sealed_test/ft_seed46.json` | yes | `0ee6af4e1778f86dc99f4e5ae089fd67` | 11819 | test 0.9796 |
+| `model/sealed_test/ft_seed42.pth` | yes | `3d32ffc15d2301331c10a9c9ee9a7aa3` | 2133122 | bit-identical to hpo_confirm s42 |
+| `model/sealed_test/ft_seed43.pth` | yes | `88fede576071f4f5cb4d9b29b96d810f` | 2133122 | |
+| `model/sealed_test/ft_seed44.pth` | yes | `3a3dc725519a62e7c2547b76f3a4ee7a` | 2133122 | |
+| `model/sealed_test/ft_seed45.pth` | yes | `dec1a5c68da1574223ae203f21659446` | 2133122 | |
+| `model/sealed_test/ft_seed46.pth` | yes | `ed550532175be43e78802c03d384c6c5` | 2133122 | |
+
+**Trap:** Test mean 0.9780 ≠ val multirun claims. Label **test** explicitly. Seed46 val 0.9483 with test 0.9796 — report both.
 
 ## WP5c Pareto (2026-07-22)
 

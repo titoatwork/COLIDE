@@ -1,7 +1,41 @@
 # Progress log (results as they land)
 
 **Policy:** document everything; label pilot vs full; test sealed unless noted.  
-**Handoff snapshot:** 2026-07-22 (WP9a claims packaging DONE; freeze card awaiting lock; prior WP7/8/F9/WP6a)
+**Handoff snapshot:** 2026-07-22 (**B14 sealed multi-seed TEST DONE** path A; test 0.9780±0.0033; claims 46 green)
+
+---
+
+## 2026-07-22 — B14 sealed multi-seed BoT TEST (user lock path A)
+
+**Mode:** full train+test · seeds 42–46 · GPU · wall **~4768 s (~79 min)**  
+**User lock:** CAD-CBA-v1 · init path **A** · champion frozen  
+**Init:** `model/best_model_botiot_distill_a0.6_T10.0_focal2.pth`  
+**HPs:** `config/hpo_best.yaml` · epochs≤10 patience=3  
+**Script:** `scripts/run_sealed_test_b14.py` (gate-locked)  
+**Tag:** `sealed_test/` · Champion md5 **unchanged** `80a90f7cc210276300eaa90173a5a385`
+
+| Seed | val macro-F1 | test macro-F1 | test min-cls | test Theft |
+|------|--------------|---------------|--------------|------------|
+| 42 | 0.9791 | **0.9787** | 0.9333 | 1.0000 |
+| 43 | 0.9587 | **0.9798** | 0.9369 | 1.0000 |
+| 44 | 0.9797 | **0.9798** | 0.9375 | 1.0000 |
+| 45 | 0.9787 | **0.9722** | 0.9014 | 1.0000 |
+| 46 | 0.9483 | **0.9796** | 0.9369 | 1.0000 |
+
+| Aggregate | Value |
+|-----------|-------|
+| **Test macro-F1 mean±std** | **0.9780 ± 0.0033** (n=5) |
+| Test min-cls mean | **0.9292** |
+| Test Theft mean | **1.0000** |
+| Val macro-F1 mean±std | 0.9689 ± 0.0145 (matches HPO confirm) |
+
+**Decision: DONE** — sealed multi-seed test after explicit freeze lock.  
+**Do not mix** test 0.9780 with val-only WP1b 0.9714 without labeling.  
+**Comparators:** protocol RF val 0.9778 · LGBM val 0.9818 · HPO val seed42 0.9791.  
+**Claims:** rebuilt → 46 claims; `bot_sealed_test_*` LOCKED_TEST; `verify_claims` all green.  
+**Note:** seed46 val weaker (0.9483) but test strong (0.9796) — report both; do not hide.
+
+**Next:** WP6b local multi-session ranges → WP9b manuscript when tracker green → DICC when user opens session.
 
 ---
 
