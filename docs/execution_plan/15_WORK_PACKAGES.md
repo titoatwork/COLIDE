@@ -27,7 +27,7 @@
 | WP4b | Teacher sweep (RF/XGB/LGBM/ensemble) | 4 | WP1–3 | Agent | **DONE 2026-07-21** ensemble student 0.9401 INCORPORATE |
 | WP5a | Full ablation ladder | 5 | Final recipe | Agent | **DONE 2026-07-21** A1–A7 seed42; A7 0.9699 tops ladder; F1–F7 RUN_DOCUMENTED |
 | WP5b | Fair baseline suite | 5 | WP1a | Agent | **DONE 2026-07-22** neural G6–G12 + classical G1–G5 (SVM 0.4268; LGBM 0.9818) + G13 N/A |
-| WP5c | Pareto figure + composite score | 5 | WP5a/b + systems | Agent | TODO |
+| WP5c | Pareto figure + composite score | 5 | WP5a/b + systems | Agent | **DONE 2026-07-22** A7 best F1 0.9699; G6 composite #1; fronts A7/A3/G6 |
 | WP6a | Re-export + fidelity | 6 | Final ckpt | Agent | TODO |
 | WP6b | Local re-bench ranges Option A | 6 | WP6a | Agent | TODO |
 | WP6c | Re-DICC if model changed | 6 | WP6a | User/ops | TODO |
@@ -42,10 +42,10 @@
 
 | Priority | Action |
 |----------|--------|
-| 0 | Verify disk via `RESULTS_DISK_MANIFEST.md` (incl. classical G2/G5 + D6 + neural + ablation + HPO) |
-| 1 | **WP5c** Pareto F1–latency–memory (H8) after systems consolidation |
-| 2 | Bounded **C\*** (SupCon C7/D9, multi-scale C4, gated C5, asymmetric C8, uncertainty C10) or **B2–B4** arch HPO |
-| 3 | **E6** neural teacher KD (bounded) / **B9** already closed RUN_DOCUMENTED |
+| 0 | Verify disk via `RESULTS_DISK_MANIFEST.md` (incl. pareto + classical + D6 + neural + ablation + HPO) |
+| 1 | Bounded **C\*** (SupCon C7/D9, multi-scale C4, gated C5, asymmetric C8, uncertainty C10) |
+| 2 | **B2–B4** arch HPO or RUN_DOCUMENTED plateau reject |
+| 3 | **E6** neural teacher KD (bounded) |
 | Parallel | **WP0** only when user opens dedicated DICC session |
 | Never first | WP9b manuscript with empty cluster cells |
 

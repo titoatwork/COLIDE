@@ -1,7 +1,7 @@
 # COLIDE — Session Handoff
 
 **MODE:** 🚀 **EXECUTION — next chat continues Prof tracker.** This chat closed for continuity.  
-**Closed:** 2026-07-22 · **G2/G5 classical + D6 stratified + G13** (science + docs).  
+**Closed:** 2026-07-22 · **WP5c Pareto H8** (analysis).  
 **Authority:** `docs/execution_plan/SESSION_CONTINUITY.md` + `RESULTS_DISK_MANIFEST.md` + `PROF_FEEDBACK_TRACKER.md` + Option A.  
 **Policy:** skip nothing → **complete every playlist/tracker row** → JSON → INCORPORATED or RUN_DOCUMENTED (BLOCKED only for ops). **Perfection over LOR hurry.** No invent DICC numbers. Context hygiene: flip statuses when evidence already exists.  
 **Champion:** `model/best_model_botiot_twostage.pth` md5 **`80a90f7cc210276300eaa90173a5a385`** — no clobber without BACKUP.  
@@ -20,13 +20,11 @@
 | Multi-seed HPO confirm 0.9689±0.0145 | DONE (prior) |
 | WP5a ablation ladder A1–A7 A7 0.9699 | DONE (prior) |
 | WP5b neural baselines G6–G12 G11 0.9493 | DONE (prior) |
-| **G2 SVM full LinearSVC** | **DONE** val **0.4268** RUN_DOCUMENTED weak |
-| **G5 LGBM fix** | **DONE** val **0.9818** tops protocol classical |
-| **D6 stratified batch** | **DONE** stratified 0.9209 ≪ shuffle 0.9791 (Δ−0.058) RUN_DOCUMENTED keep shuffle |
-| **G13 N/A note** + **B9 class-weight close** | **DONE** |
+| G2 SVM full / G5 LGBM fix / D6 stratified / G13 | DONE (prior) |
+| **WP5c Pareto H8** | **DONE** A7 best F1 **0.9699**; front A7/A3/G6; composite G6 **0.762** |
 
 **DICC:** still **ABSENT** — dedicated session when user opens it.  
-**Jobs:** classical + D6 **finished**; expect idle GPU.
+**Jobs:** analysis-only; expect idle GPU.
 
 ---
 
@@ -48,7 +46,7 @@ Perfection over LOR hurry. Option A CUDA locked. NO new jobs until you read cont
 
 FULL PLAYLIST LAW (user-locked):
 - Complete EVERY tracker / WP playlist item → DONE | INCORPORATED | RUN_DOCUMENTED | BLOCKED(ops only).
-- No silent skips of “optional” work (SupCon, arch HPO B2–B4, neural baselines done, XAI, ToN, Pareto, sealed test, etc.).
+- No silent skips of “optional” work (SupCon, arch HPO B2–B4, XAI, ToN, sealed test, etc.).
 - If evidence already exists on disk/docs → flip tracker status + notes. Never invent numbers.
 - End session: update tracker/progress/manifest/HANDOFF + commit/push + paste full next-session prompt.
 
@@ -63,6 +61,8 @@ Read first (in order):
 8) config/hpo_best.yaml
 
 Verify on disk:
+- benchmarks/results/pareto/summary.json  (H8 DONE; A7 best F1 ~0.9699; front A7/A3/G6; composite G6 ~0.762)
+- benchmarks/results/pareto/table.md + benchmarks/plots/pareto_f1_*.png
 - benchmarks/results/baselines_classical/summary_handoff.json  (LGBM ~0.9818 tops; SVM ~0.4268; RF 0.9778)
 - benchmarks/results/stratified_batch/summary.json  (shuffle ~0.9791 > stratified ~0.9209 Δ~-0.058 RUN_DOCUMENTED)
 - benchmarks/results/baselines_neural/summary.json  (G11 top ~0.9493 n=7)
@@ -76,15 +76,14 @@ Verify on disk:
 - Champion md5 still 80a90f7cc210276300eaa90173a5a385
 - No train jobs; GPU cool before start
 
-Last session (2026-07-22): G2 SVM full 0.4268 RUN_DOCUMENTED; G5 LGBM fix 0.9818 DONE (tops classical);
-D6 stratified 0.9209 vs shuffle 0.9791 (Δ-0.058) keep shuffle; G13 N/A; B9 closed; champion unchanged.
+Last session (2026-07-22): WP5c Pareto H8 DONE — A7 0.9699 best F1 @26.0µs; G6 composite #1 0.762 @4.33µs;
+fronts A7/A3/G6; classical LGBM/RF refs; champion unchanged.
 
 Next:
-A) WP5c Pareto H8 (F1–latency–memory)  ← systems + tables
-B) Bounded C* (SupCon / multi-scale / gated / asymmetric / uncertainty)
-C) B2–B4 arch HPO or RUN_DOCUMENTED plateau reject
-D) E6 neural teacher KD (bounded)
-E) DICC only if user opens dedicated session
+A) Bounded C* (SupCon / multi-scale / gated / asymmetric / uncertainty)  ← recommended science
+B) B2–B4 arch HPO or RUN_DOCUMENTED plateau reject
+C) E6 neural teacher KD (bounded)
+D) DICC only if user opens dedicated session
 
 Rules: no invent multi-day numbers; no clobber champion without BACKUP;
 thermal guard if sustained train; commit/push; end per HANDOFF lifecycle.
@@ -127,6 +126,7 @@ git rev-parse HEAD origin/master
 - Neural baselines: `baselines_neural/` ≠ historical `ablation_mlp.json`  
 - D6 stratified: `stratified_batch/` — keep **shuffle** default  
 - HPO multi-seed confirm: `multirun_hpo_confirm/` ≠ package `multirun_ensemble_hpo/` ≠ WP1b `multirun/`  
+- Pareto: `pareto/` — analysis-only; composite ≠ method lock  
 - Laptop thermal: soft 85 / hard 90  
 
 ---
@@ -135,4 +135,4 @@ git rev-parse HEAD origin/master
 
 Design plan Option A approved; FINAL_PLAN P0–P5; audit pack `docs/audit/`; interim Word report sent to Prof; feedback in `docs/feedback1.docx`.
 
-**Next science priority after verify disk:** WP5c Pareto / bounded C* / B2–B4 arch HPO / E6. DICC only when user opens that session.
+**Next science priority after verify disk:** bounded C* / B2–B4 arch HPO / E6. DICC only when user opens that session.

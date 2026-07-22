@@ -1,7 +1,29 @@
 # Progress log (results as they land)
 
 **Policy:** document everything; label pilot vs full; test sealed unless noted.  
-**Handoff snapshot:** 2026-07-22 (G2/G5 classical + D6 stratified + G13 note DONE)
+**Handoff snapshot:** 2026-07-22 (WP5c Pareto H8 DONE; G2/G5/D6 prior)
+
+---
+
+## 2026-07-22 — WP5c Pareto F1–latency–memory (H8, analysis)
+
+Scripts: `scripts/run_pareto_wp5c.py` (no retrain; consolidates existing systems metrics)  
+Sources: `ablation_ladder/summary.json` (A1–A7) + `baselines_neural/summary.json` (G6–G12) + classical handoff refs  
+Outputs: `benchmarks/results/pareto/summary.json` md5 `893645611534c7ed681e2846d3c80246` · `table.md` · plots `pareto_f1_latency.png` / `pareto_f1_params.png`  
+Latency protocol: CUDA forward val batch=256 (same harness as WP5a/b). Memory proxy: n_params + checkpoint_bytes.  
+Champion md5 **unchanged** `80a90f7cc210276300eaa90173a5a385`. Test sealed.
+
+| Front / score | Points | Notes |
+|---------------|--------|-------|
+| Best val macro-F1 | **A7** 0.9699 @ 26.02 µs/sample · 530181 params | Full CAD-CBA-v1 package |
+| F1–latency Pareto | **A7, A3, G6** | Detection vs speed trade-off |
+| F1–params / 3-obj | A7, A3, G6, G10, G8, A1 (+G11/G7 on 2-obj) | Slimmer models on front |
+| Composite #1 (0.5 nF1 + 0.25(1−nLat) + 0.25(1−nParams)) | **G6 MLP** 0.762 · F1 0.9285 @ **4.33** µs | Efficiency-weighted; not method lock |
+| Classical ref (val only) | LGBM **0.9818** · RF 0.9778 | No CUDA batch256 latency in this harness |
+
+**Decision: DONE (H8)** — multi-obj tables written; CAD-CBA-v1 remains detection package; composite does not replace A7. Historical cuML ~2MB vs ~444MB noted as secondary VRAM evidence.
+
+**Next science:** bounded C* (SupCon / multi-scale / gated / asymmetric / uncertainty) / B2–B4 arch HPO / E6 neural teacher. DICC only when user opens session.
 
 ---
 
@@ -43,7 +65,7 @@ Thermal: soft 85 / hard 90; peak ~85°C; no hard trip.
 
 **Also:** B9 class-weight close from existing `focal_cb` 0.9121 ≪ plain focal 0.9780 → RUN_DOCUMENTED keep no CB weights on neural focal.
 
-**Next science:** WP5c Pareto / bounded C* (SupCon, multi-scale, gated, asymmetric, uncertainty) / B2–B4 arch HPO / E6 neural teacher. DICC only when user opens session.
+**Next science:** (completed later same day → WP5c) then C* / B2–B4 / E6.
 
 ---
 

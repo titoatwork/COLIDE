@@ -1,7 +1,7 @@
 # Results Disk Manifest (handoff snapshot)
 
 **Generated (UTC):** 2026-07-21T11:01:25.771483+00:00  
-**Last append (UTC):** 2026-07-22T01:45:00 (G2/G5 classical + D6 stratified + G13)
+**Last append (UTC):** 2026-07-22T07:31:00 (WP5c Pareto H8)
 **Host path root:** `/home/titoisalive/colide`
 
 `benchmarks/results/` is **gitignored**. This file is committed so the next session can verify local artifacts without inventing numbers.
@@ -78,7 +78,20 @@
 | WP5b neural baselines top (G11 cnn_bilstm CE) | **0.9493** | `baselines_neural/summary.json` |
 | WP5b protocol MLP (G6) | **0.9285** | `baselines_neural/G6_mlp_seed42.json` |
 | WP5b transformer (G12) | **0.5808** weak | `baselines_neural/G12_transformer_seed42.json` |
+| WP5c Pareto best F1 (protocol systems) | **A7 0.9699** @26.02 µs · 530181 params | `pareto/summary.json` |
+| WP5c F1–latency front | A7 / A3 / G6 | `pareto/summary.json` |
+| WP5c composite #1 | **G6 0.762** F1 0.9285 @4.33 µs | `pareto/summary.json` |
 | DICC multi-day tree | ABSENT | no `benchmarks/results/dicc/` |
+
+## WP5c Pareto (2026-07-22)
+
+| Path | exists | md5 | bytes | key metrics |
+|------|--------|-----|-------|-------------|
+| `benchmarks/results/pareto/summary.json` | yes | `893645611534c7ed681e2846d3c80246` | 19545 | H8 DONE; 14 points; fronts A7/A3/G6 |
+| `benchmarks/results/pareto/table.md` | yes | `a80d4f6c4b90fb6a060d795c51f0c4c9` | 4742 | markdown tables |
+| `benchmarks/plots/pareto_f1_latency.png` | yes | `dff020a141fe8196fac926c1be1ddf81` | 66653 | F1 vs µs/sample |
+| `benchmarks/plots/pareto_f1_params.png` | yes | `77d378127ecc81af174fcc1cfd2a834f` | 69302 | F1 vs n_params |
+| `scripts/run_pareto_wp5c.py` | yes | `79a09e4f2b7b8bd6a9a3d2c3318339a8` | — | consolidator (no retrain) |
 
 ## Trap warnings
 

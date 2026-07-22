@@ -105,7 +105,7 @@
 | E6 | Strong neural teacher | TODO | **Playlist required:** bounded neural-teacher KD or RUN_DOCUMENTED reject after try |
 | E7 | Heterogeneous ensembles | INCORPORATED | RF+XGB+LGBM heterogeneous mean (WP4b) |
 | E8 | Student not mere imitation — deployment trade-off | PARTIAL | WP4b: XGB teacher 0.9918 → student 0.9270 &lt; ensemble student 0.9401 (not pure imitation); multi-obj table still open |
-| E9 | Lower memory / latency / GPU deploy / temporal | PARTIAL | Evidence on disk: `baseline_latency.json`, `energy_efficiency.json`, `cuml_rf_resources.json` (~2MB vs 444MB), `pipeline_benchmark_*.json`; need consolidated multi-obj table (H8) |
+| E9 | Lower memory / latency / GPU deploy / temporal | PARTIAL | WP5c consolidated table (`pareto/`); A7 tops F1, G6 wins composite/latency; historical cuML ~2MB vs 444MB; deploy CUDA blocks still separate |
 
 ---
 
@@ -121,7 +121,7 @@
 | F6 | + attention/fusion | RUN_DOCUMENTED | WP5a A4 attn+CE **0.7378** **underperforms** A3 0.9493 under this budget — attention not free gain; full package still uses attn+focal+KD+HPO |
 | F7 | Full proposed method | RUN_DOCUMENTED (ladder) | WP5a A7 full CAD-CBA-v1 **0.9699** tops ladder; package multirun mean 0.9639±0.0185 prior |
 | F8 | Metrics: macro/weighted F1, bal-acc, P/R, per-class F1 | DONE | `scripts/protocol/metrics.py` + all protocol result JSONs |
-| F9 | Latency, params, memory, energy per ablation | PARTIAL | WP5a logs params + CUDA latency + peak mem per row; **full energy table still open** |
+| F9 | Latency, params, memory, energy per ablation | PARTIAL | WP5a logs params + CUDA latency; WP5c consolidates F1–lat–params Pareto; **full energy table still open** |
 
 ---
 
@@ -153,12 +153,12 @@
 |----|-------------|--------|------------------|
 | H1 | May not beat RF F1 if deployment better | DONE (framing) | METHOD + multi-obj framing locked; tables still need WP5c |
 | H2 | Near-RF detection | PARTIAL | Protocol neural HPO 0.9791 / multirun mean 0.9714 vs protocol RF 0.9778 / published RF 0.9864 — keep honest dual bars |
-| H3 | Much lower GPU memory | PARTIAL | `cuml_rf_resources.json`: CNN-BiLSTM ~2MB vs cuML RF ~444MB (historical A100 note); re-measure under final ckpt |
-| H4 | Faster neural inference | PARTIAL | `baseline_latency.json` RTX 3050 numbers exist; final-method re-bench open |
+| H3 | Much lower GPU memory | PARTIAL | Historical `cuml_rf_resources.json` CNN ~2MB vs cuML RF ~444MB; protocol proxy via n_params/ckpt bytes in WP5c (`pareto/`); peak VRAM re-measure still open |
+| H4 | Faster neural inference | PARTIAL | Protocol batch256 µs/sample in WP5c: G6 MLP **4.33** vs A7 **26.02** vs A3 **19.96**; historical `baseline_latency.json` still secondary |
 | H5 | Low explanation dispatch | DONE (dispatch) | `llm_explainability.json` — 16.60 µs is **dispatch only** (not full LLM gen) |
 | H6 | Good minority detection | PARTIAL | Theft/min-cls logged (HPO seed42 Theft=1.0); systematic minority claim needs ablation/final tables |
 | H7 | Stable across GPU platforms | BLOCKED | DICC |
-| H8 | Pareto F1–latency–memory | TODO | **Playlist:** WP5c after ablations + systems numbers consolidated |
+| H8 | Pareto F1–latency–memory | DONE | WP5c: 14 protocol points (A1–A7 + G6–G12); F1–lat front **A7/A3/G6**; composite #1 G6 0.762; best F1 A7 **0.9699**; classical LGBM/RF ref 0.9818/0.9778; `pareto/summary.json` + plots |
 
 ---
 
@@ -264,6 +264,7 @@
 | 2026-07-21 | **WP5a ablation ladder DONE** A1–A7 seed42 val-only ~90 min: A7 **0.9699** &gt; A3 0.9493 &gt; A6 0.9346 &gt; A5 0.8684 &gt; A2 0.8058 &gt; A4 0.7378 &gt; A1 0.6221; F1–F7 RUN_DOCUMENTED; F9 systems partial; A4 attn+CE underperforms A3 (honest); champion unchanged; next WP5b neural baselines |
 | 2026-07-22 | **WP5b neural baselines DONE** G6–G12 seed42 CE scratch equal budget ~80 min: G11 **0.9493** &gt; G6 0.9285 &gt; G10 0.8159 &gt; G8 0.8099 &gt; G9 0.8058 &gt; G7 0.6221 &gt; G12 0.5808; G15 HPO budget note DONE; transformer weak under budget; G7=A1 G9=A2 G11=A3 consistency; champion unchanged; next D6/G2/G5 or WP5c/C* |
 | 2026-07-22 | **G2/G5 classical + D6 + G13 DONE:** LinearSVC full **0.4268** RUN_DOCUMENTED; LGBM fix **0.9818** DONE (tops classical); D6 stratified **0.9209** vs shuffle **0.9791** (Δ−0.058) RUN_DOCUMENTED keep shuffle; G13 N/A note; B9 class-weight close RUN_DOCUMENTED; champion unchanged; next WP5c Pareto / C* / B2–B4 / E6 |
+| 2026-07-22 | **WP5c Pareto H8 DONE** analysis-only: 14 protocol points A1–A7+G6–G12; F1–lat front A7/A3/G6; best F1 A7 **0.9699** @26.0 µs; composite #1 G6 **0.762** @4.33 µs F1 0.9285; classical LGBM/RF ref 0.9818/0.9778; `pareto/summary.json` + `table.md` + plots; champion unchanged; next C* / B2–B4 / E6 |
 
 ---
 
