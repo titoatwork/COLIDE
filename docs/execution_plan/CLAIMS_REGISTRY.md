@@ -104,7 +104,7 @@
 ## Open gates (do not claim as done)
 
 - WP0 DICC multi-day (user-scheduled) — I1–I5, H7, K7, I11
-- PI venue polish of camera-ready draft (local-complete draft DONE: `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf`)
+- Final journal class file / BibTeX after PI venue choice (local-complete draft + PI venue polish DONE: `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf`)
 
 ## Usage
 

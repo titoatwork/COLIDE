@@ -1,7 +1,7 @@
 # Session Continuity / Handoff Pack
 
 **Session closed for continuity:** 2026-07-22  
-**Mode this session:** **WP9c camera-ready manuscript draft** + remaining figures (no train)  
+**Mode this session:** **PI venue polish** of camera-ready manuscript (no train)  
 **Git tip at handoff:** see latest commit after handoff push (`git log -1 --oneline`)  
 **Machine root:** `/home/titoisalive/colide`
 
@@ -40,23 +40,27 @@ Complete **every** row in `PROF_FEEDBACK_TRACKER.md` for Prof Por / WoS path.
 
 ## 3. Completed this arc (do not redo)
 
-### 3.1–3.27 Prior (still valid)
-Protocol foundation through WP9b manuscript spine (title/abstract/RQs/tables/ToV).
+### 3.1–3.28 Prior (still valid)
+Protocol foundation through WP9c camera-ready local-complete draft.
 
-### 3.28 WP9c camera-ready draft (DONE — this session)
+### 3.29 PI venue polish (DONE — this session)
 - **Artifacts:**
-  - `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md`
-  - `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf` (~850 KB)
-  - `docs/manuscript/figures/` (architecture, class dist, dual bars, ablation, B14 CM, WP6b, Pareto)
-- Write order: results → methods → intro from spine; **no invented numbers**
-- Tracker: A6/L10 → DONE (draft); WP9c DONE on package board
+  - Polished `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md`
+  - Rebuilt `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf` (~797 KB)
+  - `scripts/build_manuscript_pdf.py` (reproducible builder)
+- Continuous journal abstract; author/affiliation/venue placeholders
+- Table 1b multi-seed test per-class means (from sealed_test seeds only)
+- Table 5b HPO Stage-B refine ranking (from hpo/summary.json)
+- Table 6 systems mean±std / CV / CI (from wp6b)
+- App D PI checklist; data/ethics stubs
+- Tracker: A6/L10 → DONE (PI polish); L11 notes **59** claims
 - Claims **59** green; champion **unchanged**
 - **Still BLOCKED (ops only):** A3, H7, I1–I5, I11, K7, WP0 DICC
-- Open writing: **PI venue polish** only (not science)
+- **Still PI (not science):** final journal class file + BibTeX after venue choice
 
-### 3.29 Remaining playlist
-- PI venue formatting / submission polish of draft PDF  
+### 3.30 Remaining playlist
 - **WP0** DICC (user-scheduled) — insert multi-GPU cells when SUCCESS tree exists  
+- PI fills authors / venue / BibTeX when ready  
 - End every session with **paste-ready handoff prompt**
 
 ---
@@ -70,7 +74,7 @@ Verify:
 cd /home/titoisalive/colide
 ps -eo pid,cmd | awk '/run_wp6b|train_protocol|run_hpo/{print}'
 test -f docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf && echo pdf_OK
-test -f docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md && echo spine_OK
+test -f scripts/build_manuscript_pdf.py && echo builder_OK
 test -f benchmarks/results/sealed_test/summary.json && echo sealed_OK
 test -f benchmarks/results/wp6b_local_ranges/summary.json && echo wp6b_OK
 PYTHONPATH=. python3 scripts/verify_claims.py | tail -5
@@ -84,10 +88,10 @@ nvidia-smi --query-gpu=temperature.gpu,utilization.gpu,memory.used --format=csv
 ## 5. Next chat work order (strict)
 
 1. **Verify** disk + claims green.  
-2. **PI venue polish** of manuscript draft **or** **DICC** if user opens dedicated session.  
-3. After any number edit: rebuild claims + verify_claims.  
-4. Thermal guard if any sustained train (none expected).  
-5. **DICC** only when user opens dedicated session.  
+2. **DICC** if user opens dedicated session — else no multi-GPU work.  
+3. Optional: PI fills author list / venue template / BibTeX (not invent numbers).  
+4. After any number edit: rebuild claims + verify_claims; rebuild PDF if prose changes.  
+5. Thermal guard if any sustained train (none expected).  
 6. End session: update tracker + progress + HANDOFF + commit/push + **paste next prompt in closing message**.
 
 ---
@@ -117,21 +121,22 @@ Read first (in order):
 11) config/hpo_best.yaml
 
 Verify on disk:
-- docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf (WP9c local-complete draft DONE)
+- docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf (WP9c + PI venue polish DONE)
+- scripts/build_manuscript_pdf.py
 - docs/manuscript/figures/ (arch, class-dist, CM, ablation, dual bars, WP6b, Pareto)
 - benchmarks/results/wp6b_local_ranges/summary.json  (energy 0.920–0.943; PT@256 24.15–25.68)
 - sealed_test + claims 59 + verify_claims green
 - Champion md5 still 80a90f7cc210276300eaa90173a5a385
 - No train jobs; GPU cool
 
-Last session (2026-07-22): WP9c camera-ready draft DONE (md+pdf+figures);
-WP9b spine already DONE; residual PARTIAL flips prior; claims 59 green;
-B14+WP6b DONE. Open ops: DICC only. Open writing: PI venue polish.
+Last session (2026-07-22): PI venue polish DONE (continuous abstract, Table 1b/5b,
+systems CI/CV, PDF rebuild, App D); WP9c/WP9b/B14/WP6b already DONE; claims 59 green;
+champion unchanged. Open ops: DICC only. Open PI: authors/venue/BibTeX after venue choice.
 
 Next:
-A) PI venue polish of draft PDF (or leave for PI) — do not invent numbers
-B) Keep verify_claims green after any prose/number edit
-C) DICC only if user opens dedicated session
+A) DICC only if user opens dedicated session — insert multi-GPU cells from SUCCESS tree
+B) Else idle science: optional PI author/venue fill — do not invent numbers
+C) Keep verify_claims green after any prose/number edit; rebuild PDF if needed
 
 Rules: no invent multi-day numbers; no clobber champion without BACKUP;
 thermal guard if sustained train; commit/push; end per HANDOFF lifecycle with paste-ready next prompt.
@@ -144,7 +149,8 @@ thermal guard if sustained train; commit/push; end per HANDOFF lifecycle with pa
 | Role | Path |
 |------|------|
 | Handoff narrative | `docs/execution_plan/SESSION_CONTINUITY.md` |
-| Camera-ready draft | `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md` / `.pdf` |
+| Camera-ready + PI polish | `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md` / `.pdf` |
+| PDF builder | `scripts/build_manuscript_pdf.py` |
 | Figures | `docs/manuscript/figures/` |
 | Manuscript spine | `docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md` |
 | Disk numbers + md5s | `docs/execution_plan/RESULTS_DISK_MANIFEST.md` |
@@ -174,8 +180,8 @@ thermal guard if sustained train; commit/push; end per HANDOFF lifecycle with pa
 | ToN 13-feat neural 0.811 | Lags RF 0.939 — honest multi-dataset gap |
 | Claims package | Green verifier; B14 + WP6b locked |
 | **WP9b spine** | Title/abstract/RQs/tables locked |
-| **WP9c draft** | Local-complete PDF + figures; PI polish open |
+| **WP9c + PI polish** | Local-complete PDF + figures + venue polish; journal template open |
 
 ---
 
-*End handoff. Next chat: verify disk → PI polish or DICC if user opens.*
+*End handoff. Next chat: verify disk → DICC if user opens it, else PI author/venue only.*

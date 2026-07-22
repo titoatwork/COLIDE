@@ -1,7 +1,7 @@
 # Results Disk Manifest (handoff snapshot)
 
 **Generated (UTC):** 2026-07-21T11:01:25.771483+00:00  
-**Last append (UTC):** 2026-07-22T16:45:00 (WP9c camera-ready draft + figures DONE; no new result JSON)
+**Last append (UTC):** 2026-07-22T16:22:00 (PI venue polish of manuscript + PDF rebuild; no new result JSON)
 **Host path root:** `/home/titoisalive/colide`
 
 `benchmarks/results/` is **gitignored**. This file is committed so the next session can verify local artifacts without inventing numbers.
@@ -114,7 +114,7 @@
 | Path | exists | notes |
 |------|--------|-------|
 | `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md` | yes | full local-complete prose draft |
-| `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf` | yes | ~850 KB camera-ready draft PDF |
+| `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf` | yes | camera-ready local-complete PDF |
 | `docs/manuscript/figures/fig_architecture.png` | yes | V3 CAD-CBA block diagram |
 | `docs/manuscript/figures/fig_class_distribution.png` | yes | train imbalance + test support |
 | `docs/manuscript/figures/fig_confusion_matrix_b14_seed42.png` | yes | sealed test CM representative |
@@ -125,7 +125,21 @@
 | `docs/manuscript/figures/fig_pareto_f1_params.png` | yes | copied from benchmarks/plots |
 | `scripts/generate_manuscript_figures.py` | yes | regenerates class-dist + CM |
 
-**Trap:** Draft is **local-complete**, not DICC-complete. PI venue polish still open.
+**Trap:** Draft is **local-complete**, not DICC-complete.
+
+## PI venue polish (2026-07-22)
+
+**Mode:** prose + PDF packaging only · no new result JSON · champion frozen  
+**Builder:** `scripts/build_manuscript_pdf.py` (ReportLab)
+
+| Path | exists | notes |
+|------|--------|-------|
+| `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md` | yes | continuous abstract; Table 1b per-class means; Table 5b HPO refine; systems CI/CV; front matter placeholders |
+| `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf` | yes | ~797 KB rebuild |
+| `scripts/build_manuscript_pdf.py` | yes | reproducible PDF from markdown + figures |
+
+**Table 1b means (from sealed_test ft_seed{42..46} test per_class F1):** DDoS **0.9838**, DoS **0.9813**, Normal **0.9292**, Recon **0.9958**, Theft **1.0000**.  
+**Still open for PI:** journal class file / BibTeX after venue choice. DICC cells still TBD.
 
 ## B14 sealed multi-seed BoT TEST (2026-07-22)
 

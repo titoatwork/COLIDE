@@ -1,7 +1,35 @@
 # Progress log (results as they land)
 
 **Policy:** document everything; label pilot vs full; test sealed unless noted.  
-**Handoff snapshot:** 2026-07-22 (**WP9c camera-ready draft DONE**; WP9b spine; WP6b ranges; B14 test 0.9780±0.0033; claims 59 green)
+**Handoff snapshot:** 2026-07-22 (**PI venue polish DONE**; WP9c draft; WP9b spine; WP6b ranges; B14 test 0.9780±0.0033; claims 59 green)
+
+---
+
+## 2026-07-22 — PI venue polish of camera-ready draft (no train)
+
+**Mode:** writing / packaging only · **no train** · GPU idle · champion frozen  
+**Primary artifacts:**
+- `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md` (venue-polished prose)
+- `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf` (~797 KB rebuild)
+- `scripts/build_manuscript_pdf.py` (reproducible ReportLab builder)
+
+### Delivered
+| Item | Detail |
+|------|--------|
+| Abstract | Continuous journal-style (5-part content preserved; labels removed) |
+| Front matter | Author / affiliation / correspondence / venue placeholders for PI |
+| Table 1b | Multi-seed **test** per-class F1 means from sealed_test seeds 42–46 (DDoS 0.9838 … Theft 1.0) |
+| Table 5b | HPO Stage-B full-train refine ranking (trial 8 **0.9791** selected; trial 13 collapses 0.8656) |
+| Table 6 | Systems ranges + mean±std / CV% / 95% CI from WP6b summary |
+| Process jargon | Softened INCORPORATED/RUN_DOCUMENTED/Trap language for reader-facing prose |
+| Repro / ethics | Data-availability + ethics stubs; App D PI checklist |
+| Tracker | A6/L10 → DONE (PI polish); L11 notes **59** claims |
+| Claims | **59** — `verify_claims` green (no number invention) |
+| Champion | **unchanged** `80a90f7cc210276300eaa90173a5a385` |
+| Still open | Final journal class file + BibTeX after PI venue choice; DICC ops BLOCKED |
+
+**Decision: DONE (PI venue polish pass)** — not “publisher typeset final” until PI picks venue template.  
+**Next:** DICC when user opens dedicated session **or** PI fills author/venue/BibTeX.
 
 ---
 

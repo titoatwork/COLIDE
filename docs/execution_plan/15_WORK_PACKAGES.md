@@ -35,7 +35,7 @@
 | WP8 | ToN final-method eval | 8 | Final recipe | Agent | **DONE 2026-07-22** val 0.8080 test 0.8110 RF 0.9393 RUN_DOCUMENTED |
 | WP9a | Numbers-match + claim JSON packaging | 9 | All | Agent | **DONE 2026-07-22** + post-B14 rebuild (46 claims, sealed LOCKED_TEST, verify green) |
 | WP9b | Manuscript spine + figures | 9 | WP9a | User+agent | **DONE 2026-07-22** spine `WP9b_MANUSCRIPT_SPINE.md` (title/abstract/RQs/tables/ToV) |
-| WP9c | Camera-ready draft PDF + remaining figures | 9 | WP9b | User+agent | **DONE 2026-07-22** `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.{md,pdf}` + figures (arch/class-dist/CM/ablation/dual bars/WP6b/Pareto); local-complete; PI venue polish + DICC cells open |
+| WP9c | Camera-ready draft PDF + remaining figures | 9 | WP9b | User+agent | **DONE 2026-07-22** draft + **PI venue polish** (continuous abstract, Table 1b/5b, systems CI/CV, `scripts/build_manuscript_pdf.py`); journal class/BibTeX = PI; DICC cells open |
 
 ---
 

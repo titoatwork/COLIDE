@@ -24,12 +24,12 @@
 
 | ID | Requirement | Status | Evidence / notes |
 |----|-------------|--------|------------------|
-| A1 | Local progress acknowledged but not submission-ready | DONE (framing) | Interim+reply sent; local science closed; **submission** still needs PI PDF polish + DICC if multi-GPU claimed (`WP9b_MANUSCRIPT_SPINE.md`) |
+| A1 | Local progress acknowledged but not submission-ready | DONE (framing) | Interim+reply sent; local science + PI venue polish closed; **submission** still needs PI journal class/BibTeX + DICC if multi-GPU claimed |
 | A2 | 0.9790 &lt; RF 0.9864 — detection not sole headline unless improved | DONE (framing) | Dual bars locked; pure F1 not sole headline; multi-obj + sealed test **0.9780±0.0033** near RF protocol; LGBM **0.9818** still tops pure F1 |
 | A3 | CUDA mainly B3 local RTX 3050; V100S/A100 pending | BLOCKED | Need DICC (local WP6b DONE) |
 | A4 | Clear quantitative advantage on ≥1 major dimension | DONE (local multi-obj) | G6 composite **0.9056** @4.33 µs; WP6b energy **0.920–0.943** mJ/flow; PT@256 **24.15–25.68** µs; CUDA pipe **565–570** µs; peak **322.2** MiB; dispatch **16.60** µs; pure F1 still LGBM **0.9818** |
 | A5 | Not rely mainly on implementation/docs quality | DONE | 59 claims from disk JSON; sealed test + ablations + negatives RUN_DOCUMENTED — science not docs-only |
-| A6 | Strengthen before finalising manuscript | DONE (draft) | WP9b spine + WP9c camera-ready local-complete draft PDF/figures; PI venue polish + DICC if multi-GPU claimed |
+| A6 | Strengthen before finalising manuscript | DONE (PI polish) | WP9b spine + WP9c draft + **PI venue polish** (continuous abstract, Table 1b per-class, Table 5b HPO refine, systems CI/CV, front-matter placeholders, PDF rebuild); journal class file/BibTeX = PI after venue; DICC if multi-GPU claimed |
 
 ---
 
@@ -225,8 +225,8 @@
 | L7 | One clear proposed method | DONE (named) | **CAD-CBA-v1** signed; full evaluation playlist still open (ablations/test/ToN/paper) |
 | L8 | Deploy: export, parity, profile, kernels, TRT/ORT/compile, FP16/INT8 | DONE (local path) | WP6a fidelity PASS + **WP6b multi-session ranges DONE**; TRT/ORT/compile historical; WP6c DICC re-bench only if user opens DICC (champion unchanged → optional) |
 | L9 | Realistic: trade-off vs beat RF everywhere | DONE (framing) | Multi-obj framing locked; H8 + `CLAIMS_REGISTRY` advantage snapshot |
-| L10 | Paper structure / tables / ToV / repro | DONE (draft) | Spine + `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.{md,pdf}` + figures; Phase 9 map; protocol ToV; PI venue polish open |
-| L11 | Fix gitignored claim-source repro | DONE | WP9a + **post-B14 rebuild**: 46 claims; sealed test LOCKED_TEST; `verify_claims.py` all green |
+| L10 | Paper structure / tables / ToV / repro | DONE (PI polish) | Spine + polished `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.{md,pdf}` + figures; Table 1b/5b; App D checklist; `scripts/build_manuscript_pdf.py`; journal template/BibTeX = PI after venue |
+| L11 | Fix gitignored claim-source repro | DONE | WP9a + post-B14/WP6b rebuild: **59** claims; sealed LOCKED_TEST; `verify_claims.py` all green |
 | L12 | Title words only if evaluated | DONE (policy) | J10 drops full XAI title; spine §1 recommended **T1** multi-obj + Option A CUDA; no portability/XAI-full words until evaluated |
 
 ---
@@ -278,6 +278,7 @@
 | 2026-07-22 | **WP6b local multi-session ranges DONE** n=5 sessions RTX 3050; energy **0.920–0.943** mJ/flow (mean 0.933); PT@256 **24.15–25.68** µs (mean 24.90); CUDA pipe **565–570** µs; block3 FP16 **503–509** µs; peak alloc **322.2** MiB; I7/I8/H3/H4/K6/L8 advanced; claims **59** green; historical energy 0.786 labeled HISTORICAL |
 | 2026-07-22 | **WP9b manuscript spine DONE** `WP9b_MANUSCRIPT_SPINE.md`: title policy T1; abstract 5-part; RQ answers K4/K5 DONE; core tables from disk; ToV addendum; residual PARTIAL flips A1/A2/A4–A6/C1/I6/I9/I10/K4/K5/L1/L10/L12; H7/I1–I5/I11/K7/WP0 remain BLOCKED (DICC ops); verify_claims green; no train; champion unchanged |
 | 2026-07-22 | **WP9c camera-ready draft DONE** `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.{md,pdf}` + figures (arch, class-dist, dual bars, ablation, B14 CM seed42, WP6b ranges, Pareto); related-work gap table; results→methods→intro from spine; A6/L10 flipped to draft; claims 59 green; no train; champion unchanged; DICC still BLOCKED |
+| 2026-07-22 | **PI venue polish DONE** continuous journal abstract; author/affiliation/venue placeholders; Table 1b multi-seed test per-class means (from sealed_test seeds); Table 5b HPO Stage-B refine ranking; Table 6 std/CV/CI; data/ethics stubs; App D checklist; `scripts/build_manuscript_pdf.py` rebuild (~797 KB PDF); A6/L10 → DONE (PI polish); L11 notes 59 claims; verify_claims green; no train; champion unchanged; DICC still BLOCKED; final journal class file/BibTeX left for PI after venue choice |
 
 ---
 

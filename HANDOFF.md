@@ -1,8 +1,8 @@
 # COLIDE — Session Handoff
 
 **MODE:** 🚀 **EXECUTION — next chat continues Prof tracker.** This chat closed for continuity.  
-**Closed:** 2026-07-22 · **WP9c camera-ready draft DONE** (md + PDF + figures).  
-**Authority:** `docs/execution_plan/SESSION_CONTINUITY.md` + `RESULTS_DISK_MANIFEST.md` + `PROF_FEEDBACK_TRACKER.md` + manuscript draft + Option A.  
+**Closed:** 2026-07-22 · **PI venue polish DONE** (md + PDF rebuild + builder script).  
+**Authority:** `docs/execution_plan/SESSION_CONTINUITY.md` + `RESULTS_DISK_MANIFEST.md` + `PROF_FEEDBACK_TRACKER.md` + manuscript + Option A.  
 **Policy:** skip nothing → **complete every playlist/tracker row** → JSON → INCORPORATED or RUN_DOCUMENTED (BLOCKED only for ops). **Perfection over LOR hurry.** No invent DICC numbers. Context hygiene: flip statuses when evidence already exists.  
 **Champion:** `model/best_model_botiot_twostage.pth` md5 **`80a90f7cc210276300eaa90173a5a385`** — no clobber without BACKUP.  
 **Session end:** always paste full next-session prompt in closing message (not only in this file).
@@ -22,13 +22,13 @@
 | Freeze card | **USER-LOCKED** + B14 result table |
 | Champion | **unchanged** |
 | **WP9b manuscript spine** | **DONE** `WP9b_MANUSCRIPT_SPINE.md` |
-| Residual PARTIAL flips | **DONE** (prior session) |
 | **WP9c camera-ready draft** | **DONE** `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.{md,pdf}` + figures |
+| **PI venue polish** | **DONE** continuous abstract; Table 1b/5b; systems CI/CV; App D; `scripts/build_manuscript_pdf.py` |
 | Open ops BLOCKED | A3, H7, I1–I5, I11, K7, **WP0 DICC** |
-| PI venue polish | **OPEN** (not science) |
+| Open PI (not science) | Authors / venue class file / BibTeX after venue choice |
 | DICC | **ABSENT** — dedicated session when user opens it |
 
-**CAD-CBA-v1 locked (science + sealed test + local systems + spine + draft):** V3 + focal + ensemble KD + hpo_best + shuffle + argmax.  
+**CAD-CBA-v1 locked (science + sealed test + local systems + spine + draft + PI polish):** V3 + focal + ensemble KD + hpo_best + shuffle + argmax.  
 **XAI paper path:** dispatch + structured only — no full LLM-explainable title.  
 **Systems:** report **ranges** (WP6b); historical single-shot energy 0.786 labeled HISTORICAL.  
 **Jobs:** expect idle GPU after this handoff.
@@ -75,7 +75,8 @@ Read first (in order):
 11) config/hpo_best.yaml
 
 Verify on disk:
-- docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf  (WP9c DONE; local-complete draft)
+- docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf  (WP9c + PI venue polish DONE)
+- scripts/build_manuscript_pdf.py
 - docs/manuscript/figures/  (arch, class-dist, CM, ablation, dual bars, WP6b, Pareto)
 - benchmarks/results/wp6b_local_ranges/summary.json  (WP6b DONE; energy 0.920–0.943; PT@256 24.15–25.68)
 - benchmarks/results/systems_i8_h3/summary.json  (I8/H3 mirror)
@@ -89,14 +90,15 @@ Verify on disk:
 - No train jobs; GPU cool before start
 - PYTHONPATH=. python3 scripts/verify_claims.py  → all green
 
-Last session (2026-07-22): WP9c camera-ready draft DONE (md+pdf+figures from WP9b spine);
-claims 59 green; B14+WP6b+WP9b already DONE; champion unchanged.
-Open ops BLOCKED: DICC (A3/H7/I1–I5/I11/K7/WP0). Open writing: PI venue polish only.
+Last session (2026-07-22): PI venue polish DONE (continuous abstract, Table 1b per-class,
+Table 5b HPO refine, systems CI/CV, PDF rebuild ~797KB, App D checklist); claims 59 green;
+B14+WP6b+WP9b+WP9c already DONE; champion unchanged.
+Open ops BLOCKED: DICC (A3/H7/I1–I5/I11/K7/WP0). Open PI: authors/venue/BibTeX only.
 
 Next:
-A) PI venue polish of draft PDF (optional this session) — no invent numbers
-B) Keep verify_claims green after any prose
-C) DICC only if user opens dedicated session
+A) DICC only if user opens dedicated session
+B) Else optional PI author/venue/BibTeX fill — no invent numbers
+C) Keep verify_claims green; rebuild PDF via scripts/build_manuscript_pdf.py after prose edits
 
 Rules: no invent multi-day numbers; no clobber champion without BACKUP;
 thermal guard if sustained train; commit/push; end per HANDOFF lifecycle.
@@ -114,6 +116,8 @@ git rev-parse HEAD origin/master
 # after claim edits:
 PYTHONPATH=. python3 scripts/build_claims_package.py
 PYTHONPATH=. python3 scripts/verify_claims.py
+# after manuscript prose edits:
+PYTHONPATH=. python3 scripts/build_manuscript_pdf.py
 ```
 
 | Gate | Requirement |
@@ -133,7 +137,7 @@ PYTHONPATH=. python3 scripts/verify_claims.py
 - BoT sealed multi-seed **test DONE** (B14 path A) — numbers in `sealed_test/`  
 - Local systems ranges **DONE** (WP6b) — numbers in `wp6b_local_ranges/`  
 - Manuscript spine **DONE** (WP9b) — `WP9b_MANUSCRIPT_SPINE.md`  
-- Camera-ready **local-complete draft DONE** (WP9c) — `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.{md,pdf}`  
+- Camera-ready **local-complete draft + PI venue polish DONE** — `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.{md,pdf}`  
 - Official cluster: UM DICC only — **user will open a dedicated DICC session**  
 - Results under `benchmarks/results/` often **gitignored** — use `RESULTS_DISK_MANIFEST.md` + local paths  
 - Agents: no invented DICC numbers  
@@ -151,4 +155,4 @@ PYTHONPATH=. python3 scripts/verify_claims.py
 
 Design plan Option A approved; FINAL_PLAN P0–P5; audit pack `docs/audit/`; interim Word report sent to Prof; feedback in `docs/feedback1.docx`.
 
-**Next science priority after verify disk:** **PI venue polish** of draft **or** **DICC** when user opens that session.
+**Next science priority after verify disk:** **DICC** when user opens dedicated session (only remaining BLOCKED ops). PI author/venue fill is non-science.

@@ -264,7 +264,7 @@ DICC: not included until dedicated session SUCCESS tree exists
 3. ~~Methods from freeze card~~ **DONE**  
 4. ~~Intro/abstract last using §2~~ **DONE**  
 5. ~~Draw architecture + class-dist figures~~ **DONE**  
-6. PI review / venue formatting cycles — **open**  
+6. ~~PI venue polish~~ **DONE** (2026-07-22) — continuous abstract, Table 1b/5b, systems CI/CV, PDF rebuild; journal class/BibTeX still PI after venue  
 7. **DICC insert** when user opens session (replace TBD cells)  
 8. Final verify_claims + claim-source zip after any number edit  
 
@@ -283,7 +283,7 @@ DICC: not included until dedicated session SUCCESS tree exists
 | RQ answers | **DONE** (RQ4 BLOCKED honest) |
 | Core tables | **DONE** (from disk) |
 | Figure art | **DONE (local)** — arch, class-dist, dual bars, ablation, CM, WP6b, Pareto |
-| Full PDF | **DONE (local-complete draft)** — `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf` (PI venue polish open) |
+| Full PDF | **DONE (local-complete + PI polish)** — `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf` · builder `scripts/build_manuscript_pdf.py` |
 | DICC cells | **BLOCKED** |
 
 ---

@@ -1,6 +1,6 @@
 # 13 — Phase 9: Manuscript (After Evidence Complete)
 
-**Status:** **WP9c CAMERA-READY DRAFT DONE** (2026-07-22) · local-complete PDF + figures · DICC cells open · PI venue polish open  
+**Status:** **WP9c + PI VENUE POLISH DONE** (2026-07-22) · local-complete PDF + figures · DICC cells open · journal class/BibTeX = PI after venue  
 **Prof:** Full outline in feedback1.docx  
 **Authority spine:** `docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md`  
 **Draft artifacts:** `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md` + `.pdf` + `docs/manuscript/figures/`
@@ -82,8 +82,9 @@
 2. ~~Draft results first~~ DONE (WP9c)  
 3. ~~Methods second~~ DONE  
 4. ~~Intro/abstract last~~ DONE (spine + draft)  
-5. PI review / venue formatting cycles — **open**  
-6. No new experiments hidden in writing phase without protocol  
+5. ~~PI venue polish~~ **DONE** (continuous abstract, Table 1b/5b, systems CI/CV, PDF rebuild, App D)  
+6. Final journal class file / BibTeX — **PI after venue choice**  
+7. No new experiments hidden in writing phase without protocol  
 
 ---
 
@@ -91,4 +92,5 @@
 
 - [x] Manuscript **spine** + artifact pointers + green verify_claims  
 - [x] **Local-complete** camera-ready draft PDF + full local figure art  
-- [ ] Submission-ready after **PI venue polish** + DICC cells (if multi-GPU claimed)  
+- [x] **PI venue polish** pass (not publisher typeset)  
+- [ ] Submission-ready after **PI venue template/BibTeX** + DICC cells (if multi-GPU claimed)  
