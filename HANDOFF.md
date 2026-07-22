@@ -1,7 +1,7 @@
 # COLIDE — Session Handoff
 
 **MODE:** 🚀 **EXECUTION — next chat continues Prof tracker.** This chat closed for continuity.  
-**Closed:** 2026-07-22 · **PI venue polish DONE** (md + PDF rebuild + builder script).  
+**Closed:** 2026-07-22 · **Playlist closure audit + claims hygiene DONE** (64 claims; Table 1b registered).  
 **Authority:** `docs/execution_plan/SESSION_CONTINUITY.md` + `RESULTS_DISK_MANIFEST.md` + `PROF_FEEDBACK_TRACKER.md` + manuscript + Option A.  
 **Policy:** skip nothing → **complete every playlist/tracker row** → JSON → INCORPORATED or RUN_DOCUMENTED (BLOCKED only for ops). **Perfection over LOR hurry.** No invent DICC numbers. Context hygiene: flip statuses when evidence already exists.  
 **Champion:** `model/best_model_botiot_twostage.pth` md5 **`80a90f7cc210276300eaa90173a5a385`** — no clobber without BACKUP.  
@@ -18,17 +18,18 @@
 | **B14 sealed multi-seed TEST** seeds 42–46 | **DONE** test **0.9780±0.0033**; Theft **1.0**; min-cls **0.9292** |
 | **WP6b local multi-session ranges** | **DONE** energy **0.920–0.943**; PT@256 **24.15–25.68** µs; CUDA pipe **565–570** µs; peak **322.2** MiB |
 | I7 warm-up / I8 batch sensitivity / H3 peak VRAM | **DONE** (under WP6b) |
-| Claims package rebuild | **DONE** **59** claims; verify_claims green |
+| Claims package rebuild | **DONE** **64** claims (was 59; +Table 1b per-class); verify_claims green |
 | Freeze card | **USER-LOCKED** + B14 result table |
 | Champion | **unchanged** |
 | **WP9b manuscript spine** | **DONE** `WP9b_MANUSCRIPT_SPINE.md` |
 | **WP9c camera-ready draft** | **DONE** `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.{md,pdf}` + figures |
 | **PI venue polish** | **DONE** continuous abstract; Table 1b/5b; systems CI/CV; App D; `scripts/build_manuscript_pdf.py` |
-| Open ops BLOCKED | A3, H7, I1–I5, I11, K7, **WP0 DICC** |
+| **Playlist closure audit** | **DONE** `PLAYLIST_CLOSURE_AUDIT.md` — **133/133** tracker rows terminal; 0 TODO/PARTIAL |
+| Open ops BLOCKED | A3, H7, I1–I5, I11, K7, **WP0/WP0b DICC**, WP6c N/A |
 | Open PI (not science) | Authors / venue class file / BibTeX after venue choice |
 | DICC | **ABSENT** — dedicated session when user opens it |
 
-**CAD-CBA-v1 locked (science + sealed test + local systems + spine + draft + PI polish):** V3 + focal + ensemble KD + hpo_best + shuffle + argmax.  
+**CAD-CBA-v1 locked (science + sealed test + local systems + spine + draft + PI polish + playlist closed):** V3 + focal + ensemble KD + hpo_best + shuffle + argmax.  
 **XAI paper path:** dispatch + structured only — no full LLM-explainable title.  
 **Systems:** report **ranges** (WP6b); historical single-shot energy 0.786 labeled HISTORICAL.  
 **Jobs:** expect idle GPU after this handoff.
@@ -42,10 +43,11 @@
 3. **`docs/execution_plan/RESULTS_DISK_MANIFEST.md`**  
 4. **`docs/execution_plan/PROGRESS_LOG.md`**  
 5. **`docs/execution_plan/PROF_FEEDBACK_TRACKER.md`**  
-6. **`docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md`** (or PDF)  
-7. `docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md`  
-8. `benchmarks/results/wp6b_local_ranges/summary.json`  
-9. `benchmarks/results/sealed_test/summary.json` (B14)
+6. **`docs/execution_plan/PLAYLIST_CLOSURE_AUDIT.md`**  
+7. **`docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md`** (or PDF)  
+8. `docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md`  
+9. `benchmarks/results/wp6b_local_ranges/summary.json`  
+10. `benchmarks/results/sealed_test/summary.json` (B14)
 
 ---
 
@@ -67,12 +69,13 @@ Read first (in order):
 3) docs/execution_plan/RESULTS_DISK_MANIFEST.md
 4) docs/execution_plan/PROGRESS_LOG.md
 5) docs/execution_plan/PROF_FEEDBACK_TRACKER.md
-6) docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md
-7) docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md
-8) docs/execution_plan/METHOD_PACKAGE_DECISION.md
-9) docs/execution_plan/CLAIMS_REGISTRY.md
-10) docs/execution_plan/FINAL_CONFIG_FREEZE_CARD.md
-11) config/hpo_best.yaml
+6) docs/execution_plan/PLAYLIST_CLOSURE_AUDIT.md
+7) docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md
+8) docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md
+9) docs/execution_plan/METHOD_PACKAGE_DECISION.md
+10) docs/execution_plan/CLAIMS_REGISTRY.md
+11) docs/execution_plan/FINAL_CONFIG_FREEZE_CARD.md
+12) config/hpo_best.yaml
 
 Verify on disk:
 - docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf  (WP9c + PI venue polish DONE)
@@ -81,7 +84,7 @@ Verify on disk:
 - benchmarks/results/wp6b_local_ranges/summary.json  (WP6b DONE; energy 0.920–0.943; PT@256 24.15–25.68)
 - benchmarks/results/systems_i8_h3/summary.json  (I8/H3 mirror)
 - benchmarks/results/sealed_test/summary.json  (B14 DONE; test ~0.9780±0.0033; Theft 1.0)
-- benchmarks/results/claims_package/protocol_claims.json  (59 claims)
+- benchmarks/results/claims_package/protocol_claims.json  (64 claims)
 - benchmarks/results/xai/summary.json  (J10 DROP_FULL; rank_corr ~0.9636; faith ~0.5109)
 - benchmarks/results/toniot_final/summary.json  (val ~0.8080; test ~0.8110; RF test ~0.9393)
 - benchmarks/results/energy_table/summary.json  (historical RTX ~0.786 mJ/flow)
@@ -90,10 +93,11 @@ Verify on disk:
 - No train jobs; GPU cool before start
 - PYTHONPATH=. python3 scripts/verify_claims.py  → all green
 
-Last session (2026-07-22): PI venue polish DONE (continuous abstract, Table 1b per-class,
-Table 5b HPO refine, systems CI/CV, PDF rebuild ~797KB, App D checklist); claims 59 green;
-B14+WP6b+WP9b+WP9c already DONE; champion unchanged.
+Last session (2026-07-22): Playlist closure audit DONE (133/133 tracker rows terminal);
+claims 59→64 (Table 1b per-class LOCKED_TEST); open_gates = DICC + PI venue only;
+WP0/0b/6c BLOCKED hygiene; L7/B8 stale notes flipped; PDF rebuild; champion unchanged.
 Open ops BLOCKED: DICC (A3/H7/I1–I5/I11/K7/WP0). Open PI: authors/venue/BibTeX only.
+Local science playlist is CLOSED.
 
 Next:
 A) DICC only if user opens dedicated session
@@ -138,10 +142,11 @@ PYTHONPATH=. python3 scripts/build_manuscript_pdf.py
 - Local systems ranges **DONE** (WP6b) — numbers in `wp6b_local_ranges/`  
 - Manuscript spine **DONE** (WP9b) — `WP9b_MANUSCRIPT_SPINE.md`  
 - Camera-ready **local-complete draft + PI venue polish DONE** — `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.{md,pdf}`  
+- Full local playlist **CLOSED** — `PLAYLIST_CLOSURE_AUDIT.md` (133/133 terminal)  
 - Official cluster: UM DICC only — **user will open a dedicated DICC session**  
 - Results under `benchmarks/results/` often **gitignored** — use `RESULTS_DISK_MANIFEST.md` + local paths  
 - Agents: no invented DICC numbers  
-- Claims: rebuild with `build_claims_package.py`; verify with `verify_claims.py`  
+- Claims: rebuild with `build_claims_package.py`; verify with `verify_claims.py` (**64** claims)  
 - Classical: prefer `summary_handoff.json` (LGBM official **0.9818**)  
 - B14 test **0.9780±0.0033** — label as **test**; do not mix with val multirun  
 - WP6b energy **0.920–0.943** — do not mix with historical single-shot **0.786**  

@@ -1,7 +1,7 @@
 # Protocol Claims Package (WP9a)
 
-**Generated (UTC):** 2026-07-22T15:04:00.342965+00:00
-**Git:** `d058030052824bd17f58dcae254d6ad3d0f75941`
+**Generated (UTC):** 2026-07-22T16:33:17.696762+00:00
+**Git:** `81eab4ad06cf08163ffa6dfcae115ee6e51a7c19`
 **Champion md5:** `80a90f7cc210276300eaa90173a5a385` (unchanged=True; expected `80a90f7cc210276300eaa90173a5a385`)
 **Method:** CAD-CBA-v1
 
@@ -69,12 +69,18 @@
 | `bot_sealed_test_min_cls_mean` | **0.9292** | LOCKED_TEST | `sealed_test/summary.json` | B14 test min-cls mean |
 | `bot_sealed_test_theft_mean` | **1.0000** | LOCKED_TEST | `sealed_test/summary.json` | B14 test Theft mean |
 | `bot_sealed_test_multiseed` | **0.9780±0.0033** | LOCKED_TEST | `sealed_test/summary.json` | B14 path A; champion_unchanged=True |
+| `bot_sealed_test_pc_ddos` | **0.9838** | LOCKED_TEST | `sealed_test/summary.json` | B14 multi-seed mean test per-class F1 (Table 1b); from seed JSONs only |
+| `bot_sealed_test_pc_dos` | **0.9813** | LOCKED_TEST | `sealed_test/summary.json` | B14 multi-seed mean test per-class F1 (Table 1b); from seed JSONs only |
+| `bot_sealed_test_pc_normal` | **0.9292** | LOCKED_TEST | `sealed_test/summary.json` | B14 multi-seed mean test per-class F1 (Table 1b); from seed JSONs only |
+| `bot_sealed_test_pc_recon` | **0.9958** | LOCKED_TEST | `sealed_test/summary.json` | B14 multi-seed mean test per-class F1 (Table 1b); from seed JSONs only |
+| `bot_sealed_test_pc_theft` | **1.0000** | LOCKED_TEST | `sealed_test/summary.json` | B14 multi-seed mean test per-class F1 (Table 1b); from seed JSONs only |
 | `dicc_multiday_stats` | **PENDING** | BLOCKED_DICC | `PENDING` | WP0 / I1–I6 user-scheduled DICC session |
 
-## Minority / per-class F1 (val only)
+## Minority / per-class F1 (val rows + B14 TEST mean)
 
 | Model | macro-F1 | min-cls | DDoS | DoS | Normal | Reconnaissance | Theft | source |
 |-------|----------|---------|------|------|------|------|------|--------|
+| B14 sealed multi-seed TEST mean | 0.9780 | 0.9292 | 0.9838 | 0.9813 | 0.9292 | 0.9958 | 1.0000 | `sealed_test/summary.json + ft_seed{42..46}.json` |
 | HPO winner seed42 | 0.9791 | 0.9351 | 0.9836 | 0.9812 | 0.9351 | 0.9955 | 1.0000 | `hpo/refine_rank2_trial008_seed42.json` |
 | WP1b multirun seed42 | 0.9780 | 0.9315 | 0.9833 | 0.9807 | 0.9315 | 0.9948 | 1.0000 | `multirun/ft_seed42.json` |
 | Focal FT seed42 | 0.9780 | 0.9315 | 0.9833 | 0.9807 | 0.9315 | 0.9948 | 1.0000 | `imbalance_loss/ft_focal_seed42.json` |
@@ -91,20 +97,23 @@
 
 | Dimension | Evidence | Source |
 |-----------|----------|--------|
+| B14 sealed multi-seed TEST | **0.9780±0.0033** (Theft 1.0) | `sealed_test/summary.json` |
 | Protocol classical F1 top | LGBM **0.9818** | `lgbm_seed42.json` |
 | Protocol neural HPO | **0.9791** | `hpo/summary.json` |
 | Protocol neural multirun | **0.9714±0.0109** | `multirun/summary.json` |
 | A priori composite #1 | G6 score **0.9056** @ 4.33 µs F1 0.9285 | `pareto_h8` / energy headline |
-| Energy (RTX batch128) | **0.786 mJ/flow** | `energy_table/summary.json` |
+| Energy multi-session (WP6b) | **0.920–0.943** mJ/flow (mean **0.933**) | `wp6b_local_ranges/summary.json` |
+| Energy single-shot (HISTORICAL) | **0.786 mJ/flow** | `energy_table/summary.json` |
 | LLM dispatch p99 | **16.60 µs** (dispatch only) | `xai` / energy |
 | XAI policy | DROP full explainable claim; keep structured+dispatch | `xai/summary.json` J10 |
 | ToN honesty | test 0.8110 ≪ RF 0.9393 (13-feat) | `toniot_final` |
 | Published RF dual bar | 0.9864 ≠ protocol RF 0.9778 | historical vs protocol |
+| Manuscript | Local-complete + PI venue polish | `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf` |
 
 ## Open gates (do not claim as done)
 
-- WP0 DICC multi-day (user-scheduled) — I1–I5, H7, K7, I11
-- Final journal class file / BibTeX after PI venue choice (local-complete draft + PI venue polish DONE: `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf`)
+- WP0 DICC multi-day multi-GPU (user-scheduled dedicated session only)
+- Final journal class file / BibTeX after PI venue choice (local-complete draft + PI venue polish DONE)
 
 ## Usage
 
@@ -119,7 +128,8 @@ PYTHONPATH=. python3 scripts/verify_claims.py
 | Status | Meaning |
 |--------|---------|
 | LOCKED_VAL | Val-only protocol number; safe to quote with source |
-| LOCKED_TEST | Explicitly allowed test number (ToN WP8) |
+| LOCKED_TEST | Explicitly allowed test number (B14 sealed BoT + ToN WP8) |
+| LOCKED_SYSTEMS | Local multi-session systems number (WP6b); not multi-GPU |
 | HISTORICAL | Prior pipeline / dual bar — label carefully |
-| PENDING_SEALED_TEST | Wait for user final-config lock + B14 run |
+| PENDING_SEALED_TEST | Residual only if B14 summary missing |
 | BLOCKED_DICC | Wait for dedicated DICC session |

@@ -11,8 +11,8 @@
 
 | ID | Name | Phase | Depends | Owner | Status |
 |----|------|-------|---------|-------|--------|
-| WP0 | UM DICC Day1+Day2+compare+scp | 0 | — | User/ops + coach | **TODO** (BLOCKED — no access/artifacts) |
-| WP0b | Extract DICC JSON tables + fork decision | 0 | WP0 | Agent+user | TODO |
+| WP0 | UM DICC Day1+Day2+compare+scp | 0 | — | User/ops + coach | **BLOCKED (ops)** — no `benchmarks/results/dicc/`; dedicated user session only |
+| WP0b | Extract DICC JSON tables + fork decision | 0 | WP0 | Agent+user | **BLOCKED (ops)** — depends WP0 SUCCESS tree |
 | WP1a | Unified protocol + freeze card | 1 | — (prep ok) | Agent | **DONE 2026-07-19** |
 | WP1b | Multi-run baseline driver (5 seeds) | 1 | WP1a | Agent | **DONE 2026-07-19** mean 0.9714±0.0109 |
 | WP2a | Sign method package (MOD table) | 2 | — | User+agent | **DONE** CAD-CBA-v1 |
@@ -30,10 +30,10 @@
 | WP5c | Pareto figure + composite score | 5 | WP5a/b + systems | Agent | **DONE 2026-07-22** `pareto/` + `pareto_h8/` systems rebench; G6 composite; classical refs |
 | WP6a | Re-export + fidelity | 6 | Final ckpt | Agent | **DONE 2026-07-22** re-export + bit-identical fidelity PASS |
 | WP6b | Local re-bench ranges Option A | 6 | WP6a | Agent | **DONE 2026-07-22** multi-session n=5; energy 0.920–0.943; PT@256 24.15–25.68 µs; CUDA pipe 565–570 µs |
-| WP6c | Re-DICC if model changed | 6 | WP6a | User/ops | TODO (user-scheduled; champion unchanged so optional) |
+| WP6c | Re-DICC if model changed | 6 | WP6a | User/ops | **BLOCKED (N/A)** — champion md5 unchanged; re-open only if champion replaced + BACKUP |
 | WP7 | XAI suite **or** drop explainable claims | 7 | Final detector | Agent | **DONE 2026-07-22** suite RUN_DOCUMENTED; J10 drop full claim keep structured+dispatch |
 | WP8 | ToN final-method eval | 8 | Final recipe | Agent | **DONE 2026-07-22** val 0.8080 test 0.8110 RF 0.9393 RUN_DOCUMENTED |
-| WP9a | Numbers-match + claim JSON packaging | 9 | All | Agent | **DONE 2026-07-22** + post-B14 rebuild (46 claims, sealed LOCKED_TEST, verify green) |
+| WP9a | Numbers-match + claim JSON packaging | 9 | All | Agent | **DONE 2026-07-22** + post-B14/WP6b/Table1b rebuild (**64** claims, sealed LOCKED_TEST, verify green) |
 | WP9b | Manuscript spine + figures | 9 | WP9a | User+agent | **DONE 2026-07-22** spine `WP9b_MANUSCRIPT_SPINE.md` (title/abstract/RQs/tables/ToV) |
 | WP9c | Camera-ready draft PDF + remaining figures | 9 | WP9b | User+agent | **DONE 2026-07-22** draft + **PI venue polish** (continuous abstract, Table 1b/5b, systems CI/CV, `scripts/build_manuscript_pdf.py`); journal class/BibTeX = PI; DICC cells open |
 
@@ -43,11 +43,11 @@
 
 | Priority | Action |
 |----------|--------|
-| 0 | Verify disk + `verify_claims` green |
-| 1 | **PI polish** of `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf` (venue style) **or** insert DICC cells when user opens session |
-| 2 | Keep `verify_claims` green after any prose/number edits |
-| Parallel | **WP0** only when user opens dedicated DICC session |
-| Never | Invent multi-day / multi-GPU numbers; full CUDA vs full V3 parity |
+| 0 | Verify disk + `verify_claims` green (expect **64** claims) |
+| 1 | **DICC** only when user opens dedicated session — else do not start multi-GPU work |
+| 2 | Optional: PI fills authors / venue class file / BibTeX — **no invent numbers** |
+| 3 | Keep `verify_claims` green after any prose/number edits; rebuild PDF via `scripts/build_manuscript_pdf.py` |
+| Never | Invent multi-day / multi-GPU numbers; full CUDA vs full V3 parity; clobber champion without BACKUP |
 
 ---
 

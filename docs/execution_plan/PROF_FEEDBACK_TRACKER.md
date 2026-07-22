@@ -44,7 +44,7 @@
 | B5 | Dropout rate | DONE (train) | WP3 searched dropout 0.10–0.50 + attention_dropout 0–0.30; winner dropout≈0.148 att≈0.214 |
 | B6 | LR and LR scheduler | DONE | WP3: lr log 1e-5–3e-3; scheduler {none,cosine,step}; winner lr≈5.89e-5 cosine |
 | B7 | Batch size | DONE | WP3 categorical {128,256,512,1024}; winner **1024** |
-| B8 | Focal-loss parameters | DONE (γ) | WP3 γ∈[0.5,3.5]; winner **≈1.917** (α class-weights still open B9) |
+| B8 | Focal-loss parameters | DONE (γ) | WP3 γ∈[0.5,3.5]; winner **≈1.917**; B9 class-weights **RUN_DOCUMENTED** (keep no CB on neural) |
 | B9 | Class weights | RUN_DOCUMENTED | Explicit CB via `focal_cb` val **0.9121** ≪ plain focal **0.9780** (`imbalance_loss/`); keep **no class-weight** on neural focal. (Classical LGBM G5 uses balanced — separate tree baseline, not CAD-CBA loss) |
 | B10 | Distill T and α | DONE (recipe) + historical RUN_DOCUMENTED | **17** historical `distill_botiot_a*_T*.json` sweeps; CAD-CBA-v1 uses **α=0.6 T=10** (best historical + WP4b); protocol Optuna on T/α not required if recipe locked |
 | B11 | Sequence length | DONE (locked) | V3 reshape fixed **[2,32]** in freeze/config; design freeze (not a free search dim under CAD-CBA-v1 KD transfer) |
@@ -222,11 +222,11 @@
 | L4 | Phase: freeze preprocess/split/metrics/seeds/hardware/baseline | DONE | Protocol + `BASELINE_FREEZE_CARD.md` + multirun baseline |
 | L5 | ≥5 independent training runs mean±std | DONE | WP1b 0.9714±0.0109; package 0.9639±0.0185; HPO confirm 0.9689±0.0145 n=5 (val only) |
 | L6 | Optuna/Bayesian HPO | DONE | WP3 Optuna TPE val-only; winner INCORPORATE 0.9791; multi-seed confirm RUN_DOCUMENTED 0.9689±0.0145 |
-| L7 | One clear proposed method | DONE (named) | **CAD-CBA-v1** signed; full evaluation playlist still open (ablations/test/ToN/paper) |
+| L7 | One clear proposed method | DONE (named) | **CAD-CBA-v1** signed; evaluation playlist **closed** (ablations/test/ToN/paper local-complete); only DICC ops + PI venue remain |
 | L8 | Deploy: export, parity, profile, kernels, TRT/ORT/compile, FP16/INT8 | DONE (local path) | WP6a fidelity PASS + **WP6b multi-session ranges DONE**; TRT/ORT/compile historical; WP6c DICC re-bench only if user opens DICC (champion unchanged → optional) |
 | L9 | Realistic: trade-off vs beat RF everywhere | DONE (framing) | Multi-obj framing locked; H8 + `CLAIMS_REGISTRY` advantage snapshot |
 | L10 | Paper structure / tables / ToV / repro | DONE (PI polish) | Spine + polished `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.{md,pdf}` + figures; Table 1b/5b; App D checklist; `scripts/build_manuscript_pdf.py`; journal template/BibTeX = PI after venue |
-| L11 | Fix gitignored claim-source repro | DONE | WP9a + post-B14/WP6b rebuild: **59** claims; sealed LOCKED_TEST; `verify_claims.py` all green |
+| L11 | Fix gitignored claim-source repro | DONE | WP9a + post-B14/WP6b + Table 1b per-class claims: **64** claims; sealed LOCKED_TEST; `verify_claims.py` all green |
 | L12 | Title words only if evaluated | DONE (policy) | J10 drops full XAI title; spine §1 recommended **T1** multi-obj + Option A CUDA; no portability/XAI-full words until evaluated |
 
 ---
@@ -279,6 +279,7 @@
 | 2026-07-22 | **WP9b manuscript spine DONE** `WP9b_MANUSCRIPT_SPINE.md`: title policy T1; abstract 5-part; RQ answers K4/K5 DONE; core tables from disk; ToV addendum; residual PARTIAL flips A1/A2/A4–A6/C1/I6/I9/I10/K4/K5/L1/L10/L12; H7/I1–I5/I11/K7/WP0 remain BLOCKED (DICC ops); verify_claims green; no train; champion unchanged |
 | 2026-07-22 | **WP9c camera-ready draft DONE** `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.{md,pdf}` + figures (arch, class-dist, dual bars, ablation, B14 CM seed42, WP6b ranges, Pareto); related-work gap table; results→methods→intro from spine; A6/L10 flipped to draft; claims 59 green; no train; champion unchanged; DICC still BLOCKED |
 | 2026-07-22 | **PI venue polish DONE** continuous journal abstract; author/affiliation/venue placeholders; Table 1b multi-seed test per-class means (from sealed_test seeds); Table 5b HPO Stage-B refine ranking; Table 6 std/CV/CI; data/ethics stubs; App D checklist; `scripts/build_manuscript_pdf.py` rebuild (~797 KB PDF); A6/L10 → DONE (PI polish); L11 notes 59 claims; verify_claims green; no train; champion unchanged; DICC still BLOCKED; final journal class file/BibTeX left for PI after venue choice |
+| 2026-07-22 | **Playlist closure audit + claims hygiene** — full tracker parse **133/133 terminal** (0 TODO/PARTIAL); Table 1b means re-verified from seed JSON; claims rebuild **64** (added `bot_sealed_test_pc_*`); open_gates trimmed to DICC + PI venue only; WP0/0b/6c → BLOCKED(ops/N/A); L7/B8 stale notes flipped; `PLAYLIST_CLOSURE_AUDIT.md`; verify_claims green; no train; champion unchanged |
 
 ---
 

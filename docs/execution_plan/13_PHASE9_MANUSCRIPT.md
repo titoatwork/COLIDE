@@ -1,9 +1,10 @@
 # 13 — Phase 9: Manuscript (After Evidence Complete)
 
-**Status:** **WP9c + PI VENUE POLISH DONE** (2026-07-22) · local-complete PDF + figures · DICC cells open · journal class/BibTeX = PI after venue  
+**Status:** **WP9c + PI VENUE POLISH DONE** (2026-07-22) · local-complete PDF + figures · playlist closure audit · DICC cells open · journal class/BibTeX = PI after venue  
 **Prof:** Full outline in feedback1.docx  
 **Authority spine:** `docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md`  
-**Draft artifacts:** `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md` + `.pdf` + `docs/manuscript/figures/`
+**Draft artifacts:** `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md` + `.pdf` + `docs/manuscript/figures/`  
+**Playlist audit:** `docs/execution_plan/PLAYLIST_CLOSURE_AUDIT.md` (133/133 terminal)
 
 ---
 
@@ -14,10 +15,12 @@
 - [x] Ablations + baselines + Pareto  
 - [x] CUDA Option A clean on **local** (cluster open)  
 - [x] Numbers-match across claims / registry  
-- [x] `verify_claims.py` green (59 claims)  
-- [x] Claim-source artifacts packaged (WP9a)  
+- [x] `verify_claims.py` green (**64** claims)  
+- [x] Claim-source artifacts packaged (WP9a + Table 1b per-class)  
 - [x] Title words match evaluated components only (J10 + spine §1)  
 - [x] Camera-ready **local-complete** draft PDF + figure art (WP9c)  
+- [x] PI venue polish pass  
+- [x] Full playlist closure audit (local path)  
 
 ---
 
@@ -43,15 +46,15 @@
 
 | Section | Evidence phase | Spine ref | Draft status |
 |---------|----------------|-----------|--------------|
-| Intro RQs 1–5 | All | WP9b §3 | **IN DRAFT** |
-| RW 2.1–2.7 + gap table | Literature pass | spine + literature_review_raw | **IN DRAFT** (compact) |
-| Method 3.x | Phase 2–4, 6–7 | freeze card | **IN DRAFT** |
-| Experiments 4.x | Phase 1 protocol | protocol scripts | **IN DRAFT** |
-| Results 5.1–5.11 | Phases 0*,5,6,7,8 | WP9b §8 tables | **IN DRAFT** |
-| Discussion 6.x | Synthesis | spine §4–5 | **IN DRAFT** |
-| ToV 7 | Honest limits | paper_text_blocks §15 + protocol addendum | **IN DRAFT** |
-| Repro 8 | Packaging | claims registry | **IN DRAFT** |
-| Conclusion 9 | Summary | abstract part 5 | **IN DRAFT** |
+| Intro RQs 1–5 | All | WP9b §3 | **DONE (PI polish)** |
+| RW 2.1–2.7 + gap table | Literature pass | spine + literature_review_raw | **DONE (compact; BibTeX=PI)** |
+| Method 3.x | Phase 2–4, 6–7 | freeze card | **DONE (PI polish)** |
+| Experiments 4.x | Phase 1 protocol | protocol scripts | **DONE (PI polish)** |
+| Results 5.1–5.13 | Phases 0*,5,6,7,8 | WP9b §8 tables | **DONE (PI polish; §5.13 TBD DICC)** |
+| Discussion 6.x | Synthesis | spine §4–5 | **DONE (PI polish)** |
+| ToV 7 | Honest limits | paper_text_blocks §15 + protocol addendum | **DONE (PI polish)** |
+| Repro 8 | Packaging | claims registry | **DONE (PI polish)** |
+| Conclusion 9 | Summary | abstract part 5 | **DONE (PI polish)** |
 
 \*Phase 0 multi-GPU results remain TBD cells until DICC.
 

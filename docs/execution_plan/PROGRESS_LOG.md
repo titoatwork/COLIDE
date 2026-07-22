@@ -1,7 +1,35 @@
 # Progress log (results as they land)
 
 **Policy:** document everything; label pilot vs full; test sealed unless noted.  
-**Handoff snapshot:** 2026-07-22 (**PI venue polish DONE**; WP9c draft; WP9b spine; WP6b ranges; B14 test 0.9780±0.0033; claims 59 green)
+**Handoff snapshot:** 2026-07-22 (**Playlist closure audit DONE**; claims **64** green; PI venue polish; WP9c; B14 0.9780±0.0033; WP6b ranges)
+
+---
+
+## 2026-07-22 — Playlist closure audit + claims hygiene (no train)
+
+**Mode:** audit / packaging only · **no train** · GPU idle · champion frozen  
+**Primary artifacts:**
+- `docs/execution_plan/PLAYLIST_CLOSURE_AUDIT.md`
+- `scripts/build_claims_package.py` (Table 1b per-class claims + open_gates/advantage hygiene)
+- `docs/execution_plan/CLAIMS_REGISTRY.md` (rebuilt, **64** claims)
+- `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.{md,pdf}` (claims count 64; PDF rebuild ~797 KB)
+
+### Delivered
+| Item | Detail |
+|------|--------|
+| Tracker parse | **133/133 terminal** (DONE 66 · RUN_DOCUMENTED 52 · INCORPORATED 5 · BLOCKED 10 · TODO/PARTIAL **0**) |
+| Table 1b re-verify | DDoS 0.9838 / DoS 0.9813 / Normal 0.9292 / Recon 0.9958 / Theft 1.0 — match seed JSON means |
+| Claims | **59 → 64** (`bot_sealed_test_pc_*` LOCKED_TEST) |
+| Open gates | DICC + PI venue/BibTeX only (WP9b removed as stale) |
+| WP board | WP0/WP0b **BLOCKED(ops)**; WP6c **BLOCKED(N/A)** champion unchanged |
+| Tracker hygiene | L7 playlist-open note closed; B8→B9 class-weights closed; L11 notes 64 |
+| Phase docs | 04 Phase0 BLOCKED; 13 Phase9 sections DONE (PI polish) |
+| Claims | **64** — `verify_claims` green |
+| Champion | **unchanged** `80a90f7cc210276300eaa90173a5a385` |
+| Still open | DICC ops BLOCKED; PI authors/venue/BibTeX |
+
+**Decision: DONE (local playlist closed)** — no further science rows open under full playlist law.  
+**Next:** DICC when user opens dedicated session **or** PI fills author/venue/BibTeX.
 
 ---
 

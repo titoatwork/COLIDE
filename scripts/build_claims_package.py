@@ -493,6 +493,7 @@ def main() -> int:
 
     # B14 sealed multi-seed BoT TEST (only when summary exists after user lock)
     sealed, sealed_meta = load_json("sealed_test/summary.json")
+    sealed_pc_means: dict[str, float] = {}
     if (
         sealed
         and sealed.get("allow_test")
@@ -544,6 +545,41 @@ def main() -> int:
             f"B14 path {sealed.get('init_path')}; champion_unchanged={sealed.get('champion_unchanged')}",
             status="LOCKED_TEST",
         )
+        # Multi-seed mean test per-class F1 (Table 1b) — computed from seed JSONs only
+        sealed_pc_sums: dict[str, list[float]] = {}
+        sealed_seed_list = list(sealed.get("seeds") or [])
+        for seed in sealed_seed_list or list(range(42, 47)):
+            sd, _smeta = load_json(f"sealed_test/ft_seed{seed}.json")
+            if not sd:
+                continue
+            pc = dig(sd, "metrics", "test", "per_class") or {}
+            for cls, row in pc.items():
+                if isinstance(row, dict) and isinstance(row.get("f1"), (int, float)):
+                    sealed_pc_sums.setdefault(cls, []).append(float(row["f1"]))
+        sealed_pc_means = {
+            cls: (sum(vs) / len(vs))
+            for cls, vs in sealed_pc_sums.items()
+            if len(vs) >= min(5, max(1, len(sealed_seed_list) or 5))
+        }
+        id_map = {
+            "DDoS": "bot_sealed_test_pc_ddos",
+            "DoS": "bot_sealed_test_pc_dos",
+            "Normal": "bot_sealed_test_pc_normal",
+            "Reconnaissance": "bot_sealed_test_pc_recon",
+            "Theft": "bot_sealed_test_pc_theft",
+        }
+        for cls, cid in id_map.items():
+            if cls in sealed_pc_means:
+                n_pc = len(sealed_pc_sums[cls])
+                add(
+                    cid,
+                    sealed_pc_means[cls],
+                    "sealed_test/summary.json",
+                    f"derived:mean(ft_seed*.metrics.test.per_class.{cls}.f1) n={n_pc}",
+                    "B14 multi-seed mean test per-class F1 (Table 1b); from seed JSONs only",
+                    status="LOCKED_TEST",
+                    decimals=4,
+                )
     else:
         add(
             "bot_sealed_test_multiseed",
@@ -597,6 +633,21 @@ def main() -> int:
                 },
             }
         )
+    # B14 multi-seed TEST mean per-class (label clearly as TEST, not val)
+    if sealed_pc_means and sealed:
+        minority_rows.insert(
+            0,
+            {
+                "label": "B14 sealed multi-seed TEST mean",
+                "source": "sealed_test/summary.json + ft_seed{42..46}.json",
+                "source_md5": None,
+                "macro_f1": sealed.get("test_macro_f1_mean"),
+                "min_per_class_f1": sealed.get("test_min_per_class_f1_mean"),
+                "balanced_accuracy": None,
+                "per_class_f1": sealed_pc_means,
+                "split": "test",
+            },
+        )
 
     advantage = {
         "detection_protocol_top_classical": {
@@ -616,16 +667,21 @@ def main() -> int:
             "source": "multirun/summary.json",
         },
         "efficiency_composite_top": dig(en, "headline", "pareto_h8_composite_top"),
-        "energy_rtx_batch128_mj_flow": dig(en, "headline", "rtx_gpu_batch128_mj_per_flow"),
+        "energy_wp6b_multi_session_mj_flow": dig(wp6b, "headline", "energy_mj_per_flow_range")
+        if wp6b
+        else None,
+        "energy_rtx_batch128_mj_flow_historical": dig(
+            en, "headline", "rtx_gpu_batch128_mj_per_flow"
+        ),
         "llm_dispatch_p99_us": dig(en, "headline", "llm_dispatch_p99_us")
         or dig(xai, "latency", "dispatch_overhead_p99_us"),
         "vram_proxy_note": (
-            "Historical cuML RF ~444MB vs CNN ~2MB (cuml_rf_resources.json); "
+            "WP6b peak alloc 322.2 MiB (local); historical cuML RF ~444MB contrast; "
             "protocol proxy via n_params/ckpt in pareto_h8"
         ),
         "honest_gap_vs_published_rf": (
-            "Protocol neural HPO ~0.9791 / multirun ~0.9714 vs protocol RF ~0.9778 / "
-            "published RF 0.9864 — do not mix pipelines"
+            "B14 sealed test ~0.9780±0.0033 ≈ protocol RF val ~0.9778; "
+            "LGBM val ~0.9818 tops pure F1; published RF 0.9864 other pipeline — dual bars"
         ),
         "ton_gap": "ToN 13-feat neural test ~0.8110 vs RF ~0.9393",
         "xai_policy": "DROP full LLM-explainable claim; keep dispatch + structured evidence",
@@ -680,8 +736,9 @@ def main() -> int:
                 else ["WP6b local multi-session latency/energy ranges after lock"]
             )
             + [
-                "WP0 DICC multi-day (user-scheduled)",
-                "WP9b manuscript spine after tracker largely green",
+                "WP0 DICC multi-day multi-GPU (user-scheduled dedicated session only)",
+                "Final journal class file / BibTeX after PI venue choice "
+                "(local-complete draft + PI venue polish DONE)",
             ]
         ),
         "missing_sources": missing,
@@ -768,7 +825,7 @@ def main() -> int:
             f"| `{c['id']}` | **{val}** | {c['status']} | `{c['source_file']}` | {notes} |"
         )
     lines.append("")
-    lines.append("## Minority / per-class F1 (val only)")
+    lines.append("## Minority / per-class F1 (val rows + B14 TEST mean)")
     lines.append("")
     classes: list[str] = []
     for r in minority_rows:
@@ -793,8 +850,12 @@ def main() -> int:
                 else "—"
                 for c in classes
             )
+            mf = r["macro_f1"]
+            mc = r["min_per_class_f1"]
+            mf_s = f"{mf:.4f}" if isinstance(mf, (int, float)) else "—"
+            mc_s = f"{mc:.4f}" if isinstance(mc, (int, float)) else "—"
             lines.append(
-                f"| {r['label']} | {r['macro_f1']:.4f} | {r['min_per_class_f1']:.4f} | "
+                f"| {r['label']} | {mf_s} | {mc_s} | "
                 f"{pcs} | `{r['source']}` |"
             )
     lines.append("")
@@ -802,6 +863,16 @@ def main() -> int:
     lines.append("")
     lines.append("| Dimension | Evidence | Source |")
     lines.append("|-----------|----------|--------|")
+    if (
+        sealed
+        and isinstance(sealed.get("test_macro_f1_mean"), (int, float))
+        and int(sealed.get("n_success") or 0) >= 5
+    ):
+        lines.append(
+            f"| B14 sealed multi-seed TEST | "
+            f"**{sealed['test_macro_f1_mean']:.4f}±{float(sealed.get('test_macro_f1_std') or 0):.4f}** "
+            f"(Theft {float(sealed.get('test_theft_f1_mean') or 0):.1f}) | `sealed_test/summary.json` |"
+        )
     lines.append(
         f"| Protocol classical F1 top | LGBM **{macro_f1(lgbm):.4f}** | `lgbm_seed42.json` |"
     )
@@ -819,16 +890,28 @@ def main() -> int:
             f"@ {comp_row.get('per_sample_us', float('nan')):.2f} µs "
             f"F1 {comp_row.get('val_macro_f1', float('nan')):.4f} | `pareto_h8` / energy headline |"
         )
-    lines.append(
-        f"| Energy (RTX batch128) | "
-        f"**{dig(en, 'headline', 'rtx_gpu_batch128_mj_per_flow'):.3f} mJ/flow** | `energy_table/summary.json` |"
-    )
+    e_mean = dig(wp6b, "headline", "energy_mj_per_flow_range", "mean") if wp6b else None
+    e_lo = dig(wp6b, "headline", "energy_mj_per_flow_range", "low") if wp6b else None
+    e_hi = dig(wp6b, "headline", "energy_mj_per_flow_range", "high") if wp6b else None
+    if e_mean is not None and e_lo is not None and e_hi is not None:
+        lines.append(
+            f"| Energy multi-session (WP6b) | "
+            f"**{e_lo:.3f}–{e_hi:.3f}** mJ/flow (mean **{e_mean:.3f}**) | "
+            f"`wp6b_local_ranges/summary.json` |"
+        )
+    hist_e = dig(en, "headline", "rtx_gpu_batch128_mj_per_flow")
+    if hist_e is not None:
+        lines.append(
+            f"| Energy single-shot (HISTORICAL) | "
+            f"**{hist_e:.3f} mJ/flow** | `energy_table/summary.json` |"
+        )
     disp = dig(en, "headline", "llm_dispatch_p99_us") or dig(
         xai, "latency", "dispatch_overhead_p99_us"
     )
-    lines.append(
-        f"| LLM dispatch p99 | **{disp:.2f} µs** (dispatch only) | `xai` / energy |"
-    )
+    if disp is not None:
+        lines.append(
+            f"| LLM dispatch p99 | **{float(disp):.2f} µs** (dispatch only) | `xai` / energy |"
+        )
     lines.append(
         "| XAI policy | DROP full explainable claim; keep structured+dispatch | `xai/summary.json` J10 |"
     )
@@ -837,6 +920,10 @@ def main() -> int:
     )
     lines.append(
         "| Published RF dual bar | 0.9864 ≠ protocol RF 0.9778 | historical vs protocol |"
+    )
+    lines.append(
+        "| Manuscript | Local-complete + PI venue polish | "
+        "`docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf` |"
     )
     lines.append("")
     lines.append("## Open gates (do not claim as done)")
@@ -857,9 +944,10 @@ def main() -> int:
     lines.append("| Status | Meaning |")
     lines.append("|--------|---------|")
     lines.append("| LOCKED_VAL | Val-only protocol number; safe to quote with source |")
-    lines.append("| LOCKED_TEST | Explicitly allowed test number (ToN WP8) |")
+    lines.append("| LOCKED_TEST | Explicitly allowed test number (B14 sealed BoT + ToN WP8) |")
+    lines.append("| LOCKED_SYSTEMS | Local multi-session systems number (WP6b); not multi-GPU |")
     lines.append("| HISTORICAL | Prior pipeline / dual bar — label carefully |")
-    lines.append("| PENDING_SEALED_TEST | Wait for user final-config lock + B14 run |")
+    lines.append("| PENDING_SEALED_TEST | Residual only if B14 summary missing |")
     lines.append("| BLOCKED_DICC | Wait for dedicated DICC session |")
     lines.append("")
 

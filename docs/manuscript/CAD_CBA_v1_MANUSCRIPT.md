@@ -2,7 +2,7 @@
 
 **Document type:** Camera-ready **local-complete** manuscript (PI venue polish pass)  
 **Method freeze:** CAD-CBA-v1 · **Option A** CUDA (per-block / operation-matched only)  
-**Claims package:** 59 protocol claims · `PYTHONPATH=. python3 scripts/verify_claims.py` must stay green  
+**Claims package:** 64 protocol claims · `PYTHONPATH=. python3 scripts/verify_claims.py` must stay green  
 **Champion weights:** `model/best_model_botiot_twostage.pth` · md5 `80a90f7cc210276300eaa90173a5a385`  
 **Authority for numbers:** `docs/execution_plan/CLAIMS_REGISTRY.md` + on-disk `benchmarks/results/`  
 **Open ops (not claimed):** DICC multi-GPU / multi-day cells remain **TBD** — never invent  
@@ -421,7 +421,7 @@ This draft: docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md
 Figures: docs/manuscript/figures/
 ```
 
-All load-bearing public numbers are registered in the claims package (**59** claims at last rebuild). Rebuild and re-verify after any prose that introduces new load-bearing numbers.
+All load-bearing public numbers are registered in the claims package (**64** claims at last rebuild, including B14 multi-seed test per-class means). Rebuild and re-verify after any prose that introduces new load-bearing numbers.
 
 ### 8.1 Data and code availability (PI to finalise venue wording)
 
@@ -503,4 +503,4 @@ Source: `config/hpo_best.yaml` / WP3 trial 8 full-train refine val **0.9791**.
 
 ---
 
-*Local-complete draft assembled 2026-07-22 (WP9c) · PI venue polish pass 2026-07-22. Numbers only from on-disk JSON / CLAIMS_REGISTRY. No invented DICC numbers.*
+*Local-complete draft assembled 2026-07-22 (WP9c) · PI venue polish 2026-07-22 · playlist closure audit + claims 64 (Table 1b registered) 2026-07-22. Numbers only from on-disk JSON / CLAIMS_REGISTRY. No invented DICC numbers.*

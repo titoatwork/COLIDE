@@ -1,7 +1,7 @@
 # Session Continuity / Handoff Pack
 
 **Session closed for continuity:** 2026-07-22  
-**Mode this session:** **PI venue polish** of camera-ready manuscript (no train)  
+**Mode this session:** **Playlist closure audit + claims hygiene** (no train)  
 **Git tip at handoff:** see latest commit after handoff push (`git log -1 --oneline`)  
 **Machine root:** `/home/titoisalive/colide`
 
@@ -27,38 +27,37 @@ Complete **every** row in `PROF_FEEDBACK_TRACKER.md` for Prof Por / WoS path.
 3. `docs/execution_plan/RESULTS_DISK_MANIFEST.md`  
 4. `docs/execution_plan/PROF_FEEDBACK_TRACKER.md`  
 5. `docs/execution_plan/PROGRESS_LOG.md`  
-6. `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md` (or PDF)  
-7. `docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md`  
-8. `docs/execution_plan/METHOD_PACKAGE_DECISION.md`  
-9. `docs/execution_plan/CLAIMS_REGISTRY.md`  
-10. `docs/execution_plan/FINAL_CONFIG_FREEZE_CARD.md`  
-11. `config/hpo_best.yaml`  
-12. `benchmarks/results/wp6b_local_ranges/summary.json`  
-13. `benchmarks/results/sealed_test/summary.json`  
+6. `docs/execution_plan/PLAYLIST_CLOSURE_AUDIT.md`  
+7. `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md` (or PDF)  
+8. `docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md`  
+9. `docs/execution_plan/METHOD_PACKAGE_DECISION.md`  
+10. `docs/execution_plan/CLAIMS_REGISTRY.md`  
+11. `docs/execution_plan/FINAL_CONFIG_FREEZE_CARD.md`  
+12. `config/hpo_best.yaml`  
+13. `benchmarks/results/wp6b_local_ranges/summary.json`  
+14. `benchmarks/results/sealed_test/summary.json`  
 
 ---
 
 ## 3. Completed this arc (do not redo)
 
-### 3.1–3.28 Prior (still valid)
-Protocol foundation through WP9c camera-ready local-complete draft.
+### 3.1–3.29 Prior (still valid)
+Protocol foundation through PI venue polish of camera-ready draft.
 
-### 3.29 PI venue polish (DONE — this session)
+### 3.30 Playlist closure audit + claims hygiene (DONE — this session)
 - **Artifacts:**
-  - Polished `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md`
-  - Rebuilt `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf` (~797 KB)
-  - `scripts/build_manuscript_pdf.py` (reproducible builder)
-- Continuous journal abstract; author/affiliation/venue placeholders
-- Table 1b multi-seed test per-class means (from sealed_test seeds only)
-- Table 5b HPO Stage-B refine ranking (from hpo/summary.json)
-- Table 6 systems mean±std / CV / CI (from wp6b)
-- App D PI checklist; data/ethics stubs
-- Tracker: A6/L10 → DONE (PI polish); L11 notes **59** claims
-- Claims **59** green; champion **unchanged**
-- **Still BLOCKED (ops only):** A3, H7, I1–I5, I11, K7, WP0 DICC
+  - `docs/execution_plan/PLAYLIST_CLOSURE_AUDIT.md` — **133/133** tracker rows terminal (0 TODO/PARTIAL)
+  - Claims rebuild **64** (was 59): `bot_sealed_test_pc_{ddos,dos,normal,recon,theft}` from seed JSONs
+  - Table 1b means re-verified (DDoS 0.9838 … Theft 1.0)
+  - `scripts/build_claims_package.py` open_gates / advantage snapshot hygiene
+  - WP0/WP0b/WP6c → BLOCKED(ops/N/A); L7/B8 stale notes flipped
+  - Manuscript claims count 59→64; PDF rebuild
+- Claims **64** green; champion **unchanged**
+- **Still BLOCKED (ops only):** A3, H7, I1–I5, I11, K7, WP0/WP0b DICC
 - **Still PI (not science):** final journal class file + BibTeX after venue choice
+- **Local science playlist:** **CLOSED**
 
-### 3.30 Remaining playlist
+### 3.31 Remaining playlist
 - **WP0** DICC (user-scheduled) — insert multi-GPU cells when SUCCESS tree exists  
 - PI fills authors / venue / BibTeX when ready  
 - End every session with **paste-ready handoff prompt**
@@ -74,7 +73,7 @@ Verify:
 cd /home/titoisalive/colide
 ps -eo pid,cmd | awk '/run_wp6b|train_protocol|run_hpo/{print}'
 test -f docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf && echo pdf_OK
-test -f scripts/build_manuscript_pdf.py && echo builder_OK
+test -f docs/execution_plan/PLAYLIST_CLOSURE_AUDIT.md && echo audit_OK
 test -f benchmarks/results/sealed_test/summary.json && echo sealed_OK
 test -f benchmarks/results/wp6b_local_ranges/summary.json && echo wp6b_OK
 PYTHONPATH=. python3 scripts/verify_claims.py | tail -5
@@ -87,7 +86,7 @@ nvidia-smi --query-gpu=temperature.gpu,utilization.gpu,memory.used --format=csv
 
 ## 5. Next chat work order (strict)
 
-1. **Verify** disk + claims green.  
+1. **Verify** disk + claims green (expect **64**).  
 2. **DICC** if user opens dedicated session — else no multi-GPU work.  
 3. Optional: PI fills author list / venue template / BibTeX (not invent numbers).  
 4. After any number edit: rebuild claims + verify_claims; rebuild PDF if prose changes.  
@@ -113,25 +112,26 @@ Read first (in order):
 3) docs/execution_plan/RESULTS_DISK_MANIFEST.md
 4) docs/execution_plan/PROGRESS_LOG.md
 5) docs/execution_plan/PROF_FEEDBACK_TRACKER.md
-6) docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md
-7) docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md
-8) docs/execution_plan/METHOD_PACKAGE_DECISION.md
-9) docs/execution_plan/CLAIMS_REGISTRY.md
-10) docs/execution_plan/FINAL_CONFIG_FREEZE_CARD.md
-11) config/hpo_best.yaml
+6) docs/execution_plan/PLAYLIST_CLOSURE_AUDIT.md
+7) docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md
+8) docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md
+9) docs/execution_plan/METHOD_PACKAGE_DECISION.md
+10) docs/execution_plan/CLAIMS_REGISTRY.md
+11) docs/execution_plan/FINAL_CONFIG_FREEZE_CARD.md
+12) config/hpo_best.yaml
 
 Verify on disk:
 - docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf (WP9c + PI venue polish DONE)
 - scripts/build_manuscript_pdf.py
-- docs/manuscript/figures/ (arch, class-dist, CM, ablation, dual bars, WP6b, Pareto)
+- docs/execution_plan/PLAYLIST_CLOSURE_AUDIT.md (133/133 terminal)
 - benchmarks/results/wp6b_local_ranges/summary.json  (energy 0.920–0.943; PT@256 24.15–25.68)
-- sealed_test + claims 59 + verify_claims green
+- sealed_test + claims 64 + verify_claims green
 - Champion md5 still 80a90f7cc210276300eaa90173a5a385
 - No train jobs; GPU cool
 
-Last session (2026-07-22): PI venue polish DONE (continuous abstract, Table 1b/5b,
-systems CI/CV, PDF rebuild, App D); WP9c/WP9b/B14/WP6b already DONE; claims 59 green;
-champion unchanged. Open ops: DICC only. Open PI: authors/venue/BibTeX after venue choice.
+Last session (2026-07-22): Playlist closure audit DONE; claims 64 (Table 1b registered);
+WP0/0b/6c BLOCKED hygiene; local science playlist CLOSED. Open ops: DICC only.
+Open PI: authors/venue/BibTeX after venue choice.
 
 Next:
 A) DICC only if user opens dedicated session — insert multi-GPU cells from SUCCESS tree
@@ -149,6 +149,7 @@ thermal guard if sustained train; commit/push; end per HANDOFF lifecycle with pa
 | Role | Path |
 |------|------|
 | Handoff narrative | `docs/execution_plan/SESSION_CONTINUITY.md` |
+| Playlist closure | `docs/execution_plan/PLAYLIST_CLOSURE_AUDIT.md` |
 | Camera-ready + PI polish | `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md` / `.pdf` |
 | PDF builder | `scripts/build_manuscript_pdf.py` |
 | Figures | `docs/manuscript/figures/` |
@@ -178,9 +179,10 @@ thermal guard if sustained train; commit/push; end per HANDOFF lifecycle with pa
 | Multi-obj G6 composite 0.9056 | Publishable efficiency angle |
 | XAI free-form LLM | Weak — drop full claim |
 | ToN 13-feat neural 0.811 | Lags RF 0.939 — honest multi-dataset gap |
-| Claims package | Green verifier; B14 + WP6b locked |
+| Claims package | Green verifier; **64** claims; B14 + WP6b + Table 1b locked |
 | **WP9b spine** | Title/abstract/RQs/tables locked |
 | **WP9c + PI polish** | Local-complete PDF + figures + venue polish; journal template open |
+| **Playlist local** | **CLOSED** (133/133 terminal) |
 
 ---
 
