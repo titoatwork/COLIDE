@@ -1,8 +1,9 @@
 # 13 — Phase 9: Manuscript (After Evidence Complete)
 
-**Status:** **WP9b SPINE DONE** (2026-07-22) · camera-ready PDF still open · DICC cells open  
+**Status:** **WP9c CAMERA-READY DRAFT DONE** (2026-07-22) · local-complete PDF + figures · DICC cells open · PI venue polish open  
 **Prof:** Full outline in feedback1.docx  
-**Authority spine:** `docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md`
+**Authority spine:** `docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md`  
+**Draft artifacts:** `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md` + `.pdf` + `docs/manuscript/figures/`
 
 ---
 
@@ -16,6 +17,7 @@
 - [x] `verify_claims.py` green (59 claims)  
 - [x] Claim-source artifacts packaged (WP9a)  
 - [x] Title words match evaluated components only (J10 + spine §1)  
+- [x] Camera-ready **local-complete** draft PDF + figure art (WP9c)  
 
 ---
 
@@ -27,7 +29,7 @@
 
 ---
 
-## 3. Abstract five-part structure (Prof) — drafted in spine §2
+## 3. Abstract five-part structure (Prof) — drafted in spine §2 · **in draft PDF**
 
 1. Background/problem (imbalance + low-latency)  
 2. Gap (accuracy vs acceleration silos; unfair kernel comparisons; weak multi-platform)  
@@ -39,17 +41,17 @@
 
 ## 4. Section map → our evidence
 
-| Section | Evidence phase | Spine ref |
-|---------|----------------|-----------|
-| Intro RQs 1–5 | All | WP9b §3 |
-| RW 2.1–2.7 + gap table | Literature pass | TODO write |
-| Method 3.x | Phase 2–4, 6–7 | freeze card |
-| Experiments 4.x | Phase 1 protocol | protocol scripts |
-| Results 5.1–5.11 | Phases 0*,5,6,7,8 | WP9b §8 tables |
-| Discussion 6.x | Synthesis | spine §4–5 |
-| ToV 7 | Honest limits | paper_text_blocks §15 + protocol addendum |
-| Repro 8 | Packaging | claims registry |
-| Conclusion 9 | Summary | abstract part 5 |
+| Section | Evidence phase | Spine ref | Draft status |
+|---------|----------------|-----------|--------------|
+| Intro RQs 1–5 | All | WP9b §3 | **IN DRAFT** |
+| RW 2.1–2.7 + gap table | Literature pass | spine + literature_review_raw | **IN DRAFT** (compact) |
+| Method 3.x | Phase 2–4, 6–7 | freeze card | **IN DRAFT** |
+| Experiments 4.x | Phase 1 protocol | protocol scripts | **IN DRAFT** |
+| Results 5.1–5.11 | Phases 0*,5,6,7,8 | WP9b §8 tables | **IN DRAFT** |
+| Discussion 6.x | Synthesis | spine §4–5 | **IN DRAFT** |
+| ToV 7 | Honest limits | paper_text_blocks §15 + protocol addendum | **IN DRAFT** |
+| Repro 8 | Packaging | claims registry | **IN DRAFT** |
+| Conclusion 9 | Summary | abstract part 5 | **IN DRAFT** |
 
 \*Phase 0 multi-GPU results remain TBD cells until DICC.
 
@@ -57,30 +59,30 @@
 
 ## 5. Essential tables/figures checklist (Prof)
 
-- [ ] Architecture diagram (draw)  
-- [ ] Class distribution (plot)  
-- [ ] Related-work comparison table (write)  
+- [x] Architecture diagram — `docs/manuscript/figures/fig_architecture.png`  
+- [x] Class distribution — `fig_class_distribution.png`  
+- [x] Related-work comparison table — manuscript §2 + App C  
 - [x] Overall predictive table (numbers ready)  
 - [x] Per-class table (claims + B14)  
-- [x] Ablation table (A1–A7)  
-- [x] HPO sensitivity table (hpo/)  
+- [x] Ablation table (A1–A7) + figure  
+- [x] HPO sensitivity table (hpo/ + App A)  
 - [x] Per-block CUDA latency (WP6b)  
 - [x] Full-model framework latency (local historical + ranges)  
 - [ ] Cross-GPU multi-day stability (**DICC**)  
 - [x] Pareto accuracy–latency–memory (plots exist)  
 - [x] Energy/throughput (WP6b primary)  
 - [x] Explanation pipeline + quality **scoped** (J10)  
-- [ ] Confusion matrices (export if needed)  
+- [x] Confusion matrices — B14 seed42 representative export  
 
 ---
 
 ## 6. Writing process (exceptional)
 
 1. ~~Lock number table~~ DONE  
-2. Draft results first — **next writing session**  
-3. Methods second  
-4. Intro/abstract last (use spine draft)  
-5. PI review cycles  
+2. ~~Draft results first~~ DONE (WP9c)  
+3. ~~Methods second~~ DONE  
+4. ~~Intro/abstract last~~ DONE (spine + draft)  
+5. PI review / venue formatting cycles — **open**  
 6. No new experiments hidden in writing phase without protocol  
 
 ---
@@ -88,4 +90,5 @@
 ## 7. Exit
 
 - [x] Manuscript **spine** + artifact pointers + green verify_claims  
-- [ ] Submission-ready PDF + full figure art + DICC cells (if claimed)  
+- [x] **Local-complete** camera-ready draft PDF + full local figure art  
+- [ ] Submission-ready after **PI venue polish** + DICC cells (if multi-GPU claimed)  

@@ -49,7 +49,8 @@ Extreme class imbalance + minority (Theft) under neural deploy path; RF still st
 | Multi-seed confirm of HPO winner (val) | **RUN_DOCUMENTED** | mean **0.9689 ± 0.0145** n=5; seed42 **0.9791** repro; does **not** beat WP1b mean |
 | Sealed multi-seed **test** of final lock | **DONE** | User lock path **A** 2026-07-22; test **0.9780 ± 0.0033** n=5; Theft 1.0; `sealed_test/summary.json` |
 | WP9a claims packaging | **DONE** | post-WP6b: **59** claims; sealed LOCKED_TEST; verify green |
-| WP9b manuscript spine | **DONE** | `WP9b_MANUSCRIPT_SPINE.md` title/abstract/RQs/tables; PDF later |
+| WP9b manuscript spine | **DONE** | `WP9b_MANUSCRIPT_SPINE.md` title/abstract/RQs/tables |
+| WP9c camera-ready draft | **DONE (local)** | `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.{md,pdf}` + figures; PI venue polish open |
 | WP7 XAI suite | **RUN_DOCUMENTED** | J10 drop full LLM-XAI claim; keep dispatch + structured evidence |
 | WP8 ToN final method | **RUN_DOCUMENTED** | val 0.8080 / test 0.8110 vs RF test 0.9393 (13-feat); KD selected |
 | F9 energy table | **RUN_DOCUMENTED** | consolidated `energy_table/`; RTX ~0.786 mJ/flow |

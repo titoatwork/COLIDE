@@ -135,9 +135,9 @@ CAD-CBA-v1 is **not** “just a standard CNN–BiLSTM.” Novelty is **compositi
 
 | Artifact | Status | Path / plan |
 |----------|--------|-------------|
-| Architecture diagram | **TODO (draw)** | V3 CAD-CBA block diagram — from model code |
-| Class distribution | **TODO (plot from protocol)** | BoT train counts + SMOTE note |
-| Related-work comparison table | **TODO (write)** | From literature pass |
+| Architecture diagram | **DONE** | `docs/manuscript/figures/fig_architecture.png` |
+| Class distribution | **DONE** | `docs/manuscript/figures/fig_class_distribution.png` |
+| Related-work comparison table | **DONE (draft)** | Manuscript §2 + App C |
 | Overall predictive table | **READY (numbers)** | B14 test + classical dual bars |
 | Per-class / minority table | **READY** | claims minority rows + sealed test aggregates |
 | Ablation table | **READY** | A1–A7 ranking |
@@ -148,7 +148,7 @@ CAD-CBA-v1 is **not** “just a standard CNN–BiLSTM.” Novelty is **compositi
 | Pareto F1–latency–memory | **READY** | `benchmarks/plots/pareto_*.png` + `pareto_h8/` |
 | Energy / throughput | **READY** | WP6b primary; energy_table HISTORICAL |
 | Explanation pipeline + quality | **READY (scoped)** | dispatch + structured; no full LLM claim |
-| Confusion matrices | **TODO (export)** | From sealed_test / champion eval if needed |
+| Confusion matrices | **DONE** | `docs/manuscript/figures/fig_confusion_matrix_b14_seed42.png` |
 
 ---
 
@@ -260,14 +260,15 @@ DICC: not included until dedicated session SUCCESS tree exists
 ## 11. Writing process (remaining to camera-ready)
 
 1. ~~Lock number table~~ **DONE** (claims registry + this spine)  
-2. Draft results sections from §8 tables  
-3. Methods from freeze card  
-4. Intro/abstract last using §2  
-5. Draw architecture + class-dist figures  
-6. PI review cycles  
+2. ~~Draft results sections from §8 tables~~ **DONE** (WP9c)  
+3. ~~Methods from freeze card~~ **DONE**  
+4. ~~Intro/abstract last using §2~~ **DONE**  
+5. ~~Draw architecture + class-dist figures~~ **DONE**  
+6. PI review / venue formatting cycles — **open**  
 7. **DICC insert** when user opens session (replace TBD cells)  
-8. Final verify_claims + claim-source zip  
+8. Final verify_claims + claim-source zip after any number edit  
 
+**Camera-ready draft paths:** `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md` + `.pdf`  
 **No new experiments during prose** unless a number is missing from disk — then open a bounded WP, do not invent.
 
 ---
@@ -281,8 +282,8 @@ DICC: not included until dedicated session SUCCESS tree exists
 | Abstract draft | **DONE** |
 | RQ answers | **DONE** (RQ4 BLOCKED honest) |
 | Core tables | **DONE** (from disk) |
-| Figure art | **PARTIAL** — Pareto PNGs exist; arch/class-dist TODO draw |
-| Full PDF | **TODO** (next writing session; not blocked on science) |
+| Figure art | **DONE (local)** — arch, class-dist, dual bars, ablation, CM, WP6b, Pareto |
+| Full PDF | **DONE (local-complete draft)** — `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf` (PI venue polish open) |
 | DICC cells | **BLOCKED** |
 
 ---

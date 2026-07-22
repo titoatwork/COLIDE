@@ -34,7 +34,8 @@
 | WP7 | XAI suite **or** drop explainable claims | 7 | Final detector | Agent | **DONE 2026-07-22** suite RUN_DOCUMENTED; J10 drop full claim keep structured+dispatch |
 | WP8 | ToN final-method eval | 8 | Final recipe | Agent | **DONE 2026-07-22** val 0.8080 test 0.8110 RF 0.9393 RUN_DOCUMENTED |
 | WP9a | Numbers-match + claim JSON packaging | 9 | All | Agent | **DONE 2026-07-22** + post-B14 rebuild (46 claims, sealed LOCKED_TEST, verify green) |
-| WP9b | Manuscript spine + figures | 9 | WP9a | User+agent | **DONE 2026-07-22** spine `WP9b_MANUSCRIPT_SPINE.md` (title/abstract/RQs/tables/ToV); figure art PARTIAL (Pareto exist; arch/class-dist TODO); PDF later |
+| WP9b | Manuscript spine + figures | 9 | WP9a | User+agent | **DONE 2026-07-22** spine `WP9b_MANUSCRIPT_SPINE.md` (title/abstract/RQs/tables/ToV) |
+| WP9c | Camera-ready draft PDF + remaining figures | 9 | WP9b | User+agent | **DONE 2026-07-22** `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.{md,pdf}` + figures (arch/class-dist/CM/ablation/dual bars/WP6b/Pareto); local-complete; PI venue polish + DICC cells open |
 
 ---
 
@@ -43,7 +44,7 @@
 | Priority | Action |
 |----------|--------|
 | 0 | Verify disk + `verify_claims` green |
-| 1 | **Camera-ready writing** from `WP9b_MANUSCRIPT_SPINE.md` (results→methods→intro) + remaining figures |
+| 1 | **PI polish** of `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf` (venue style) **or** insert DICC cells when user opens session |
 | 2 | Keep `verify_claims` green after any prose/number edits |
 | Parallel | **WP0** only when user opens dedicated DICC session |
 | Never | Invent multi-day / multi-GPU numbers; full CUDA vs full V3 parity |

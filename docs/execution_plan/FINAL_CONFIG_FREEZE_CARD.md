@@ -103,9 +103,10 @@ Until that message appears, agents must **keep BoT test sealed**.
 1. ~~WP6b local multi-session latency/energy ranges~~ **DONE 2026-07-22** (energy 0.920–0.943; PT@256 24.15–25.68 µs; CUDA pipe 565–570)  
 2. ~~WP9a claim flips for test numbers~~ **DONE** (59 claims post-WP6b)  
 3. ~~WP9b manuscript spine~~ **DONE 2026-07-22** (`WP9b_MANUSCRIPT_SPINE.md`)  
-4. DICC only in a dedicated user-opened session  
-5. Camera-ready PDF / remaining figure art — writing pass  
+4. ~~Camera-ready local-complete draft~~ **DONE 2026-07-22** (`docs/manuscript/CAD_CBA_v1_MANUSCRIPT.{md,pdf}` + figures)  
+5. DICC only in a dedicated user-opened session  
+6. PI venue polish / submission formatting — open  
 
 ---
 
-*Card written 2026-07-22 (WP9a session). User-locked + B14 + WP6b + WP9b spine complete.*
+*Card written 2026-07-22 (WP9a session). User-locked + B14 + WP6b + WP9b spine + WP9c draft complete.*

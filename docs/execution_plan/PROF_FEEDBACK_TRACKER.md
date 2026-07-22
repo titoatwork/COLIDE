@@ -29,7 +29,7 @@
 | A3 | CUDA mainly B3 local RTX 3050; V100S/A100 pending | BLOCKED | Need DICC (local WP6b DONE) |
 | A4 | Clear quantitative advantage on ≥1 major dimension | DONE (local multi-obj) | G6 composite **0.9056** @4.33 µs; WP6b energy **0.920–0.943** mJ/flow; PT@256 **24.15–25.68** µs; CUDA pipe **565–570** µs; peak **322.2** MiB; dispatch **16.60** µs; pure F1 still LGBM **0.9818** |
 | A5 | Not rely mainly on implementation/docs quality | DONE | 59 claims from disk JSON; sealed test + ablations + negatives RUN_DOCUMENTED — science not docs-only |
-| A6 | Strengthen before finalising manuscript | DONE (spine) | WP9b manuscript spine locked; camera-ready PDF remains writing pass |
+| A6 | Strengthen before finalising manuscript | DONE (draft) | WP9b spine + WP9c camera-ready local-complete draft PDF/figures; PI venue polish + DICC if multi-GPU claimed |
 
 ---
 
@@ -225,7 +225,7 @@
 | L7 | One clear proposed method | DONE (named) | **CAD-CBA-v1** signed; full evaluation playlist still open (ablations/test/ToN/paper) |
 | L8 | Deploy: export, parity, profile, kernels, TRT/ORT/compile, FP16/INT8 | DONE (local path) | WP6a fidelity PASS + **WP6b multi-session ranges DONE**; TRT/ORT/compile historical; WP6c DICC re-bench only if user opens DICC (champion unchanged → optional) |
 | L9 | Realistic: trade-off vs beat RF everywhere | DONE (framing) | Multi-obj framing locked; H8 + `CLAIMS_REGISTRY` advantage snapshot |
-| L10 | Paper structure / tables / ToV / repro | DONE (spine) | `WP9b_MANUSCRIPT_SPINE.md` + Phase 9 map + protocol ToV addendum; camera-ready PDF still writing pass |
+| L10 | Paper structure / tables / ToV / repro | DONE (draft) | Spine + `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.{md,pdf}` + figures; Phase 9 map; protocol ToV; PI venue polish open |
 | L11 | Fix gitignored claim-source repro | DONE | WP9a + **post-B14 rebuild**: 46 claims; sealed test LOCKED_TEST; `verify_claims.py` all green |
 | L12 | Title words only if evaluated | DONE (policy) | J10 drops full XAI title; spine §1 recommended **T1** multi-obj + Option A CUDA; no portability/XAI-full words until evaluated |
 
@@ -277,6 +277,7 @@
 | 2026-07-22 | **B14 sealed multi-seed BoT TEST DONE** user lock path **A**; seeds 42–46; **test macro-F1 0.9780 ± 0.0033**; min-cls 0.9292; Theft **1.0**; val 0.9689±0.0145; champion unchanged; wall ~79 min; claims rebuild 46 claims green; B14/C12/D1/H2/H6/L11 flipped |
 | 2026-07-22 | **WP6b local multi-session ranges DONE** n=5 sessions RTX 3050; energy **0.920–0.943** mJ/flow (mean 0.933); PT@256 **24.15–25.68** µs (mean 24.90); CUDA pipe **565–570** µs; block3 FP16 **503–509** µs; peak alloc **322.2** MiB; I7/I8/H3/H4/K6/L8 advanced; claims **59** green; historical energy 0.786 labeled HISTORICAL |
 | 2026-07-22 | **WP9b manuscript spine DONE** `WP9b_MANUSCRIPT_SPINE.md`: title policy T1; abstract 5-part; RQ answers K4/K5 DONE; core tables from disk; ToV addendum; residual PARTIAL flips A1/A2/A4–A6/C1/I6/I9/I10/K4/K5/L1/L10/L12; H7/I1–I5/I11/K7/WP0 remain BLOCKED (DICC ops); verify_claims green; no train; champion unchanged |
+| 2026-07-22 | **WP9c camera-ready draft DONE** `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.{md,pdf}` + figures (arch, class-dist, dual bars, ablation, B14 CM seed42, WP6b ranges, Pareto); related-work gap table; results→methods→intro from spine; A6/L10 flipped to draft; claims 59 green; no train; champion unchanged; DICC still BLOCKED |
 
 ---
 

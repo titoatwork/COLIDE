@@ -104,7 +104,7 @@
 ## Open gates (do not claim as done)
 
 - WP0 DICC multi-day (user-scheduled) — I1–I5, H7, K7, I11
-- Camera-ready PDF + arch/class-dist figures (spine DONE: `WP9b_MANUSCRIPT_SPINE.md`)
+- PI venue polish of camera-ready draft (local-complete draft DONE: `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf`)
 
 ## Usage
 

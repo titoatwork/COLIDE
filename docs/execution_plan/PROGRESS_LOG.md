@@ -1,7 +1,33 @@
 # Progress log (results as they land)
 
 **Policy:** document everything; label pilot vs full; test sealed unless noted.  
-**Handoff snapshot:** 2026-07-22 (**WP9b manuscript spine DONE**; WP6b ranges; B14 test 0.9780±0.0033; claims 59 green)
+**Handoff snapshot:** 2026-07-22 (**WP9c camera-ready draft DONE**; WP9b spine; WP6b ranges; B14 test 0.9780±0.0033; claims 59 green)
+
+---
+
+## 2026-07-22 — WP9c camera-ready manuscript draft + remaining figures
+
+**Mode:** writing / packaging only · **no train** · GPU idle · champion frozen  
+**Primary artifacts:**
+- `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md` (~26 KB full prose)
+- `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf` (~850 KB camera-ready local-complete draft)
+- `docs/manuscript/figures/` — architecture, class dist, dual bars, ablation, B14 CM seed42, WP6b ranges, Pareto copies
+
+### Delivered
+| Item | Detail |
+|------|--------|
+| Write order | Results tables → methods → intro/abstract (spine-locked numbers only) |
+| Title | T1 multi-obj + Option A CUDA; J10 full LLM-XAI rejected |
+| Figures | arch, class-dist, dual bars, ablation, CM, WP6b, Pareto — all from disk |
+| Related work | Gap table + compact positioning (App C) |
+| Tracker flips | A6/L10 → DONE (draft); WP9c DONE |
+| Still BLOCKED (ops) | A3, H7, I1–I5, I11, K7, WP0 DICC |
+| Claims | **59** — `verify_claims` green (no number invention) |
+| Champion | **unchanged** `80a90f7cc210276300eaa90173a5a385` |
+| Open writing | PI venue polish only; DICC cell insert when user opens session |
+
+**Decision: DONE (local-complete camera-ready draft)** — not “journal submission final” until PI venue format + optional DICC.  
+**Next:** PI polish **or** DICC when user opens dedicated session.
 
 ---
 

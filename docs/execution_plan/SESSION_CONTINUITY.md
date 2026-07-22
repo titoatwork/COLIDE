@@ -1,7 +1,7 @@
 # Session Continuity / Handoff Pack
 
 **Session closed for continuity:** 2026-07-22  
-**Mode this session:** **WP9b manuscript spine** + residual PARTIAL tracker flips (no train)  
+**Mode this session:** **WP9c camera-ready manuscript draft** + remaining figures (no train)  
 **Git tip at handoff:** see latest commit after handoff push (`git log -1 --oneline`)  
 **Machine root:** `/home/titoisalive/colide`
 
@@ -27,9 +27,9 @@ Complete **every** row in `PROF_FEEDBACK_TRACKER.md` for Prof Por / WoS path.
 3. `docs/execution_plan/RESULTS_DISK_MANIFEST.md`  
 4. `docs/execution_plan/PROF_FEEDBACK_TRACKER.md`  
 5. `docs/execution_plan/PROGRESS_LOG.md`  
-6. `docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md`  
-7. `docs/execution_plan/METHOD_PACKAGE_DECISION.md`  
-8. `docs/execution_plan/15_WORK_PACKAGES.md`  
+6. `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md` (or PDF)  
+7. `docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md`  
+8. `docs/execution_plan/METHOD_PACKAGE_DECISION.md`  
 9. `docs/execution_plan/CLAIMS_REGISTRY.md`  
 10. `docs/execution_plan/FINAL_CONFIG_FREEZE_CARD.md`  
 11. `config/hpo_best.yaml`  
@@ -40,22 +40,23 @@ Complete **every** row in `PROF_FEEDBACK_TRACKER.md` for Prof Por / WoS path.
 
 ## 3. Completed this arc (do not redo)
 
-### 3.1–3.26 Prior (still valid)
-Protocol foundation through WP6b local multi-session ranges (energy 0.920–0.943; PT@256 24.15–25.68).
+### 3.1–3.27 Prior (still valid)
+Protocol foundation through WP9b manuscript spine (title/abstract/RQs/tables/ToV).
 
-### 3.27 WP9b manuscript spine (DONE — this session)
-- **Artifact:** `docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md`  
-- Title policy **T1**; abstract five-part; RQ answers K4/K5 locked; core tables from disk; ToV addendum  
-- Residual PARTIAL flips: A1/A2/A4–A6, C1, I6/I9/I10, K4/K5, L1/L10/L12  
-- **Still BLOCKED (ops only):** A3, H7, I1–I5, I11, K7, WP0 DICC  
-- Claims **59** green; champion **unchanged**  
-- Figure art: Pareto PNGs exist; architecture + class-dist diagrams still TODO draw  
-- Camera-ready PDF: **not** this session  
+### 3.28 WP9c camera-ready draft (DONE — this session)
+- **Artifacts:**
+  - `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md`
+  - `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf` (~850 KB)
+  - `docs/manuscript/figures/` (architecture, class dist, dual bars, ablation, B14 CM, WP6b, Pareto)
+- Write order: results → methods → intro from spine; **no invented numbers**
+- Tracker: A6/L10 → DONE (draft); WP9c DONE on package board
+- Claims **59** green; champion **unchanged**
+- **Still BLOCKED (ops only):** A3, H7, I1–I5, I11, K7, WP0 DICC
+- Open writing: **PI venue polish** only (not science)
 
-### 3.28 Remaining playlist
-- Camera-ready writing pass (results→methods→intro from spine)  
-- Optional remaining figures (arch diagram, class dist, confusion matrices)  
-- **WP0** DICC (user-scheduled)  
+### 3.29 Remaining playlist
+- PI venue formatting / submission polish of draft PDF  
+- **WP0** DICC (user-scheduled) — insert multi-GPU cells when SUCCESS tree exists  
 - End every session with **paste-ready handoff prompt**
 
 ---
@@ -68,6 +69,7 @@ Verify:
 ```bash
 cd /home/titoisalive/colide
 ps -eo pid,cmd | awk '/run_wp6b|train_protocol|run_hpo/{print}'
+test -f docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf && echo pdf_OK
 test -f docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md && echo spine_OK
 test -f benchmarks/results/sealed_test/summary.json && echo sealed_OK
 test -f benchmarks/results/wp6b_local_ranges/summary.json && echo wp6b_OK
@@ -82,12 +84,11 @@ nvidia-smi --query-gpu=temperature.gpu,utilization.gpu,memory.used --format=csv
 ## 5. Next chat work order (strict)
 
 1. **Verify** disk + claims green.  
-2. **Camera-ready writing** from `WP9b_MANUSCRIPT_SPINE.md` (or DICC if user opens).  
-3. Draw remaining figures only as needed for PDF.  
-4. Keep verify_claims green after prose.  
-5. Thermal guard if any sustained train (none expected).  
-6. **DICC** only when user opens dedicated session.  
-7. End session: update tracker + progress + HANDOFF + commit/push + **paste next prompt in closing message**.
+2. **PI venue polish** of manuscript draft **or** **DICC** if user opens dedicated session.  
+3. After any number edit: rebuild claims + verify_claims.  
+4. Thermal guard if any sustained train (none expected).  
+5. **DICC** only when user opens dedicated session.  
+6. End session: update tracker + progress + HANDOFF + commit/push + **paste next prompt in closing message**.
 
 ---
 
@@ -108,25 +109,28 @@ Read first (in order):
 3) docs/execution_plan/RESULTS_DISK_MANIFEST.md
 4) docs/execution_plan/PROGRESS_LOG.md
 5) docs/execution_plan/PROF_FEEDBACK_TRACKER.md
-6) docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md
-7) docs/execution_plan/METHOD_PACKAGE_DECISION.md
-8) docs/execution_plan/CLAIMS_REGISTRY.md
-9) docs/execution_plan/FINAL_CONFIG_FREEZE_CARD.md
-10) config/hpo_best.yaml
+6) docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md
+7) docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md
+8) docs/execution_plan/METHOD_PACKAGE_DECISION.md
+9) docs/execution_plan/CLAIMS_REGISTRY.md
+10) docs/execution_plan/FINAL_CONFIG_FREEZE_CARD.md
+11) config/hpo_best.yaml
 
 Verify on disk:
-- docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md (WP9b DONE)
+- docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf (WP9c local-complete draft DONE)
+- docs/manuscript/figures/ (arch, class-dist, CM, ablation, dual bars, WP6b, Pareto)
 - benchmarks/results/wp6b_local_ranges/summary.json  (energy 0.920–0.943; PT@256 24.15–25.68)
 - sealed_test + claims 59 + verify_claims green
 - Champion md5 still 80a90f7cc210276300eaa90173a5a385
 - No train jobs; GPU cool
 
-Last session (2026-07-22): WP9b manuscript spine DONE; residual PARTIAL flips;
-claims 59 green; B14+WP6b already DONE. Open ops: DICC only.
+Last session (2026-07-22): WP9c camera-ready draft DONE (md+pdf+figures);
+WP9b spine already DONE; residual PARTIAL flips prior; claims 59 green;
+B14+WP6b DONE. Open ops: DICC only. Open writing: PI venue polish.
 
 Next:
-A) Camera-ready PDF drafting from spine (results→methods→intro) + remaining figures
-B) Keep verify_claims green
+A) PI venue polish of draft PDF (or leave for PI) — do not invent numbers
+B) Keep verify_claims green after any prose/number edit
 C) DICC only if user opens dedicated session
 
 Rules: no invent multi-day numbers; no clobber champion without BACKUP;
@@ -140,6 +144,8 @@ thermal guard if sustained train; commit/push; end per HANDOFF lifecycle with pa
 | Role | Path |
 |------|------|
 | Handoff narrative | `docs/execution_plan/SESSION_CONTINUITY.md` |
+| Camera-ready draft | `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md` / `.pdf` |
+| Figures | `docs/manuscript/figures/` |
 | Manuscript spine | `docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md` |
 | Disk numbers + md5s | `docs/execution_plan/RESULTS_DISK_MANIFEST.md` |
 | Tracker | `docs/execution_plan/PROF_FEEDBACK_TRACKER.md` |
@@ -167,8 +173,9 @@ thermal guard if sustained train; commit/push; end per HANDOFF lifecycle with pa
 | XAI free-form LLM | Weak — drop full claim |
 | ToN 13-feat neural 0.811 | Lags RF 0.939 — honest multi-dataset gap |
 | Claims package | Green verifier; B14 + WP6b locked |
-| **WP9b spine** | Title/abstract/RQs/tables locked for writing |
+| **WP9b spine** | Title/abstract/RQs/tables locked |
+| **WP9c draft** | Local-complete PDF + figures; PI polish open |
 
 ---
 
-*End handoff. Next chat: verify disk → camera-ready writing from spine → or DICC if user opens.*
+*End handoff. Next chat: verify disk → PI polish or DICC if user opens.*

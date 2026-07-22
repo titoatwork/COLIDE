@@ -1,8 +1,8 @@
 # COLIDE — Session Handoff
 
 **MODE:** 🚀 **EXECUTION — next chat continues Prof tracker.** This chat closed for continuity.  
-**Closed:** 2026-07-22 · **WP9b manuscript spine DONE** + residual PARTIAL flips.  
-**Authority:** `docs/execution_plan/SESSION_CONTINUITY.md` + `RESULTS_DISK_MANIFEST.md` + `PROF_FEEDBACK_TRACKER.md` + `WP9b_MANUSCRIPT_SPINE.md` + Option A.  
+**Closed:** 2026-07-22 · **WP9c camera-ready draft DONE** (md + PDF + figures).  
+**Authority:** `docs/execution_plan/SESSION_CONTINUITY.md` + `RESULTS_DISK_MANIFEST.md` + `PROF_FEEDBACK_TRACKER.md` + manuscript draft + Option A.  
 **Policy:** skip nothing → **complete every playlist/tracker row** → JSON → INCORPORATED or RUN_DOCUMENTED (BLOCKED only for ops). **Perfection over LOR hurry.** No invent DICC numbers. Context hygiene: flip statuses when evidence already exists.  
 **Champion:** `model/best_model_botiot_twostage.pth` md5 **`80a90f7cc210276300eaa90173a5a385`** — no clobber without BACKUP.  
 **Session end:** always paste full next-session prompt in closing message (not only in this file).
@@ -21,13 +21,14 @@
 | Claims package rebuild | **DONE** **59** claims; verify_claims green |
 | Freeze card | **USER-LOCKED** + B14 result table |
 | Champion | **unchanged** |
-| **WP9b manuscript spine** | **DONE** `WP9b_MANUSCRIPT_SPINE.md` (title/abstract/RQs/tables/ToV) |
-| Residual PARTIAL flips | **DONE** A1/A2/A4–A6, C1, I6/I9/I10, K4/K5, L1/L10/L12 |
+| **WP9b manuscript spine** | **DONE** `WP9b_MANUSCRIPT_SPINE.md` |
+| Residual PARTIAL flips | **DONE** (prior session) |
+| **WP9c camera-ready draft** | **DONE** `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.{md,pdf}` + figures |
 | Open ops BLOCKED | A3, H7, I1–I5, I11, K7, **WP0 DICC** |
-| Camera-ready PDF + arch figures | **NOT RUN** (next writing pass) |
+| PI venue polish | **OPEN** (not science) |
 | DICC | **ABSENT** — dedicated session when user opens it |
 
-**CAD-CBA-v1 locked (science + sealed test + local systems ranges + spine):** V3 + focal + ensemble KD + hpo_best + shuffle + argmax.  
+**CAD-CBA-v1 locked (science + sealed test + local systems + spine + draft):** V3 + focal + ensemble KD + hpo_best + shuffle + argmax.  
 **XAI paper path:** dispatch + structured only — no full LLM-explainable title.  
 **Systems:** report **ranges** (WP6b); historical single-shot energy 0.786 labeled HISTORICAL.  
 **Jobs:** expect idle GPU after this handoff.
@@ -41,9 +42,10 @@
 3. **`docs/execution_plan/RESULTS_DISK_MANIFEST.md`**  
 4. **`docs/execution_plan/PROGRESS_LOG.md`**  
 5. **`docs/execution_plan/PROF_FEEDBACK_TRACKER.md`**  
-6. **`docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md`**  
-7. `benchmarks/results/wp6b_local_ranges/summary.json`  
-8. `benchmarks/results/sealed_test/summary.json` (B14)
+6. **`docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md`** (or PDF)  
+7. `docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md`  
+8. `benchmarks/results/wp6b_local_ranges/summary.json`  
+9. `benchmarks/results/sealed_test/summary.json` (B14)
 
 ---
 
@@ -55,7 +57,7 @@ Perfection over LOR hurry. Option A CUDA locked. NO new jobs until you read cont
 
 FULL PLAYLIST LAW (user-locked):
 - Complete EVERY tracker / WP playlist item → DONE | INCORPORATED | RUN_DOCUMENTED | BLOCKED(ops only).
-- No silent skips of “optional” work (manuscript gates, residual PARTIAL rows, etc.).
+- No silent skips of “optional” work.
 - If evidence already exists on disk/docs → flip tracker status + notes. Never invent numbers.
 - End session: update tracker/progress/manifest/HANDOFF + commit/push + paste full next-session prompt.
 
@@ -65,15 +67,16 @@ Read first (in order):
 3) docs/execution_plan/RESULTS_DISK_MANIFEST.md
 4) docs/execution_plan/PROGRESS_LOG.md
 5) docs/execution_plan/PROF_FEEDBACK_TRACKER.md
-6) docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md
-7) docs/execution_plan/METHOD_PACKAGE_DECISION.md
-8) docs/execution_plan/CLAIMS_REGISTRY.md
-9) docs/execution_plan/FINAL_CONFIG_FREEZE_CARD.md
-10) docs/execution_plan/13_PHASE9_MANUSCRIPT.md
+6) docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md
+7) docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md
+8) docs/execution_plan/METHOD_PACKAGE_DECISION.md
+9) docs/execution_plan/CLAIMS_REGISTRY.md
+10) docs/execution_plan/FINAL_CONFIG_FREEZE_CARD.md
 11) config/hpo_best.yaml
 
 Verify on disk:
-- docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md  (WP9b DONE)
+- docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf  (WP9c DONE; local-complete draft)
+- docs/manuscript/figures/  (arch, class-dist, CM, ablation, dual bars, WP6b, Pareto)
 - benchmarks/results/wp6b_local_ranges/summary.json  (WP6b DONE; energy 0.920–0.943; PT@256 24.15–25.68)
 - benchmarks/results/systems_i8_h3/summary.json  (I8/H3 mirror)
 - benchmarks/results/sealed_test/summary.json  (B14 DONE; test ~0.9780±0.0033; Theft 1.0)
@@ -86,13 +89,13 @@ Verify on disk:
 - No train jobs; GPU cool before start
 - PYTHONPATH=. python3 scripts/verify_claims.py  → all green
 
-Last session (2026-07-22): WP9b manuscript spine DONE; residual PARTIAL tracker flips
-(A1/A2/A4–A6, C1, I6/I9/I10, K4/K5, L1/L10/L12); claims 59 green; B14+WP6b already DONE;
-champion unchanged. Open ops BLOCKED: DICC (A3/H7/I1–I5/I11/K7/WP0).
+Last session (2026-07-22): WP9c camera-ready draft DONE (md+pdf+figures from WP9b spine);
+claims 59 green; B14+WP6b+WP9b already DONE; champion unchanged.
+Open ops BLOCKED: DICC (A3/H7/I1–I5/I11/K7/WP0). Open writing: PI venue polish only.
 
 Next:
-A) Camera-ready PDF drafting from WP9b spine (results→methods→intro) + remaining figures
-B) Keep verify_claims green after prose
+A) PI venue polish of draft PDF (optional this session) — no invent numbers
+B) Keep verify_claims green after any prose
 C) DICC only if user opens dedicated session
 
 Rules: no invent multi-day numbers; no clobber champion without BACKUP;
@@ -130,6 +133,7 @@ PYTHONPATH=. python3 scripts/verify_claims.py
 - BoT sealed multi-seed **test DONE** (B14 path A) — numbers in `sealed_test/`  
 - Local systems ranges **DONE** (WP6b) — numbers in `wp6b_local_ranges/`  
 - Manuscript spine **DONE** (WP9b) — `WP9b_MANUSCRIPT_SPINE.md`  
+- Camera-ready **local-complete draft DONE** (WP9c) — `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.{md,pdf}`  
 - Official cluster: UM DICC only — **user will open a dedicated DICC session**  
 - Results under `benchmarks/results/` often **gitignored** — use `RESULTS_DISK_MANIFEST.md` + local paths  
 - Agents: no invented DICC numbers  
@@ -147,4 +151,4 @@ PYTHONPATH=. python3 scripts/verify_claims.py
 
 Design plan Option A approved; FINAL_PLAN P0–P5; audit pack `docs/audit/`; interim Word report sent to Prof; feedback in `docs/feedback1.docx`.
 
-**Next science priority after verify disk:** **camera-ready writing** from spine (or **DICC** when user opens that session).
+**Next science priority after verify disk:** **PI venue polish** of draft **or** **DICC** when user opens that session.

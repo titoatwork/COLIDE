@@ -1,7 +1,7 @@
 # Results Disk Manifest (handoff snapshot)
 
 **Generated (UTC):** 2026-07-21T11:01:25.771483+00:00  
-**Last append (UTC):** 2026-07-22T16:30:00 (WP9b manuscript spine DONE; no new result JSON)
+**Last append (UTC):** 2026-07-22T16:45:00 (WP9c camera-ready draft + figures DONE; no new result JSON)
 **Host path root:** `/home/titoisalive/colide`
 
 `benchmarks/results/` is **gitignored**. This file is committed so the next session can verify local artifacts without inventing numbers.
@@ -105,6 +105,27 @@
 | `scripts/run_wp6b_local_ranges.py` | yes | — | — | harness |
 
 **Trap:** Do not mix WP6b multi-session energy **0.933 mean** with historical single-shot **0.786**. Do not claim full CUDA vs full V3 PT parity. Local ≠ DICC multi-day.
+
+## WP9c camera-ready manuscript draft (2026-07-22)
+
+**Mode:** prose + figures only · no new result JSON · champion frozen  
+**Numbers:** all from CLAIMS_REGISTRY / sealed_test / wp6b / classical / ablation / xai / toniot_final
+
+| Path | exists | notes |
+|------|--------|-------|
+| `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md` | yes | full local-complete prose draft |
+| `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf` | yes | ~850 KB camera-ready draft PDF |
+| `docs/manuscript/figures/fig_architecture.png` | yes | V3 CAD-CBA block diagram |
+| `docs/manuscript/figures/fig_class_distribution.png` | yes | train imbalance + test support |
+| `docs/manuscript/figures/fig_confusion_matrix_b14_seed42.png` | yes | sealed test CM representative |
+| `docs/manuscript/figures/fig_ablation_ladder.png` | yes | A1–A7 |
+| `docs/manuscript/figures/fig_detection_dual_bars.png` | yes | test vs classical dual bars |
+| `docs/manuscript/figures/fig_wp6b_systems_ranges.png` | yes | energy + PT ranges |
+| `docs/manuscript/figures/fig_pareto_f1_latency.png` | yes | copied from benchmarks/plots |
+| `docs/manuscript/figures/fig_pareto_f1_params.png` | yes | copied from benchmarks/plots |
+| `scripts/generate_manuscript_figures.py` | yes | regenerates class-dist + CM |
+
+**Trap:** Draft is **local-complete**, not DICC-complete. PI venue polish still open.
 
 ## B14 sealed multi-seed BoT TEST (2026-07-22)
 
