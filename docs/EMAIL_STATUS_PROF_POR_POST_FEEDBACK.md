@@ -3,13 +3,14 @@
 **Status:** Ready to paste (plain text, no tables) · 2026-07-22  
 **Student:** Ibteshamul Haque  
 **Tone:** grateful, evidence-led; honest about DICC still open; not defensive  
+**Includes:** DICC admin response + timeline (local wrap-up this week; DICC from early next week)  
 **Do not invent:** multi-day V100S/A100 cells still empty  
 **Optional attach:** none on first send  
 
 ---
 
 **To:** Prof. Dr. Por Lip Yee  
-**Subject:** COLIDE — progress after your feedback (local package completed while DICC pending; multi-day campaign next)
+**Subject:** COLIDE — progress after your feedback (local package nearly closed; DICC multi-day from early next week)
 
 ---
 
@@ -17,9 +18,11 @@ Dear Prof. Por,
 
 Thank you again for your detailed and constructive feedback on the COLIDE interim report. I understood clearly that local progress at that stage was not yet enough for a strong Web of Science–oriented contribution, and that the final manuscript must show a clear advantage in at least one major dimension—detection performance, latency, memory usage, energy efficiency, throughput, robustness, portability, or an overall accuracy–efficiency trade-off—without relying mainly on implementation effort or documentation quality.
 
-**Intention and sequencing.** Because the UM DICC multi-day campaign was still blocked on access and reliable interactive execution, and based on your feedback that the local scientific package itself also needed to be strengthened under a proper protocol, we deliberately started and completed the **local work that could proceed without waiting on DICC**. That includes protocol freeze, systematic HPO, one locked method package, imbalance and teacher studies, ablations and fair baselines, multi-objective analysis, Option A CUDA fidelity, local multi-session latency/energy/memory ranges, scoped explainability evaluation, multi-dataset honesty on ToN, sealed multi-seed test, claims packaging, and a local-complete manuscript draft. We did **not** treat documentation as the contribution, and we did **not** invent multi-day cluster numbers or claim GPU portability before SUCCESS artifacts exist. Multi-day V100S/A100 work remains the next priority and is required before any portability claim.
+**Intention and sequencing.** Because the UM DICC multi-day campaign was still blocked on access and reliable interactive execution, and based on your feedback that the local scientific package itself also needed to be strengthened under a proper protocol, we deliberately started and completed the **local work that could proceed without waiting on DICC**. That includes protocol freeze, systematic HPO, one locked method package, imbalance and teacher studies, ablations and fair baselines, multi-objective analysis, Option A CUDA fidelity, local multi-session latency/energy/memory ranges, scoped explainability evaluation, multi-dataset honesty on ToN, sealed multi-seed test, claims packaging, and a local-complete manuscript draft. We did **not** treat documentation as the contribution, and we did **not** invent multi-day cluster numbers or claim GPU portability before SUCCESS artifacts exist.
 
-Below is a concise update of what that local package now contains, and what remains.
+**Update on DICC access and timeline.** We have now received a response from the DICC administrator regarding interactive-session reliability. Their guidance is to use the **VNC Desktop through DICC OnDemand** for longer interactive work (so temporary network or VPN interruptions do not drop the allocation), and to use tools such as **screen** inside that environment for long-running tasks. With that path clarified, we will **proceed with the UM DICC multi-day campaign**. Our plan is to **finish remaining local wrap-up this week**, and to **start DICC execution from early next week** (Day 1 and Day 2 on V100S and A100 under batch run_campaign.sh, then bring SUCCESS artifacts home and insert multi-GPU cells from JSON only). Multi-day V100S/A100 results remain required before any portability claim.
+
+Below is a concise update of what the local package now contains, and what remains on DICC.
 
 ### Contribution framing (your dimension bar)
 
@@ -29,7 +32,7 @@ Under frozen protocol botiot_v1, the sealed multi-seed BoT **test** result for t
 
 Against that honest detection dual bar, local multi-session systems evidence on RTX 3050 (n=5 sessions, champion frozen) quantifies latency, energy, and memory: full V3 PyTorch at batch 256 is **24.15–25.68** µs per sample; Option A CUDA derived pipeline is **565–570** µs (per-block / operation-matched only—not full-pipeline Custom CUDA versus full V3); energy is **0.920–0.943** mJ per flow as the multi-session range (historical single-shot 0.786 is labeled historical only); peak allocated memory is **322.2** MiB. Multi-objective Pareto analysis supports an efficiency-weighted path (for example G6 composite **0.9056** at **4.33** µs). Multi-seed sealed test and strong minority behaviour support robustness as a secondary element.
 
-**Portability across GPUs** remains the open major dimension in your list. Multi-day V100S and A100 results are not claimed until UM DICC SUCCESS artifacts exist. Implementation quality and documentation (claims package, verifier, runbooks) are reproducibility infrastructure only, not the scientific contribution.
+**Portability across GPUs** remains the open major dimension in your list until the multi-day DICC SUCCESS tree exists. Implementation quality and documentation (claims package, verifier, runbooks) are reproducibility infrastructure only, not the scientific contribution.
 
 ### How this maps to your technical recommendations
 
@@ -45,11 +48,11 @@ Against that honest detection dual bar, local multi-session systems evidence on 
 
 **6. Multi-dataset.** BoT remains primary. Final-method recipe transfer on 13-feature ToN is reported with an honest gap (neural test about **0.8110** versus same-split RF about **0.9393**), not conflated with historical 26-feature figures.
 
-**7. Reproducibility.** Sealed-test discipline, multi-seed reporting, frozen champion md5 **80a90f7cc210276300eaa90173a5a385**, and a 64-claim package with automated verification against source JSON (verify_claims green). Every item on our internal Prof-feedback tracker is terminal (done, incorporated, or run-documented) except multi-GPU multi-day rows that remain blocked until DICC.
+**7. Reproducibility.** Sealed-test discipline, multi-seed reporting, frozen champion md5 **80a90f7cc210276300eaa90173a5a385**, and a 64-claim package with automated verification against source JSON (verify_claims green). Every item on our internal Prof-feedback tracker is terminal (done, incorporated, or run-documented) except multi-GPU multi-day rows that remain blocked until DICC SUCCESS artifacts exist.
 
 A local-complete camera-ready manuscript draft (prose, figures, systems tables, threats to validity) has been assembled from these locked numbers. Journal class file, author list, and bibliography remain final venue steps. Multi-GPU cells in the draft are explicit TBD until DICC.
 
-### What remains — DICC multi-day (next)
+### What remains — DICC multi-day (from early next week)
 
 The remaining hard gate is exactly the multi-platform campaign you prioritised and that we could not complete while DICC execution was blocked:
 
@@ -58,15 +61,15 @@ The remaining hard gate is exactly the multi-platform campaign you prioritised a
 - V100S and A100  
 - at least two days, with mean, median, standard deviation, CV, CI, and Day-1 versus Day-2 comparison  
 
-Ops method for this next phase: DICC OnDemand VNC Desktop for interactive setup so temporary VPN or network drops do not kill long interactive sessions; screen for long terminal work; and batch run_campaign.sh for Day 1 and Day 2 so jobs continue after disconnect. Legacy June single-shot cluster figures remain labeled legacy only until the new SUCCESS tree exists.
+We will execute this under the administrator-guided ops method: DICC OnDemand VNC Desktop for interactive setup; screen for long terminal work; and batch run_campaign.sh for Day 1 and Day 2 so jobs continue after disconnect. Legacy June single-shot cluster figures remain labeled legacy only until the new SUCCESS tree exists.
 
 Once SUCCESS artifacts are on disk, I will insert multi-GPU multi-day cells into the manuscript and claims package from JSON only, then update you again.
 
 ### Closing
 
-In short: because DICC was not yet solvable as a blocker, we used your feedback to complete the full local scientific and local systems package that could be finished without cluster multi-day results—under protocol discipline, with a clear multi-objective accuracy–efficiency advantage, without overselling detection or full-pipeline CUDA, and without treating documentation as the contribution. Portability remains the open major dimension and is the next execution priority on UM DICC.
+In short: because DICC was not yet solvable as a blocker, we used your feedback to complete the local scientific and local systems package that could be finished without cluster multi-day results—under protocol discipline, with a clear multi-objective accuracy–efficiency advantage, without overselling detection or full-pipeline CUDA, and without treating documentation as the contribution. With the DICC administrator’s guidance now in hand, we will finish remaining local wrap-up this week and begin the multi-day DICC campaign from early next week. Portability remains the open major dimension until those SUCCESS results are in.
 
-I would be grateful for any brief comment on whether this multi-objective framing matches the emphasis you expect for the final manuscript. If helpful, I can later send a short plain-text table pack (sealed test, classical dual bars, ablation top line, local systems ranges) without attaching the full draft.
+I would be grateful for any brief comment on whether this multi-objective framing matches the emphasis you expect for the final manuscript. If helpful, I can later send a short plain-text summary of key numbers without attaching the full draft.
 
 Thank you again for raising the scientific standard of this work.
 
@@ -78,6 +81,8 @@ Ibteshamul Haque
 ## Internal checklist (not for email)
 
 - [x] Opening intention: local work while DICC blocked  
+- [x] DICC admin response + OnDemand VNC + screen  
+- [x] Timeline: local wrap-up this week; DICC from early next week  
 - [x] Contribution dimension bar addressed  
 - [x] No markdown tables (plain-text friendly)  
 - [x] Dual-bar honesty; Option A; scoped XAI  
