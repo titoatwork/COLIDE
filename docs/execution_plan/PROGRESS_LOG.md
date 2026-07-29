@@ -1,7 +1,32 @@
 # Progress log (results as they land)
 
 **Policy:** document everything; label pilot vs full; test sealed unless noted.  
-**Handoff snapshot:** 2026-07-22 (**Branching policy locked** + DICC OnDemand VNC ops; claims **64** green)
+**Handoff snapshot:** 2026-07-29 (**Local wrap DONE** + **D0 laptop preflight DONE**; DICC SUCCESS still ABSENT; next = user OnDemand VNC → Day1)
+
+---
+
+## 2026-07-29 — Return from pause: local wrap + D0 laptop preflight
+
+**Mode:** packaging / preflight · no train · no multi-day numbers invented  
+**Champion:** unchanged `80a90f7cc210276300eaa90173a5a385`
+
+### Local wrap (A)
+| Item | Status |
+|------|--------|
+| Prof short summary email | **SENT** (recorded `docs/EMAIL_STATUS_PROF_POR_SHORT_SENT.md`) |
+| Plain-English numbers card | **DONE** `docs/PROF_PLAIN_NUMBERS_CARD.md` (no repo jargon for future Prof mail) |
+| Claims green | **PASS** |
+| DICC SUCCESS tree | still **ABSENT** |
+
+### D0 laptop preflight
+| Item | Status |
+|------|--------|
+| `run_campaign.sh --dry-run` | **OK** (local; no SLURM partitions — expected) |
+| `local_validate.sh` | 26 pass / 2 fail (mock spool profile path); compare core OK |
+| Ops + checklist | `docs/DICC_OPS_METHOD.md` + `docs/DICC_D0_PREFLIGHT_CHECKLIST.md` |
+| User-only next | OnDemand VNC + screen + env + Day1 submit (**D1**) |
+
+**Decision:** Local wrap closed. D0 **laptop** portion DONE. Full D0 needs user VNC login. Next session: **D1 Day1** after user completes VNC env steps in checklist §2.
 
 ---
 

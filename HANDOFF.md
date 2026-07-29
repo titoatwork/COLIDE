@@ -1,172 +1,98 @@
 # COLIDE — Session Handoff
 
-**MODE:** 🚀 **EXECUTION — next chat continues Prof tracker.** This chat closed for continuity.  
-**Closed:** 2026-07-22 · **Playlist closure audit + claims hygiene DONE** (64 claims; Table 1b registered).  
-**Authority:** `docs/execution_plan/SESSION_CONTINUITY.md` + `RESULTS_DISK_MANIFEST.md` + `PROF_FEEDBACK_TRACKER.md` + manuscript + Option A.  
-**Policy:** skip nothing → **complete every playlist/tracker row** → JSON → INCORPORATED or RUN_DOCUMENTED (BLOCKED only for ops). **Perfection over LOR hurry.** No invent DICC numbers. Context hygiene: flip statuses when evidence already exists.  
-**Champion:** `model/best_model_botiot_twostage.pth` md5 **`80a90f7cc210276300eaa90173a5a385`** — no clobber without BACKUP.  
-**Git:** **`master` is always final.** Branch **only** for true alternative options; keep branch count low — see `docs/BRANCHING_POLICY.md`.  
-**Session end:** always paste full next-session prompt in closing message (not only in this file).
+**MODE:** 🚀 **EXECUTION — next chat = DICC live (user OnDemand VNC → D1).**  
+**Closed:** 2026-07-29 · **Local wrap DONE** + **D0 laptop preflight DONE**.  
+**Authority:** `SESSION_CONTINUITY.md` + `DICC_OPS_METHOD.md` + `DICC_D0_PREFLIGHT_CHECKLIST.md` + Option A.  
+**Policy:** skip nothing · perfection over LOR hurry · no invent DICC numbers · **`master` final** (`BRANCHING_POLICY.md`).  
+**Champion:** `model/best_model_botiot_twostage.pth` md5 **`80a90f7cc210276300eaa90173a5a385`**.  
+**Session end:** paste full next-session prompt in closing message.
 
 ---
 
-## This chat / arc delivered
+## This session delivered
 
 | Deliverable | Status |
 |-------------|--------|
-| Protocol + WP1b–WP9a science arc | DONE (prior) |
-| User freeze lock CAD-CBA-v1 path **A** | **DONE** |
-| **B14 sealed multi-seed TEST** seeds 42–46 | **DONE** test **0.9780±0.0033**; Theft **1.0**; min-cls **0.9292** |
-| **WP6b local multi-session ranges** | **DONE** energy **0.920–0.943**; PT@256 **24.15–25.68** µs; CUDA pipe **565–570** µs; peak **322.2** MiB |
-| I7 warm-up / I8 batch sensitivity / H3 peak VRAM | **DONE** (under WP6b) |
-| Claims package rebuild | **DONE** **64** claims (was 59; +Table 1b per-class); verify_claims green |
-| Freeze card | **USER-LOCKED** + B14 result table |
-| Champion | **unchanged** |
-| **WP9b manuscript spine** | **DONE** `WP9b_MANUSCRIPT_SPINE.md` |
-| **WP9c camera-ready draft** | **DONE** `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.{md,pdf}` + figures |
-| **PI venue polish** | **DONE** continuous abstract; Table 1b/5b; systems CI/CV; App D; `scripts/build_manuscript_pdf.py` |
-| **Playlist closure audit** | **DONE** `PLAYLIST_CLOSURE_AUDIT.md` — **133/133** tracker rows terminal; 0 TODO/PARTIAL |
-| Open ops BLOCKED | A3, H7, I1–I5, I11, K7, **WP0/WP0b DICC**, WP6c N/A |
-| Open PI (not science) | Authors / venue class file / BibTeX after venue choice |
-| DICC | **ABSENT** SUCCESS tree — ops method **locked**: OnDemand VNC + `screen` + batch (`docs/DICC_OPS_METHOD.md`) |
+| Local wrap after pause | **DONE** |
+| Prof short summary email (as sent) | Recorded `docs/EMAIL_STATUS_PROF_POR_SHORT_SENT.md` |
+| Plain-English numbers card (no repo jargon) | **DONE** `docs/PROF_PLAIN_NUMBERS_CARD.md` |
+| D0 laptop preflight | **DONE** dry-run OK; validate 26/28 mock notes; checklist written |
+| DICC tarball refresh | **DONE** `~/colide-master-for-dicc.tar.gz` ~323 MB (2026-07-29) |
+| Claims / champion | Green / unchanged |
+| DICC SUCCESS tree | still **ABSENT** |
+| Open ops | A3, H7, I1–I5, I11, K7, WP0 — need live DICC |
 
-**CAD-CBA-v1 locked (science + sealed test + local systems + spine + draft + PI polish + playlist closed):** V3 + focal + ensemble KD + hpo_best + shuffle + argmax.  
-**XAI paper path:** dispatch + structured only — no full LLM-explainable title.  
-**Systems:** report **ranges** (WP6b); historical single-shot energy 0.786 labeled HISTORICAL.  
-**Jobs:** expect idle GPU after this handoff.
+**Next must be user-driven:** open **DICC OnDemand → VNC Desktop** → `screen` → sync tree → env → Day1 `run_campaign.sh` (**D1**). Agent cannot log into OnDemand.
 
 ---
 
 ## Open with (next chat)
 
-1. `HANDOFF.md` (this header)  
-2. **`docs/execution_plan/SESSION_CONTINUITY.md`**  
-3. **`docs/execution_plan/RESULTS_DISK_MANIFEST.md`**  
-4. **`docs/execution_plan/PROGRESS_LOG.md`**  
-5. **`docs/execution_plan/PROF_FEEDBACK_TRACKER.md`**  
-6. **`docs/execution_plan/PLAYLIST_CLOSURE_AUDIT.md`**  
-7. **`docs/BRANCHING_POLICY.md`** (master final; branch only for real options)  
-8. **`docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md`** (or PDF)  
-9. `docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md`  
-10. `benchmarks/results/wp6b_local_ranges/summary.json`  
-11. `benchmarks/results/sealed_test/summary.json` (B14)
+1. `HANDOFF.md`  
+2. `docs/DICC_OPS_METHOD.md`  
+3. `docs/DICC_D0_PREFLIGHT_CHECKLIST.md` §2 (user VNC steps)  
+4. `docs/PROF_PLAIN_NUMBERS_CARD.md` (if emailing Prof)  
+5. `docs/execution_plan/SESSION_CONTINUITY.md`  
 
 ---
 
 ## Paste-ready next-session prompt
 
 ```text
-Continue COLIDE — FULL PROF FEEDBACK EXECUTION. Skip nothing. Exceptional quality.
-Perfection over LOR hurry. Option A CUDA locked. NO new jobs until you read continuity + verify disk.
+Continue COLIDE — DICC D1 (Day 1 campaign). Option A CUDA locked. NO invent multi-day numbers.
 
-FULL PLAYLIST LAW (user-locked):
-- Complete EVERY tracker / WP playlist item → DONE | INCORPORATED | RUN_DOCUMENTED | BLOCKED(ops only).
-- No silent skips of “optional” work.
-- If evidence already exists on disk/docs → flip tracker status + notes. Never invent numbers.
-- End session: update tracker/progress/manifest/HANDOFF + commit/push + paste full next-session prompt.
+FULL PLAYLIST LAW: complete work → DONE/INCORPORATED/RUN_DOCUMENTED/BLOCKED(ops).
+master is final; branch only for true options (docs/BRANCHING_POLICY.md).
 
-Read first (in order):
-1) HANDOFF.md header + Session lifecycle
-2) docs/execution_plan/SESSION_CONTINUITY.md
-3) docs/execution_plan/RESULTS_DISK_MANIFEST.md
-4) docs/execution_plan/PROGRESS_LOG.md
-5) docs/execution_plan/PROF_FEEDBACK_TRACKER.md
-6) docs/execution_plan/PLAYLIST_CLOSURE_AUDIT.md
-7) docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md
-8) docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md
-9) docs/execution_plan/METHOD_PACKAGE_DECISION.md
-10) docs/execution_plan/CLAIMS_REGISTRY.md
-11) docs/execution_plan/FINAL_CONFIG_FREEZE_CARD.md
-12) config/hpo_best.yaml
+Read first:
+1) HANDOFF.md
+2) docs/DICC_OPS_METHOD.md
+3) docs/DICC_D0_PREFLIGHT_CHECKLIST.md
+4) docs/execution_plan/04_PHASE0_DICC.md
+5) dicc_scripts/README.md
 
-Verify on disk:
-- docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf  (WP9c + PI venue polish DONE)
-- scripts/build_manuscript_pdf.py
-- docs/manuscript/figures/  (arch, class-dist, CM, ablation, dual bars, WP6b, Pareto)
-- benchmarks/results/wp6b_local_ranges/summary.json  (WP6b DONE; energy 0.920–0.943; PT@256 24.15–25.68)
-- benchmarks/results/systems_i8_h3/summary.json  (I8/H3 mirror)
-- benchmarks/results/sealed_test/summary.json  (B14 DONE; test ~0.9780±0.0033; Theft 1.0)
-- benchmarks/results/claims_package/protocol_claims.json  (64 claims)
-- benchmarks/results/xai/summary.json  (J10 DROP_FULL; rank_corr ~0.9636; faith ~0.5109)
-- benchmarks/results/toniot_final/summary.json  (val ~0.8080; test ~0.8110; RF test ~0.9393)
-- benchmarks/results/energy_table/summary.json  (historical RTX ~0.786 mJ/flow)
-- benchmarks/results/numerical_fidelity.json  (bit-identical + CUDA PASS)
-- Champion md5 still 80a90f7cc210276300eaa90173a5a385
-- No train jobs; GPU cool before start
-- PYTHONPATH=. python3 scripts/verify_claims.py  → all green
+Verify: champion md5 80a90f7cc210276300eaa90173a5a385; no dicc SUCCESS yet unless user ran overnight.
 
-Last session (2026-07-22): Playlist closure audit DONE (133/133 tracker rows terminal);
-claims 59→64 (Table 1b per-class LOCKED_TEST); open_gates = DICC + PI venue only;
-WP0/0b/6c BLOCKED hygiene; L7/B8 stale notes flipped; PDF rebuild; champion unchanged.
-Open ops BLOCKED: DICC (A3/H7/I1–I5/I11/K7/WP0). Open PI: authors/venue/BibTeX only.
-Local science playlist is CLOSED.
+Last session (2026-07-29): local wrap DONE; D0 laptop preflight DONE (dry-run OK;
+tarball refreshed ~/colide-master-for-dicc.tar.gz; checklist + plain numbers card).
+Prof short summary already SENT. User must complete OnDemand VNC env if not done.
 
-Next:
-A) DICC dedicated session: OnDemand VNC Desktop + screen + batch run_campaign.sh
-   (docs/DICC_OPS_METHOD.md) — NOT campus-runner / Cheran-as-default; NOT long srun/salloc VPN
-B) Else optional PI author/venue/BibTeX fill — no invent numbers
-C) Keep verify_claims green; rebuild PDF via scripts/build_manuscript_pdf.py after prose edits
+This session goal — D1 Day1:
+A) User: OnDemand VNC + screen -S colide (if not already)
+B) Sync git clone OR upload refreshed tarball; verify champion md5
+C) .venv-cluster + torch cu121; export partitions gpu-v100s / gpu-a100 GRES gpu:1
+D) bash dicc_scripts/run_campaign.sh   # Day 1 real submit (not dry-run)
+E) Record job IDs / SUCCESS paths; do not invent numbers
+F) End: update HANDOFF/progress/checklist + commit/push + next prompt (D2)
 
-Rules: no invent multi-day numbers; no clobber champion without BACKUP;
-git: master always final; branch only for true options (docs/BRANCHING_POLICY.md); low branch count;
-thermal guard if sustained train; commit/push; end per HANDOFF lifecycle.
+Rules: no invent multi-day numbers; no clobber champion; plain English if emailing Prof.
 ```
 
 ---
 
-## Session lifecycle (standing)
+## Session lifecycle
 
 ```bash
-cd /path/to/colide
-git status -sb
-git branch -vv
-git log -1 --oneline
-git rev-parse HEAD origin/master
-# after claim edits:
-PYTHONPATH=. python3 scripts/build_claims_package.py
-PYTHONPATH=. python3 scripts/verify_claims.py
-# after manuscript prose edits:
-PYTHONPATH=. python3 scripts/build_manuscript_pdf.py
+cd /home/titoisalive/colide
+git status -sb && git log -1 --oneline
+md5sum model/best_model_botiot_twostage.pth
+# expect 80a90f7cc210276300eaa90173a5a385
 ```
 
 | Gate | Requirement |
 |------|-------------|
-| HANDOFF header | Updated |
-| Deliverables | On disk / documented |
-| Commit + push | Meaningful message on **`master`** (or merge to master before handoff) |
-| Branch policy | `docs/BRANCHING_POLICY.md` — master final; branch only for real options; few branches |
-| Clean tree | Or list deferred |
+| HANDOFF | Updated |
+| Commit + push | On **master** |
 | Next prompt | In HANDOFF **and** closing message |
-| Champion | Never clobber without backup + OK |
+| Champion | Never clobber without BACKUP |
 
 ---
 
 ## Standing rules
 
-- Option A: no full-pipeline Custom CUDA vs full V3  
-- BoT sealed multi-seed **test DONE** (B14 path A) — numbers in `sealed_test/`  
-- Local systems ranges **DONE** (WP6b) — numbers in `wp6b_local_ranges/`  
-- Manuscript spine **DONE** (WP9b) — `WP9b_MANUSCRIPT_SPINE.md`  
-- Camera-ready **local-complete draft + PI venue polish DONE** — `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.{md,pdf}`  
-- Full local playlist **CLOSED** — `PLAYLIST_CLOSURE_AUDIT.md` (133/133 terminal)  
-- Official cluster: UM DICC only  
-- **DICC ops (locked):** `docs/DICC_OPS_METHOD.md` — OnDemand **VNC Desktop** + **`screen`** + **batch** `run_campaign.sh`  
-- **Superseded ops plans:** campus-stable runner; Cheran-as-default cluster operator; long interactive `srun`/`salloc` over VPN  
-- **Git branching (locked):** `docs/BRANCHING_POLICY.md` — **`master` always final**; create a branch when work is a **true alternative option**; **strict low branch count** (no spam branches); merge back then delete  
-- Results under `benchmarks/results/` often **gitignored** — use `RESULTS_DISK_MANIFEST.md` + local paths  
-- Agents: no invented DICC numbers; no DICC login  
-- Claims: rebuild with `build_claims_package.py`; verify with `verify_claims.py` (**64** claims)  
-- Classical: prefer `summary_handoff.json` (LGBM official **0.9818**)  
-- B14 test **0.9780±0.0033** — label as **test**; do not mix with val multirun  
-- WP6b energy **0.920–0.943** — do not mix with historical single-shot **0.786**  
-- XAI: drop full explainable claim; keep dispatch + structured  
-- ToN: `toniot_final/` — 13-feat protocol ≠ historical 26-feat clean  
-- Laptop thermal: soft 85 / hard 90  
+- Option A · no invent DICC · OnDemand VNC + screen + batch  
+- Local science closed · multi-GPU claims only after SUCCESS on laptop  
+- Prof mail: **short**, plain English (`PROF_PLAIN_NUMBERS_CARD.md`) — no `verify_claims` jargon  
+- Git: **master final**; sparse option branches only  
 
----
-
-## Older checkpoints (still valid)
-
-Design plan Option A approved; FINAL_PLAN P0–P5; audit pack `docs/audit/`; interim Word report sent to Prof; feedback in `docs/feedback1.docx`.
-
-**Next ops priority after verify disk:** **DICC** under `docs/DICC_OPS_METHOD.md` (OnDemand VNC + screen + batch). PI author/venue fill is non-science.
+**Next:** User VNC (finish D0 full) → **D1 Day1** `run_campaign.sh`.

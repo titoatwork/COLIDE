@@ -1,7 +1,7 @@
 # Session Continuity / Handoff Pack
 
-**Session closed for continuity:** 2026-07-22  
-**Mode this session:** **Playlist closure audit + claims hygiene** (no train)  
+**Session closed for continuity:** 2026-07-29  
+**Mode this session:** **Local wrap + D0 laptop preflight** (no train; no multi-day invent)  
 **Git tip at handoff:** see latest commit after handoff push (`git log -1 --oneline`)  
 **Machine root:** `/home/titoisalive/colide`
 
@@ -46,7 +46,16 @@ Complete **every** row in `PROF_FEEDBACK_TRACKER.md` for Prof Por / WoS path.
 ### 3.1–3.29 Prior (still valid)
 Protocol foundation through PI venue polish of camera-ready draft.
 
-### 3.30 Playlist closure audit + claims hygiene (DONE — this session)
+### 3.30–3.31 Prior arc (still valid)
+Playlist closure, claims 64, PI polish, branching policy, DICC ops method lock, Prof short summary **SENT**.
+
+### 3.32 Local wrap + D0 laptop preflight (DONE — 2026-07-29)
+- Sent-email archive + plain-English numbers card  
+- `run_campaign.sh --dry-run` OK; tarball refreshed `~/colide-master-for-dicc.tar.gz` ~323 MB  
+- `docs/DICC_D0_PREFLIGHT_CHECKLIST.md` — **user VNC steps remain for full D0**  
+- Next: **D1 Day1** after OnDemand VNC env  
+
+### 3.30 Playlist closure audit + claims hygiene (DONE — prior)
 - **Artifacts:**
   - `docs/execution_plan/PLAYLIST_CLOSURE_AUDIT.md` — **133/133** tracker rows terminal (0 TODO/PARTIAL)
   - Claims rebuild **64** (was 59): `bot_sealed_test_pc_{ddos,dos,normal,recon,theft}` from seed JSONs
