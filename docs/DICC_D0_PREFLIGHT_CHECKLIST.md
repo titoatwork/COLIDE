@@ -10,7 +10,7 @@
 
 | Check | Result |
 |-------|--------|
-| Git tip | `87723ad` (or later after this session’s handoff commit) on **`master`** |
+| Git tip | `7df6712` on **`master`** (handoff commit after D0 laptop) |
 | Champion md5 | `80a90f7cc210276300eaa90173a5a385` **unchanged** |
 | Claims verifier | All tracked claims green (local package) |
 | GPU local | Idle (not required for DICC) |
