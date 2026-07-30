@@ -89,36 +89,62 @@ init_conda() {
   fi
 }
 
-# Activate Python for benchmarks. Prefer (1) conda env colide, (2) repo venv
-# (.venv-cluster or .venv), (3) already-working system/module python.
+# Activate Python for benchmarks. Prefer (1) repo venv python binary,
+# (2) conda env colide, (3) already-working system/module python.
+# On heterogeneous clusters, `source activate` + bare `python` can still hit
+# a login/module interpreter without site-packages — always pin venv/bin.
 activate_colide_env() {
   local root="${COLIDE_ROOT:-$(resolve_colide_root)}"
   local venv_dir="${COLIDE_VENV:-${root}/.venv-cluster}"
+  local py=""
 
-  if [[ -f "${venv_dir}/bin/activate" ]]; then
+  # Stale PYTHONHOME from sbatch --export=ALL breaks venv site-packages.
+  unset PYTHONHOME || true
+
+  if [[ -x "${venv_dir}/bin/python" ]]; then
+    export VIRTUAL_ENV="${venv_dir}"
+    export PATH="${venv_dir}/bin:${PATH}"
+    hash -r 2>/dev/null || true
     # shellcheck source=/dev/null
-    source "${venv_dir}/bin/activate"
-    log "Using venv: ${venv_dir}"
+    [[ -f "${venv_dir}/bin/activate" ]] && source "${venv_dir}/bin/activate"
+    py="${venv_dir}/bin/python"
+    log "Using venv python: ${py}"
   elif command -v conda >/dev/null 2>&1 || [[ "${COLIDE_FORCE_CONDA:-0}" == "1" ]]; then
     init_conda
     conda activate colide || die "Failed to activate conda env 'colide'. Run 01_setup.sh first."
-    log "Using conda env: colide"
-  elif [[ -f "${root}/.venv/bin/activate" ]]; then
+    py="$(command -v python)"
+    log "Using conda env: colide (${py})"
+  elif [[ -x "${root}/.venv/bin/python" ]]; then
+    export VIRTUAL_ENV="${root}/.venv"
+    export PATH="${root}/.venv/bin:${PATH}"
+    hash -r 2>/dev/null || true
     # shellcheck source=/dev/null
-    source "${root}/.venv/bin/activate"
-    log "Using venv: ${root}/.venv"
+    [[ -f "${root}/.venv/bin/activate" ]] && source "${root}/.venv/bin/activate"
+    py="${root}/.venv/bin/python"
+    log "Using venv python: ${py}"
   else
     log "WARN: no colide conda env or .venv-cluster; using python on PATH"
+    py="$(command -v python || true)"
   fi
 
-  command -v python >/dev/null 2>&1 || die "python not available after env activation"
-  python - <<'PY' || die "python missing numpy/torch — re-run 01_setup.sh on a node with pip/network"
+  [[ -n "${py}" && -x "${py}" ]] || die "python not available after env activation"
+  export COLIDE_PYTHON="${py}"
+  # Ensure subsequent bare `python` hits the same interpreter.
+  if [[ "$(command -v python 2>/dev/null || true)" != "${py}" ]]; then
+    export PATH="$(dirname "${py}"):${PATH}"
+    hash -r 2>/dev/null || true
+  fi
+
+  "${py}" - <<'PY' || die "python missing numpy/torch — re-run: .venv-cluster/bin/pip install numpy scipy pyyaml torch (cu121)"
+import sys
+print("python_ok", sys.executable)
 import numpy, yaml
+print("numpy", numpy.__version__, "at", getattr(numpy, "__file__", "?"))
 try:
     import torch
 except Exception as e:
     raise SystemExit(f"torch import failed: {e}")
-print("python_ok", __import__("sys").executable)
+print("torch", torch.__version__)
 PY
 }
 
