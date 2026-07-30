@@ -58,9 +58,10 @@ submit_compile() {
     cmd+=(--gres="${USE_GRES}")
   fi
 
-  cmd+=(
-    --wrap="set -Eeuo pipefail; cd '${COLIDE_ROOT}'; export COLIDE_ROOT='${COLIDE_ROOT}'; hostname; command -v nvcc || true; find /usr/local /opt -name nvcc 2>/dev/null | head -5; bash dicc_scripts/01_setup.sh --kernels-only --allow-dirty --targets ${nvcc_arch}:${subdir}"
-  )
+  # sbatch --wrap defaults to /bin/sh (no pipefail). Force bash.
+  local wrap
+  wrap="bash -c $(printf '%q' "set -Eeuo pipefail; cd '${COLIDE_ROOT}'; export COLIDE_ROOT='${COLIDE_ROOT}'; hostname; command -v nvcc || true; find /usr/local /opt -name nvcc 2>/dev/null | head -5; bash dicc_scripts/01_setup.sh --kernels-only --allow-dirty --targets ${nvcc_arch}:${subdir}")"
+  cmd+=(--wrap="${wrap}")
 
   log "Submitting: profile=${profile} partition=${partition} arch=${nvcc_arch} gres='${USE_GRES}' gpus='${USE_GPUS}'"
   {

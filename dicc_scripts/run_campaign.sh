@@ -284,7 +284,8 @@ compile_target() {
   out="${COLIDE_ROOT}/benchmarks/results/dicc/compile_${t}_%j.out"
   err="${COLIDE_ROOT}/benchmarks/results/dicc/compile_${t}_%j.err"
   mkdir -p "${COLIDE_ROOT}/benchmarks/results/dicc"
-  wrap="set -Eeuo pipefail; cd '${COLIDE_ROOT}'; export COLIDE_ROOT='${COLIDE_ROOT}'; export PATH=/usr/local/cuda/bin:\$PATH; command -v nvcc || true; bash dicc_scripts/01_setup.sh --kernels-only --allow-dirty --targets ${pair}"
+  # sbatch --wrap defaults to /bin/sh (no pipefail on Debian/Ubuntu). Force bash.
+  wrap="bash -c $(printf '%q' "set -Eeuo pipefail; cd '${COLIDE_ROOT}'; export COLIDE_ROOT='${COLIDE_ROOT}'; export PATH=/usr/local/cuda/bin:\$PATH; command -v nvcc || true; bash dicc_scripts/01_setup.sh --kernels-only --allow-dirty --targets ${pair}")"
 
   local -a scmd=(
     sbatch --parsable --job-name="colide_compile_${t}"
