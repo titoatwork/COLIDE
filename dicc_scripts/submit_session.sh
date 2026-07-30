@@ -191,7 +191,10 @@ submit_profile() {
   local job_script="${COLIDE_ROOT}/dicc_scripts/${COLIDE_JOB_SCRIPT:-job_benchmark.sh}"
   [[ -f "${job_script}" ]] || die "Missing job script ${job_script}"
 
-  local export_list="ALL"
+  # Do NOT use --export=ALL: login env (PYTHONPATH/PYTHONHOME/modules) can
+  # break venv site-packages on compute nodes (numpy ImportError despite
+  # correct .venv-cluster/bin/python). Pass only COLIDE_* + clean PATH hint.
+  local export_list="NONE"
   export_list+=",COLIDE_ROOT=${COLIDE_ROOT}"
   export_list+=",COLIDE_CAMPAIGN=${CAMPAIGN}"
   export_list+=",COLIDE_DATE_LABEL=${DATE_LABEL}"
@@ -204,6 +207,10 @@ submit_profile() {
   export_list+=",COLIDE_GPU_CC=${COLIDE_GPU_CC}"
   export_list+=",COLIDE_GPU_MIN_MEM=${COLIDE_GPU_MIN_MEM}"
   export_list+=",COLIDE_KERNELS_SUBDIR=${COLIDE_KERNELS_SUBDIR}"
+  export_list+=",PATH=/usr/local/cuda/bin:/usr/bin:/bin"
+  export_list+=",HOME=${HOME:-/home/user/${USER}}"
+  export_list+=",USER=${USER}"
+  export_list+=",LANG=C.UTF-8"
 
   # Profile may override partition/gres/constraint (needed when V100/A100 are
   # different queues, e.g. Rostam cuda-V100 vs cuda-A100).

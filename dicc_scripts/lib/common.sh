@@ -98,12 +98,16 @@ activate_colide_env() {
   local venv_dir="${COLIDE_VENV:-${root}/.venv-cluster}"
   local py=""
 
-  # Stale PYTHONHOME from sbatch --export=ALL breaks venv site-packages.
-  unset PYTHONHOME || true
+  # Login/module env leaking into jobs breaks venv site-packages (seen on DICC:
+  # correct .venv-cluster/bin/python but ModuleNotFoundError: numpy).
+  unset PYTHONHOME PYTHONSTARTUP PYTHONNOUSERSITE 2>/dev/null || true
+  # Drop inherited PYTHONPATH; caller may re-add COLIDE_ROOT after activate.
+  unset PYTHONPATH 2>/dev/null || true
+  export PYTHONNOUSERSITE=1
 
   if [[ -x "${venv_dir}/bin/python" ]]; then
     export VIRTUAL_ENV="${venv_dir}"
-    export PATH="${venv_dir}/bin:${PATH}"
+    export PATH="${venv_dir}/bin:${PATH:-/usr/bin:/bin}"
     hash -r 2>/dev/null || true
     # shellcheck source=/dev/null
     [[ -f "${venv_dir}/bin/activate" ]] && source "${venv_dir}/bin/activate"
@@ -116,7 +120,7 @@ activate_colide_env() {
     log "Using conda env: colide (${py})"
   elif [[ -x "${root}/.venv/bin/python" ]]; then
     export VIRTUAL_ENV="${root}/.venv"
-    export PATH="${root}/.venv/bin:${PATH}"
+    export PATH="${root}/.venv/bin:${PATH:-/usr/bin:/bin}"
     hash -r 2>/dev/null || true
     # shellcheck source=/dev/null
     [[ -f "${root}/.venv/bin/activate" ]] && source "${root}/.venv/bin/activate"
@@ -131,14 +135,30 @@ activate_colide_env() {
   export COLIDE_PYTHON="${py}"
   # Ensure subsequent bare `python` hits the same interpreter.
   if [[ "$(command -v python 2>/dev/null || true)" != "${py}" ]]; then
-    export PATH="$(dirname "${py}"):${PATH}"
+    export PATH="$(dirname "${py}"):${PATH:-/usr/bin:/bin}"
     hash -r 2>/dev/null || true
   fi
 
-  "${py}" - <<'PY' || die "python missing numpy/torch — re-run: .venv-cluster/bin/pip install numpy scipy pyyaml torch (cu121)"
+  # Re-apply repo on PYTHONPATH only after cleaning (scripts need COLIDE root).
+  export PYTHONPATH="${root}${PYTHONPATH:+:${PYTHONPATH}}"
+
+  if ! "${py}" - <<'PY'
 import sys
+from pathlib import Path
 print("python_ok", sys.executable)
-import numpy, yaml
+# Ensure venv site-packages (lib and lib64) are importable on odd nodes
+prefix = Path(sys.prefix)
+for sp in prefix.glob("lib*/python*/site-packages"):
+    p = str(sp)
+    if p not in sys.path:
+        sys.path.insert(0, p)
+        print("sys.path+site", p)
+try:
+    import numpy, yaml
+except Exception as e:
+    print("sys.path:", sys.path, file=sys.stderr)
+    print("prefix:", sys.prefix, file=sys.stderr)
+    raise SystemExit(f"numpy/yaml import failed: {e}")
 print("numpy", numpy.__version__, "at", getattr(numpy, "__file__", "?"))
 try:
     import torch
@@ -146,6 +166,9 @@ except Exception as e:
     raise SystemExit(f"torch import failed: {e}")
 print("torch", torch.__version__)
 PY
+  then
+    die "python missing numpy/torch on this node — check venv site-packages visible from compute (lib/lib64) or re-pip install into .venv-cluster"
+  fi
 }
 
 # Locate nvcc without requiring a module named "cuda" (many sites only ship
