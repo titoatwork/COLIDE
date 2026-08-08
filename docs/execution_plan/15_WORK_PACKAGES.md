@@ -12,8 +12,8 @@
 
 | ID | Name | Phase | Depends | Owner | Status |
 |----|------|-------|---------|-------|--------|
-| WP0 | UM DICC Day1+Day2+compare+scp | 0 | — | User (OnDemand VNC) + agent coach | **BLOCKED (ops)** — no `benchmarks/results/dicc/`; method: `docs/DICC_OPS_METHOD.md` |
-| WP0b | Extract DICC JSON tables + fork decision | 0 | WP0 | Agent+user | **BLOCKED (ops)** — depends WP0 SUCCESS tree |
+| WP0 | UM DICC Day1+Day2+compare+scp | 0 | — | User + agent | **PARTIAL** — S1+S2+Day2 SUCCESS on cluster (6 runs); **laptop rsync + formal compare still open**. Flags: `docs/DICC_RESULTS_AND_FLAGS.md` |
+| WP0b | Extract DICC JSON tables + fork decision | 0 | WP0 | Agent+user | **PARTIAL** — means extracted from cluster JSON; re-verify after rsync; **fork: B3 CUDA loses to PT on servers** |
 | WP1a | Unified protocol + freeze card | 1 | — (prep ok) | Agent | **DONE 2026-07-19** |
 | WP1b | Multi-run baseline driver (5 seeds) | 1 | WP1a | Agent | **DONE 2026-07-19** mean 0.9714±0.0109 |
 | WP2a | Sign method package (MOD table) | 2 | — | User+agent | **DONE** CAD-CBA-v1 |

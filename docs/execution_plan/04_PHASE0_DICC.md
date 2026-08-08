@@ -1,6 +1,6 @@
 # 04 — Phase 0: UM DICC Multi-Day Campaign (HARD GATE)
 
-**Status:** **BLOCKED (ops)** — artifacts ABSENT (`benchmarks/results/dicc/` missing); user opens a **dedicated DICC session**  
+**Status:** **PARTIAL** — cluster SUCCESS S1+S2+Day2 V100S+A100 (2026-08); laptop tree + formal compare pending. See `docs/DICC_RESULTS_AND_FLAGS.md`.  
 **Authority:** feedback §8; `docs/DICC_OPS_METHOD.md` (ops); `dicc_scripts/`  
 **Blocking:** All cluster claims, portability RQ (K7), final multi-objective cluster cells  
 **Local path note:** WP6b multi-session ranges on RTX 3050 are DONE and must not be re-labeled as DICC multi-day.  

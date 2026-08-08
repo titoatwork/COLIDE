@@ -26,7 +26,7 @@
 |----|-------------|--------|------------------|
 | A1 | Local progress acknowledged but not submission-ready | DONE (framing) | Interim+reply sent; local science + PI venue polish closed; **submission** still needs PI journal class/BibTeX + DICC if multi-GPU claimed |
 | A2 | 0.9790 &lt; RF 0.9864 — detection not sole headline unless improved | DONE (framing) | Dual bars locked; pure F1 not sole headline; multi-obj + sealed test **0.9780±0.0033** near RF protocol; LGBM **0.9818** still tops pure F1 |
-| A3 | CUDA mainly B3 local RTX 3050; V100S/A100 pending | BLOCKED | Need DICC SUCCESS tree; ops: OnDemand VNC + screen + batch (`DICC_OPS_METHOD.md`); local WP6b DONE |
+| A3 | CUDA mainly B3 local RTX 3050; V100S/A100 pending | PARTIAL | **Cluster:** S1+S2+Day2 SUCCESS V100S+A100 (jobs 390642/643/653/654/781/782). **Laptop rsync + formal compare pending.** **FLAG:** B3 CUDA FP16 *slower* than matching PT B3 on both GPUs (~513 vs ~363 V100; ~668–671 vs ~384–391 A100). See `docs/DICC_RESULTS_AND_FLAGS.md` |
 | A4 | Clear quantitative advantage on ≥1 major dimension | DONE (local multi-obj) | G6 composite **0.9056** @4.33 µs; WP6b energy **0.920–0.943** mJ/flow; PT@256 **24.15–25.68** µs; CUDA pipe **565–570** µs; peak **322.2** MiB; dispatch **16.60** µs; pure F1 still LGBM **0.9818** |
 | A5 | Not rely mainly on implementation/docs quality | DONE | 59 claims from disk JSON; sealed test + ablations + negatives RUN_DOCUMENTED — science not docs-only |
 | A6 | Strengthen before finalising manuscript | DONE (PI polish) | WP9b spine + WP9c draft + **PI venue polish** (continuous abstract, Table 1b per-class, Table 5b HPO refine, systems CI/CV, front-matter placeholders, PDF rebuild); journal class file/BibTeX = PI after venue; DICC if multi-GPU claimed |
@@ -157,7 +157,7 @@
 | H4 | Faster neural inference | DONE (local ranges) | **WP6b** full V3 PT @bs=256 **24.15–25.68** µs/sample (mean **24.90**, n=5); WP5c relative arch table still valid (G6 4.33 vs A7 ~26); CUDA Option A pipe **565–570** µs |
 | H5 | Low explanation dispatch | DONE (dispatch) | `llm_explainability.json` — 16.60 µs is **dispatch only** (not full LLM gen) |
 | H6 | Good minority detection | DONE (protocol) | Val + **B14 test Theft mean 1.0** / min-cls **0.9292**; classical Theft 0.9231 on val; paper table ready from claims |
-| H7 | Stable across GPU platforms | BLOCKED | DICC only (local multi-session ≠ multi-GPU) |
+| H7 | Stable across GPU platforms | PARTIAL | Multi-session SUCCESS on V100S+A100; session means stable for B3. Formal `compare_dicc_sessions` + laptop tree pending. Portable “CUDA B3 beats PT” **not** supported (PT faster on servers). |
 | H8 | Pareto F1–latency–memory | DONE | WP5c analysis `pareto/` + systems rebench `pareto_h8/`: composite G6; F1 leadership classical LGBM/package seeds; a priori weights locked; figure + CSV |
 
 ---
@@ -166,17 +166,17 @@
 
 | ID | Requirement | Status | Evidence / notes |
 |----|-------------|--------|------------------|
-| I1 | B3 CUDA vs matching PT same GPU | BLOCKED | No dicc/ tree; ops=`DICC_OPS_METHOD.md` (OnDemand VNC) |
-| I2 | Full PT model latency same GPU | BLOCKED | Same |
-| I3 | V100S results | BLOCKED | Legacy single-shot only until multi-day SUCCESS |
-| I4 | A100 results | BLOCKED | Legacy single-shot only until multi-day SUCCESS |
-| I5 | ≥2 different days | BLOCKED | Day1+Day2 via batch campaign |
+| I1 | B3 CUDA vs matching PT same GPU | PARTIAL (JSON on cluster) | Measured: **PT B3 faster** than CUDA FP16 B3 on V100S+A100. Rsync + table lock pending. |
+| I2 | Full PT model latency same GPU | PARTIAL (JSON on cluster) | Full V3 PT ~945–967 µs means (n=20). Rsync pending. |
+| I3 | V100S results | PARTIAL | S1/S2/Day2 SUCCESS on cluster; laptop tree pending |
+| I4 | A100 results | PARTIAL | S1/S2/Day2 SUCCESS on cluster; laptop tree pending |
+| I5 | ≥2 different days | PARTIAL | Labels `20260807`, `20260807_s2`, `20260808`; formal compare may reject git_dirty — see flags doc |
 | I6 | mean, median, std, CV, CI | DONE (local) | **WP6b** local multi-session mean/median/std/CV/CI on energy + PT + CUDA (`wp6b_local_ranges/`); **DICC multi-day still BLOCKED** (I1–I5) |
 | I7 | Warm-up protocol | DONE | WP6b warm-up **50** discarded sync forwards per timed block; documented in summary |
 | I8 | Batch-size sensitivity | DONE | WP6b multi-session I8 table bs∈{1,8,32,64,128,256,512,1024}; `systems_i8_h3/` + `wp6b_local_ranges/` |
 | I9 | Statistical significance + effect size | DONE (local) / BLOCKED (cross-GPU) | Local: `statistical_significance_v2.json` framework tests + WP6b CI/CV/std; **cross-GPU multi-day significance BLOCKED** until DICC |
 | I10 | No generalise from RTX 3050 alone | DONE (discipline) | Spine + ToV + claims forbid RTX→cluster generalisation; multi-GPU cells TBD until DICC |
-| I11 | Portability central | BLOCKED | Until I1–I5 (DICC) |
+| I11 | Portability central | PARTIAL | Evidence exists on two GPU classes; **portable B3 CUDA win not justified**; finish rsync/compare/wording |
 
 ---
 
@@ -207,7 +207,7 @@
 | K4 | RQ: improve detection? | DONE (answer locked) | B14 test **0.9780±0.0033** near RF val 0.9778; does **not** beat LGBM 0.9818 or published RF 0.9864 — multi-obj / deploy is the contribution path (`WP9b_MANUSCRIPT_SPINE.md` §3) |
 | K5 | RQ: minority recognition? | DONE (answer locked) | B14 test Theft **1.0** mean; min-cls **0.9292** — strong minority under protocol; val tables support |
 | K6 | RQ: reduce latency or memory? | DONE (local answer draft) | WP6b ranges: energy **0.920–0.943** mJ/flow; PT@256 **24.15–25.68** µs; peak **322.2** MiB; G6 composite 0.9056 @4.33 µs; multi-GPU still BLOCKED |
-| K7 | RQ: valid across GPUs? | BLOCKED | DICC |
+| K7 | RQ: valid across GPUs? | PARTIAL | Ran on V100S+A100 multi-session; B3 direction differs from local “beats PT” hope — answer with honesty after compare |
 | K8 | RQ: explainability measurable value? | RUN_DOCUMENTED | Dispatch yes; structured evidence yes; free-form LLM quality weak → no full XAI RQ claim |
 
 ---
