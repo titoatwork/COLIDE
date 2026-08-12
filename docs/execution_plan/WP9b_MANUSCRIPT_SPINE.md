@@ -1,9 +1,9 @@
 # WP9b — Manuscript Spine (CAD-CBA-v1 / Prof feedback track)
 
-**Status:** **DONE** (spine locked 2026-07-22)  
-**Gate:** Science + local systems closed; claims **59** green; champion md5 **`80a90f7cc210276300eaa90173a5a385`**  
-**Not this deliverable:** camera-ready PDF, multi-GPU DICC cells, invented numbers  
-**Authority numbers:** `CLAIMS_REGISTRY.md` + `RESULTS_DISK_MANIFEST.md` + `benchmarks/results/**`
+**Status:** **DONE** (spine locked 2026-07-22); **DICC cells now available 2026-08-12**  
+**Gate:** Science + local systems + DICC multi-session + multi-compiler closed; champion md5 **`80a90f7cc210276300eaa90173a5a385`**  
+**Insert numbers from:** `docs/CLAIM_MAP_PREWRITE.md`, `DICC_EXTRACTION_TABLES.md`, `DICC_MULTI_COMPILER_MATRIX.md`  
+**Authority numbers:** claim map + SUCCESS JSON + multi-compiler JSON  
 
 ---
 
@@ -11,15 +11,15 @@
 
 | Gate (Phase 9) | Status | Evidence |
 |----------------|--------|----------|
-| Phase 0 DICC complete | **OPEN (ops)** | WP0 BLOCKED — user-scheduled dedicated session only |
+| Phase 0 DICC complete | **DONE** | 6 SUCCESS + compares + multi-compiler |
 | Final method + sealed test | **DONE** | CAD-CBA-v1; B14 test **0.9780±0.0033** |
 | Ablations + baselines + Pareto | **DONE** | WP5a/b/c + classical + C* negatives |
-| CUDA Option A clean local | **DONE** | WP6a fidelity PASS; WP6b ranges; **cluster open** |
-| Numbers-match + verify_claims | **DONE** | 59 claims; all green |
-| Claim-source packaging | **DONE** | WP9a + post-B14/WP6b rebuild |
+| CUDA Option A (local + DICC) | **DONE** | WP6a/b + DICC Option A; **B3 PT wins on servers** |
+| Multi-compiler DICC | **DONE** | `DICC_MULTI_COMPILER_MATRIX.md` |
+| Numbers-match + claim map | **DONE** | `CLAIM_MAP_PREWRITE.md` |
 | Title words = evaluated only | **DONE** | J10 + §1 title policy below |
 
-**Manuscript policy under open DICC:** write a **local-complete** paper spine. Leave multi-GPU / multi-day cells as **TBD (DICC)** — never invent. Do **not** claim portability until I1–I5 land.
+**Manuscript policy now:** insert multi-GPU Option A + multi-compiler from locked tables. Still **forbid** full CUDA vs full V3 and portable B3 CUDA win.
 
 ---
 

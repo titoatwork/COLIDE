@@ -1,10 +1,15 @@
 # Results Disk Manifest (handoff snapshot)
 
+> **SUPERSEDED for DICC status (2026-08-12).**  
+> DICC SUCCESS + multi-compiler **present** under `benchmarks/results/dicc/` (many paths force-added to git).  
+> Live numbers: `docs/DICC_EXTRACTION_TABLES.md`, `docs/DICC_MULTI_COMPILER_MATRIX.md`, `docs/CLAIM_MAP_PREWRITE.md`.  
+> Body below is a **historical** local inventory snapshot — do not treat “dicc ABSENT” lines as current.
+
 **Generated (UTC):** 2026-07-21T11:01:25.771483+00:00  
 **Last append (UTC):** 2026-07-29T11:25:00 (local wrap + D0 laptop preflight; tarball refresh; no dicc SUCCESS JSON)
 **Host path root:** `/home/titoisalive/colide`
 
-`benchmarks/results/` is **gitignored**. This file is committed so the next session can verify local artifacts without inventing numbers.
+`benchmarks/results/` is **gitignored** by default; DICC SUCCESS/multi-compiler JSONs were **force-added**.
 
 ## Champion (never clobber)
 

@@ -1,5 +1,9 @@
 # COLIDE Execution Plan Pack — Master Index
 
+> **UPDATE 2026-08-12:** Pre-manuscript **CLOSED**. DICC multi-session + multi-compiler **present**.  
+> Live authority: root **`HANDOFF.md`**, `docs/PRE_MANUSCRIPT_CLOSURE.md`, `docs/CLAIM_MAP_PREWRITE.md`.  
+> Historical “ABSENT / BLOCKED DICC” lines below are **stale** unless re-opened by new work.
+
 **Created:** 2026-07-19  
 **Purpose:** Exceptional, end-to-end plan to meet Prof. Por’s WoS-level expectations (`docs/feedback1.docx`) while respecting Option A CUDA claim discipline.  
 **Standard:** Not “just enough.” Every Prof requirement mapped to codebase reality, gaps, work packages, acceptance criteria, and quality bar.  
@@ -11,7 +15,7 @@
 
 | Priority | Document |
 |----------|----------|
-| 0 | **`SESSION_CONTINUITY.md`** + **`RESULTS_DISK_MANIFEST.md`** + root **`HANDOFF.md`** — live handoff / disk numbers |
+| 0 | **`HANDOFF.md`** + **`SESSION_CONTINUITY.md`** + `docs/PRE_MANUSCRIPT_CLOSURE.md` + `docs/CLAIM_MAP_PREWRITE.md` |
 | 1 | `docs/feedback1.docx` — Prof technical plan |
 | 2 | **`PROF_FEEDBACK_TRACKER.md`** — live checklist (update every session) |
 | 3 | **This pack** (`docs/execution_plan/`) — operational plan |
@@ -55,36 +59,27 @@
 
 ---
 
-## Golden path (do not reorder casually)
+## Golden path (status 2026-08-12)
 
 ```text
-0 DICC multi-day UM          ← STILL BLOCKED (artifacts ABSENT; ops=OnDemand VNC+screen+batch)
-1 Baseline freeze + multi-run   ← DONE (protocol + multirun mean 0.9714±0.0109)
-2 Choose ONE method package     ← DONE (CAD-CBA-v1; focal default)
-3 HPO on validation only        ← NEXT open
-4 Imbalance + teacher           ← loss compare DONE; teacher/thresholds open
-5 Ablations + baselines + Pareto← classical PARTIAL; neural/ablations open
-6 Deploy / CUDA re-bench (Option A)
-7 XAI quality (if title claims explainable)
-8 Second dataset (ToN)
-9 Numbers-match + manuscript    ← not until tracker largely green
+0 DICC multi-session UM       ← DONE (6 SUCCESS + multi-compiler)
+1 Baseline freeze + multi-run ← DONE
+2 Method package CAD-CBA-v1   ← DONE
+3–8 Local science playlist    ← DONE (see tracker / playlist audit)
+9 Manuscript insert of DICC   ← NEXT (writing only; numbers locked)
 ```
-
-**Parallel only while 0 waits:** thresholds, teachers, HPO, ablations, claim-JSON packaging — **not** manuscript freeze of cluster numbers.
 
 ---
 
-## Current frozen reference (local — interim)
+## Current frozen reference
 
 | Item | Value |
 |------|-------|
 | Champion | `model/best_model_botiot_twostage.pth` |
 | md5 | `80a90f7cc210276300eaa90173a5a385` |
-| Test macro-F1 | 0.9790 |
-| RF bar | 0.9864 (gap 0.74%) |
-| Multi-day DICC | **ABSENT** |
-
-These are **baseline references**, not the final paper champion until Phases 1–5 complete under Prof protocol.
+| Sealed multi-seed test | **0.9780±0.0033** |
+| DICC multi-session | **PRESENT** (`benchmarks/results/dicc/`) |
+| DICC multi-compiler | **PRESENT** (V100S+A100) |
 
 ---
 

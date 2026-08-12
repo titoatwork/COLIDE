@@ -1,6 +1,6 @@
 # 10 — Phase 6: Deployment Path & CUDA (Option A)
 
-**Status:** LOCAL DONE (WP6a fidelity + WP6b multi-session ranges); cluster BLOCKED on Phase 0 / DICC  
+**Status:** **DONE (local + DICC)** — WP6a/b local; Phase 0 multi-session Option A; full multi-compiler on V100S+A100 (2026-08-12)  
 **Depends on:** Final weights from Phases 2–5; Phase 0 for cluster claims  
 **Prof:** staged Phase 4 deploy; §8 cluster; Option A  
 

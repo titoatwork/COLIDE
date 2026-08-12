@@ -56,7 +56,7 @@ Protocol caveat: CUDA n=100 kernel trials vs PT n=20 subprocess trials — diffe
 
 | Method | V100S mean µs | A100 mean µs | Status |
 |--------|--------------:|-------------:|--------|
-| Eager | 1041 | 932 | **OK** |
+| Eager | 1041 | 931.5 (~**932**) | **OK** |
 | torch.compile | 865 | 770 | **OK** |
 | ORT CUDA | 895 | 865 | **OK** |
 | ORT CPU | 500 | 461 | **OK** (not a GPU deploy claim) |

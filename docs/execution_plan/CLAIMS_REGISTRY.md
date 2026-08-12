@@ -74,7 +74,7 @@
 | `bot_sealed_test_pc_normal` | **0.9292** | LOCKED_TEST | `sealed_test/summary.json` | B14 multi-seed mean test per-class F1 (Table 1b); from seed JSONs only |
 | `bot_sealed_test_pc_recon` | **0.9958** | LOCKED_TEST | `sealed_test/summary.json` | B14 multi-seed mean test per-class F1 (Table 1b); from seed JSONs only |
 | `bot_sealed_test_pc_theft` | **1.0000** | LOCKED_TEST | `sealed_test/summary.json` | B14 multi-seed mean test per-class F1 (Table 1b); from seed JSONs only |
-| `dicc_multiday_stats` | **PENDING** | BLOCKED_DICC | `PENDING` | WP0 / I1–I6 user-scheduled DICC session |
+| `dicc_multiday_stats` | **LOCKED** | MEASURED | `docs/DICC_EXTRACTION_TABLES.md` + `benchmarks/results/dicc/core/` | 6 SUCCESS; B3 PT win; multi-compiler matrix separate |
 
 ## Minority / per-class F1 (val rows + B14 TEST mean)
 

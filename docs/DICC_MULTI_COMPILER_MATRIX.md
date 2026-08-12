@@ -22,7 +22,7 @@
 
 | Method | V100S | A100 | Notes |
 |--------|------:|-----:|-------|
-| Eager full V3 | **1041.3** | **931.5** | PyTorch 2.5.1+cu121 |
+| Eager full V3 | **1041.3** | **931.5** (~932) | PyTorch 2.5.1+cu121 |
 | torch.compile (`reduce-overhead`) | **865.0** | **770.2** | ~1.20–1.21× vs eager |
 | ORT CUDA EP | **894.6** | **864.9** | onnxruntime-gpu **1.16.3** (manylinux2014) |
 | ORT CPU EP | **500.1** | **460.7** | CPU EP on compute node (not laptop) |
@@ -40,7 +40,9 @@
 | 5 | **ORT CUDA** 895 | **eager** 931 |
 | 6 | **eager** 1041 | **ORT TRT EP** 2033 |
 
-**Important:** ORT CPU winning absolute µs on server nodes is **not** a deployment claim for GPU inference; it is a valid measurement under this batch-1 protocol. ORT TensorRT EP on A100 is much slower than native TRT (engine path / EP overhead / fallback behavior differs).
+**Important:**
+- ORT CPU winning absolute µs on server nodes is **not** a deployment claim for GPU inference; it is a valid measurement under this batch-1 protocol.
+- ORT TensorRT EP is **active** (`TensorrtExecutionProvider`) on both GPUs, but on A100 it is ~**3.5× slower** than native TRT (766 vs 528 on V100S is only ~1.45×). Treat native TRT as the primary TRT result; do not headline ORT-TRT EP on A100 as “TRT performance.”
 
 ---
 

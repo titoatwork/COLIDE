@@ -61,7 +61,7 @@ torch.compile with CUDA graph capture **crashes** on BiLSTM (dynamic recurrent c
 |-----|------------------:|-----------:|----------------:|------|
 | **V100S** | ~**513 µs** | ~**363 µs** | ~**964–973 µs** | PT B3 **faster** than CUDA B3 FP16 |
 | **A100** | ~**667–671 µs** | ~**384–391 µs** | ~**945–962 µs** | same direction |
-| RTX 3050 (laptop) | framework table above | local ranges | local | multi-compiler matrix is **laptop** |
+| RTX 3050 (laptop) | framework table above | local ranges | local | laptop multi-compiler only; DICC matrix is separate table below |
 
 Legacy June single-shot pipeline (~551 / ~592 µs CUDA-only) remains **legacy** (no same-GPU PT that day).  
 **Do not** claim full Custom CUDA pipeline vs full V3 PT. Prefer per-block tables (esp. B3 honesty + B1/B2/B4 CUDA wins).  
@@ -73,7 +73,7 @@ Details: `docs/DICC_EXTRACTION_TABLES.md`, `docs/DICC_B3_CUDA_VS_PT_REPORT.md`.
 
 | Method | V100S mean (µs) | A100 mean (µs) |
 |--------|----------------:|---------------:|
-| Eager full V3 | **1041** | **932** |
+| Eager full V3 | **1041** | **931.5** |
 | torch.compile | **865** | **770** |
 | ORT CUDA | **895** | **865** |
 | ORT CPU | **500** | **461** |
@@ -296,7 +296,7 @@ Four fused kernels replacing PyTorch operators:
 1. **Custom CUDA for CNN-BiLSTM IDS** — closest prior work (Ibrahim et al., *Computer Networks*, 2026) applies custom CUDA kernels to a GNN-based IDS vs. a CPU baseline only (1.22x-1.48x); we target a recurrent CNN-BiLSTM benchmarked against production ML frameworks. On **laptop RTX 3050**, Custom CUDA pipeline ranges show **3.60x–4.99x** over TensorRT (multi-session ranges; incomplete CUDA scope caveats apply). On **DICC**, Option A shows CUDA wins on B1/B2/B4 and **PT wins B3**.
 2. **On-device LLM for IDS** — Jamshidi et al. (2026) used cloud APIs; we provide fully local with 16.60 us p99 dispatch
 3. **TensorRT vs custom CUDA for sub-1M models** — no prior comparison on laptop; TensorRT is 3.60x–4.99x slower than Custom pipeline **on RTX 3050** (not re-proven on DICC)
-4. **torch.compile on recurrent models** — laptop CUDA-graph path can crash on BiLSTM; DICC stretch full-model `reduce-overhead` ran on V100S (~818 vs ~1033 µs) and A100 (~761 vs ~957 µs)
+4. **torch.compile on recurrent models** — laptop CUDA-graph path can crash on BiLSTM; DICC full multi-compiler matrix includes compile means ~**865 µs** (V100S) / ~**770 µs** (A100) vs eager ~**1041 / 932** (see multi-compiler table)
 
 ## Limitations
 

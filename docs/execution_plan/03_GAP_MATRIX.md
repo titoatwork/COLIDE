@@ -1,5 +1,9 @@
 # 03 — Gap Matrix: Prof Requirements × Codebase Reality
 
+> **SUPERSEDED as live gap list (2026-08-12).**  
+> Pre-manuscript closed; DICC multi-session + multi-compiler measured.  
+> Use `docs/CLAIM_MAP_PREWRITE.md` + tracker for current gaps (optional S1b/Nsight/B3 optim / manuscript insert only).
+
 **Legend:** DONE = usable as-is · PARTIAL = exists but incomplete · MISSING = must build · BLOCKED = waiting on ops/data
 
 ---
