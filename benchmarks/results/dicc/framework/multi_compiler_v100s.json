@@ -1,0 +1,91 @@
+{
+  "tag": "v100s",
+  "hardware": "Tesla V100S-PCIE-32GB",
+  "checkpoint": "model/best_model_botiot_twostage.pth",
+  "protocol": {
+    "n_trials": 20,
+    "inner": 200,
+    "warmup": 50,
+    "batch": 1
+  },
+  "notes": [
+    "Full multi-compiler absolute latencies; not Option A block parity.",
+    "Do not ratio against incomplete Custom CUDA pipeline without caveat."
+  ],
+  "errors": {},
+  "eager_full_model_us": {
+    "n": 20,
+    "mean": 1041.3139243610203,
+    "std": 14.715905249699196,
+    "p50": 1036.5908965468407,
+    "min": 1025.9058326482773,
+    "max": 1098.240027204156,
+    "cv_pct": 1.413205461429827
+  },
+  "torch_compile_full_model_us": {
+    "n": 20,
+    "mean": 864.9503579363227,
+    "std": 7.785109097812248,
+    "p50": 868.5762295499444,
+    "min": 846.5009741485119,
+    "max": 873.4010625630617,
+    "cv_pct": 0.9000642668541893
+  },
+  "torch_compile_error": null,
+  "onnx_path": "benchmarks/results/dicc/framework/colide_champion.onnx",
+  "ort_available_providers": [
+    "TensorrtExecutionProvider",
+    "CUDAExecutionProvider",
+    "AzureExecutionProvider",
+    "CPUExecutionProvider"
+  ],
+  "ort_version": "1.16.3",
+  "ort_cuda_full_model_us": {
+    "n": 20,
+    "mean": 894.5873356424272,
+    "std": 2.8511643637276864,
+    "p50": 895.5431403592229,
+    "min": 888.0805689841509,
+    "max": 898.5961321741343,
+    "cv_pct": 0.31871280199603863,
+    "active_provider": "CUDAExecutionProvider",
+    "requested_provider": "CUDAExecutionProvider"
+  },
+  "ort_cpu_full_model_us": {
+    "n": 20,
+    "mean": 500.1327837817371,
+    "std": 0.8201793667154661,
+    "p50": 500.24944357573986,
+    "min": 498.39261919260025,
+    "max": 502.0168609917164,
+    "cv_pct": 0.1639923223016311,
+    "active_provider": "CPUExecutionProvider",
+    "requested_provider": "CPUExecutionProvider"
+  },
+  "ort_tensorrt_ep_full_model_us": {
+    "n": 20,
+    "mean": 766.109733376652,
+    "std": 1.1687073447328005,
+    "p50": 766.2251591682434,
+    "min": 762.357609346509,
+    "max": 767.6624227315187,
+    "cv_pct": 0.15255090671954882,
+    "active_provider": "TensorrtExecutionProvider",
+    "requested_provider": "TensorrtExecutionProvider"
+  },
+  "tensorrt_native_full_model_us": {
+    "n": 20,
+    "mean": 528.2507976517081,
+    "std": 1.253944616832148,
+    "p50": 528.1389458104968,
+    "min": 525.311566889286,
+    "max": 530.3160287439823,
+    "cv_pct": 0.23737675785941964,
+    "tensorrt_version": "tensorrt_bindings-8.6",
+    "fp16": true,
+    "io": {
+      "input": "input",
+      "output": "output"
+    }
+  }
+}

@@ -107,8 +107,8 @@ This is defensible for **systems / FGCS-leaning** venues; weaker for “we beat 
 
 | ID | Item | Status |
 |----|------|--------|
-| S1a | torch.compile DICC V100S | **DONE** job 395338 → ~818 vs ~1033 µs |
-| S1a | torch.compile DICC A100 | **DONE** job 395339 → ~761 vs ~957 µs |
+| S1a | torch.compile DICC (early) | **DONE** then superseded |
+| — | **Full multi-compiler** V100S+A100 | **DONE** → `docs/DICC_MULTI_COMPILER_MATRIX.md` (eager/compile/ORT/TRT) |
 | S1b | Clean A100 re-run (provenance) | **DEFERRED** (optional; not blocking write) |
 | S1c | README / claim hygiene | **DONE** |
 | S1d | B3 CUDA vs PT one-pager | **DONE** → `docs/DICC_B3_CUDA_VS_PT_REPORT.md` |

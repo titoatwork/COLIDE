@@ -13,7 +13,7 @@ COLIDE is a multi-objective IoT IDS systems project: a sealed-protocol CAD-CBA d
 1. **Multi-objective CAD-CBA package** under sealed protocol (HPO, focal + ensemble KD, ablations, dual bars vs classical baselines) — accuracy–efficiency story, not F1 supremacy.
 2. **Option A Custom CUDA** for CNN-BiLSTM blocks: large wins on B1/B2/B4 vs matching PT; **honest B3 result on DICC** (PT B3 faster than CUDA FP16 B3 on V100S/A100).
 3. **Multi-session multi-GPU measurement** (3 sessions × V100S + A100 SUCCESS trees) with formal compares — not RTX-only portability claims.
-4. **Laptop multi-compiler ranges** (eager / torch.compile / TensorRT / ORT-GPU vs Custom pipeline) with measurement-stability ranges; **not** re-proven as portable to DICC without server-side remeasure.
+4. **Multi-compiler on laptop + DICC** — laptop multi-session ranges (eager/compile/TRT/ORT vs Custom pipeline) **and** full DICC matrix (eager/compile/ORT/TRT native on V100S+A100); do not mix laptop ratios with server absolutes.
 5. **On-device LLM dispatch** micro-benchmark (**16.60 µs p99**); full free-form LLM explainability is **not** a title-level claim.
 
 ## Results Summary
@@ -67,14 +67,20 @@ Legacy June single-shot pipeline (~551 / ~592 µs CUDA-only) remains **legacy** 
 **Do not** claim full Custom CUDA pipeline vs full V3 PT. Prefer per-block tables (esp. B3 honesty + B1/B2/B4 CUDA wins).  
 Details: `docs/DICC_EXTRACTION_TABLES.md`, `docs/DICC_B3_CUDA_VS_PT_REPORT.md`.
 
-### DICC torch.compile stretch (full-model absolute, not Option A)
+### DICC multi-compiler matrix (full-model absolute, not Option A)
 
-| GPU | Eager full V3 mean | torch.compile mean | Job / source |
-|-----|-------------------:|-------------------:|--------------|
-| **V100S** | ~**1033 µs** | ~**818 µs** | job 395338 · `framework/torch_compile_v100s.json` |
-| **A100** | ~**957 µs** | ~**761 µs** | job 395339 · `framework/torch_compile_a100.json` |
+**Source:** `docs/DICC_MULTI_COMPILER_MATRIX.md` · jobs 395433 (V100S) / 395417 (A100) · n=20, inner=200, warmup=50.
 
-Protocol: n=20 trial medians, inner=200, warmup=50, `reduce-overhead`. Compile ~**1.26×** faster than eager on both GPUs. Absolute framework latencies only — **not** Custom CUDA parity. TRT/ORT not run on DICC. Details: `docs/DICC_TORCH_COMPILE_STRETCH.md`.
+| Method | V100S mean (µs) | A100 mean (µs) |
+|--------|----------------:|---------------:|
+| Eager full V3 | **1041** | **932** |
+| torch.compile | **865** | **770** |
+| ORT CUDA | **895** | **865** |
+| ORT CPU | **500** | **461** |
+| ORT TensorRT EP | **766** | **2033** |
+| TensorRT native FP16 | **528** | **588** |
+
+Absolute framework latencies only — **not** Custom CUDA parity. Fastest GPU framework path here is **TensorRT native**. ORT CPU is measured but is not a GPU-deployment claim. Laptop multi-compiler ranges remain a separate local story.
 
 ### Per-Block Performance (RTX 3050)
 

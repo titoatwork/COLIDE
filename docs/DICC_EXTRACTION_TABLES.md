@@ -22,11 +22,12 @@
 | A100 | PT full | 945.2 | 961.8 | 956.6 | 1.74 |
 | A100 | CUDA B1 | 12.1 | 12.0 | 12.4 | 3.26 |
 
-## 3. Stretch S1a — torch.compile full-model (absolute µs)
+## 3. Full multi-compiler matrix (absolute µs) — **authoritative**
 
-| GPU | Job | Eager mean | compile mean | ratio compile/eager | JSON |
-|-----|-----|----------:|-------------:|--------------------:|------|
-| V100S | 395338 | 1033.0 | 818.0 | 0.79 | `framework/torch_compile_v100s.json` |
-| A100 | 395339 | 956.9 | 760.6 | 0.79 | `framework/torch_compile_a100.json` |
+| GPU | Eager | compile | ORT CUDA | ORT CPU | ORT TRT EP | TRT native | Job |
+|-----|------:|--------:|---------:|--------:|-----------:|-----------:|-----|
+| V100S | 1041.3 | 865.0 | 894.6 | 500.1 | 766.1 | **528.3** | 395433 |
+| A100 | 931.5 | 770.2 | 864.9 | 460.7 | 2032.7 | **587.7** | 395417 |
 
-Protocol differs from campaign PT full (inner=200 here). Use within-JSON pairs only.
+JSON: `framework/multi_compiler_{v100s,a100}.json` · details: `docs/DICC_MULTI_COMPILER_MATRIX.md`.  
+Earlier S1a-only torch.compile JSON (395338/395339) superseded for multi-compiler claims.

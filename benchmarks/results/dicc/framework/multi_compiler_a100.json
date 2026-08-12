@@ -1,0 +1,91 @@
+{
+  "tag": "a100",
+  "hardware": "NVIDIA A100-SXM4-80GB",
+  "checkpoint": "model/best_model_botiot_twostage.pth",
+  "protocol": {
+    "n_trials": 20,
+    "inner": 200,
+    "warmup": 50,
+    "batch": 1
+  },
+  "notes": [
+    "Full multi-compiler absolute latencies; not Option A block parity.",
+    "Do not ratio against incomplete Custom CUDA pipeline without caveat."
+  ],
+  "errors": {},
+  "eager_full_model_us": {
+    "n": 20,
+    "mean": 931.4692346379161,
+    "std": 1.7510715297150437,
+    "p50": 931.5704228356481,
+    "min": 928.3740073442459,
+    "max": 937.2211061418056,
+    "cv_pct": 0.18799027005929253
+  },
+  "torch_compile_full_model_us": {
+    "n": 20,
+    "mean": 770.16765717417,
+    "std": 2.401483563621802,
+    "p50": 769.4207597523928,
+    "min": 767.1208586543798,
+    "max": 777.4007972329855,
+    "cv_pct": 0.3118130891698451
+  },
+  "torch_compile_error": null,
+  "onnx_path": "benchmarks/results/dicc/framework/colide_champion.onnx",
+  "ort_available_providers": [
+    "TensorrtExecutionProvider",
+    "CUDAExecutionProvider",
+    "AzureExecutionProvider",
+    "CPUExecutionProvider"
+  ],
+  "ort_version": "1.16.3",
+  "ort_cuda_full_model_us": {
+    "n": 20,
+    "mean": 864.9366674944758,
+    "std": 1.7488121863378079,
+    "p50": 864.6269561722875,
+    "min": 862.8771174699068,
+    "max": 871.0920810699463,
+    "cv_pct": 0.20218962290079776,
+    "active_provider": "CUDAExecutionProvider",
+    "requested_provider": "CUDAExecutionProvider"
+  },
+  "ort_cpu_full_model_us": {
+    "n": 20,
+    "mean": 460.73890989646316,
+    "std": 1.0613895028896343,
+    "p50": 460.6607835739851,
+    "min": 459.183007478714,
+    "max": 463.27547170221806,
+    "cv_pct": 0.23036680429880532,
+    "active_provider": "CPUExecutionProvider",
+    "requested_provider": "CPUExecutionProvider"
+  },
+  "ort_tensorrt_ep_full_model_us": {
+    "n": 20,
+    "mean": 2032.7478414401412,
+    "std": 140.45713628988213,
+    "p50": 2090.0373347103596,
+    "min": 1724.635949358344,
+    "max": 2123.865531757474,
+    "cv_pct": 6.909717645567511,
+    "active_provider": "TensorrtExecutionProvider",
+    "requested_provider": "TensorrtExecutionProvider"
+  },
+  "tensorrt_native_full_model_us": {
+    "n": 20,
+    "mean": 587.7020535990596,
+    "std": 0.3968618992200453,
+    "p50": 587.7497605979443,
+    "min": 586.868030950427,
+    "max": 588.5260179638863,
+    "cv_pct": 0.06752773736107978,
+    "tensorrt_version": "tensorrt_bindings-8.6",
+    "fp16": true,
+    "io": {
+      "input": "input",
+      "output": "output"
+    }
+  }
+}

@@ -48,7 +48,7 @@
 - Custom CUDA remains much faster on Blocks **1, 2, and 4**  
 - Full Custom CUDA pipeline vs full PyTorch model: **not claimed** (architecture parity incomplete)  
 - Full-model PyTorch absolute: V100S ~**964–973 µs**; A100 ~**945–962 µs**  
-- Stretch torch.compile: V100S ~**818 µs** vs eager ~**1033 µs**; A100 ~**761 µs** vs eager ~**957 µs** (~1.26×) 
+- Full multi-compiler on DICC (batch-1 protocol): TensorRT native ~**528 µs** (V100S) / ~**588 µs** (A100); torch.compile ~**865 / 770**; eager ~**1041 / 932** 
 
 ## Still open (writing / optional)
 

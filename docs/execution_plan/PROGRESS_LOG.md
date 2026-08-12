@@ -1,7 +1,19 @@
 # Progress log (results as they land)
 
 **Policy:** document everything; label pilot vs full; test sealed unless noted.  
-**Handoff snapshot:** 2026-08-12 — **PRE-MANUSCRIPT CLOSED** + default stretch largely done (S1c/S1d/S1a-V100); next = manuscript multi-GPU write (+ finish A100 torch.compile if still pending).
+**Handoff snapshot:** 2026-08-12 — **PRE-MANUSCRIPT CLOSED** + **full DICC multi-compiler complete** (V100S+A100); next = manuscript multi-GPU write.
+
+---
+
+## 2026-08-12 — Full DICC multi-compiler matrix
+
+**Mode:** server multi-compiler · CentOS7/glibc2.17 constraints · no invent  
+| GPU | Job | Key means (µs) |
+|-----|-----|----------------|
+| V100S | 395433 | eager 1041 · compile 865 · ORT-CUDA 895 · ORT-CPU 500 · ORT-TRT 766 · **TRT native 528** |
+| A100 | 395417 | eager 932 · compile 770 · ORT-CUDA 865 · ORT-CPU 461 · ORT-TRT 2033 · **TRT native 588** |
+
+**Authority:** `docs/DICC_MULTI_COMPILER_MATRIX.md` · harness `scripts/benchmark_multi_compiler_dicc.py`
 
 ---
 

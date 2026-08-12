@@ -63,7 +63,7 @@
 
 | Item | Status | Action if resuming |
 |------|--------|-------------------|
-| S1a A100 torch.compile | **DONE** job 395339 (~761 vs ~957 µs) | JSON on laptop |
+| Full multi-compiler V100S+A100 | **DONE** 395433/395417 | `DICC_MULTI_COMPILER_MATRIX.md` |
 | S1b clean A100 re-run | **DEFERRED** optional | Only if provenance reviewers demand no `--allow-dirty` |
 | S2c Nsight | **NOT RUN** | Optional systems depth |
 | Manuscript multi-GPU section | **NEXT** | Write from JSON-backed tables only |
@@ -95,7 +95,7 @@ rsync -avz -e ssh dicc:~/colide/benchmarks/results/dicc/framework/ \
 
 | ID | Item | Status |
 |----|------|--------|
-| S1a | torch.compile V100+A100 | **DONE** both (V100S ~818/~1033; A100 ~761/~957) |
+| S1a / full multi-compiler | eager+compile+ORT+TRT V100+A100 | **DONE** (matrix pack) |
 | S1b | Clean A100 re-run | **DEFERRED** |
 | S1c | README hygiene | **DONE** |
 | S1d | B3 stats one-pager | **DONE** |
