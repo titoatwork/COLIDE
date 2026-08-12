@@ -1,0 +1,10 @@
+COLIDE DICC run summary
+run_dir=/home/user/ibteshamulhaque/colide/benchmarks/results/dicc/core/v100s/20260807_job390642
+git_sha=
+gpu=Tesla V100S-PCIE-32GB label=v100s
+checkpoint=model/best_model_botiot_twostage.pth
+cuda_stats=/home/user/ibteshamulhaque/colide/benchmarks/results/dicc/core/v100s/20260807_job390642/cuda_kernel_stats.json
+pytorch_stats=/home/user/ibteshamulhaque/colide/benchmarks/results/dicc/core/v100s/20260807_job390642/pytorch_gpu_stats.json
+NOTE: full CUDA-vs-PyTorch pipeline speedup is NOT valid
+      (CUDA lacks attention/LayerNorm/GAP; fused_pipeline skips Block3).
+      Use per-block comparisons only, especially Block 3.

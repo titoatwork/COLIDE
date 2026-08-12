@@ -1,0 +1,7 @@
+=== COLIDE Block3 (transposed W_hh + CUDA Graphs) ===
+✅ FP32 validation PASSED
+⏱️  Without CUDA Graphs: 898.653 µs
+✅ CUDA Graph validation PASSED
+⏱️  With CUDA Graphs:    852.518 µs
+   Speedup from graphs:  1.05412x
+   PyTorch GPU target:   784.1 µs (n=50-trial mean, see benchmark_pytorch_block3_stats.py)

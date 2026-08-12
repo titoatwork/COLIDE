@@ -1,0 +1,15 @@
+=== COLIDE Full Pipeline (Chained) ===
+
+⏱️  Blocks 1+2+4 chained (measured this run): 38.6211 µs
+   Block 3 FP16 (measured separately, fused_block3_fp16): 601.4 µs
+   ─────────────────────────────────
+   Pipeline chained total:     640.021 µs
+   Pipeline separate total:    770.4 µs
+   PyTorch GPU baseline:       2246.76 µs (eager, 20-trial mean)
+   ─────────────────────────────────
+   Chained speedup vs PyTorch: 3.51044x
+   Separate speedup vs PyTorch:2.91635x
+   Chaining overhead:          -130.379 µs
+
+📊 Finding: Chaining REDUCES overhead by 130.379 µs
+   Back-to-back launches benefit from GPU scheduler pipelining.

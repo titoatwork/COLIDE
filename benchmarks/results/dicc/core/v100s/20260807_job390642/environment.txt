@@ -1,0 +1,106 @@
+=== date ===
+Fri Aug  7 01:24:02 UTC 2026
+=== hostname ===
+gpu05.dicc.um.edu.my
+=== uname ===
+Linux gpu05.dicc.um.edu.my 3.10.0-1160.114.2.el7.x86_64 #1 SMP Wed Mar 20 15:54:52 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+=== COLIDE_ROOT ===
+/home/user/ibteshamulhaque/colide
+=== git ===
+=== modules ===
+No modules loaded
+=== which ===
+/home/user/ibteshamulhaque/colide/.venv-mamba/bin/python
+/usr/bin/nvidia-smi
+=== python ===
+executable /home/user/ibteshamulhaque/micromamba/envs/colide/bin/python
+version 3.10.20 | packaged by conda-forge | (main, Jun 11 2026, 03:31:56) [GCC 14.3.0]
+torch 2.5.1+cu121 cuda 12.1
+device Tesla V100S-PCIE-32GB
+props 7 0 34072559616
+numpy 2.2.6
+=== nvidia-smi ===
+Fri Aug  7 09:24:04 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 550.76                 Driver Version: 550.76         CUDA Version: 12.4     |
+|-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  Tesla V100S-PCIE-32GB          On  |   00000000:81:00.0 Off |                    0 |
+| N/A   30C    P0             24W /  250W |       1MiB /  32768MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+                                                                                         
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI        PID   Type   Process name                              GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+=== env (selected) ===
+COLIDE_CAMPAIGN=core
+COLIDE_CHECKPOINT=model/best_model_botiot_twostage.pth
+COLIDE_DATE_LABEL=20260807
+COLIDE_GPU_CC=7.0
+COLIDE_GPU_LABEL=v100s
+COLIDE_GPU_MEM_MIB=32768
+COLIDE_GPU_MIN_MEM=14000
+COLIDE_GPU_NAME=Tesla V100S-PCIE-32GB
+COLIDE_GPU_NAME_RE=V100
+COLIDE_GPU_NODE_COUNT=1
+COLIDE_KERNELS_DIR=/home/user/ibteshamulhaque/colide/inference/kernels/v100
+COLIDE_KERNELS_SUBDIR=v100
+COLIDE_N_TRIALS_CUDA=100
+COLIDE_N_TRIALS_PYTORCH=20
+COLIDE_PYTHON=/home/user/ibteshamulhaque/colide/.venv-mamba/bin/python
+COLIDE_PYTORCH_INNER=1000
+COLIDE_ROOT=/home/user/ibteshamulhaque/colide
+COLIDE_RUN_DIR=/home/user/ibteshamulhaque/colide/benchmarks/results/dicc/core/v100s/20260807_job390642
+COLIDE_VENV=/home/user/ibteshamulhaque/colide/.venv-mamba
+CUDA_VISIBLE_DEVICES=0
+PATH=/home/user/ibteshamulhaque/colide/.venv-mamba/bin:/home/user/ibteshamulhaque/colide/.venv-mamba/bin:/usr/local/cuda/bin:/usr/bin:/bin
+PYTHONNOUSERSITE=1
+PYTHONPATH=/home/user/ibteshamulhaque/colide
+SLURMD_NODENAME=gpu05
+SLURM_CLUSTER_NAME=um-hpc
+SLURM_CONF=/var/spool/slurmd/conf-cache/slurm.conf
+SLURM_CPUS_ON_NODE=4
+SLURM_CPUS_PER_TASK=4
+SLURM_EXPORT_ENV=NONE,COLIDE_ROOT=/home/user/ibteshamulhaque/colide,COLIDE_CAMPAIGN=core,COLIDE_DATE_LABEL=20260807,COLIDE_CHECKPOINT=model/best_model_botiot_twostage.pth,COLIDE_N_TRIALS_CUDA=100,COLIDE_N_TRIALS_PYTORCH=20,COLIDE_PYTORCH_INNER=1000,COLIDE_GPU_LABEL=v100s,COLIDE_GPU_NAME_RE=V100,COLIDE_GPU_CC=7.0,COLIDE_GPU_MIN_MEM=14000,COLIDE_KERNELS_SUBDIR=v100,COLIDE_VENV=/home/user/ibteshamulhaque/colide/.venv-mamba,MAMBA_ROOT_PREFIX=/home/user/ibteshamulhaque/micromamba,HOME=/home/user/ibteshamulhaque,PATH=/usr/local/cuda/bin:/usr/bin:/bin,HOME=/home/user/ibteshamulhaque,USER=ibteshamulhaque,LANG=C.UTF-8
+SLURM_GET_USER_ENV=1
+SLURM_GPUS_ON_NODE=1
+SLURM_GTIDS=0
+SLURM_JOBID=390642
+SLURM_JOB_ACCOUNT=free
+SLURM_JOB_CPUS_PER_NODE=4
+SLURM_JOB_END_TIME=1786073038
+SLURM_JOB_GID=548200795
+SLURM_JOB_GPUS=1
+SLURM_JOB_ID=390642
+SLURM_JOB_NAME=colide_v100
+SLURM_JOB_NODELIST=gpu05
+SLURM_JOB_NUM_NODES=1
+SLURM_JOB_PARTITION=gpu-v100s
+SLURM_JOB_QOS=normal
+SLURM_JOB_START_TIME=1786065838
+SLURM_JOB_UID=548200795
+SLURM_JOB_USER=ibteshamulhaque
+SLURM_LOCALID=0
+SLURM_MEM_PER_NODE=32768
+SLURM_NNODES=1
+SLURM_NODEID=0
+SLURM_NODELIST=gpu05
+SLURM_NPROCS=1
+SLURM_NTASKS=1
+SLURM_PRIO_PROCESS=0
+SLURM_PROCID=0
+SLURM_SUBMIT_DIR=/home/user/ibteshamulhaque/colide
+SLURM_SUBMIT_HOST=login01.dicc.um.edu.my
+SLURM_TASKS_PER_NODE=1
+SLURM_TASK_PID=6911
+SLURM_TOPOLOGY_ADDR=gpu05
+SLURM_TOPOLOGY_ADDR_PATTERN=node
+SLURM_TRES_PER_TASK=cpu=4

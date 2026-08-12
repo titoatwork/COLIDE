@@ -1,0 +1,4 @@
+=== COLIDE Fused Block4 (Dense head) ===
+✅ FP32 validation PASSED
+⏱️  Block4 (Dense) time: 8.19616 µs
+   PyTorch GPU target: 186.5 µs

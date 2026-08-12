@@ -1,0 +1,7278 @@
+{
+  "hardware_tag": "a100",
+  "n_trials": 100,
+  "kernels": {
+    "fused_block1": {
+      "binary": "/home/user/ibteshamulhaque/colide/inference/kernels/a100/fused_block1",
+      "n_trials_requested": 100,
+      "samples": {
+        "latency_us": [
+          11.3536,
+          11.9354,
+          12.1983,
+          11.9249,
+          12.0612,
+          11.7362,
+          12.652,
+          11.906,
+          11.9627,
+          12.1595,
+          11.9777,
+          11.9237,
+          12.5468,
+          12.2917,
+          12.1145,
+          12.3628,
+          12.0041,
+          12.0581,
+          12.4384,
+          11.9591,
+          12.0627,
+          12.0393,
+          11.7246,
+          10.888,
+          11.3847,
+          12.4074,
+          11.9762,
+          12.0136,
+          11.8935,
+          11.9868,
+          11.9153,
+          11.9847,
+          11.4036,
+          11.9201,
+          11.5416,
+          11.5464,
+          11.954,
+          11.9259,
+          12.4498,
+          12.2934,
+          12.1036,
+          11.9018,
+          12.3052,
+          12.3008,
+          12.3244,
+          11.9472,
+          11.9645,
+          11.9584,
+          11.976,
+          11.9333,
+          12.2549,
+          11.9827,
+          12.1303,
+          12.0719,
+          12.3505,
+          12.4221,
+          11.6823,
+          11.5829,
+          11.5562,
+          12.2912,
+          12.0121,
+          11.9614,
+          11.8861,
+          11.9928,
+          11.9134,
+          11.9159,
+          11.9592,
+          12.1931,
+          12.4528,
+          12.3632,
+          12.1696,
+          11.939,
+          12.2729,
+          12.0113,
+          12.3993,
+          11.9009,
+          12.0315,
+          11.3687,
+          11.9423,
+          11.8991,
+          11.8991,
+          12.2092,
+          11.8112,
+          12.5067,
+          12.4234,
+          12.0296,
+          12.5185,
+          12.0288,
+          11.9766,
+          12.1283,
+          12.3438,
+          12.3941,
+          12.3329,
+          12.7322,
+          12.5789,
+          12.3415,
+          11.9515,
+          11.9634,
+          12.3553,
+          12.3885
+        ]
+      },
+      "runs": [
+        {
+          "trial": 0,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.3536
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 1,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.9354
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 2,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.1983
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 3,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.9249
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 4,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.0612
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 5,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.7362
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 6,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.652
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 7,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.906
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 8,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.9627
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 9,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.1595
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 10,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.9777
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 11,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.9237
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 12,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.5468
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 13,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.2917
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 14,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.1145
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 15,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.3628
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 16,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.0041
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 17,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.0581
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 18,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.4384
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 19,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.9591
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 20,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.0627
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 21,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.0393
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 22,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.7246
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 23,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.888
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 24,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.3847
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 25,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.4074
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 26,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.9762
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 27,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.0136
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 28,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.8935
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 29,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.9868
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 30,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.9153
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 31,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.9847
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 32,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.4036
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 33,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.9201
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 34,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.5416
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 35,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.5464
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 36,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.954
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 37,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.9259
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 38,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.4498
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 39,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.2934
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 40,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.1036
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 41,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.9018
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 42,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.3052
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 43,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.3008
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 44,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.3244
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 45,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.9472
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 46,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.9645
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 47,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.9584
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 48,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.976
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 49,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.9333
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 50,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.2549
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 51,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.9827
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 52,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.1303
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 53,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.0719
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 54,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.3505
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 55,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.4221
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 56,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.6823
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 57,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.5829
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 58,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.5562
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 59,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.2912
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 60,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.0121
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 61,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.9614
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 62,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.8861
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 63,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.9928
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 64,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.9134
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 65,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.9159
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 66,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.9592
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 67,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.1931
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 68,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.4528
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 69,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.3632
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 70,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.1696
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 71,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.939
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 72,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.2729
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 73,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.0113
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 74,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.3993
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 75,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.9009
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 76,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.0315
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 77,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.3687
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 78,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.9423
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 79,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.8991
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 80,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.8991
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 81,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.2092
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 82,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.8112
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 83,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.5067
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 84,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.4234
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 85,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.0296
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 86,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.5185
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 87,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.0288
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 88,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.9766
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 89,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.1283
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 90,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.3438
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 91,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.3941
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 92,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.3329
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 93,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.7322
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 94,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.5789
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 95,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.3415
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 96,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.9515
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 97,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.9634
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 98,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.3553
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 99,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.3885
+          },
+          "validation": "ok"
+        }
+      ]
+    },
+    "fused_block2": {
+      "binary": "/home/user/ibteshamulhaque/colide/inference/kernels/a100/fused_block2",
+      "n_trials_requested": 100,
+      "samples": {
+        "latency_us": [
+          35.0952,
+          35.0882,
+          34.7963,
+          34.6792,
+          35.0593,
+          34.6956,
+          35.1728,
+          34.8318,
+          35.1085,
+          34.7101,
+          34.8398,
+          34.6836,
+          35.3211,
+          35.0235,
+          35.108,
+          35.1121,
+          35.4277,
+          34.6298,
+          35.0317,
+          34.627,
+          35.0349,
+          35.0344,
+          34.6937,
+          34.7466,
+          34.6975,
+          35.0584,
+          34.6832,
+          35.0354,
+          35.1362,
+          35.028,
+          35.1571,
+          34.7189,
+          34.7777,
+          35.0303,
+          34.6332,
+          34.6398,
+          34.6598,
+          34.4432,
+          34.7056,
+          34.9232,
+          35.2019,
+          35.145,
+          35.1105,
+          34.9658,
+          34.8226,
+          35.0288,
+          35.0568,
+          35.6015,
+          35.1357,
+          35.0889,
+          36.1234,
+          35.071,
+          34.8653,
+          35.6308,
+          35.1851,
+          35.0682,
+          35.0928,
+          35.0816,
+          34.9935,
+          35.421,
+          35.0792,
+          35.136,
+          35.461,
+          35.1798,
+          35.398,
+          35.9918,
+          35.1419,
+          35.1462,
+          35.1545,
+          35.0237,
+          35.1118,
+          35.0909,
+          35.207,
+          35.1041,
+          35.0276,
+          35.0931,
+          35.312,
+          35.3076,
+          35.8686,
+          35.541,
+          35.0893,
+          35.3252,
+          35.6075,
+          35.5681,
+          35.0484,
+          35.115,
+          35.0944,
+          35.0851,
+          35.0523,
+          35.127,
+          35.067,
+          35.8675,
+          35.5175,
+          35.1457,
+          35.1058,
+          35.0909,
+          35.5323,
+          35.2238,
+          35.0782,
+          35.0427
+        ]
+      },
+      "runs": [
+        {
+          "trial": 0,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.0952
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 1,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.0882
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 2,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 34.7963
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 3,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 34.6792
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 4,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.0593
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 5,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 34.6956
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 6,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.1728
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 7,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 34.8318
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 8,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.1085
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 9,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 34.7101
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 10,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 34.8398
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 11,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 34.6836
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 12,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.3211
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 13,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.0235
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 14,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.108
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 15,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.1121
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 16,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.4277
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 17,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 34.6298
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 18,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.0317
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 19,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 34.627
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 20,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.0349
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 21,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.0344
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 22,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 34.6937
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 23,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 34.7466
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 24,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 34.6975
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 25,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.0584
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 26,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 34.6832
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 27,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.0354
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 28,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.1362
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 29,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.028
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 30,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.1571
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 31,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 34.7189
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 32,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 34.7777
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 33,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.0303
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 34,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 34.6332
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 35,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 34.6398
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 36,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 34.6598
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 37,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 34.4432
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 38,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 34.7056
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 39,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 34.9232
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 40,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.2019
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 41,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.145
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 42,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.1105
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 43,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 34.9658
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 44,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 34.8226
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 45,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.0288
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 46,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.0568
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 47,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.6015
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 48,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.1357
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 49,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.0889
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 50,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 36.1234
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 51,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.071
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 52,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 34.8653
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 53,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.6308
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 54,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.1851
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 55,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.0682
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 56,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.0928
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 57,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.0816
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 58,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 34.9935
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 59,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.421
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 60,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.0792
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 61,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.136
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 62,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.461
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 63,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.1798
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 64,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.398
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 65,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.9918
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 66,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.1419
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 67,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.1462
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 68,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.1545
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 69,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.0237
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 70,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.1118
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 71,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.0909
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 72,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.207
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 73,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.1041
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 74,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.0276
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 75,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.0931
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 76,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.312
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 77,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.3076
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 78,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.8686
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 79,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.541
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 80,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.0893
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 81,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.3252
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 82,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.6075
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 83,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.5681
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 84,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.0484
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 85,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.115
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 86,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.0944
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 87,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.0851
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 88,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.0523
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 89,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.127
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 90,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.067
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 91,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.8675
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 92,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.5175
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 93,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.1457
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 94,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.1058
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 95,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.0909
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 96,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.5323
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 97,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.2238
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 98,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.0782
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 99,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 35.0427
+          },
+          "validation": "ok"
+        }
+      ]
+    },
+    "fused_block3": {
+      "binary": "/home/user/ibteshamulhaque/colide/inference/kernels/a100/fused_block3",
+      "n_trials_requested": 100,
+      "samples": {
+        "no_graphs_us": [
+          1030.41,
+          846.305,
+          846.092,
+          847.274,
+          849.397,
+          848.813,
+          847.428,
+          849.127,
+          846.872,
+          847.512,
+          846.256,
+          847.308,
+          848.188,
+          846.572,
+          847.384,
+          847.65,
+          850.434,
+          846.568,
+          846.283,
+          848.133,
+          847.905,
+          847.386,
+          846.062,
+          846.816,
+          848.31,
+          846.58,
+          848.389,
+          847.297,
+          847.334,
+          847.125,
+          846.879,
+          847.949,
+          846.187,
+          846.553,
+          845.528,
+          846.633,
+          849.639,
+          847.073,
+          846.034,
+          846.767,
+          848.053,
+          850.032,
+          847.564,
+          847.398,
+          847.11,
+          849.35,
+          847.207,
+          846.92,
+          846.011,
+          846.969,
+          847.803,
+          846.889,
+          846.316,
+          847.698,
+          847.623,
+          848.019,
+          847.185,
+          846.579,
+          846.797,
+          847.157,
+          847.243,
+          846.305,
+          847.243,
+          848.627,
+          853.972,
+          847.868,
+          849.816,
+          849.521,
+          847.91,
+          846.147,
+          847.668,
+          845.742,
+          847.111,
+          847.017,
+          847.139,
+          846.192,
+          846.617,
+          848.279,
+          846.883,
+          846.323,
+          847.359,
+          847.146,
+          847.164,
+          846.588,
+          846.117,
+          847.271,
+          847.482,
+          846.661,
+          846.083,
+          846.137,
+          846.821,
+          848.308,
+          847.316,
+          847.315,
+          847.383,
+          846.525,
+          847.409,
+          848.626,
+          846.055,
+          846.207
+        ],
+        "with_graphs_us": [
+          927.6,
+          836.995,
+          836.281,
+          836.531,
+          839.049,
+          836.172,
+          837.821,
+          838.709,
+          837.068,
+          836.455,
+          835.992,
+          836.696,
+          836.79,
+          836.151,
+          836.575,
+          837.722,
+          836.278,
+          837.032,
+          836.66,
+          838.185,
+          838.197,
+          838.872,
+          836.113,
+          838.063,
+          837.126,
+          839.066,
+          837.354,
+          837.149,
+          836.236,
+          836.378,
+          836.045,
+          838.047,
+          836.307,
+          836.613,
+          835.523,
+          835.874,
+          837.852,
+          836.05,
+          836.246,
+          835.862,
+          835.799,
+          836.189,
+          837.136,
+          835.877,
+          836.089,
+          837.306,
+          837.17,
+          837.653,
+          837.422,
+          837.47,
+          836.623,
+          835.932,
+          838.275,
+          839.15,
+          838.066,
+          837.87,
+          836.58,
+          836.2,
+          838.0,
+          836.755,
+          836.62,
+          836.054,
+          836.215,
+          836.149,
+          836.495,
+          839.346,
+          837.784,
+          836.504,
+          836.13,
+          835.866,
+          836.172,
+          836.268,
+          836.527,
+          837.528,
+          836.16,
+          837.98,
+          836.269,
+          839.827,
+          839.111,
+          836.291,
+          836.934,
+          838.951,
+          837.403,
+          836.787,
+          836.274,
+          837.798,
+          836.507,
+          835.756,
+          835.78,
+          835.916,
+          839.09,
+          836.727,
+          837.404,
+          836.517,
+          836.556,
+          836.281,
+          837.331,
+          836.061,
+          836.011,
+          836.024
+        ]
+      },
+      "runs": [
+        {
+          "trial": 0,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 1030.41,
+            "with_graphs_us": 927.6
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 1,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.305,
+            "with_graphs_us": 836.995
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 2,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.092,
+            "with_graphs_us": 836.281
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 3,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.274,
+            "with_graphs_us": 836.531
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 4,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 849.397,
+            "with_graphs_us": 839.049
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 5,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 848.813,
+            "with_graphs_us": 836.172
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 6,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.428,
+            "with_graphs_us": 837.821
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 7,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 849.127,
+            "with_graphs_us": 838.709
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 8,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.872,
+            "with_graphs_us": 837.068
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 9,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.512,
+            "with_graphs_us": 836.455
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 10,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.256,
+            "with_graphs_us": 835.992
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 11,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.308,
+            "with_graphs_us": 836.696
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 12,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 848.188,
+            "with_graphs_us": 836.79
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 13,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.572,
+            "with_graphs_us": 836.151
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 14,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.384,
+            "with_graphs_us": 836.575
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 15,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.65,
+            "with_graphs_us": 837.722
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 16,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 850.434,
+            "with_graphs_us": 836.278
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 17,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.568,
+            "with_graphs_us": 837.032
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 18,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.283,
+            "with_graphs_us": 836.66
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 19,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 848.133,
+            "with_graphs_us": 838.185
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 20,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.905,
+            "with_graphs_us": 838.197
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 21,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.386,
+            "with_graphs_us": 838.872
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 22,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.062,
+            "with_graphs_us": 836.113
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 23,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.816,
+            "with_graphs_us": 838.063
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 24,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 848.31,
+            "with_graphs_us": 837.126
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 25,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.58,
+            "with_graphs_us": 839.066
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 26,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 848.389,
+            "with_graphs_us": 837.354
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 27,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.297,
+            "with_graphs_us": 837.149
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 28,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.334,
+            "with_graphs_us": 836.236
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 29,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.125,
+            "with_graphs_us": 836.378
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 30,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.879,
+            "with_graphs_us": 836.045
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 31,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.949,
+            "with_graphs_us": 838.047
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 32,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.187,
+            "with_graphs_us": 836.307
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 33,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.553,
+            "with_graphs_us": 836.613
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 34,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 845.528,
+            "with_graphs_us": 835.523
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 35,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.633,
+            "with_graphs_us": 835.874
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 36,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 849.639,
+            "with_graphs_us": 837.852
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 37,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.073,
+            "with_graphs_us": 836.05
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 38,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.034,
+            "with_graphs_us": 836.246
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 39,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.767,
+            "with_graphs_us": 835.862
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 40,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 848.053,
+            "with_graphs_us": 835.799
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 41,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 850.032,
+            "with_graphs_us": 836.189
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 42,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.564,
+            "with_graphs_us": 837.136
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 43,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.398,
+            "with_graphs_us": 835.877
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 44,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.11,
+            "with_graphs_us": 836.089
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 45,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 849.35,
+            "with_graphs_us": 837.306
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 46,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.207,
+            "with_graphs_us": 837.17
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 47,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.92,
+            "with_graphs_us": 837.653
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 48,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.011,
+            "with_graphs_us": 837.422
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 49,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.969,
+            "with_graphs_us": 837.47
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 50,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.803,
+            "with_graphs_us": 836.623
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 51,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.889,
+            "with_graphs_us": 835.932
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 52,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.316,
+            "with_graphs_us": 838.275
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 53,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.698,
+            "with_graphs_us": 839.15
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 54,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.623,
+            "with_graphs_us": 838.066
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 55,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 848.019,
+            "with_graphs_us": 837.87
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 56,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.185,
+            "with_graphs_us": 836.58
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 57,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.579,
+            "with_graphs_us": 836.2
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 58,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.797,
+            "with_graphs_us": 838.0
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 59,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.157,
+            "with_graphs_us": 836.755
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 60,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.243,
+            "with_graphs_us": 836.62
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 61,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.305,
+            "with_graphs_us": 836.054
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 62,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.243,
+            "with_graphs_us": 836.215
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 63,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 848.627,
+            "with_graphs_us": 836.149
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 64,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 853.972,
+            "with_graphs_us": 836.495
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 65,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.868,
+            "with_graphs_us": 839.346
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 66,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 849.816,
+            "with_graphs_us": 837.784
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 67,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 849.521,
+            "with_graphs_us": 836.504
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 68,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.91,
+            "with_graphs_us": 836.13
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 69,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.147,
+            "with_graphs_us": 835.866
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 70,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.668,
+            "with_graphs_us": 836.172
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 71,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 845.742,
+            "with_graphs_us": 836.268
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 72,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.111,
+            "with_graphs_us": 836.527
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 73,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.017,
+            "with_graphs_us": 837.528
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 74,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.139,
+            "with_graphs_us": 836.16
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 75,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.192,
+            "with_graphs_us": 837.98
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 76,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.617,
+            "with_graphs_us": 836.269
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 77,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 848.279,
+            "with_graphs_us": 839.827
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 78,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.883,
+            "with_graphs_us": 839.111
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 79,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.323,
+            "with_graphs_us": 836.291
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 80,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.359,
+            "with_graphs_us": 836.934
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 81,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.146,
+            "with_graphs_us": 838.951
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 82,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.164,
+            "with_graphs_us": 837.403
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 83,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.588,
+            "with_graphs_us": 836.787
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 84,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.117,
+            "with_graphs_us": 836.274
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 85,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.271,
+            "with_graphs_us": 837.798
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 86,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.482,
+            "with_graphs_us": 836.507
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 87,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.661,
+            "with_graphs_us": 835.756
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 88,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.083,
+            "with_graphs_us": 835.78
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 89,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.137,
+            "with_graphs_us": 835.916
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 90,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.821,
+            "with_graphs_us": 839.09
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 91,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 848.308,
+            "with_graphs_us": 836.727
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 92,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.316,
+            "with_graphs_us": 837.404
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 93,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.315,
+            "with_graphs_us": 836.517
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 94,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.383,
+            "with_graphs_us": 836.556
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 95,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.525,
+            "with_graphs_us": 836.281
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 96,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 847.409,
+            "with_graphs_us": 837.331
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 97,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 848.626,
+            "with_graphs_us": 836.061
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 98,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.055,
+            "with_graphs_us": 836.011
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 99,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "no_graphs_us": 846.207,
+            "with_graphs_us": 836.024
+          },
+          "validation": "ok"
+        }
+      ]
+    },
+    "fused_block3_fp16": {
+      "binary": "/home/user/ibteshamulhaque/colide/inference/kernels/a100/fused_block3_fp16",
+      "n_trials_requested": 100,
+      "samples": {
+        "latency_us": [
+          540.96,
+          541.62,
+          671.199,
+          671.397,
+          669.84,
+          672.454,
+          669.778,
+          672.844,
+          670.589,
+          670.512,
+          669.194,
+          671.953,
+          671.289,
+          671.955,
+          671.825,
+          670.051,
+          669.825,
+          669.723,
+          672.116,
+          671.372,
+          671.783,
+          669.456,
+          671.182,
+          671.032,
+          670.144,
+          669.995,
+          670.902,
+          670.594,
+          671.62,
+          670.913,
+          670.093,
+          670.898,
+          670.1,
+          670.828,
+          671.276,
+          669.749,
+          670.125,
+          673.451,
+          670.036,
+          670.76,
+          673.25,
+          669.646,
+          670.309,
+          670.633,
+          670.341,
+          670.012,
+          672.359,
+          670.246,
+          672.308,
+          671.252,
+          672.789,
+          670.804,
+          670.287,
+          672.113,
+          661.502,
+          662.363,
+          670.441,
+          670.474,
+          670.328,
+          672.787,
+          669.868,
+          670.844,
+          670.353,
+          669.935,
+          669.742,
+          669.823,
+          670.238,
+          670.834,
+          671.29,
+          669.979,
+          670.855,
+          670.472,
+          671.27,
+          670.509,
+          669.594,
+          669.689,
+          670.933,
+          670.88,
+          669.626,
+          670.302,
+          670.952,
+          670.964,
+          671.31,
+          670.028,
+          670.525,
+          670.079,
+          671.402,
+          671.376,
+          669.739,
+          671.33,
+          669.81,
+          672.521,
+          671.756,
+          670.215,
+          669.919,
+          671.246,
+          669.797,
+          669.905,
+          671.441,
+          670.998
+        ]
+      },
+      "runs": [
+        {
+          "trial": 0,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 540.96
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 1,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 541.62
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 2,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 671.199
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 3,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 671.397
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 4,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 669.84
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 5,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 672.454
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 6,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 669.778
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 7,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 672.844
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 8,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.589
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 9,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.512
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 10,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 669.194
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 11,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 671.953
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 12,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 671.289
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 13,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 671.955
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 14,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 671.825
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 15,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.051
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 16,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 669.825
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 17,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 669.723
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 18,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 672.116
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 19,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 671.372
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 20,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 671.783
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 21,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 669.456
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 22,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 671.182
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 23,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 671.032
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 24,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.144
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 25,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 669.995
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 26,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.902
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 27,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.594
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 28,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 671.62
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 29,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.913
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 30,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.093
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 31,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.898
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 32,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.1
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 33,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.828
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 34,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 671.276
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 35,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 669.749
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 36,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.125
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 37,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 673.451
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 38,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.036
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 39,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.76
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 40,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 673.25
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 41,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 669.646
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 42,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.309
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 43,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.633
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 44,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.341
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 45,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.012
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 46,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 672.359
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 47,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.246
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 48,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 672.308
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 49,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 671.252
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 50,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 672.789
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 51,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.804
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 52,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.287
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 53,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 672.113
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 54,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 661.502
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 55,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 662.363
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 56,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.441
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 57,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.474
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 58,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.328
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 59,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 672.787
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 60,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 669.868
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 61,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.844
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 62,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.353
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 63,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 669.935
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 64,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 669.742
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 65,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 669.823
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 66,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.238
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 67,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.834
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 68,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 671.29
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 69,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 669.979
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 70,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.855
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 71,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.472
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 72,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 671.27
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 73,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.509
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 74,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 669.594
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 75,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 669.689
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 76,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.933
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 77,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.88
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 78,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 669.626
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 79,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.302
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 80,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.952
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 81,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.964
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 82,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 671.31
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 83,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.028
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 84,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.525
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 85,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.079
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 86,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 671.402
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 87,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 671.376
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 88,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 669.739
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 89,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 671.33
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 90,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 669.81
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 91,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 672.521
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 92,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 671.756
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 93,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.215
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 94,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 669.919
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 95,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 671.246
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 96,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 669.797
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 97,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 669.905
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 98,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 671.441
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 99,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 670.998
+          },
+          "validation": "ok"
+        }
+      ]
+    },
+    "fused_block3_naive": {
+      "binary": "/home/user/ibteshamulhaque/colide/inference/kernels/a100/fused_block3_naive",
+      "n_trials_requested": 100,
+      "samples": {
+        "latency_us": [
+          6670.75,
+          6212.97,
+          6206.72,
+          6211.51,
+          6211.1,
+          6210.32,
+          6212.78,
+          6212.76,
+          6209.28,
+          6209.79,
+          6209.5,
+          6211.71,
+          6210.5,
+          6212.24,
+          6213.24,
+          6212.5,
+          6215.37,
+          6211.4,
+          6213.66,
+          6209.72,
+          6208.54,
+          6209.56,
+          6211.59,
+          6212.77,
+          6213.27,
+          6211.54,
+          6207.39,
+          6210.64,
+          6210.12,
+          6213.97,
+          6209.58,
+          6212.09,
+          6213.42,
+          6213.14,
+          6212.38,
+          6211.01,
+          6207.99,
+          6211.22,
+          6211.03,
+          6210.55,
+          6211.33,
+          6208.1,
+          6210.06,
+          6211.28,
+          6210.95,
+          6210.19,
+          6211.07,
+          6208.41,
+          6209.98,
+          6212.32,
+          6211.21,
+          6207.98,
+          6210.12,
+          6211.86,
+          6211.82,
+          6214.54,
+          6213.72,
+          6215.73,
+          6208.25,
+          6209.72,
+          6210.16,
+          6210.71,
+          6209.05,
+          6210.52,
+          6211.63,
+          6214.17,
+          6213.39,
+          6211.98,
+          6208.64,
+          6212.48,
+          6210.31,
+          6210.52,
+          6210.45,
+          6214.04,
+          6215.04,
+          6215.03,
+          6215.09,
+          6210.07,
+          6212.97,
+          6211.1,
+          6212.96,
+          6212.84,
+          6211.24,
+          6213.84,
+          6211.81,
+          6212.42,
+          6211.67,
+          6210.88,
+          6208.42,
+          6213.3,
+          6211.93,
+          6209.16,
+          6211.73,
+          6212.06,
+          6210.86,
+          6211.21,
+          6213.14,
+          6210.69,
+          6212.78,
+          6209.64
+        ]
+      },
+      "runs": [
+        {
+          "trial": 0,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6670.75
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 1,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6212.97
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 2,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6206.72
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 3,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6211.51
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 4,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6211.1
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 5,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6210.32
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 6,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6212.78
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 7,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6212.76
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 8,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6209.28
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 9,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6209.79
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 10,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6209.5
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 11,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6211.71
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 12,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6210.5
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 13,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6212.24
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 14,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6213.24
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 15,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6212.5
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 16,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6215.37
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 17,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6211.4
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 18,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6213.66
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 19,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6209.72
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 20,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6208.54
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 21,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6209.56
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 22,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6211.59
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 23,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6212.77
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 24,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6213.27
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 25,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6211.54
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 26,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6207.39
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 27,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6210.64
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 28,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6210.12
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 29,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6213.97
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 30,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6209.58
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 31,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6212.09
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 32,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6213.42
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 33,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6213.14
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 34,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6212.38
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 35,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6211.01
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 36,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6207.99
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 37,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6211.22
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 38,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6211.03
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 39,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6210.55
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 40,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6211.33
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 41,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6208.1
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 42,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6210.06
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 43,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6211.28
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 44,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6210.95
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 45,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6210.19
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 46,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6211.07
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 47,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6208.41
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 48,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6209.98
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 49,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6212.32
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 50,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6211.21
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 51,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6207.98
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 52,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6210.12
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 53,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6211.86
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 54,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6211.82
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 55,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6214.54
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 56,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6213.72
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 57,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6215.73
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 58,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6208.25
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 59,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6209.72
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 60,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6210.16
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 61,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6210.71
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 62,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6209.05
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 63,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6210.52
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 64,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6211.63
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 65,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6214.17
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 66,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6213.39
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 67,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6211.98
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 68,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6208.64
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 69,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6212.48
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 70,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6210.31
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 71,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6210.52
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 72,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6210.45
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 73,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6214.04
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 74,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6215.04
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 75,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6215.03
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 76,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6215.09
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 77,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6210.07
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 78,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6212.97
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 79,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6211.1
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 80,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6212.96
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 81,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6212.84
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 82,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6211.24
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 83,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6213.84
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 84,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6211.81
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 85,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6212.42
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 86,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6211.67
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 87,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6210.88
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 88,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6208.42
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 89,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6213.3
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 90,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6211.93
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 91,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6209.16
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 92,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6211.73
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 93,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6212.06
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 94,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6210.86
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 95,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6211.21
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 96,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6213.14
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 97,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6210.69
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 98,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6212.78
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 99,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 6209.64
+          },
+          "validation": "ok"
+        }
+      ]
+    },
+    "fused_block4": {
+      "binary": "/home/user/ibteshamulhaque/colide/inference/kernels/a100/fused_block4",
+      "n_trials_requested": 100,
+      "samples": {
+        "latency_us": [
+          10.1606,
+          10.1605,
+          10.1208,
+          10.3343,
+          10.1973,
+          10.1142,
+          10.1488,
+          10.2188,
+          10.1297,
+          10.2672,
+          10.1673,
+          10.1291,
+          10.3982,
+          10.1176,
+          10.2231,
+          10.1927,
+          10.1204,
+          10.1411,
+          10.1566,
+          10.1922,
+          10.1021,
+          10.1461,
+          10.1382,
+          12.5945,
+          11.3546,
+          10.2368,
+          10.2636,
+          10.3082,
+          12.4518,
+          10.1323,
+          10.1403,
+          10.2324,
+          10.1408,
+          10.2151,
+          10.3578,
+          10.1337,
+          10.3942,
+          10.376,
+          10.1789,
+          10.2207,
+          10.2227,
+          10.1742,
+          10.4113,
+          10.231,
+          10.2419,
+          10.259,
+          10.2791,
+          10.1332,
+          10.1523,
+          10.1825,
+          12.2753,
+          10.901,
+          10.7278,
+          10.2246,
+          10.2192,
+          10.2665,
+          10.3756,
+          10.1463,
+          10.2082,
+          10.1277,
+          10.085,
+          10.4029,
+          10.1769,
+          10.1369,
+          10.1968,
+          10.1519,
+          10.1311,
+          10.1424,
+          10.3241,
+          10.183,
+          10.1922,
+          10.1886,
+          10.1931,
+          10.2651,
+          10.3858,
+          10.2462,
+          10.1659,
+          10.1374,
+          10.1431,
+          10.2516,
+          10.3721,
+          10.3182,
+          10.3341,
+          10.173,
+          10.1523,
+          10.2254,
+          10.1698,
+          10.3375,
+          10.22,
+          10.1842,
+          10.1413,
+          10.2599,
+          10.164,
+          12.6298,
+          10.4253,
+          10.1719,
+          10.1336,
+          10.2094,
+          10.1892,
+          10.1603
+        ]
+      },
+      "runs": [
+        {
+          "trial": 0,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1606
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 1,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1605
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 2,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1208
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 3,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.3343
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 4,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1973
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 5,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1142
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 6,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1488
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 7,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.2188
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 8,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1297
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 9,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.2672
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 10,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1673
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 11,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1291
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 12,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.3982
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 13,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1176
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 14,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.2231
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 15,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1927
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 16,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1204
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 17,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1411
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 18,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1566
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 19,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1922
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 20,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1021
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 21,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1461
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 22,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1382
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 23,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.5945
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 24,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 11.3546
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 25,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.2368
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 26,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.2636
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 27,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.3082
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 28,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.4518
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 29,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1323
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 30,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1403
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 31,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.2324
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 32,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1408
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 33,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.2151
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 34,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.3578
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 35,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1337
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 36,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.3942
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 37,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.376
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 38,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1789
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 39,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.2207
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 40,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.2227
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 41,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1742
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 42,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.4113
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 43,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.231
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 44,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.2419
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 45,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.259
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 46,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.2791
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 47,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1332
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 48,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1523
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 49,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1825
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 50,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.2753
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 51,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.901
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 52,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.7278
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 53,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.2246
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 54,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.2192
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 55,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.2665
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 56,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.3756
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 57,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1463
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 58,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.2082
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 59,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1277
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 60,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.085
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 61,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.4029
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 62,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1769
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 63,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1369
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 64,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1968
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 65,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1519
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 66,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1311
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 67,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1424
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 68,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.3241
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 69,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.183
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 70,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1922
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 71,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1886
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 72,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1931
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 73,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.2651
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 74,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.3858
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 75,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.2462
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 76,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1659
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 77,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1374
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 78,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1431
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 79,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.2516
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 80,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.3721
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 81,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.3182
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 82,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.3341
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 83,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.173
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 84,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1523
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 85,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.2254
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 86,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1698
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 87,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.3375
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 88,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.22
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 89,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1842
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 90,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1413
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 91,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.2599
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 92,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.164
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 93,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 12.6298
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 94,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.4253
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 95,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1719
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 96,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1336
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 97,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.2094
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 98,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1892
+          },
+          "validation": "ok"
+        },
+        {
+          "trial": 99,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "latency_us": 10.1603
+          },
+          "validation": "ok"
+        }
+      ]
+    },
+    "fused_pipeline": {
+      "binary": "/home/user/ibteshamulhaque/colide/inference/kernels/a100/fused_pipeline",
+      "n_trials_requested": 100,
+      "samples": {
+        "b124_chained_us": [
+          43.783,
+          44.1364,
+          54.5022,
+          54.6188,
+          54.2054,
+          54.7867,
+          54.8521,
+          54.7184,
+          54.3017,
+          54.2903,
+          54.3685,
+          54.2527,
+          54.5823,
+          54.3084,
+          54.2143,
+          54.2991,
+          54.7722,
+          54.3542,
+          54.4814,
+          54.331,
+          54.8678,
+          54.7729,
+          54.3503,
+          54.6147,
+          54.2203,
+          54.2916,
+          54.1593,
+          54.2378,
+          54.2336,
+          54.3635,
+          54.1823,
+          54.5882,
+          54.7059,
+          54.7241,
+          54.8046,
+          54.3255,
+          54.2924,
+          54.1893,
+          54.7389,
+          54.2336,
+          54.1741,
+          54.2786,
+          54.1844,
+          54.2435,
+          54.3194,
+          54.163,
+          54.3068,
+          54.798,
+          54.7002,
+          54.321,
+          54.2412,
+          54.5818,
+          54.3905,
+          54.1913,
+          54.2572,
+          54.253,
+          54.1477,
+          54.1896,
+          54.7214,
+          54.5882,
+          54.823,
+          54.1536,
+          54.1454,
+          54.4634,
+          54.5899,
+          54.3023,
+          54.1823,
+          54.4816,
+          54.2447,
+          54.7181,
+          54.1799,
+          54.7006,
+          54.7105,
+          54.6013,
+          54.258,
+          54.8153,
+          54.5714,
+          54.2972,
+          54.3396,
+          54.703,
+          54.2983,
+          54.1615,
+          54.7617,
+          54.1818,
+          54.166,
+          50.7702,
+          50.8453,
+          54.471,
+          54.7738,
+          54.2754,
+          54.7799,
+          54.8162,
+          54.7167,
+          54.8468,
+          54.6252,
+          54.699,
+          54.3424,
+          54.7378,
+          54.5872,
+          54.3327
+        ]
+      },
+      "runs": [
+        {
+          "trial": 0,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 43.783
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 1,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 44.1364
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 2,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.5022
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 3,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.6188
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 4,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.2054
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 5,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.7867
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 6,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.8521
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 7,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.7184
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 8,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.3017
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 9,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.2903
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 10,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.3685
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 11,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.2527
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 12,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.5823
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 13,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.3084
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 14,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.2143
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 15,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.2991
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 16,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.7722
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 17,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.3542
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 18,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.4814
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 19,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.331
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 20,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.8678
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 21,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.7729
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 22,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.3503
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 23,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.6147
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 24,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.2203
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 25,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.2916
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 26,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.1593
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 27,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.2378
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 28,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.2336
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 29,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.3635
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 30,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.1823
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 31,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.5882
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 32,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.7059
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 33,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.7241
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 34,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.8046
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 35,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.3255
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 36,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.2924
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 37,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.1893
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 38,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.7389
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 39,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.2336
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 40,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.1741
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 41,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.2786
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 42,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.1844
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 43,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.2435
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 44,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.3194
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 45,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.163
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 46,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.3068
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 47,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.798
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 48,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.7002
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 49,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.321
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 50,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.2412
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 51,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.5818
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 52,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.3905
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 53,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.1913
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 54,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.2572
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 55,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.253
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 56,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.1477
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 57,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.1896
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 58,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.7214
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 59,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.5882
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 60,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.823
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 61,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.1536
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 62,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.1454
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 63,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.4634
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 64,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.5899
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 65,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.3023
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 66,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.1823
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 67,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.4816
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 68,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.2447
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 69,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.7181
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 70,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.1799
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 71,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.7006
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 72,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.7105
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 73,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.6013
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 74,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.258
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 75,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.8153
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 76,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.5714
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 77,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.2972
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 78,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.3396
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 79,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.703
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 80,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.2983
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 81,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.1615
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 82,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.7617
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 83,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.1818
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 84,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.166
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 85,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 50.7702
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 86,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 50.8453
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 87,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.471
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 88,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.7738
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 89,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.2754
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 90,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.7799
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 91,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.8162
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 92,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.7167
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 93,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.8468
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 94,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.6252
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 95,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.699
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 96,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.3424
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 97,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.7378
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 98,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.5872
+          },
+          "validation": "unknown"
+        },
+        {
+          "trial": 99,
+          "attempt": 1,
+          "returncode": 0,
+          "metrics": {
+            "b124_chained_us": 54.3327
+          },
+          "validation": "unknown"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,10 @@
+COLIDE DICC run summary
+run_dir=/home/user/ibteshamulhaque/colide/benchmarks/results/dicc/core/a100/20260807_s2_job390654
+git_sha=ac9ed1b6580d4c274d0a32fa15f1f01f0a34bf59
+gpu=NVIDIA A100-SXM4-80GB label=a100
+checkpoint=model/best_model_botiot_twostage.pth
+cuda_stats=/home/user/ibteshamulhaque/colide/benchmarks/results/dicc/core/a100/20260807_s2_job390654/cuda_kernel_stats.json
+pytorch_stats=/home/user/ibteshamulhaque/colide/benchmarks/results/dicc/core/a100/20260807_s2_job390654/pytorch_gpu_stats.json
+NOTE: full CUDA-vs-PyTorch pipeline speedup is NOT valid
+      (CUDA lacks attention/LayerNorm/GAP; fused_pipeline skips Block3).
+      Use per-block comparisons only, especially Block 3.

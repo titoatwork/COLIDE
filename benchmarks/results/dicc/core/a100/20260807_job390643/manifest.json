@@ -1,0 +1,21 @@
+{
+  "campaign": "core",
+  "gpu_label": "a100",
+  "gpu_name": "NVIDIA A100-SXM4-80GB",
+  "gpu_compute_capability": "8.0",
+  "gpu_memory_mib": 81920,
+  "date_label": "20260807",
+  "slurm_job_id": "390643",
+  "slurm_job_name": "colide_a100",
+  "slurm_nodelist": "gpu07",
+  "hostname": "gpu07.dicc.um.edu.my",
+  "git_sha": "ac9ed1b6580d4c274d0a32fa15f1f01f0a34bf59",
+  "git_dirty": true,
+  "colide_root": "/home/user/ibteshamulhaque/colide",
+  "kernels_dir": "/home/user/ibteshamulhaque/colide/inference/kernels/a100",
+  "checkpoint": "model/best_model_botiot_twostage.pth",
+  "n_trials_cuda": 100,
+  "n_trials_pytorch": 20,
+  "pytorch_inner_forwards": 1000,
+  "created_utc": "2026-08-07T01:24:05Z"
+}

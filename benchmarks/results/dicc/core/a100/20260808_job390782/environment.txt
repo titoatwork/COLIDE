@@ -1,0 +1,121 @@
+=== date ===
+Jumaat 07 Ogos 2026 10:31:07  UTC
+=== hostname ===
+gpu06.dicc.um.edu.my
+=== uname ===
+Linux gpu06.dicc.um.edu.my 5.15.0-1045-nvidia #45-Ubuntu SMP Mon Feb 12 16:47:42 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+=== COLIDE_ROOT ===
+/home/user/ibteshamulhaque/colide
+=== git ===
+ac9ed1b6580d4c274d0a32fa15f1f01f0a34bf59
+ M dicc_scripts/compile_on_gpu.sh
+ M dicc_scripts/lib/common.sh
+ M dicc_scripts/lib/run_benchmark.sh
+ M dicc_scripts/run_campaign.sh
+ M dicc_scripts/submit_session.sh
+?? .claude/
+?? .venv-cluster.bak-login39/
+?? .venv-gpu/
+?? .venv-mamba/
+?? inference/kernels/a100/
+?? inference/kernels/v100/
+?? logs/
+=== modules ===
+No modules loaded
+=== which ===
+/home/user/ibteshamulhaque/colide/.venv-mamba/bin/python
+/usr/local/cuda/bin/nvcc
+/usr/bin/nvidia-smi
+=== python ===
+executable /home/user/ibteshamulhaque/micromamba/envs/colide/bin/python
+version 3.10.20 | packaged by conda-forge | (main, Jun 11 2026, 03:31:56) [GCC 14.3.0]
+torch 2.5.1+cu121 cuda 12.1
+device NVIDIA A100-SXM4-80GB
+props 8 0 84987740160
+numpy 2.2.6
+=== nvidia-smi ===
+Sat Aug  8 06:31:09 2026       
++---------------------------------------------------------------------------------------+
+| NVIDIA-SMI 535.216.03             Driver Version: 535.216.03   CUDA Version: 12.2     |
+|-----------------------------------------+----------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |         Memory-Usage | GPU-Util  Compute M. |
+|                                         |                      |               MIG M. |
+|=========================================+======================+======================|
+|   0  NVIDIA A100-SXM4-80GB          On  | 00000000:4E:00.0 Off |                    0 |
+| N/A   27C    P0              60W / 400W |      0MiB / 81920MiB |      0%      Default |
+|                                         |                      |             Disabled |
++-----------------------------------------+----------------------+----------------------+
+                                                                                         
++---------------------------------------------------------------------------------------+
+| Processes:                                                                            |
+|  GPU   GI   CI        PID   Type   Process name                            GPU Memory |
+|        ID   ID                                                             Usage      |
+|=======================================================================================|
+|  No running processes found                                                           |
++---------------------------------------------------------------------------------------+
+=== env (selected) ===
+COLIDE_CAMPAIGN=core
+COLIDE_CHECKPOINT=model/best_model_botiot_twostage.pth
+COLIDE_DATE_LABEL=20260808
+COLIDE_GPU_CC=8.0
+COLIDE_GPU_LABEL=a100
+COLIDE_GPU_MEM_MIB=81920
+COLIDE_GPU_MIN_MEM=30000
+COLIDE_GPU_NAME=NVIDIA A100-SXM4-80GB
+COLIDE_GPU_NAME_RE=A100
+COLIDE_GPU_NODE_COUNT=1
+COLIDE_KERNELS_DIR=/home/user/ibteshamulhaque/colide/inference/kernels/a100
+COLIDE_KERNELS_SUBDIR=a100
+COLIDE_N_TRIALS_CUDA=100
+COLIDE_N_TRIALS_PYTORCH=20
+COLIDE_PYTHON=/home/user/ibteshamulhaque/colide/.venv-mamba/bin/python
+COLIDE_PYTORCH_INNER=1000
+COLIDE_ROOT=/home/user/ibteshamulhaque/colide
+COLIDE_RUN_DIR=/home/user/ibteshamulhaque/colide/benchmarks/results/dicc/core/a100/20260808_job390782
+COLIDE_VENV=/home/user/ibteshamulhaque/colide/.venv-mamba
+CUDA_VISIBLE_DEVICES=0
+LD_LIBRARY_PATH=/usr/local/cuda/lib64
+PATH=/home/user/ibteshamulhaque/colide/.venv-mamba/bin:/home/user/ibteshamulhaque/colide/.venv-mamba/bin:/usr/local/cuda/bin:/usr/local/cuda/bin:/usr/bin:/bin
+PYTHONNOUSERSITE=1
+PYTHONPATH=/home/user/ibteshamulhaque/colide
+SLURMD_NODENAME=gpu06
+SLURM_CLUSTER_NAME=um-hpc
+SLURM_CONF=/var/spool/slurmd/conf-cache/slurm.conf
+SLURM_CPUS_ON_NODE=4
+SLURM_CPUS_PER_TASK=4
+SLURM_EXPORT_ENV=NONE,COLIDE_ROOT=/home/user/ibteshamulhaque/colide,COLIDE_CAMPAIGN=core,COLIDE_DATE_LABEL=20260808,COLIDE_CHECKPOINT=model/best_model_botiot_twostage.pth,COLIDE_N_TRIALS_CUDA=100,COLIDE_N_TRIALS_PYTORCH=20,COLIDE_PYTORCH_INNER=1000,COLIDE_GPU_LABEL=a100,COLIDE_GPU_NAME_RE=A100,COLIDE_GPU_CC=8.0,COLIDE_GPU_MIN_MEM=30000,COLIDE_KERNELS_SUBDIR=a100,COLIDE_VENV=/home/user/ibteshamulhaque/colide/.venv-mamba,MAMBA_ROOT_PREFIX=/home/user/ibteshamulhaque/micromamba,HOME=/home/user/ibteshamulhaque,PATH=/usr/local/cuda/bin:/usr/bin:/bin,HOME=/home/user/ibteshamulhaque,USER=ibteshamulhaque,LANG=C.UTF-8
+SLURM_GET_USER_ENV=1
+SLURM_GPUS_ON_NODE=1
+SLURM_GTIDS=0
+SLURM_JOBID=390782
+SLURM_JOB_ACCOUNT=free
+SLURM_JOB_CPUS_PER_NODE=4
+SLURM_JOB_END_TIME=1786149046
+SLURM_JOB_GID=548200795
+SLURM_JOB_GPUS=3
+SLURM_JOB_ID=390782
+SLURM_JOB_NAME=colide_a100
+SLURM_JOB_NODELIST=gpu06
+SLURM_JOB_NUM_NODES=1
+SLURM_JOB_PARTITION=gpu-a100
+SLURM_JOB_QOS=normal
+SLURM_JOB_START_TIME=1786141846
+SLURM_JOB_UID=548200795
+SLURM_JOB_USER=ibteshamulhaque
+SLURM_LOCALID=0
+SLURM_MEM_PER_NODE=32768
+SLURM_NNODES=1
+SLURM_NODEID=0
+SLURM_NODELIST=gpu06
+SLURM_NPROCS=1
+SLURM_NTASKS=1
+SLURM_PRIO_PROCESS=0
+SLURM_PROCID=0
+SLURM_SUBMIT_DIR=/home/user/ibteshamulhaque/colide
+SLURM_SUBMIT_HOST=login01.dicc.um.edu.my
+SLURM_TASKS_PER_NODE=1
+SLURM_TASK_PID=3708195
+SLURM_TOPOLOGY_ADDR=gpu06
+SLURM_TOPOLOGY_ADDR_PATTERN=node
+SLURM_TRES_PER_TASK=cpu=4

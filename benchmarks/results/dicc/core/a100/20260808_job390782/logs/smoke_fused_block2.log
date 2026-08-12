@@ -1,0 +1,4 @@
+=== COLIDE Fused Block2 Kernel (corrected) ===
+✅ FP32 validation PASSED
+⏱️  Fused kernel (FP32) time: 33.6811 µs
+   PyTorch GPU target: 333.8 µs

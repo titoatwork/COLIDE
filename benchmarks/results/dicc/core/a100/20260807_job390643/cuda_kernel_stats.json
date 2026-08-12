@@ -1,0 +1,412 @@
+{
+  "hardware_tag": "a100",
+  "n_trials": 100,
+  "kernels_dir": "/home/user/ibteshamulhaque/colide/inference/kernels/a100",
+  "strict": true,
+  "timeout_sec": 600.0,
+  "protocol": {
+    "description": "Independent process invocations of each kernel binary; latency parsed from binary stdout; stats across trials",
+    "n_trials": 100
+  },
+  "kernels": {
+    "fused_block1": {
+      "n_trials_requested": 100,
+      "n_samples": {
+        "latency_us": 100
+      },
+      "validation_failures": 0,
+      "validation_retries": 0,
+      "nonzero_exits": 0,
+      "timeouts": 0,
+      "parse_failures": 0,
+      "binary": "/home/user/ibteshamulhaque/colide/inference/kernels/a100/fused_block1",
+      "latency_us": {
+        "n": 100,
+        "mean": 12.054166,
+        "std": 0.30367808818549946,
+        "std_sample": 0.3052079622920487,
+        "p50": 12.0077,
+        "p95": 12.507290000000001,
+        "min": 10.888,
+        "max": 12.7322,
+        "cv_pct": 2.5192791287717413,
+        "ci95_low": 11.99360611874847,
+        "ci95_high": 12.11472588125153,
+        "ci95_halfwidth": 0.06055988125153059
+      }
+    },
+    "fused_block2": {
+      "n_trials_requested": 100,
+      "n_samples": {
+        "latency_us": 100
+      },
+      "validation_failures": 0,
+      "validation_retries": 0,
+      "nonzero_exits": 0,
+      "timeouts": 0,
+      "parse_failures": 0,
+      "binary": "/home/user/ibteshamulhaque/colide/inference/kernels/a100/fused_block2",
+      "latency_us": {
+        "n": 100,
+        "mean": 35.097280999999995,
+        "std": 0.29947928599320517,
+        "std_sample": 0.3009880073099997,
+        "p50": 35.0891,
+        "p95": 35.608665,
+        "min": 34.4432,
+        "max": 36.1234,
+        "cv_pct": 0.8532834380908458,
+        "ci95_low": 35.03755844936946,
+        "ci95_high": 35.15700355063053,
+        "ci95_halfwidth": 0.05972255063053207
+      }
+    },
+    "fused_block3": {
+      "n_trials_requested": 100,
+      "n_samples": {
+        "no_graphs_us": 100,
+        "with_graphs_us": 100
+      },
+      "validation_failures": 0,
+      "validation_retries": 0,
+      "nonzero_exits": 0,
+      "timeouts": 0,
+      "parse_failures": 0,
+      "binary": "/home/user/ibteshamulhaque/colide/inference/kernels/a100/fused_block3",
+      "no_graphs_us": {
+        "n": 100,
+        "mean": 849.18728,
+        "std": 18.252290248667432,
+        "std_sample": 18.344241914997735,
+        "p50": 847.1959999999999,
+        "p95": 849.6478500000001,
+        "min": 845.528,
+        "max": 1030.41,
+        "cv_pct": 2.1493833785013163,
+        "ci95_low": 845.5473844229685,
+        "ci95_high": 852.8271755770314,
+        "ci95_halfwidth": 3.6398955770314605
+      },
+      "with_graphs_us": {
+        "n": 100,
+        "mean": 837.8670100000002,
+        "std": 9.072842453713172,
+        "std_sample": 9.118549757870914,
+        "p50": 836.6165000000001,
+        "p95": 839.09105,
+        "min": 835.523,
+        "max": 927.6,
+        "cv_pct": 1.08284994461271,
+        "ci95_low": 836.0576918997259,
+        "ci95_high": 839.6763281002744,
+        "ci95_halfwidth": 1.8093181002742862
+      }
+    },
+    "fused_block3_fp16": {
+      "n_trials_requested": 100,
+      "n_samples": {
+        "latency_us": 100
+      },
+      "validation_failures": 0,
+      "validation_retries": 0,
+      "nonzero_exits": 0,
+      "timeouts": 0,
+      "parse_failures": 0,
+      "binary": "/home/user/ibteshamulhaque/colide/inference/kernels/a100/fused_block3_fp16",
+      "latency_us": {
+        "n": 100,
+        "mean": 668.0202600000001,
+        "std": 18.16940411274954,
+        "std_sample": 18.260938214039538,
+        "p50": 670.557,
+        "p95": 672.5342999999999,
+        "min": 540.96,
+        "max": 673.451,
+        "cv_pct": 2.7198881831442563,
+        "ci95_low": 664.3968936845251,
+        "ci95_high": 671.6436263154751,
+        "ci95_halfwidth": 3.623366315474994
+      }
+    },
+    "fused_block3_naive": {
+      "n_trials_requested": 100,
+      "n_samples": {
+        "latency_us": 100
+      },
+      "validation_failures": 0,
+      "validation_retries": 0,
+      "nonzero_exits": 0,
+      "timeouts": 0,
+      "parse_failures": 0,
+      "binary": "/home/user/ibteshamulhaque/colide/inference/kernels/a100/fused_block3_naive",
+      "latency_us": {
+        "n": 100,
+        "mean": 6215.9819,
+        "std": 45.743718665954574,
+        "std_sample": 45.97416706986302,
+        "p50": 6211.305,
+        "p95": 6215.0305,
+        "min": 6206.72,
+        "max": 6670.75,
+        "cv_pct": 0.735904952779135,
+        "ci95_low": 6206.859627836849,
+        "ci95_high": 6225.104172163151,
+        "ci95_halfwidth": 9.122272163151449
+      }
+    },
+    "fused_block4": {
+      "n_trials_requested": 100,
+      "n_samples": {
+        "latency_us": 100
+      },
+      "validation_failures": 0,
+      "validation_retries": 0,
+      "nonzero_exits": 0,
+      "timeouts": 0,
+      "parse_failures": 0,
+      "binary": "/home/user/ibteshamulhaque/colide/inference/kernels/a100/fused_block4",
+      "latency_us": {
+        "n": 100,
+        "mean": 10.326393000000001,
+        "std": 0.47091526865350203,
+        "std_sample": 0.47328765277972057,
+        "p50": 10.1929,
+        "p95": 10.92368,
+        "min": 10.085,
+        "max": 12.6298,
+        "cv_pct": 4.560307443785085,
+        "ci95_low": 10.232482461641473,
+        "ci95_high": 10.42030353835853,
+        "ci95_halfwidth": 0.09391053835852771
+      }
+    },
+    "fused_pipeline": {
+      "n_trials_requested": 100,
+      "n_samples": {
+        "b124_chained_us": 100
+      },
+      "validation_failures": 0,
+      "validation_retries": 0,
+      "nonzero_exits": 0,
+      "timeouts": 0,
+      "parse_failures": 0,
+      "binary": "/home/user/ibteshamulhaque/colide/inference/kernels/a100/fused_pipeline",
+      "b124_chained_us": {
+        "n": 100,
+        "mean": 54.165766000000005,
+        "std": 1.5614097913885385,
+        "std_sample": 1.5692758854614788,
+        "p50": 54.33615,
+        "p95": 54.815345,
+        "min": 43.783,
+        "max": 54.8678,
+        "cv_pct": 2.882650623621825,
+        "ci95_low": 53.85438761864736,
+        "ci95_high": 54.47714438135265,
+        "ci95_halfwidth": 0.31137838135264645
+      }
+    }
+  },
+  "fused_block1": {
+    "n_trials_requested": 100,
+    "n_samples": {
+      "latency_us": 100
+    },
+    "validation_failures": 0,
+    "validation_retries": 0,
+    "nonzero_exits": 0,
+    "timeouts": 0,
+    "parse_failures": 0,
+    "binary": "/home/user/ibteshamulhaque/colide/inference/kernels/a100/fused_block1",
+    "latency_us": {
+      "n": 100,
+      "mean": 12.054166,
+      "std": 0.30367808818549946,
+      "std_sample": 0.3052079622920487,
+      "p50": 12.0077,
+      "p95": 12.507290000000001,
+      "min": 10.888,
+      "max": 12.7322,
+      "cv_pct": 2.5192791287717413,
+      "ci95_low": 11.99360611874847,
+      "ci95_high": 12.11472588125153,
+      "ci95_halfwidth": 0.06055988125153059
+    }
+  },
+  "fused_block2": {
+    "n_trials_requested": 100,
+    "n_samples": {
+      "latency_us": 100
+    },
+    "validation_failures": 0,
+    "validation_retries": 0,
+    "nonzero_exits": 0,
+    "timeouts": 0,
+    "parse_failures": 0,
+    "binary": "/home/user/ibteshamulhaque/colide/inference/kernels/a100/fused_block2",
+    "latency_us": {
+      "n": 100,
+      "mean": 35.097280999999995,
+      "std": 0.29947928599320517,
+      "std_sample": 0.3009880073099997,
+      "p50": 35.0891,
+      "p95": 35.608665,
+      "min": 34.4432,
+      "max": 36.1234,
+      "cv_pct": 0.8532834380908458,
+      "ci95_low": 35.03755844936946,
+      "ci95_high": 35.15700355063053,
+      "ci95_halfwidth": 0.05972255063053207
+    }
+  },
+  "fused_block3": {
+    "n_trials_requested": 100,
+    "n_samples": {
+      "no_graphs_us": 100,
+      "with_graphs_us": 100
+    },
+    "validation_failures": 0,
+    "validation_retries": 0,
+    "nonzero_exits": 0,
+    "timeouts": 0,
+    "parse_failures": 0,
+    "binary": "/home/user/ibteshamulhaque/colide/inference/kernels/a100/fused_block3",
+    "no_graphs_us": {
+      "n": 100,
+      "mean": 849.18728,
+      "std": 18.252290248667432,
+      "std_sample": 18.344241914997735,
+      "p50": 847.1959999999999,
+      "p95": 849.6478500000001,
+      "min": 845.528,
+      "max": 1030.41,
+      "cv_pct": 2.1493833785013163,
+      "ci95_low": 845.5473844229685,
+      "ci95_high": 852.8271755770314,
+      "ci95_halfwidth": 3.6398955770314605
+    },
+    "with_graphs_us": {
+      "n": 100,
+      "mean": 837.8670100000002,
+      "std": 9.072842453713172,
+      "std_sample": 9.118549757870914,
+      "p50": 836.6165000000001,
+      "p95": 839.09105,
+      "min": 835.523,
+      "max": 927.6,
+      "cv_pct": 1.08284994461271,
+      "ci95_low": 836.0576918997259,
+      "ci95_high": 839.6763281002744,
+      "ci95_halfwidth": 1.8093181002742862
+    }
+  },
+  "fused_block3_fp16": {
+    "n_trials_requested": 100,
+    "n_samples": {
+      "latency_us": 100
+    },
+    "validation_failures": 0,
+    "validation_retries": 0,
+    "nonzero_exits": 0,
+    "timeouts": 0,
+    "parse_failures": 0,
+    "binary": "/home/user/ibteshamulhaque/colide/inference/kernels/a100/fused_block3_fp16",
+    "latency_us": {
+      "n": 100,
+      "mean": 668.0202600000001,
+      "std": 18.16940411274954,
+      "std_sample": 18.260938214039538,
+      "p50": 670.557,
+      "p95": 672.5342999999999,
+      "min": 540.96,
+      "max": 673.451,
+      "cv_pct": 2.7198881831442563,
+      "ci95_low": 664.3968936845251,
+      "ci95_high": 671.6436263154751,
+      "ci95_halfwidth": 3.623366315474994
+    }
+  },
+  "fused_block3_naive": {
+    "n_trials_requested": 100,
+    "n_samples": {
+      "latency_us": 100
+    },
+    "validation_failures": 0,
+    "validation_retries": 0,
+    "nonzero_exits": 0,
+    "timeouts": 0,
+    "parse_failures": 0,
+    "binary": "/home/user/ibteshamulhaque/colide/inference/kernels/a100/fused_block3_naive",
+    "latency_us": {
+      "n": 100,
+      "mean": 6215.9819,
+      "std": 45.743718665954574,
+      "std_sample": 45.97416706986302,
+      "p50": 6211.305,
+      "p95": 6215.0305,
+      "min": 6206.72,
+      "max": 6670.75,
+      "cv_pct": 0.735904952779135,
+      "ci95_low": 6206.859627836849,
+      "ci95_high": 6225.104172163151,
+      "ci95_halfwidth": 9.122272163151449
+    }
+  },
+  "fused_block4": {
+    "n_trials_requested": 100,
+    "n_samples": {
+      "latency_us": 100
+    },
+    "validation_failures": 0,
+    "validation_retries": 0,
+    "nonzero_exits": 0,
+    "timeouts": 0,
+    "parse_failures": 0,
+    "binary": "/home/user/ibteshamulhaque/colide/inference/kernels/a100/fused_block4",
+    "latency_us": {
+      "n": 100,
+      "mean": 10.326393000000001,
+      "std": 0.47091526865350203,
+      "std_sample": 0.47328765277972057,
+      "p50": 10.1929,
+      "p95": 10.92368,
+      "min": 10.085,
+      "max": 12.6298,
+      "cv_pct": 4.560307443785085,
+      "ci95_low": 10.232482461641473,
+      "ci95_high": 10.42030353835853,
+      "ci95_halfwidth": 0.09391053835852771
+    }
+  },
+  "fused_pipeline": {
+    "n_trials_requested": 100,
+    "n_samples": {
+      "b124_chained_us": 100
+    },
+    "validation_failures": 0,
+    "validation_retries": 0,
+    "nonzero_exits": 0,
+    "timeouts": 0,
+    "parse_failures": 0,
+    "binary": "/home/user/ibteshamulhaque/colide/inference/kernels/a100/fused_pipeline",
+    "b124_chained_us": {
+      "n": 100,
+      "mean": 54.165766000000005,
+      "std": 1.5614097913885385,
+      "std_sample": 1.5692758854614788,
+      "p50": 54.33615,
+      "p95": 54.815345,
+      "min": 43.783,
+      "max": 54.8678,
+      "cv_pct": 2.882650623621825,
+      "ci95_low": 53.85438761864736,
+      "ci95_high": 54.47714438135265,
+      "ci95_halfwidth": 0.31137838135264645
+    }
+  },
+  "derived_pipeline_total_us": {
+    "mean_sum": 722.1860260000001,
+    "comparability_valid": false,
+    "reason": "Additive reconstruction from Blocks1+2+4 chained + Block3 FP16. fused_pipeline.cu does not execute Block3 into Block4; CUDA path also lacks attention/LayerNorm/global-average-pool present in V3 PyTorch."
+  }
+}

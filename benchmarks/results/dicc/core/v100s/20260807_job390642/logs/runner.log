@@ -1,0 +1,153 @@
+[2026-08-07T01:24:00Z] === COLIDE DICC benchmark runner ===
+[2026-08-07T01:24:00Z] COLIDE_ROOT=/home/user/ibteshamulhaque/colide
+[2026-08-07T01:24:00Z] RUN_DIR=/home/user/ibteshamulhaque/colide/benchmarks/results/dicc/core/v100s/20260807_job390642
+[2026-08-07T01:24:00Z] GPU_LABEL=v100s kernels=/home/user/ibteshamulhaque/colide/inference/kernels/v100
+[2026-08-07T01:24:00Z] Using venv python: /home/user/ibteshamulhaque/colide/.venv-mamba/bin/python
+python_ok /home/user/ibteshamulhaque/micromamba/envs/colide/bin/python
+sys.path+site /home/user/ibteshamulhaque/micromamba/envs/colide/lib/python3.1/site-packages
+numpy 2.2.6 at /home/user/ibteshamulhaque/micromamba/envs/colide/lib/python3.1/site-packages/numpy/__init__.py
+torch 2.5.1+cu121
+[2026-08-07T01:24:02Z] Using pre-set CUDA_VISIBLE_DEVICES=0 (1 GPUs on node before mask)
+[2026-08-07T01:24:02Z] GPU OK: label=v100s name='Tesla V100S-PCIE-32GB' cc=7.0 mem=32768MiB visible_on_node=1 CUDA_VISIBLE_DEVICES=0
+torch CC OK: 7.0 device=Tesla V100S-PCIE-32GB (expect=7.0)
+[2026-08-07T01:24:06Z] === Single-run CUDA kernel smoke (must pass validation) ===
+[2026-08-07T01:24:06Z] --- fused_block1 ---
+=== COLIDE Fused Block1 Kernel ===
+✅ FP32 validation PASSED
+⏱️  Fused kernel (FP32) time: 9.89888 µs
+   PyTorch GPU (cuDNN) block1 p50: 300.1 µs (target to beat)
+[2026-08-07T01:24:06Z] --- fused_block2 ---
+=== COLIDE Fused Block2 Kernel (corrected) ===
+✅ FP32 validation PASSED
+⏱️  Fused kernel (FP32) time: 29.7025 µs
+   PyTorch GPU target: 333.8 µs
+[2026-08-07T01:24:06Z] --- fused_block3 ---
+=== COLIDE Block3 (transposed W_hh + CUDA Graphs) ===
+✅ FP32 validation PASSED
+⏱️  Without CUDA Graphs: 894.653 µs
+✅ CUDA Graph validation PASSED
+⏱️  With CUDA Graphs:    811.632 µs
+   Speedup from graphs:  1.10229x
+   PyTorch GPU target:   784.1 µs (n=50-trial mean, see benchmark_pytorch_block3_stats.py)
+[2026-08-07T01:24:07Z] --- fused_block3_fp16 ---
+=== COLIDE Block3 FP16 Native half2 ===
+✅ FP16 half2 validation PASSED
+⏱️  Block3 FP16 half2:    539.131 µs
+   Block3 FP32:          1007.3 µs
+   Speedup FP16/FP32:    1.86838x
+   PyTorch GPU target:   784.1 µs (n=50-trial mean, see benchmark_pytorch_block3_stats.py)
+[2026-08-07T01:24:07Z] --- fused_block3_naive ---
+=== COLIDE Fused Block3 (BiLSTM) ===
+✅ FP32 validation PASSED
+⏱️  Block3 (BiLSTM) time: 5045.72 µs
+   PyTorch GPU target: 784.1 µs (n=50-trial mean, see benchmark_pytorch_block3_stats.py)
+[2026-08-07T01:24:08Z] --- fused_block4 ---
+=== COLIDE Fused Block4 (Dense head) ===
+✅ FP32 validation PASSED
+⏱️  Block4 (Dense) time: 8.20674 µs
+   PyTorch GPU target: 186.5 µs
+[2026-08-07T01:24:08Z] --- fused_pipeline ---
+=== COLIDE Full Pipeline (Chained) ===
+
+⏱️  Blocks 1+2+4 chained (measured this run): 38.6211 µs
+   Block 3 FP16 (measured separately, fused_block3_fp16): 601.4 µs
+   ─────────────────────────────────
+   Pipeline chained total:     640.021 µs
+   Pipeline separate total:    770.4 µs
+   PyTorch GPU baseline:       2246.76 µs (eager, 20-trial mean)
+   ─────────────────────────────────
+   Chained speedup vs PyTorch: 3.51044x
+   Separate speedup vs PyTorch:2.91635x
+   Chaining overhead:          -130.379 µs
+
+📊 Finding: Chaining REDUCES overhead by 130.379 µs
+   Back-to-back launches benefit from GPU scheduler pipelining.
+[2026-08-07T01:24:08Z] === CUDA kernel statistical benchmark (n=100) ===
+==============================================================================
+CUDA KERNEL STATISTICAL BENCHMARK (n=100 trials each, tag=v100s, strict=True)
+==============================================================================
+
+--- fused_block1 ---
+  latency_us: n=100  mean=9.38  std=0.67  (CV=7.2%)  p50=9.35  95%CI=[9.24, 9.51]  range=[8.15, 11.42]
+
+--- fused_block2 ---
+  latency_us: n=100  mean=29.44  std=0.46  (CV=1.6%)  p50=29.20  95%CI=[29.35, 29.53]  range=[29.03, 31.20]
+
+--- fused_block3 ---
+  no_graphs_us: n=100  mean=706.24  std=22.81  (CV=3.2%)  p50=702.81  95%CI=[701.70, 710.79]  range=[701.09, 898.79]
+  with_graphs_us: n=100  mean=699.73  std=20.57  (CV=2.9%)  p50=696.66  95%CI=[695.63, 703.84]  range=[695.29, 877.74]
+
+--- fused_block3_fp16 ---
+  latency_us: n=100  mean=513.26  std=0.77  (CV=0.2%)  p50=513.05  95%CI=[513.11, 513.42]  range=[512.16, 516.44]
+
+--- fused_block3_naive ---
+  latency_us: n=100  mean=4936.78  std=1.77  (CV=0.0%)  p50=4936.98  95%CI=[4936.43, 4937.14]  range=[4932.13, 4940.32]
+
+--- fused_block4 ---
+  latency_us: n=100  mean=8.22  std=0.02  (CV=0.3%)  p50=8.21  95%CI=[8.21, 8.22]  range=[8.17, 8.27]
+
+--- fused_pipeline ---
+  b124_chained_us: n=100  mean=47.08  std=3.07  (CV=6.5%)  p50=48.16  95%CI=[46.47, 47.70]  range=[38.67, 48.46]
+
+Derived additive total (mean b124 + mean block3 FP16): 560.3 us
+  WARNING: not a measured full pipeline; architecture parity incomplete. Do not publish as full-model CUDA latency or CUDA-vs-PyTorch speedup.
+
+Results saved to /home/user/ibteshamulhaque/colide/benchmarks/results/dicc/core/v100s/20260807_job390642/cuda_kernel_stats.json
+Raw samples saved to /home/user/ibteshamulhaque/colide/benchmarks/results/dicc/core/v100s/20260807_job390642/raw/cuda_kernel_raw.json
+[2026-08-07T01:27:42Z] === PyTorch GPU statistical harness ===
+==============================================================================
+PYTORCH GPU STATISTICAL HARNESS (n=20 trials × 1000 forwards, tag=v100s)
+checkpoint=/home/user/ibteshamulhaque/colide/model/best_model_botiot_twostage.pth
+==============================================================================
+  trial  1/20: full=974.9  b1=168.9  b2=156.5  b3=385.9  b4=94.5 us
+  trial  2/20: full=966.6  b1=170.0  b2=158.3  b3=369.2  b4=97.7 us
+  trial  3/20: full=973.3  b1=172.8  b2=159.0  b3=367.0  b4=96.7 us
+  trial  4/20: full=952.4  b1=165.3  b2=152.5  b3=355.0  b4=91.3 us
+  trial  5/20: full=957.2  b1=165.7  b2=154.3  b3=355.5  b4=92.0 us
+  trial  6/20: full=950.9  b1=165.5  b2=153.1  b3=355.1  b4=92.1 us
+  trial  7/20: full=994.4  b1=174.4  b2=161.3  b3=370.5  b4=94.8 us
+  trial  8/20: full=956.3  b1=165.1  b2=153.5  b3=356.0  b4=92.0 us
+  trial  9/20: full=959.8  b1=167.4  b2=155.1  b3=355.2  b4=92.2 us
+  trial 10/20: full=987.3  b1=172.9  b2=160.2  b3=365.8  b4=97.8 us
+  trial 11/20: full=951.8  b1=164.1  b2=152.7  b3=365.4  b4=95.9 us
+  trial 12/20: full=991.8  b1=173.7  b2=160.3  b3=404.1  b4=97.3 us
+  trial 13/20: full=952.7  b1=167.0  b2=154.7  b3=355.4  b4=92.5 us
+  trial 14/20: full=956.5  b1=174.1  b2=160.4  b3=368.3  b4=96.0 us
+  trial 15/20: full=961.2  b1=166.0  b2=154.4  b3=357.0  b4=92.4 us
+  trial 16/20: full=953.2  b1=166.5  b2=153.8  b3=355.2  b4=90.9 us
+  trial 17/20: full=959.1  b1=166.0  b2=154.1  b3=356.4  b4=92.7 us
+  trial 18/20: full=961.1  b1=167.0  b2=156.2  b3=363.9  b4=95.6 us
+  trial 19/20: full=953.3  b1=164.0  b2=152.2  b3=353.3  b4=91.4 us
+  trial 20/20: full=955.9  b1=165.0  b2=152.5  b3=354.8  b4=92.1 us
+
+==============================================================================
+full_model_us    mean=963.5 us  std=13.3  CV=1.4%  95%CI=[957.1, 969.9]  n=20
+block1_us        mean=168.1 us  std=3.5  CV=2.1%  95%CI=[166.4, 169.7]  n=20
+block2_us        mean=155.7 us  std=3.0  CV=1.9%  95%CI=[154.3, 157.2]  n=20
+block3_us        mean=363.5 us  std=12.3  CV=3.4%  95%CI=[357.6, 369.4]  n=20
+block4_us        mean=93.9 us  std=2.3  CV=2.4%  95%CI=[92.8, 95.0]  n=20
+comparability.full_pipeline_cuda_vs_pytorch.valid = false
+comparability.block3_cuda_vs_pytorch.valid = true
+==============================================================================
+
+Results saved to /home/user/ibteshamulhaque/colide/benchmarks/results/dicc/core/v100s/20260807_job390642/pytorch_gpu_stats.json
+Raw trials saved to /home/user/ibteshamulhaque/colide/benchmarks/results/dicc/core/v100s/20260807_job390642/raw/pytorch_gpu_raw.json
+COLIDE DICC run summary
+run_dir=/home/user/ibteshamulhaque/colide/benchmarks/results/dicc/core/v100s/20260807_job390642
+Unknown option: -C
+usage: git [--version] [--help] [-c name=value]
+           [--exec-path[=<path>]] [--html-path] [--man-path] [--info-path]
+           [-p|--paginate|--no-pager] [--no-replace-objects] [--bare]
+           [--git-dir=<path>] [--work-tree=<path>] [--namespace=<name>]
+           <command> [<args>]
+git_sha=
+gpu=Tesla V100S-PCIE-32GB label=v100s
+checkpoint=model/best_model_botiot_twostage.pth
+cuda_stats=/home/user/ibteshamulhaque/colide/benchmarks/results/dicc/core/v100s/20260807_job390642/cuda_kernel_stats.json
+pytorch_stats=/home/user/ibteshamulhaque/colide/benchmarks/results/dicc/core/v100s/20260807_job390642/pytorch_gpu_stats.json
+NOTE: full CUDA-vs-PyTorch pipeline speedup is NOT valid
+      (CUDA lacks attention/LayerNorm/GAP; fused_pipeline skips Block3).
+      Use per-block comparisons only, especially Block 3.
+[2026-08-07T01:29:06Z] === Benchmark core complete (SUCCESS marker written on clean exit) ===
+[2026-08-07T01:29:06Z] Run marked SUCCESS: /home/user/ibteshamulhaque/colide/benchmarks/results/dicc/core/v100s/20260807_job390642
+[2026-08-07T01:29:06Z] Runner finished with exit_status=0

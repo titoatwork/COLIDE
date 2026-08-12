@@ -1,0 +1,6 @@
+=== COLIDE Block3 FP16 Native half2 ===
+✅ FP16 half2 validation PASSED
+⏱️  Block3 FP16 half2:    542.594 µs
+   Block3 FP32:          1007.3 µs
+   Speedup FP16/FP32:    1.85645x
+   PyTorch GPU target:   784.1 µs (n=50-trial mean, see benchmark_pytorch_block3_stats.py)
