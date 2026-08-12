@@ -1,13 +1,12 @@
 # COLIDE — Session Handoff
 
-**MODE:** DICC multi-session campaign **COMPLETE on cluster** (S1 + S2 + Day2 both GPUs SUCCESS).  
-**Laptop:** results tree **not yet rsynced** (VPN required).  
-**Authority:** Option A · no invent · `docs/DICC_RESULTS_AND_FLAGS.md` · `docs/DICC_OPS_METHOD.md`.  
-**Champion:** `model/best_model_botiot_twostage.pth` md5 **`80a90f7cc210276300eaa90173a5a385`**.
+**MODE:** DICC multi-session **COMPLETE** · tree **on laptop** · compare **partial** (V100 ran; A100 rejected dirty).  
+**Authority:** Option A · no invent · `docs/DICC_RESULTS_AND_FLAGS.md` · `docs/DICC_COMPARE_OUTCOMES.md`.  
+**Champion:** md5 **`80a90f7cc210276300eaa90173a5a385`**.
 
 ---
 
-## Cluster SUCCESS (all six)
+## SUCCESS (laptop `benchmarks/results/dicc/`)
 
 | Session | Label | V100S | A100 |
 |---------|--------|-------|------|
@@ -15,36 +14,25 @@
 | S2 | `20260807_s2` | 390653 | 390654 |
 | Day2 | `20260808` | 390781 | 390782 |
 
-Paths under cluster `~/colide/benchmarks/results/dicc/core/{v100s,a100}/`.
+---
+
+## Critical flags
+
+1. **B3 CUDA FP16 slower than PT B3** both GPUs (~513 vs ~363 V100; ~668–671 vs ~384–391 A100).  
+2. Full CUDA vs full V3 PT **invalid**.  
+3. A100 formal compare **REJECTED** (`git_dirty=true`); V100 S1–Day2 compare ran but **not session-stable** on all metrics (B1 11% spread); S1–S2 V100 **stable**.  
+4. Multi-compiler TRT/compile/ORT = **laptop only**.  
 
 ---
 
-## Critical flags (see `docs/DICC_RESULTS_AND_FLAGS.md`)
+## Next (user claim decision)
 
-1. **B3 CUDA FP16 slower than matching PT B3** on V100S (~513 vs ~363 µs) and A100 (~668–671 vs ~384–391 µs).  
-2. Full CUDA vs full V3 PT speedup **invalid**.  
-3. Formal `compare_dicc_sessions.py` may **reject** runs with **git_dirty=true**.  
-4. Multi-compiler (TRT/compile/ORT) evidence is **laptop**, not DICC campaign.  
-5. Laptop `benchmarks/results/dicc/` still nearly empty until rsync.
+- Paper tables from local JSON only  
+- Tracker/claims wording for honest B3  
+- Optional: clean re-run A100 for formal compare accept  
+- Manuscript only after you approve claim strategy  
 
----
-
-## Next (user decides claim strategy after)
-
-```bash
-# 1) VPN + ssh dicc once (ControlMaster), then laptop:
-bash scripts/rsync_dicc_results.sh
-
-# 2) Compare (may flag dirty git):
-PYTHONPATH=. python scripts/compare_dicc_sessions.py \
-  --run-a benchmarks/results/dicc/core/v100s/20260807_job390642 \
-  --run-b benchmarks/results/dicc/core/v100s/20260808_job390781
-# similarly a100 S1 vs Day2
-
-# 3) Update tracker + claims only with JSON-backed language
-```
-
-**Do not** invent multi-day tables. **Do not** clobber champion.
+**Do not** invent numbers. **Do not** clobber champion.
 
 ---
 

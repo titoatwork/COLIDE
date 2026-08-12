@@ -2,7 +2,7 @@
 
 **Status date (UTC):** 2026-08-08  
 **Machine (cluster):** `/home/user/ibteshamulhaque/colide`  
-**Laptop tree:** `benchmarks/results/dicc/` — **sync pending until VPN/SSH** (see `scripts/rsync_dicc_results.sh`)  
+**Laptop tree:** `benchmarks/results/dicc/` — **synced 2026-08-12** (~1.9 MB, 6 SUCCESS). Compare outcomes: `docs/DICC_COMPARE_OUTCOMES.md`  
 **Champion:** `model/best_model_botiot_twostage.pth` md5 `80a90f7cc210276300eaa90173a5a385`  
 **Option A:** per-block Custom CUDA vs matching ops only; full pipeline CUDA vs full V3 **invalid**
 
@@ -42,7 +42,7 @@ Each SUCCESS run includes (when complete):
 |-----|---------|---------------------------:|------------------:|--------:|
 | V100S | S1 | 513.3 µs | 363.5 µs | **1.41× slower CUDA** |
 | V100S | S2 | 513.0 µs | 363.6 µs | **1.41×** |
-| V100S | Day2 | *(confirm after local JSON)* | | |
+| V100S | Day2 | 513.1 µs | 363.3 µs | **1.41× slower CUDA** |
 | A100 | S1 | 668.0 µs | 383.7 µs | **1.74× slower CUDA** |
 | A100 | S2 | 667.4 µs | 389.0 µs | **1.72×** |
 | A100 | Day2 | 671.2 µs | 390.9 µs | **1.72×** |
@@ -95,10 +95,10 @@ Scripts: `benchmark_tensorrt_native.py`, `benchmark_torch_compile_native.py`, `b
 | **FLAG-2** | Info | B1/B2/B4 CUDA still much faster than PT |
 | **FLAG-3** | Hard rule | Full CUDA vs full V3 PT speedup **invalid** |
 | **FLAG-4** | Scope | Multi-compiler (TRT/compile/ORT) wins are **laptop**; not DICC campaign |
-| **FLAG-5** | **HIGH** | Campaign runs logged **dirty git tree** — `compare_dicc_sessions.py` **rejects** `git_dirty=true` (see script). Formal compare may need allow-dirty path or clean re-run |
+| **FLAG-5** | **HIGH** | A100 runs all `git_dirty=true` → formal compare **REJECTED**. V100 runs `git_dirty=false` but `git_sha=unknown` → compare ran. See `DICC_COMPARE_OUTCOMES.md` |
 | **FLAG-6** | Medium | Same-day S2 is a second **session**, not a new calendar day; Day2 label `20260808` is the calendar multi-day point |
 | **FLAG-7** | Medium | README still markets portable framework beat-all language — must align with DICC B3 honesty before submit |
-| **FLAG-8** | Ops | Laptop `benchmarks/results/dicc/` **empty** until rsync |
+| **FLAG-8** | Ops | ~~Laptop empty~~ **CLEARED 2026-08-12** — rsync complete |
 | **FLAG-9** | Science | Por §8 gate for portable “beats cuDNN” is **failed** on servers; multi-obj + measurement still viable |
 
 ---
