@@ -1,5 +1,9 @@
 # Stretch S1a: torch.compile on DICC (full-model absolute)
 
+> **SUPERSEDED for multi-compiler claims (2026-08-12).**  
+> Authoritative full matrix (eager/compile/ORT/TRT): `docs/DICC_MULTI_COMPILER_MATRIX.md`  
+> Jobs 395433 (V100S) / 395417 (A100). This file remains as early S1a history only.
+
 **Date (UTC):** 2026-08-12  
 **Scope:** Full-model **eager** vs **torch.compile** absolute latencies on UM DICC.  
 **Not Option A:** does **not** compare Custom CUDA blocks; full-model PT frameworks only.  

@@ -44,6 +44,22 @@ Formal V100 S1–S2: `stable_cross_day=True` (max 2.49%).
 Formal V100 S1–Day2: max spread 11% driven by **B1**, not B3.  
 A100 compares: require `--allow-dirty` (git_dirty); with that, stable ≤2.93%.
 
+### Welch / effect size (trial distributions, per session)
+
+From `cuda_kernel_stats.json` (`fused_block3_fp16`, n=100) and `pytorch_gpu_stats.json` (`block3_us`, n=20).  
+**Caveat:** harnesses differ (kernel binary trials vs PT subprocess trial medians); still the direction and magnitude are unambiguous.
+
+| GPU | Session | CUDA mean±std | PT mean±std | Welch t | approx. df | Cohen d | Winner |
+|-----|---------|---------------:|------------:|--------:|-----------:|--------:|--------|
+| V100S | S1 | 513.3±0.8 | 363.5±12.6 | 53 | 19 | ~29 | **PT** |
+| V100S | S2 | 513.0±0.7 | 363.6±4.8 | 139 | 19 | ~74 | **PT** |
+| V100S | Day2 | 513.1±0.7 | 363.3±6.2 | 108 | 19 | ~58 | **PT** |
+| A100 | S1 | 668.0±18.3 | 383.7±5.0 | 133 | 109 | ~17 | **PT** |
+| A100 | S2 | 667.4±18.7 | 389.0±6.9 | 115 | 81 | ~16 | **PT** |
+| A100 | Day2 | 671.2±20.0 | 390.9±6.7 | 112 | 92 | ~15 | **PT** |
+
+All sessions: CUDA−PT mean difference **positive and large** (CUDA slower); not measurement noise.
+
 ---
 
 ## 3. Context: other blocks (same runs)

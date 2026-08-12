@@ -1,8 +1,21 @@
-# Pre-manuscript closure pack
+# Pre-manuscript closure pack — **FINAL**
 
 **Date (UTC):** 2026-08-12  
-**Scope:** Everything **before** manuscript prose/PDF/venue.  
-**Authority:** Option A · JSON only · `DICC_RESULTS_AND_FLAGS.md` · `DICC_EXTRACTION_TABLES.md` · `DICC_COMPARE_OUTCOMES.md`
+**Status:** ✅ **CLOSED** — evidence + default exceptional stretch complete  
+**Scope of this pack:** Everything **before** manuscript prose/PDF/venue formatting  
+**Authority:** Option A · JSON only · champion frozen  
+
+| Artifact | Path |
+|----------|------|
+| Extraction tables | `docs/DICC_EXTRACTION_TABLES.md` |
+| B3 report (S1d) | `docs/DICC_B3_CUDA_VS_PT_REPORT.md` |
+| Multi-compiler matrix | `docs/DICC_MULTI_COMPILER_MATRIX.md` |
+| Compare outcomes | `docs/DICC_COMPARE_OUTCOMES.md` |
+| Results + flags | `docs/DICC_RESULTS_AND_FLAGS.md` |
+| Claim map (pre-write) | `docs/CLAIM_MAP_PREWRITE.md` |
+| Session handoff | `HANDOFF.md` |
+
+**Champion:** `model/best_model_botiot_twostage.pth` md5 **`80a90f7cc210276300eaa90173a5a385`**
 
 ---
 
@@ -12,23 +25,25 @@
 |------|--------|
 | Local science playlist closed | **DONE** |
 | Champion frozen `80a90f7…` | **DONE** |
-| DICC S1 + S2 + Day2 SUCCESS × V100S + A100 | **DONE** (6 runs) |
+| DICC S1 + S2 + Day2 SUCCESS × V100S + A100 | **DONE** (6 SUCCESS markers) |
 | Results on laptop under `benchmarks/results/dicc/` | **DONE** |
-| Force-added SUCCESS runs to git | **DONE** |
-| Extraction tables from JSON | **DONE** → `docs/DICC_EXTRACTION_TABLES.md` |
+| Force-added SUCCESS + multi-compiler JSON to git | **DONE** |
+| Extraction tables from JSON | **DONE** |
 | Cross-session compare V100 | **DONE** (S1–S2 stable; S1–Day2 B1 spread high) |
-| Cross-session compare A100 | **DONE** with `--allow-dirty` (stable); provenance caveat noted |
-| Fork decision (B3 CUDA vs PT) | **DONE** §2 below |
-| Tracker DICC rows updated | **DONE** (PARTIAL→closed with honesty) |
-| Multi-compiler DICC matrix | **NOT required** for pre-manuscript (stretch) |
-| Manuscript multi-GPU insert | **OUT OF SCOPE** (next phase) |
+| Cross-session compare A100 | **DONE** with `--allow-dirty` (stable); dirty provenance noted |
+| Fork decision (B3 CUDA vs PT) | **DONE** — PT wins; Welch/d recorded in B3 report |
+| Tracker DICC rows honest language | **DONE** |
+| README / claim hygiene (S1c) | **DONE** |
+| Full multi-compiler DICC (eager/compile/ORT/TRT) | **DONE** both GPUs |
+| Manuscript multi-GPU prose | **OUT OF SCOPE** (next phase) |
+| PI journal class file / BibTeX | **OUT OF SCOPE** (PI after venue) |
 
-**Pre-manuscript status: CLOSED for evidence collection.**  
-Remaining is **claim strategy + writing**, not missing SUCCESS trees.
+**Pre-manuscript status: CLOSED.**  
+No further evidence collection is required for the Option A + multi-GPU + multi-compiler systems package.
 
 ---
 
-## 2. Fork decision (MOD / systems)
+## 2. Fork decision (locked)
 
 ### Decision: **Option A honest — no portable B3 CUDA win**
 
@@ -37,93 +52,60 @@ Remaining is **claim strategy + writing**, not missing SUCCESS trees.
 | On V100S/A100, **PT B3 faster** than CUDA B3 FP16 (~1.41× / ~1.72×) | **Do not claim** portable CUDA B3 beats matching PT |
 | B1/B2/B4 CUDA ≫ PT | **Claim** per-block CUDA wins (Option A) |
 | Full CUDA vs full V3 | **Forbidden** |
-| Multi-session B3 means stable | **Claim** measurement stability for B3/full PT |
-| Laptop Custom vs TRT/compile/ORT | **Claim** as **local** multi-session ranges only |
+| Multi-session B3 means stable | **Claim** measurement stability for B3 |
+| DICC multi-compiler absolute | **Claim** with protocol + CentOS7 constraints |
+| Laptop multi-compiler ranges | **Claim** as **laptop only** — do not mix with DICC means |
 | Detection multi-obj package | **Primary** scientific contribution alongside systems measurement |
 
-**Recorded:** 2026-08-12 · evidence: six SUCCESS JSON dirs + compare JSON under `benchmarks/results/dicc/core/`.
-
 ---
 
-## 3. What “exceptional” needs beyond minimum (stretch menu)
+## 3. Stretch menu — final disposition
 
-Prioritized for Q1-leaning **systems + multi-obj** paper (not accuracy-SOTA).
-
-### Tier S1 — high value / moderate effort (recommended)
-
-| ID | Stretch | Why exceptional | Effort |
-|----|---------|-----------------|--------|
-| **S1a** | **torch.compile on DICC** V100+A100 (absolute full-model µs, multi-trial) | Closes “compilers on server” without TRT install; torch already in micromamba | 1–2 days |
-| **S1b** | **Clean A100 re-run** (clean git tree) so formal compare needs no `--allow-dirty` | Provenance polish for reviewers | 0.5–1 day + queue |
-| **S1c** | **Claim map + README hygiene** — remove portable overclaims; dual tables (block vs framework absolute) | Exceptional honesty; prevents desk reject | 0.5 day |
-| **S1d** | **Welch/d write-up** of B3 CUDA vs PT (report PT win with CI) | Turns “loss” into rigorous result | 0.5 day |
-
-### Tier S2 — high impact / higher effort
-
-| ID | Stretch | Why | Effort |
-|----|---------|-----|--------|
-| **S2a** | **B3 kernel optimization pass** + re-DICC B3 only | Only path to reverse PT B3 win | days–weeks + risk |
-| **S2b** | **ORT-GPU on DICC** if `onnxruntime-gpu` installs | Extends multi-compiler story to servers | 1–2 days if pip works |
-| **S2c** | **Nsight brief** V100 vs A100 bottleneck (why B3 CUDA slower on A100) | Strong systems depth | 1–2 days |
-| **S2d** | Energy/power on DICC if tools available | Multi-obj on cluster | unknown / may block |
-
-### Tier S3 — optional / reviewer-driven
-
-| ID | Stretch | Note |
-|----|---------|------|
-| **S3a** | TensorRT on DICC | Hard (no module; install TRT); FINAL_PLAN: only if demanded |
-| **S3b** | Option B full CUDA = V3 (attention/LN/GAP) | Large; only if full-pipeline claim mandatory |
-| **S3c** | Retrain to beat RF F1 | Out of freeze scope unless PI prioritizes |
-
-### Recommended exceptional package (default)
-
-```text
-Pre-manuscript (this pack)     ✅
-+ S1c claim/README hygiene
-+ S1d B3 statistical report (honest)
-+ S1a torch.compile on DICC (V100+A100)
-+ S1b clean A100 re-run if time
-(+ S2c Nsight if time before write)
-```
-
-**Do not** bet the paper on S2a (B3 optim) unless you accept delay and possible still-lose.
-
----
-
-## 4. Contribution spine for exceptional framing
-
-1. **Multi-objective CAD-CBA package** under sealed protocol (detection competitive, not pure F1 king).  
-2. **Measurement-first multi-GPU study**: three sessions, two GPU classes, JSON-backed, formal compares.  
-3. **Option A systems results**: CUDA wins B1/B2/B4; **PT wins B3 on servers** (portable nuance).  
-4. **Laptop multi-compiler** (TRT/compile/ORT) with incomplete-CUDA caveats.  
-5. **LLM dispatch** micro-result + no full XAI overclaim.  
-6. Stretch: **server torch.compile** + optional Nsight “why B3”.
-
-This is defensible for **systems / FGCS-leaning** venues; weaker for “we beat cuDNN everywhere” HPC-only pitches.
-
----
-
-## 5. Stretch execution status (2026-08-12)
-
-| ID | Item | Status |
-|----|------|--------|
-| S1a | torch.compile DICC (early) | **DONE** then superseded |
-| — | **Full multi-compiler** V100S+A100 | **DONE** → `docs/DICC_MULTI_COMPILER_MATRIX.md` (eager/compile/ORT/TRT) |
-| S1b | Clean A100 re-run (provenance) | **DEFERRED** (optional; not blocking write) |
+| ID | Item | Final status |
+|----|------|--------------|
+| S1a | torch.compile DICC | **DONE** (superseded by full matrix) |
+| **Full multi-compiler** | eager / compile / ORT / TRT on V100S+A100 | **DONE** (395433 / 395417) |
+| S1b | Clean A100 re-run | **DEFERRED** (optional provenance; not blocking) |
 | S1c | README / claim hygiene | **DONE** |
-| S1d | B3 CUDA vs PT one-pager | **DONE** → `docs/DICC_B3_CUDA_VS_PT_REPORT.md` |
-| S2c | Nsight V100 vs A100 | **NOT RUN** (optional) |
+| S1d | B3 CUDA vs PT stats report | **DONE** |
+| S2a | B3 kernel optim | **NOT DONE** (optional science delay) |
+| S2b | ORT-GPU on DICC | **DONE** (in full matrix) |
+| S2c | Nsight V100 vs A100 | **NOT DONE** (optional) |
+| S2d | Energy on DICC | **NOT DONE** (optional) |
+| S3a | TensorRT on DICC | **DONE** (native TRT 8.6 + ORT TRT EP) |
+| S3b | Option B full CUDA = V3 | **NOT DONE** (out of Option A freeze) |
+| S3c | Retrain to beat RF F1 | **NOT DONE** (out of freeze) |
 
 ---
 
-## 6. Next phase (after this pack)
+## 4. Contribution spine (pre-write)
+
+1. **Multi-objective CAD-CBA package** under sealed protocol (detection competitive, not pure-F1 king).  
+2. **Measurement-first multi-GPU study**: three sessions, two GPU classes, JSON-backed, formal compares.  
+3. **Option A systems**: CUDA wins B1/B2/B4; **PT wins B3 on servers**.  
+4. **Multi-compiler**: laptop ranges **and** DICC absolute matrix (eager/compile/ORT/TRT).  
+5. **LLM dispatch** micro-result; no full free-form XAI title claim.  
+
+Defensible for **systems / FGCS-leaning** venues; not for “we beat cuDNN BiLSTM everywhere.”
+
+---
+
+## 5. Next phase (explicitly **not** pre-manuscript)
 
 | # | Action |
 |---|--------|
-| 1 | Manuscript multi-GPU section from extraction tables + B3 report + torch.compile absolutes |
+| 1 | Manuscript multi-GPU + multi-compiler section from locked tables |
 | 2 | PI venue class file / BibTeX when journal chosen |
-| 3 | Optional: S1b clean A100, S2c Nsight, S2a B3 optim only if PI prioritizes |
+| 3 | Optional only if PI prioritizes: S1b, S2c Nsight, S2a B3 optim |
 
 ---
 
-*Pre-manuscript evidence gate: CLOSED. Default stretch S1a–d **complete** (S1b deferred optional). Next = manuscript write.*
+## 6. Integrity snapshot (2026-08-12)
+
+```text
+SUCCESS markers: 6 (S1/S2/Day2 × v100s+a100)
+multi_compiler_v100s.json + multi_compiler_a100.json: errors {}
+champion md5: 80a90f7cc210276300eaa90173a5a385
+```
+
+*End final pre-manuscript pack. Do not reopen evidence gates without new JSON.*

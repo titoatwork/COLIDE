@@ -105,7 +105,7 @@
 | E6 | Strong neural teacher | RUN_DOCUMENTED | G11 neural teacher → V3 student stage_a_kd val **0.8513** ≪ ensemble student **0.9401**; keep ensemble (`teachers_kd_neural/`) |
 | E7 | Heterogeneous ensembles | INCORPORATED | RF+XGB+LGBM heterogeneous mean (WP4b) |
 | E8 | Student not mere imitation — deployment trade-off | RUN_DOCUMENTED | WP4b: XGB teacher 0.9918 → student 0.9270 &lt; ensemble 0.9401; multi-obj `pareto_h8/` composite G6 0.9056 |
-| E9 | Lower memory / latency / GPU deploy / temporal | RUN_DOCUMENTED (local) | WP5c + `pareto_h8/` + **WP6b multi-session ranges** (energy 0.920–0.943; PT@256 24.15–25.68 µs; peak 322.2 MiB); DICC multi-day still BLOCKED |
+| E9 | Lower memory / latency / GPU deploy / temporal | DONE (local + DICC systems) | WP6b local ranges + **DICC multi-session Option A** + **full multi-compiler matrix** (`DICC_MULTI_COMPILER_MATRIX.md`) |
 
 ---
 
@@ -171,11 +171,11 @@
 | I3 | V100S results | DONE | 3 SUCCESS sessions on laptop+git |
 | I4 | A100 results | DONE | 3 SUCCESS sessions on laptop+git |
 | I5 | ≥2 different days | DONE | S1/S2 + calendar Day2; compares in `DICC_COMPARE_OUTCOMES.md` |
-| I6 | mean, median, std, CV, CI | DONE (local) | **WP6b** local multi-session mean/median/std/CV/CI on energy + PT + CUDA (`wp6b_local_ranges/`); **DICC multi-day still BLOCKED** (I1–I5) |
+| I6 | mean, median, std, CV, CI | DONE | Local WP6b + DICC SUCCESS JSON (mean/median/std/CV/CI per block/kernel) + multi-compiler means |
 | I7 | Warm-up protocol | DONE | WP6b warm-up **50** discarded sync forwards per timed block; documented in summary |
 | I8 | Batch-size sensitivity | DONE | WP6b multi-session I8 table bs∈{1,8,32,64,128,256,512,1024}; `systems_i8_h3/` + `wp6b_local_ranges/` |
-| I9 | Statistical significance + effect size | DONE (local) / BLOCKED (cross-GPU) | Local: `statistical_significance_v2.json` framework tests + WP6b CI/CV/std; **cross-GPU multi-day significance BLOCKED** until DICC |
-| I10 | No generalise from RTX 3050 alone | DONE (discipline) | Spine + ToV + claims forbid RTX→cluster generalisation; multi-GPU cells TBD until DICC |
+| I9 | Statistical significance + effect size | DONE | Local framework tests + DICC B3 Welch/d (PT win, large d) in `DICC_B3_CUDA_VS_PT_REPORT.md` |
+| I10 | No generalise from RTX 3050 alone | DONE | DICC multi-GPU measured; laptop multi-compiler labeled local-only |
 | I11 | Portability central | DONE (honest answer) | Measured on V100S+A100 multi-session; portable B3 CUDA speedup **refuted**; portability of *measurement* and small-block CUDA wins stand |
 
 ---
@@ -206,7 +206,7 @@
 | K3 | Cross-dataset / transfer | RUN_DOCUMENTED (recipe) | Recipe transfer (not weight transfer); ToN-scale kd_lr/ft_lr; honest RF gap |
 | K4 | RQ: improve detection? | DONE (answer locked) | B14 test **0.9780±0.0033** near RF val 0.9778; does **not** beat LGBM 0.9818 or published RF 0.9864 — multi-obj / deploy is the contribution path (`WP9b_MANUSCRIPT_SPINE.md` §3) |
 | K5 | RQ: minority recognition? | DONE (answer locked) | B14 test Theft **1.0** mean; min-cls **0.9292** — strong minority under protocol; val tables support |
-| K6 | RQ: reduce latency or memory? | DONE (local answer draft) | WP6b ranges: energy **0.920–0.943** mJ/flow; PT@256 **24.15–25.68** µs; peak **322.2** MiB; G6 composite 0.9056 @4.33 µs; multi-GPU still BLOCKED |
+| K6 | RQ: reduce latency or memory? | DONE | Local WP6b + DICC Option A blocks + multi-compiler TRT native ~528/588 µs (batch-1) |
 | K7 | RQ: valid across GPUs? | DONE (answered) | Yes measured; B3 CUDA does **not** transfer as a win vs PT; full PT absolute + B1/B2/B4 CUDA wins do |
 | K8 | RQ: explainability measurable value? | RUN_DOCUMENTED | Dispatch yes; structured evidence yes; free-form LLM quality weak → no full XAI RQ claim |
 
@@ -216,14 +216,14 @@
 
 | ID | Requirement | Status | Evidence / notes |
 |----|-------------|--------|------------------|
-| L1 | DICC first, then focused improvement | DONE (order policy) | Order locked; DICC deferred to **dedicated user session** under **OnDemand VNC + screen + batch** (`DICC_OPS_METHOD.md`); local science closed without inventing multi-day numbers; campus/Cheran-default ops **superseded** |
+| L1 | DICC first, then focused improvement | DONE | DICC multi-session campaign + multi-compiler executed; ops method in `DICC_OPS_METHOD.md` |
 | L2 | Mod table before final model | DONE | `docs/MOD_DECISION_TABLE.md` + CAD-CBA-v1 signed |
 | L3 | Avoid changing many parts at once | DONE | Sequential WPs (loss → thresholds → KD → HPO → package → confirm) |
 | L4 | Phase: freeze preprocess/split/metrics/seeds/hardware/baseline | DONE | Protocol + `BASELINE_FREEZE_CARD.md` + multirun baseline |
 | L5 | ≥5 independent training runs mean±std | DONE | WP1b 0.9714±0.0109; package 0.9639±0.0185; HPO confirm 0.9689±0.0145 n=5 (val only) |
 | L6 | Optuna/Bayesian HPO | DONE | WP3 Optuna TPE val-only; winner INCORPORATE 0.9791; multi-seed confirm RUN_DOCUMENTED 0.9689±0.0145 |
 | L7 | One clear proposed method | DONE (named) | **CAD-CBA-v1** signed; evaluation playlist **closed** (ablations/test/ToN/paper local-complete); only DICC ops + PI venue remain |
-| L8 | Deploy: export, parity, profile, kernels, TRT/ORT/compile, FP16/INT8 | DONE (local path) | WP6a fidelity PASS + **WP6b multi-session ranges DONE**; TRT/ORT/compile historical; WP6c DICC re-bench only if user opens DICC (champion unchanged → optional) |
+| L8 | Deploy: export, parity, profile, kernels, TRT/ORT/compile, FP16/INT8 | DONE | Local WP6a/b + **DICC multi-compiler** (eager/compile/ORT/TRT native 8.6) on V100S+A100 |
 | L9 | Realistic: trade-off vs beat RF everywhere | DONE (framing) | Multi-obj framing locked; H8 + `CLAIMS_REGISTRY` advantage snapshot |
 | L10 | Paper structure / tables / ToV / repro | DONE (PI polish) | Spine + polished `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.{md,pdf}` + figures; Table 1b/5b; App D checklist; `scripts/build_manuscript_pdf.py`; journal template/BibTeX = PI after venue |
 | L11 | Fix gitignored claim-source repro | DONE | WP9a + post-B14/WP6b + Table 1b per-class claims: **64** claims; sealed LOCKED_TEST; `verify_claims.py` all green |

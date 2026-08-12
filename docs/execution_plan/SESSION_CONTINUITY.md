@@ -1,7 +1,7 @@
 # Session Continuity / Handoff Pack
 
 **Session closed for continuity:** 2026-08-12  
-**Mode this session:** Pre-manuscript closed + exceptional stretch (S1a–d) · finalize docs · handoff  
+**Mode this session:** **PRE-MANUSCRIPT FULLY CLOSED** (evidence + multi-compiler + claim map)  
 **Git tip at handoff:** see latest commit after handoff push (`git log -1 --oneline`)  
 **Machine root:** `/home/titoisalive/colide`  
 **Cluster:** `dicc` → `login01.dicc.um.edu.my` · user `ibteshamulhaque` · repo `~/colide`
@@ -10,7 +10,8 @@
 
 ## 1. Mission (current)
 
-**Pre-manuscript evidence is CLOSED.** Next phase is **manuscript multi-GPU writing** (+ optional remaining stretch polish).
+**Pre-manuscript is FULLY CLOSED** (campaign + stretch multi-compiler + claim map).  
+**Next phase is manuscript writing only** — no more evidence collection unless PI prioritizes optional S1b/Nsight/B3 optim.
 
 **Policy:** Option A · JSON only · never invent · never clobber champion without BACKUP + OK.  
 **Champion:** `model/best_model_botiot_twostage.pth` md5 **`80a90f7cc210276300eaa90173a5a385`**.  
@@ -21,18 +22,16 @@
 
 ## 2. Read first in the next chat (order)
 
-1. **`HANDOFF.md`** (paste-ready resume prompt at bottom)  
+1. **`HANDOFF.md`**  
 2. **This file**  
 3. `docs/PRE_MANUSCRIPT_CLOSURE.md`  
-4. `docs/DICC_EXTRACTION_TABLES.md`  
-5. `docs/DICC_B3_CUDA_VS_PT_REPORT.md`  
-6. `docs/DICC_TORCH_COMPILE_STRETCH.md`  
-7. `docs/DICC_COMPARE_OUTCOMES.md`  
-8. `docs/DICC_RESULTS_AND_FLAGS.md`  
-9. `README.md` (abstract + DICC sections)  
-10. `docs/execution_plan/PROGRESS_LOG.md` (top entry)  
-11. `docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md` (when writing)  
-12. `docs/manuscript/` camera-ready draft (when writing)
+4. `docs/CLAIM_MAP_PREWRITE.md`  
+5. `docs/DICC_EXTRACTION_TABLES.md`  
+6. `docs/DICC_B3_CUDA_VS_PT_REPORT.md`  
+7. `docs/DICC_MULTI_COMPILER_MATRIX.md`  
+8. `docs/DICC_COMPARE_OUTCOMES.md`  
+9. `docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md`  
+10. `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md`
 
 ---
 

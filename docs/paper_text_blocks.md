@@ -284,12 +284,19 @@ Shuffle **0.9791** ≫ stratified inv-freq **0.9209** (Δ−0.058) — keep **sh
 
 Export path **bit-identical** (max abs error 0); CUDA self-checks all PASS. Champion md5 unchanged.
 
-### Explicitly not yet claimable (updated 2026-08-12)
+### Explicitly not yet claimable / forbidden (updated 2026-08-12 final)
 
-- ~~DICC multi-day mean/median/std/CV/CI~~ — **NOW MEASURED** (3 sessions × V100S+A100); see `docs/DICC_EXTRACTION_TABLES.md`  
 - Portable “CUDA B3 beats matching PT on servers” — **false** (PT wins B3); claim B1/B2/B4 CUDA wins only  
 - Full LLM-explainable IDS title claim — **dropped** (J10)  
-- Full custom CUDA pipeline vs full V3 PT speedup as **parity** — Option A forbids
+- Full custom CUDA pipeline vs full V3 PT speedup as **parity** — Option A forbids  
+- Mixing laptop multi-compiler ratios with DICC absolute µs  
+
+### Now claimable (JSON-backed)
+
+- DICC multi-session Option A tables — `docs/DICC_EXTRACTION_TABLES.md`  
+- B3 PT win + Welch/d — `docs/DICC_B3_CUDA_VS_PT_REPORT.md`  
+- DICC full multi-compiler — `docs/DICC_MULTI_COMPILER_MATRIX.md`  
+- Full claim map — `docs/CLAIM_MAP_PREWRITE.md`
 
 
 ## 12. Protocol-era manuscript spine + camera-ready draft (WP9b/WP9c)

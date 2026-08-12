@@ -1,7 +1,20 @@
 # Progress log (results as they land)
 
 **Policy:** document everything; label pilot vs full; test sealed unless noted.  
-**Handoff snapshot:** 2026-08-12 — **PRE-MANUSCRIPT CLOSED** + **full DICC multi-compiler complete** (V100S+A100); next = manuscript multi-GPU write.
+**Handoff snapshot:** 2026-08-12 — **PRE-MANUSCRIPT FULLY CLOSED** (evidence + multi-compiler + claim map + tracker hygiene); next = **manuscript writing only**.
+
+---
+
+## 2026-08-12 — Pre-manuscript final freeze
+
+**Mode:** documentation freeze · no train · no invent  
+| Item | Status |
+|------|--------|
+| `PRE_MANUSCRIPT_CLOSURE.md` final | **DONE** |
+| `CLAIM_MAP_PREWRITE.md` | **DONE** (authorized vs forbidden) |
+| B3 Welch/d table | **DONE** in B3 report |
+| Tracker E9/I6/I9/I10/K6/L1/L8 DICC notes | **DONE** (no longer “BLOCKED”) |
+| Optional S1b/Nsight/B3 optim | deferred (not pre-ms required) |
 
 ---
 
