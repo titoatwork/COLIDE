@@ -158,7 +158,7 @@ def _pytorch_values(pt: dict, key: str) -> list[float] | None:
     return None
 
 
-def compare_runs(run_a: Path, run_b: Path) -> dict:
+def compare_runs(run_a: Path, run_b: Path, *, allow_dirty: bool = False) -> dict:
     _require_success(run_a)
     _require_success(run_b)
 
@@ -188,8 +188,9 @@ def compare_runs(run_a: Path, run_b: Path) -> dict:
     _field("n_trials_pytorch")
     _field("pytorch_inner_forwards")
 
-    # Dirty trees are not comparable provenance
-    if man_a.get("git_dirty") or man_b.get("git_dirty"):
+    # Dirty trees are not ideal provenance; allow explicit override for documented campaigns
+    dirty = bool(man_a.get("git_dirty") or man_b.get("git_dirty"))
+    if dirty and not allow_dirty:
         raise CompareError("one or both runs recorded git_dirty=true")
 
     sum_a = _checksums(run_a)
@@ -303,6 +304,17 @@ def compare_runs(run_a: Path, run_b: Path) -> dict:
         "This neither confirms nor rules out WSL2-specific drift locally."
     )
 
+    notes = [
+        "Full CUDA-vs-PyTorch pipeline speedup remains invalid until architecture parity.",
+        "Block 3 comparisons are the preferred CUDA/PyTorch head-to-head.",
+        "Update README/paper claims only from accepted cross-day artifacts.",
+    ]
+    if dirty and allow_dirty:
+        notes.append(
+            "WARNING: allow_dirty=True — one or both runs had git_dirty=true; "
+            "treat as operational campaign compare, not clean-repo provenance."
+        )
+
     return {
         "gpu_label": gpu_label,
         "date_a": date_a,
@@ -311,15 +323,12 @@ def compare_runs(run_a: Path, run_b: Path) -> dict:
         "run_b": str(run_b),
         "git_sha": man_a.get("git_sha"),
         "checkpoint": man_a.get("checkpoint"),
+        "git_dirty_allowed": bool(dirty and allow_dirty),
         "stable_cross_day": stable,
         "max_relative_spread_pct": max_spread,
         "interpretation": interpretation,
         "comparisons": comparisons,
-        "notes": [
-            "Full CUDA-vs-PyTorch pipeline speedup remains invalid until architecture parity.",
-            "Block 3 comparisons are the preferred CUDA/PyTorch head-to-head.",
-            "Update README/paper claims only from accepted cross-day artifacts.",
-        ],
+        "notes": notes,
     }
 
 
@@ -332,6 +341,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--run-a", default=None, help="Explicit run directory A")
     parser.add_argument("--run-b", default=None, help="Explicit run directory B")
     parser.add_argument("--output", default=None, help="Write comparison JSON here")
+    parser.add_argument(
+        "--allow-dirty",
+        action="store_true",
+        help="Allow git_dirty=true manifests (document operational campaigns)",
+    )
     args = parser.parse_args(argv)
 
     try:
@@ -345,7 +359,7 @@ def main(argv: list[str] | None = None) -> int:
             print("ERROR: provide --run-a/--run-b or --gpu with --date-a/--date-b", file=sys.stderr)
             return 2
 
-        report = compare_runs(run_a, run_b)
+        report = compare_runs(run_a, run_b, allow_dirty=args.allow_dirty)
     except CompareError as exc:
         print(f"REJECTED: {exc}", file=sys.stderr)
         return 1

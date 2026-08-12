@@ -11,8 +11,8 @@
 |------|--------|-------|
 | V100S S1 (`20260807`) vs Day2 (`20260808`) | **RAN** | `stable_cross_day=False` (max spread **11.0%** on CUDA B1). B3 FP16 spread **0.04%**. Output: `core/v100s/compare_20260807_vs_20260808.json` |
 | V100S S1 vs S2 (`20260807_s2`) | **RAN + stable** | max spread **2.49%** &lt; 5%. Output: `core/v100s/compare_20260807_vs_20260807_s2.json` |
-| A100 S1 vs Day2 | **REJECTED** | `git_dirty=true` on both |
-| A100 S1 vs S2 | **REJECTED** | `git_dirty=true` on both |
+| A100 S1 vs Day2 | **REJECTED** (strict) / **RAN with `--allow-dirty`** | Strict reject dirty; allow-dirty → **stable** max spread **2.93%**. JSON: `compare_20260807_vs_20260808_allow_dirty.json` |
+| A100 S1 vs S2 | **REJECTED** (strict) / **RAN with `--allow-dirty`** | allow-dirty → **stable** max spread **1.77%**. JSON: `compare_20260807_vs_20260807_s2_allow_dirty.json` |
 
 **FLAG:** V100 manifests have `git_dirty=false` but `git_sha=unknown`. A100 all `git_dirty=true`, `git_sha=ac9ed1b658…`.
 

@@ -1,54 +1,38 @@
 # COLIDE — Session Handoff
 
-**MODE:** DICC multi-session **COMPLETE** · tree **on laptop** · compare **partial** (V100 ran; A100 rejected dirty).  
-**Authority:** Option A · no invent · `docs/DICC_RESULTS_AND_FLAGS.md` · `docs/DICC_COMPARE_OUTCOMES.md`.  
+**MODE:** ✅ **PRE-MANUSCRIPT EVIDENCE CLOSED** · stretch optional for exceptional polish.  
+**Authority:** `docs/PRE_MANUSCRIPT_CLOSURE.md` · `DICC_EXTRACTION_TABLES.md` · `DICC_COMPARE_OUTCOMES.md` · Option A.  
 **Champion:** md5 **`80a90f7cc210276300eaa90173a5a385`**.
 
 ---
 
-## SUCCESS (laptop `benchmarks/results/dicc/`)
+## Delivered
 
-| Session | Label | V100S | A100 |
-|---------|--------|-------|------|
-| S1 | `20260807` | 390642 | 390643 |
-| S2 | `20260807_s2` | 390653 | 390654 |
-| Day2 | `20260808` | 390781 | 390782 |
-
----
-
-## Critical flags
-
-1. **B3 CUDA FP16 slower than PT B3** both GPUs (~513 vs ~363 V100; ~668–671 vs ~384–391 A100).  
-2. Full CUDA vs full V3 PT **invalid**.  
-3. A100 formal compare **REJECTED** (`git_dirty=true`); V100 S1–Day2 compare ran but **not session-stable** on all metrics (B1 11% spread); S1–S2 V100 **stable**.  
-4. Multi-compiler TRT/compile/ORT = **laptop only**.  
+- 6 DICC SUCCESS runs on laptop + git  
+- Extraction tables + fork decision (B3: PT wins on servers)  
+- V100 formal compares; A100 compares with `--allow-dirty`  
+- Tracker A3/H7/I1–I5/I11/K7/WP0/WP0b closed with honest language  
 
 ---
 
-## Next (user claim decision)
+## Exceptional stretch (default package)
 
-- Paper tables from local JSON only  
-- Tracker/claims wording for honest B3  
-- Optional: clean re-run A100 for formal compare accept  
-- Manuscript only after you approve claim strategy  
+| ID | Item |
+|----|------|
+| S1a | torch.compile on DICC V100+A100 |
+| S1b | Optional clean A100 re-run (provenance) |
+| S1c | README/claim hygiene |
+| S1d | B3 CUDA vs PT statistical one-pager |
+| S2c | Optional Nsight V100 vs A100 |
 
-**Do not** invent numbers. **Do not** clobber champion.
-
----
-
-## Ops that worked
-
-- On-node `nvcc -std=c++11` kernels (sm_70 / sm_80)  
-- micromamba `colide` env on GPU nodes (login venv py3.9 broken on compute py3.6)  
-- batch `run_campaign.sh` with kernels prebuilt  
+Approve stretch set → execute → then manuscript multi-GPU section.
 
 ---
 
-## Paste-ready next prompt
+## Next prompt
 
 ```text
-Continue COLIDE — post-DICC pre-manuscript.
-Read: HANDOFF.md, docs/DICC_RESULTS_AND_FLAGS.md
-VPN + rsync dicc tree if missing; run compare_dicc_sessions; document accept/reject;
-update tracker A3/H7/I* for multi-GPU with honest B3 language. No invent. Option A.
+Continue COLIDE — exceptional stretch + claim hygiene (pre-write).
+Read PRE_MANUSCRIPT_CLOSURE.md. Execute approved stretch (default S1a–d).
+Option A; no invent; no clobber champion.
 ```
