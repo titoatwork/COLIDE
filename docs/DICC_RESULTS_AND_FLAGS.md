@@ -1,8 +1,8 @@
 # DICC multi-session campaign — results pack + flags
 
-**Status date (UTC):** 2026-08-08  
+**Status date (UTC):** 2026-08-12  
 **Machine (cluster):** `/home/user/ibteshamulhaque/colide`  
-**Laptop tree:** `benchmarks/results/dicc/` — **synced 2026-08-12** (~1.9 MB, 6 SUCCESS). Compare outcomes: `docs/DICC_COMPARE_OUTCOMES.md`  
+**Laptop tree:** `benchmarks/results/dicc/` — **synced 2026-08-12** (6 SUCCESS + framework stretch). Compare: `docs/DICC_COMPARE_OUTCOMES.md` · B3 report: `docs/DICC_B3_CUDA_VS_PT_REPORT.md` · torch.compile: `docs/DICC_TORCH_COMPILE_STRETCH.md`  
 **Champion:** `model/best_model_botiot_twostage.pth` md5 `80a90f7cc210276300eaa90173a5a385`  
 **Option A:** per-block Custom CUDA vs matching ops only; full pipeline CUDA vs full V3 **invalid**
 
@@ -30,11 +30,11 @@ benchmarks/results/dicc/core/a100/20260808_job390782/SUCCESS
 Each SUCCESS run includes (when complete):  
 `manifest.json`, `cuda_kernel_stats.json`, `pytorch_gpu_stats.json`, `kernel_SHA256SUMS`, `exit_status`, `raw/`, logs.
 
-**Laptop:** as of doc write, only `DAY1_LABEL.txt` local — **full tree not yet rsynced**.
+**Laptop:** **full SUCCESS tree rsynced 2026-08-12** (FLAG-8 cleared). Stretch framework JSON under `benchmarks/results/dicc/framework/`.
 
 ---
 
-## 2. Extraction tables (from cluster JSON means — re-verify after rsync)
+## 2. Extraction tables (from laptop SUCCESS JSON — see also `DICC_EXTRACTION_TABLES.md`)
 
 ### 2.1 Block 3 Option A head-to-head (primary systems compare)
 
@@ -67,11 +67,20 @@ Order of magnitude (S1-class means): CUDA B1 ~10–12 µs, B2 ~35 µs, B4 ~10 µ
 Harness: `comparability.full_pipeline_cuda_vs_pytorch.valid = false`.  
 **FLAG-3:** Do **not** publish full-pipeline Custom CUDA vs full V3 speedup.
 
-### 2.5 Laptop multi-compiler matrix (separate story — not DICC campaign)
+### 2.5 Laptop multi-compiler matrix (separate story — not DICC campaign core)
 
 Documented ranges (RTX 3050 / WSL): Custom pipeline 594–675 µs vs eager / torch.compile / TensorRT / ORT-GPU.  
 Scripts: `benchmark_tensorrt_native.py`, `benchmark_torch_compile_native.py`, `benchmark_ort.py`.  
-**FLAG-4:** Those ratios are **laptop**; TRT/ORT **not** installed on DICC micromamba; FINAL_PLAN marks full TRT matrix on DICC as **stretch / if reviewers demand**. Scripts hardcode old custom µs and partly old checkpoints — not drop-in for production champion without rework.
+**FLAG-4:** Laptop multi-compiler ratios remain **laptop**. TRT/ORT **not** on DICC micromamba. Full TRT matrix on DICC remains stretch-if-demanded.
+
+### 2.6 Stretch S1a — torch.compile on DICC (absolute full-model)
+
+| GPU | Job | Eager mean | torch.compile mean | Source |
+|-----|-----|----------:|-------------------:|--------|
+| V100S | 395338 COMPLETED | **~1033 µs** | **~818 µs** | `framework/torch_compile_v100s.json` |
+| A100 | 395339 COMPLETED | **~957 µs** | **~761 µs** | `framework/torch_compile_a100.json` |
+
+Details: `docs/DICC_TORCH_COMPILE_STRETCH.md`. **Not** Option A; do not ratio against incomplete Custom CUDA pipeline.
 
 ---
 
@@ -94,10 +103,10 @@ Scripts: `benchmark_tensorrt_native.py`, `benchmark_torch_compile_native.py`, `b
 | **FLAG-1** | **CRITICAL** | B3 CUDA FP16 **slower** than matching PT B3 on V100S & A100 |
 | **FLAG-2** | Info | B1/B2/B4 CUDA still much faster than PT |
 | **FLAG-3** | Hard rule | Full CUDA vs full V3 PT speedup **invalid** |
-| **FLAG-4** | Scope | Multi-compiler (TRT/compile/ORT) wins are **laptop**; not DICC campaign |
-| **FLAG-5** | **HIGH** | A100 runs all `git_dirty=true` → formal compare **REJECTED**. V100 runs `git_dirty=false` but `git_sha=unknown` → compare ran. See `DICC_COMPARE_OUTCOMES.md` |
+| **FLAG-4** | Scope | Laptop multi-compiler (TRT/ORT) remains laptop; **DICC torch.compile** stretch **DONE** both GPUs (V100S ~818 vs ~1033; A100 ~761 vs ~957) |
+| **FLAG-5** | **HIGH** | A100 campaign runs all `git_dirty=true` → formal compare needs `--allow-dirty`. V100 `git_dirty=false` but `git_sha=unknown`. See `DICC_COMPARE_OUTCOMES.md` |
 | **FLAG-6** | Medium | Same-day S2 is a second **session**, not a new calendar day; Day2 label `20260808` is the calendar multi-day point |
-| **FLAG-7** | Medium | README still markets portable framework beat-all language — must align with DICC B3 honesty before submit |
+| **FLAG-7** | ~~Medium~~ **CLEARED 2026-08-12** | README abstract/contributions/cross-HW + B3 report aligned with Option A honesty |
 | **FLAG-8** | Ops | ~~Laptop empty~~ **CLEARED 2026-08-12** — rsync complete |
 | **FLAG-9** | Science | Por §8 gate for portable “beats cuDNN” is **failed** on servers; multi-obj + measurement still viable |
 
@@ -139,20 +148,26 @@ rsync -avz -e ssh dicc:/home/user/ibteshamulhaque/colide/benchmarks/results/dicc
 
 ---
 
-## 7. Pre-manuscript remaining (after sync)
+## 7. Pre-manuscript + stretch status (2026-08-12)
 
-1. Rsync tree to laptop  
-2. Re-extract tables from local JSON (confirm Day2 V100 cells)  
-3. Run formal compare; record accept/reject  
-4. Flip tracker A3/H7/I1–I5/I11/K7/WP0 with honest B3 language  
-5. Claims rebuild only if new DICC claims added  
-6. **Not** manuscript prose until you decide claim strategy  
+| Item | Status |
+|------|--------|
+| Rsync SUCCESS tree | **DONE** |
+| Extraction tables | **DONE** → `DICC_EXTRACTION_TABLES.md` |
+| Formal compare V100 / A100 allow-dirty | **DONE** → `DICC_COMPARE_OUTCOMES.md` |
+| Tracker A3/H7/I1–I5/I11/K7/WP0 | **DONE** (honest B3 language) |
+| S1c README hygiene | **DONE** (abstract, contributions, cross-HW, limitations) |
+| S1d B3 CUDA vs PT report | **DONE** → `DICC_B3_CUDA_VS_PT_REPORT.md` |
+| S1a torch.compile V100S | **DONE** (job 395338) |
+| S1a torch.compile A100 | **DONE** (job 395339) |
+| S1b clean A100 re-run | **DEFERRED** (optional provenance; not blocking) |
+| Manuscript multi-GPU prose | **NEXT PHASE** (writing) |
 
 ---
 
-## 8. Claim strategy note (for your decision — not auto-applied)
+## 8. Claim strategy (locked for pre-write)
 
-- **Justified:** multi-GPU measured; multi-session stability; full PT absolute; B1/B2/B4 CUDA vs PT; laptop multi-compiler ranges with caveats; multi-obj detection package.  
-- **Not justified:** portable CUDA B3 beats matching PT; full-pipeline Custom vs full V3; DICC TRT/compile without new runs.  
+- **Justified:** multi-GPU measured; multi-session stability; full PT absolute; B1/B2/B4 CUDA vs PT; laptop multi-compiler ranges with caveats; multi-obj detection package; DICC torch.compile absolute (V100S+A100).  
+- **Not justified:** portable CUDA B3 beats matching PT; full-pipeline Custom vs full V3; DICC TRT/ORT without new runs.  
 
 *End pack.*

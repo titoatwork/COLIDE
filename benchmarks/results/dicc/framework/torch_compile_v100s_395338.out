@@ -1,0 +1,44 @@
+host=gpu05.dicc.um.edu.my gpu=GPU 0: Tesla V100S-PCIE-32GB (UUID: GPU-a1476076-3775-ebee-7ccd-5e8c2c5791f1)
+eager trial 1/20: 1014.36 us
+eager trial 2/20: 1004.37 us
+eager trial 3/20: 1011.58 us
+eager trial 4/20: 1006.11 us
+eager trial 5/20: 1009.82 us
+eager trial 6/20: 1040.92 us
+eager trial 7/20: 1041.57 us
+eager trial 8/20: 1040.21 us
+eager trial 9/20: 1039.14 us
+eager trial 10/20: 1041.09 us
+eager trial 11/20: 1039.56 us
+eager trial 12/20: 1041.35 us
+eager trial 13/20: 1041.75 us
+eager trial 14/20: 1041.01 us
+eager trial 15/20: 1040.77 us
+eager trial 16/20: 1040.09 us
+eager trial 17/20: 1040.21 us
+eager trial 18/20: 1038.34 us
+eager trial 19/20: 1042.07 us
+eager trial 20/20: 1045.25 us
+compile trial 1/20: 813.20 us
+compile trial 2/20: 818.71 us
+compile trial 3/20: 818.21 us
+compile trial 4/20: 816.45 us
+compile trial 5/20: 807.49 us
+compile trial 6/20: 812.94 us
+compile trial 7/20: 813.70 us
+compile trial 8/20: 812.64 us
+compile trial 9/20: 813.26 us
+compile trial 10/20: 809.14 us
+compile trial 11/20: 808.81 us
+compile trial 12/20: 808.75 us
+compile trial 13/20: 807.40 us
+compile trial 14/20: 808.67 us
+compile trial 15/20: 833.46 us
+compile trial 16/20: 831.36 us
+compile trial 17/20: 830.83 us
+compile trial 18/20: 831.12 us
+compile trial 19/20: 831.04 us
+compile trial 20/20: 832.19 us
+WROTE benchmarks/results/dicc/framework/torch_compile_v100s.json
+eager {'n': 20, 'mean': 1032.9764802008867, 'std': 14.242387983337068, 'p50': 1040.2080370113254, 'min': 1004.3659713119268, 'max': 1045.245910063386, 'cv_pct': 1.378771758730392}
+compile {'n': 20, 'mean': 817.9662050679326, 'std': 9.747136303663861, 'p50': 813.4783711284399, 'min': 807.400094345212, 'max': 833.4557060152292, 'cv_pct': 1.1916306863624464}

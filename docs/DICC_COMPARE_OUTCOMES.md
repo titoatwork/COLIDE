@@ -52,4 +52,9 @@ Session-to-session B3 CUDA/PT: **very stable**. Primary Option A B3 head-to-head
 benchmarks/results/dicc/core/{v100s,a100}/…_SUCCESS runs
 benchmarks/results/dicc/core/v100s/compare_20260807_vs_20260808.json
 benchmarks/results/dicc/core/v100s/compare_20260807_vs_20260807_s2.json
+benchmarks/results/dicc/core/a100/compare_*_allow_dirty.json
+benchmarks/results/dicc/framework/torch_compile_v100s.json   # stretch S1a
+benchmarks/results/dicc/framework/torch_compile_a100.json
 ```
+
+Related: `docs/DICC_B3_CUDA_VS_PT_REPORT.md`, `docs/DICC_TORCH_COMPILE_STRETCH.md`.

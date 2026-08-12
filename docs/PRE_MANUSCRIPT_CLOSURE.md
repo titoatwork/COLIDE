@@ -103,16 +103,27 @@ This is defensible for **systems / FGCS-leaning** venues; weaker for “we beat 
 
 ---
 
-## 5. Immediate next actions (execute after you approve stretch picks)
+## 5. Stretch execution status (2026-08-12)
 
-| # | Action | Owner |
-|---|--------|-------|
-| 1 | Approve stretch set (default S1a–d) | **You** |
-| 2 | Run S1a compile jobs on DICC if approved | Agent + VPN |
-| 3 | S1c README claim strip | Agent |
-| 4 | S1d one-page B3 stats summary | Agent |
-| 5 | Then manuscript multi-GPU section | Writing phase |
+| ID | Item | Status |
+|----|------|--------|
+| S1a | torch.compile DICC V100S | **DONE** job 395338 → ~818 vs ~1033 µs |
+| S1a | torch.compile DICC A100 | **DONE** job 395339 → ~761 vs ~957 µs |
+| S1b | Clean A100 re-run (provenance) | **DEFERRED** (optional; not blocking write) |
+| S1c | README / claim hygiene | **DONE** |
+| S1d | B3 CUDA vs PT one-pager | **DONE** → `docs/DICC_B3_CUDA_VS_PT_REPORT.md` |
+| S2c | Nsight V100 vs A100 | **NOT RUN** (optional) |
 
 ---
 
-*Pre-manuscript evidence gate: CLOSED. Stretch is for exceptional polish, not basic completeness.*
+## 6. Next phase (after this pack)
+
+| # | Action |
+|---|--------|
+| 1 | Manuscript multi-GPU section from extraction tables + B3 report + torch.compile absolutes |
+| 2 | PI venue class file / BibTeX when journal chosen |
+| 3 | Optional: S1b clean A100, S2c Nsight, S2a B3 optim only if PI prioritizes |
+
+---
+
+*Pre-manuscript evidence gate: CLOSED. Default stretch S1a–d **complete** (S1b deferred optional). Next = manuscript write.*

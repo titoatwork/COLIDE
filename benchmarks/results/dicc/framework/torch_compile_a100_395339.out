@@ -1,0 +1,44 @@
+host=gpu07.dicc.um.edu.my gpu=GPU 0: NVIDIA A100-SXM4-80GB (UUID: GPU-dbec3c5f-63bd-40fc-e1c3-3d51f3e315f4)
+eager trial 1/20: 965.91 us
+eager trial 2/20: 962.42 us
+eager trial 3/20: 960.16 us
+eager trial 4/20: 958.48 us
+eager trial 5/20: 957.22 us
+eager trial 6/20: 956.35 us
+eager trial 7/20: 955.54 us
+eager trial 8/20: 955.29 us
+eager trial 9/20: 957.41 us
+eager trial 10/20: 957.53 us
+eager trial 11/20: 956.93 us
+eager trial 12/20: 955.60 us
+eager trial 13/20: 954.05 us
+eager trial 14/20: 954.99 us
+eager trial 15/20: 955.09 us
+eager trial 16/20: 955.34 us
+eager trial 17/20: 953.63 us
+eager trial 18/20: 955.72 us
+eager trial 19/20: 955.06 us
+eager trial 20/20: 956.28 us
+compile trial 1/20: 764.86 us
+compile trial 2/20: 764.22 us
+compile trial 3/20: 762.45 us
+compile trial 4/20: 761.90 us
+compile trial 5/20: 761.41 us
+compile trial 6/20: 759.20 us
+compile trial 7/20: 760.87 us
+compile trial 8/20: 759.22 us
+compile trial 9/20: 759.74 us
+compile trial 10/20: 760.54 us
+compile trial 11/20: 759.67 us
+compile trial 12/20: 759.84 us
+compile trial 13/20: 760.47 us
+compile trial 14/20: 760.10 us
+compile trial 15/20: 759.77 us
+compile trial 16/20: 759.49 us
+compile trial 17/20: 758.57 us
+compile trial 18/20: 758.82 us
+compile trial 19/20: 761.21 us
+compile trial 20/20: 759.60 us
+WROTE benchmarks/results/dicc/framework/torch_compile_a100.json
+eager {'n': 20, 'mean': 956.9497196935117, 'std': 2.949047337341288, 'p50': 956.0014586895704, 'min': 953.6293800920248, 'max': 965.9123606979847, 'cv_pct': 0.3081716078338784}
+compile {'n': 20, 'mean': 760.5970837175846, 'std': 1.6854938592592321, 'p50': 759.9705131724477, 'min': 758.5699204355478, 'max': 764.8570463061333, 'cv_pct': 0.22160140964793243}

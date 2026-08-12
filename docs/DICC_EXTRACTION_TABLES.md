@@ -21,3 +21,12 @@
 | A100 | PT B3 | 383.7 | 389.0 | 390.9 | 1.86 |
 | A100 | PT full | 945.2 | 961.8 | 956.6 | 1.74 |
 | A100 | CUDA B1 | 12.1 | 12.0 | 12.4 | 3.26 |
+
+## 3. Stretch S1a — torch.compile full-model (absolute µs)
+
+| GPU | Job | Eager mean | compile mean | ratio compile/eager | JSON |
+|-----|-----|----------:|-------------:|--------------------:|------|
+| V100S | 395338 | 1033.0 | 818.0 | 0.79 | `framework/torch_compile_v100s.json` |
+| A100 | 395339 | 956.9 | 760.6 | 0.79 | `framework/torch_compile_a100.json` |
+
+Protocol differs from campaign PT full (inner=200 here). Use within-JSON pairs only.

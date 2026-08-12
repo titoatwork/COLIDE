@@ -81,8 +81,10 @@ Confidence: **HIGH / MED / LOW**. Labels: CURRENT / LEGACY / SUPERSEDED / INVALI
 | C-DICC-001 | V100S **~551** (550.664) | dicc_v100_summary.txt | HIGH as LEGACY single-shot | job 363046 |
 | C-DICC-002 | A100 **~592** (592.044) | dicc_a100_summary.txt | HIGH as LEGACY | job 363047 |
 | C-DICC-003 | vs PyTorch n/a | README footnote | HIGH discipline | was INVALID 3.39x/3.15x |
-| C-DICC-004 | Multi-day SUCCESS tree | path checked | **ABSENT** | PLANNED |
-| C-DICC-005 | Rostam B3 ~581 vs PT ~512 (V100); ~706 vs ~353 (A100) | DESIGN_PLAN §5.3 | LOW-MED doc | TOOLING-ONLY |
+| C-DICC-004 | Multi-session SUCCESS ×6 | `benchmarks/results/dicc/core/` | **PRESENT 2026-08-12** | S1/S2/Day2 × V100S+A100 |
+| C-DICC-005 | Rostam B3 ~581 vs PT ~512 (V100); ~706 vs ~353 (A100) | DESIGN_PLAN §5.3 | LOW-MED doc | TOOLING-ONLY / not campaign |
+| C-DICC-006 | B3 CUDA FP16 vs PT B3 | `DICC_EXTRACTION_TABLES.md` | **HIGH** | PT wins ~1.41× V100S / ~1.72× A100 |
+| C-DICC-007 | torch.compile V100S ~818 vs eager ~1033; A100 ~761 vs ~957 | `framework/torch_compile_*.json` | HIGH stretch | absolute full-model only; ~1.26× |
 
 ## G. LLM / streaming / energy
 

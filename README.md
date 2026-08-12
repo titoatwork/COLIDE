@@ -6,15 +6,15 @@
 
 ## Abstract
 
-COLIDE presents custom CUDA C++ inference kernels for a CNN-BiLSTM-based IoT intrusion detection system, achieving statistically significant speedups over all major deep learning inference frameworks: **3.60x–4.99x over TensorRT** (p<0.001), **2.25x–2.99x over torch.compile** (p<0.001), and **3.04x–3.78x over eager PyTorch** (p<0.001) — ranges combining 3 independent framework-side measurement sessions (20 trials each) with 5 independent Custom CUDA measurement sessions (see "Measurement Stability"). The system integrates an on-device, air-gapped LLM explainability module (TinyLlama 1.1B, 4-bit quantized) with only **16.60 us p99** async dispatch overhead (~2.5% of the detection pipeline). Knowledge distillation from a Random Forest teacher combined with focal loss closes the accuracy gap to **0.74%** on BoT-IoT (**0.9790** macro-F1) and **3.3%** on ToN-IoT (**0.9526** macro-F1). The system sustains **25,899 flows/sec** in streaming mode on consumer-grade edge hardware.
+COLIDE is a multi-objective IoT IDS systems project: a sealed-protocol CAD-CBA detection package (competitive but not pure-F1 SOTA vs RF/LGBM) plus **Option A** Custom CUDA kernels (per-block vs matching ops) and measured multi-GPU multi-session latency on UM DICC (V100S + A100). On a **laptop RTX 3050 (WSL2)**, Custom CUDA pipeline ranges beat full-model eager / torch.compile / TensorRT / ORT-GPU when reported as multi-session ranges (see below; incomplete CUDA scope caveats apply). On **DICC**, three sessions show stable means: matching **PyTorch Block 3 is faster than CUDA Block 3 FP16** (~363 vs ~513 µs V100S; ~385–391 vs ~667–671 µs A100), while CUDA remains much faster on Blocks 1/2/4. Full Custom CUDA vs full V3 speedup is **not** claimed. Async on-device LLM dispatch is **16.60 µs p99** (not full generation). See `docs/DICC_EXTRACTION_TABLES.md` and `docs/PRE_MANUSCRIPT_CLOSURE.md`.
 
 ## Key Contributions
 
-1. **Custom CUDA Beating All Frameworks**: Hand-written CUDA C++ kernels outperform TensorRT (3.60x–4.99x), torch.compile (2.25x–2.99x), eager PyTorch (3.04x–3.78x), and ORT GPU (5.72x–7.83x) — ranges combining 3 independent framework-side sessions (20 trials each, all statistically significant at p<0.001) with 5 independent Custom CUDA measurement sessions (see "Measurement Stability"); ORT CPU is a separate, unstable case — not significantly different from Custom CUDA in one session, but significantly faster in two others
-2. **FP16 Half2 BiLSTM Beating cuDNN**: Native half-precision FMA instructions with documented **7.55x–9.50x optimization progression** (4,544–5,050 to 532–602 us) **beating cuDNN by 1.30x–1.47x** (both the cuDNN baseline and the FP16 kernel are real n=50/n=100-trial means; the range reflects genuine session-to-session measurement drift on this dev box, not an unresolved ambiguity — see "Block 3 Optimization Progression" below)
-3. **Knowledge Distillation Closing the RF Gap**: RF-to-CNN-BiLSTM distillation with temperature scaling (T=10.0) and focal loss narrows accuracy gap from 5.12% to **0.74%** on BoT-IoT and 11.4% to **3.3%** on ToN-IoT
-4. **On-Device Air-Gapped LLM Explainability**: Async ring-buffer dispatch to local quantized TinyLlama 1.1B with **16.60 us p99 overhead** and zero cloud dependency — contrasting with Jamshidi et al. (2026) cloud API approach
-5. **Cross-Hardware Profiling**: 3 GPU architectures (RTX 3050, V100S, A100) revealing **V100S outperforms A100** for sequential LSTM — clock speed dominates SM count
+1. **Multi-objective CAD-CBA package** under sealed protocol (HPO, focal + ensemble KD, ablations, dual bars vs classical baselines) — accuracy–efficiency story, not F1 supremacy.
+2. **Option A Custom CUDA** for CNN-BiLSTM blocks: large wins on B1/B2/B4 vs matching PT; **honest B3 result on DICC** (PT B3 faster than CUDA FP16 B3 on V100S/A100).
+3. **Multi-session multi-GPU measurement** (3 sessions × V100S + A100 SUCCESS trees) with formal compares — not RTX-only portability claims.
+4. **Laptop multi-compiler ranges** (eager / torch.compile / TensorRT / ORT-GPU vs Custom pipeline) with measurement-stability ranges; **not** re-proven as portable to DICC without server-side remeasure.
+5. **On-device LLM dispatch** micro-benchmark (**16.60 µs p99**); full free-form LLM explainability is **not** a title-level claim.
 
 ## Results Summary
 
@@ -53,29 +53,28 @@ significantly *faster* than Custom CUDA in both fresh 2026-07-02 sessions (p<0.0
 
 torch.compile with CUDA graph capture **crashes** on BiLSTM (dynamic recurrent control flow). TensorRT is slower than eager PyTorch for this sub-1M parameter model.
 
-### Cross-Hardware CUDA Pipeline
+### Cross-Hardware (UM DICC multi-session campaign, Option A)
 
-| GPU | Architecture | Pipeline (chained FP16) | vs PyTorch GPU |
-|---|---|---|---|
-| RTX 3050 6GB | Ampere (SM 8.6) | 594–675 us | 3.04x–3.78x* |
-| **V100S 32GB** | **Volta (SM 7.0)** | **551 us** | n/a** |
-| A100 80GB | Ampere (SM 8.0) | 592 us | n/a** |
+**Source:** `docs/DICC_EXTRACTION_TABLES.md` · three sessions (S1, S2, Day2) · SUCCESS on laptop.
 
-V100S is fastest because BiLSTM sequential recurrence is clock-speed-bound, not SM-count-bound.
+| GPU | CUDA B3 FP16 mean | PT B3 mean | PT full V3 mean | Note |
+|-----|------------------:|-----------:|----------------:|------|
+| **V100S** | ~**513 µs** | ~**363 µs** | ~**964–973 µs** | PT B3 **faster** than CUDA B3 FP16 |
+| **A100** | ~**667–671 µs** | ~**384–391 µs** | ~**945–962 µs** | same direction |
+| RTX 3050 (laptop) | framework table above | local ranges | local | multi-compiler matrix is **laptop** |
 
-\* Same comparison as "3.04x–3.78x over eager PyTorch" above (20-trial, statistically validated) — the chained
-custom-CUDA pipeline and the eager-PyTorch full-model forward pass are the same computation on the same
-GPU, so this is not an independent number.
-\*\* No same-hardware PyTorch GPU baseline was captured during the *legacy* DICC V100S/A100 runs (only the
-custom CUDA kernels were benchmarked there — see `dicc_v100_summary.txt` / `dicc_a100_summary.txt`).
-Reusing the RTX 3050 PyTorch baseline to compute a ratio for different hardware would not be a valid
-same-machine comparison, so no ratio is reported here yet. The hardened Phase 3 campaign
-(`dicc_scripts/submit_session.sh` + `scripts/benchmark_pytorch_gpu_stats.py`, branch `final-polish`)
-collects same-hardware PyTorch baselines under isolated
-`benchmarks/results/dicc/<campaign>/<gpu>/<date>_job<id>/` dirs; replace this footnote only after
-accepted Day-1/Day-2 compare artifacts exist. **Do not** publish a full-pipeline CUDA/PyTorch speedup
-from those runs until architecture parity is fixed (V3 attention/LayerNorm/GAP are not in the CUDA
-path; `fused_pipeline.cu` skips Block 3) — per-block ratios (esp. Block 3) are the valid comparisons.
+Legacy June single-shot pipeline (~551 / ~592 µs CUDA-only) remains **legacy** (no same-GPU PT that day).  
+**Do not** claim full Custom CUDA pipeline vs full V3 PT. Prefer per-block tables (esp. B3 honesty + B1/B2/B4 CUDA wins).  
+Details: `docs/DICC_EXTRACTION_TABLES.md`, `docs/DICC_B3_CUDA_VS_PT_REPORT.md`.
+
+### DICC torch.compile stretch (full-model absolute, not Option A)
+
+| GPU | Eager full V3 mean | torch.compile mean | Job / source |
+|-----|-------------------:|-------------------:|--------------|
+| **V100S** | ~**1033 µs** | ~**818 µs** | job 395338 · `framework/torch_compile_v100s.json` |
+| **A100** | ~**957 µs** | ~**761 µs** | job 395339 · `framework/torch_compile_a100.json` |
+
+Protocol: n=20 trial medians, inner=200, warmup=50, `reduce-overhead`. Compile ~**1.26×** faster than eager on both GPUs. Absolute framework latencies only — **not** Custom CUDA parity. TRT/ORT not run on DICC. Details: `docs/DICC_TORCH_COMPILE_STRETCH.md`.
 
 ### Per-Block Performance (RTX 3050)
 
@@ -288,10 +287,10 @@ Four fused kernels replacing PyTorch operators:
 
 ## Verified Research Gaps
 
-1. **Custom CUDA for CNN-BiLSTM IDS** — closest prior work (Ibrahim et al., *Computer Networks*, 2026) applies custom CUDA kernels to a GNN-based IDS vs. a CPU baseline only (1.22x-1.48x); we target a recurrent CNN-BiLSTM benchmarked against production ML frameworks (PyTorch eager/compile, TensorRT, ONNX Runtime), achieving 3.60x–4.99x over TensorRT
+1. **Custom CUDA for CNN-BiLSTM IDS** — closest prior work (Ibrahim et al., *Computer Networks*, 2026) applies custom CUDA kernels to a GNN-based IDS vs. a CPU baseline only (1.22x-1.48x); we target a recurrent CNN-BiLSTM benchmarked against production ML frameworks. On **laptop RTX 3050**, Custom CUDA pipeline ranges show **3.60x–4.99x** over TensorRT (multi-session ranges; incomplete CUDA scope caveats apply). On **DICC**, Option A shows CUDA wins on B1/B2/B4 and **PT wins B3**.
 2. **On-device LLM for IDS** — Jamshidi et al. (2026) used cloud APIs; we provide fully local with 16.60 us p99 dispatch
-3. **TensorRT vs custom CUDA for sub-1M models** — no prior comparison; TensorRT is 3.60x–4.99x slower
-4. **torch.compile crash on BiLSTM** — documented failure with CUDA graphs on recurrent control flow
+3. **TensorRT vs custom CUDA for sub-1M models** — no prior comparison on laptop; TensorRT is 3.60x–4.99x slower than Custom pipeline **on RTX 3050** (not re-proven on DICC)
+4. **torch.compile on recurrent models** — laptop CUDA-graph path can crash on BiLSTM; DICC stretch full-model `reduce-overhead` ran on V100S (~818 vs ~1033 µs) and A100 (~761 vs ~957 µs)
 
 ## Limitations
 
@@ -299,7 +298,7 @@ Four fused kernels replacing PyTorch operators:
 - **SMOTE dependency**: 52 Theft samples require synthetic augmentation
 - **Pseudo-sequence**: MLP ablation shows sequential bias is not essential; architecture retained for compiler stress-testing
 - **Energy**: cuML RF (0.048 mJ/flow) is more efficient than CNN-BiLSTM (1.089 mJ/flow) on same A100 hardware
-- **Measurement environment**: WSL2/RTX 3050 shows session-to-session latency drift; framework ratios are reported as ranges (see Measurement Stability). V100S/A100 still lack multi-day same-hardware PyTorch baselines (DICC Phase 3 pending)
+- **Measurement environment**: WSL2/RTX 3050 session drift → framework ratios as ranges. DICC multi-session SUCCESS (V100S+A100) with same-GPU PT is available under `benchmarks/results/dicc/`; Block 3 CUDA does **not** beat matching PT on servers (see `docs/DICC_B3_CUDA_VS_PT_REPORT.md`)
 - **Numerical fidelity**: export path is bit-identical on n=10 reference samples; CUDA block self-checks PASS at disclosed tolerances (FP16 Block 3: 5e-2) — see `docs/paper_text_blocks.md` §15–§16 and `scripts/numerical_fidelity.py`
 
 ## Citation

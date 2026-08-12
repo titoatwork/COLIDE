@@ -1,8 +1,9 @@
 # Plain-English numbers card (for Prof updates — no repo jargon)
 
 **Purpose:** future short emails / talk tracks. Prof has **no codebase access**.  
-**Authority:** sealed_test / wp6b / claims on laptop · never invent DICC multi-day cells  
-**Champion weights fingerprint:** `80a90f7cc210276300eaa90173a5a385` (frozen)
+**Authority:** sealed_test / wp6b / claims / DICC SUCCESS JSON on laptop · never invent cells  
+**Champion weights fingerprint:** `80a90f7cc210276300eaa90173a5a385` (frozen)  
+**Updated:** 2026-08-12
 
 ---
 
@@ -20,13 +21,14 @@
 - CNN–BiLSTM with attention, distilled from an **ensemble of tree models**, focal loss, Optuna-selected train settings, standard shuffle training, argmax decisions
 - Test used only after final freeze
 
-## Local systems (laptop GPU, 5 measurement sessions)
+## Local systems (laptop GPU, multi-session)
 
 - Energy per flow: **0.920–0.943** mJ
 - Full model PyTorch latency @ batch 256: **24.15–25.68** µs per sample
 - Custom CUDA (operation-matched blocks only): derived pipeline **565–570** µs — **not** claimed as full-model CUDA vs full model PyTorch
 - Peak GPU memory: **322.2** MiB
 - Multi-objective efficiency path example: composite score **0.9056** at **4.33** µs
+- Framework comparison vs Custom pipeline: multi-session **ranges** (eager / compile / TensorRT / ORT-GPU) — laptop only
 
 ## Explainability
 
@@ -38,9 +40,19 @@
 
 - Same-style recipe on 13 features: neural test ~**0.811** vs same-split RF ~**0.939** (honest gap)
 
-## Still open
+## UM DICC multi-session (measured — three sessions, V100S + A100)
 
-- UM cluster multi-day (V100S + A100, two days, same-GPU CUDA block vs matching PyTorch + full model PyTorch absolute latency)
-- No portability claim until those results exist on disk
+- **Block 3 (same ops):** matching PyTorch is **faster** than our FP16 Custom CUDA on both GPUs  
+  - V100S: ~**363 µs** PT vs ~**513 µs** CUDA  
+  - A100: ~**385–391 µs** PT vs ~**667–671 µs** CUDA  
+- Custom CUDA remains much faster on Blocks **1, 2, and 4**  
+- Full Custom CUDA pipeline vs full PyTorch model: **not claimed** (architecture parity incomplete)  
+- Full-model PyTorch absolute: V100S ~**964–973 µs**; A100 ~**945–962 µs**  
+- Stretch torch.compile: V100S ~**818 µs** vs eager ~**1033 µs**; A100 ~**761 µs** vs eager ~**957 µs** (~1.26×) 
+
+## Still open (writing / optional)
+
+- Manuscript multi-GPU section write-up  
+- Optional: clean A100 provenance re-run; Nsight “why B3”; B3 kernel optim only if PI prioritizes  
 
 *End card.*

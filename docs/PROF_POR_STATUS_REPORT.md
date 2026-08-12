@@ -1,5 +1,9 @@
 # COLIDE — Status Report for Prof. Dr. Por Lip Yee
 
+> **SUPERSEDED for current status (2026-08-12).**  
+> Living authority: `docs/PRE_MANUSCRIPT_CLOSURE.md`, `docs/DICC_B3_CUDA_VS_PT_REPORT.md`, `HANDOFF.md`.  
+> DICC multi-session campaign is **done** (6 SUCCESS); B3 PT wins on servers. Historical “blocker / SUCCESS absent” text below is frozen.
+
 **Date:** 2026-07-18  
 **Student:** Ibteshamul Haque (`titoatwork`)  
 **Project:** COLIDE — CUDA-Optimized CNN-BiLSTM with LLM-Based Explainability for IoT Intrusion Detection  

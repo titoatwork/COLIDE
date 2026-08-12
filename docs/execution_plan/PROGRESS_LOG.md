@@ -1,7 +1,27 @@
 # Progress log (results as they land)
 
 **Policy:** document everything; label pilot vs full; test sealed unless noted.  
-**Handoff snapshot:** 2026-07-29 (**Local wrap DONE** + **D0 laptop preflight DONE**; DICC SUCCESS still ABSENT; next = user OnDemand VNC → Day1)
+**Handoff snapshot:** 2026-08-12 — **PRE-MANUSCRIPT CLOSED** + default stretch largely done (S1c/S1d/S1a-V100); next = manuscript multi-GPU write (+ finish A100 torch.compile if still pending).
+
+---
+
+## 2026-08-12 — Pre-manuscript closed + stretch package
+
+**Mode:** DICC evidence + stretch · Option A · no invent · champion frozen  
+**Champion:** `80a90f7cc210276300eaa90173a5a385`
+
+| Item | Status |
+|------|--------|
+| 6 SUCCESS S1/S2/Day2 × V100S+A100 on laptop | **DONE** (git force-added) |
+| Extraction + formal compares | **DONE** |
+| Fork: PT wins B3 on servers | **DONE** (`DICC_B3_CUDA_VS_PT_REPORT.md`) |
+| S1c README hygiene | **DONE** |
+| S1a torch.compile V100S job 395338 | **DONE** (~818 vs ~1033 µs) |
+| S1a torch.compile A100 job 395339 | **DONE** (~761 vs ~957 µs) |
+| S1b clean A100 | **DEFERRED** optional |
+| Manuscript multi-GPU prose | **NEXT** |
+
+**Authority:** `docs/PRE_MANUSCRIPT_CLOSURE.md`, `docs/DICC_TORCH_COMPILE_STRETCH.md`, `HANDOFF.md`
 
 ---
 

@@ -1,5 +1,9 @@
 # COLIDE — Prof. Por update (≤3 days) — command plan
 
+> **SUPERSEDED for current status (2026-08-12).**  
+> Campaign + stretch executed. Living authority: `HANDOFF.md`, `docs/PRE_MANUSCRIPT_CLOSURE.md`, `docs/DICC_EXTRACTION_TABLES.md`.  
+> This file remains as a historical run plan only.
+
 **Deadline:** give Prof. Dr. Por Lip Yee a **quick status update with numbers within ≤3 days**  
 **Priority freeze:** **DICC multi-day numbers first**; manuscript spine / deep claim rewrites / stretch WPs **after** the update.  
 **Strategy still locked:** Option A (valid **per-block** CUDA vs PyTorch only; **no** full-pipeline CUDA vs full V3 speedup).  

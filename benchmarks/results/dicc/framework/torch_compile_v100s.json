@@ -1,0 +1,34 @@
+{
+  "tag": "v100s",
+  "hardware": "Tesla V100S-PCIE-32GB",
+  "checkpoint": "model/best_model_botiot_twostage.pth",
+  "protocol": {
+    "n_trials": 20,
+    "inner": 200,
+    "warmup": 50,
+    "batch": 1
+  },
+  "eager_full_model_us": {
+    "n": 20,
+    "mean": 1032.9764802008867,
+    "std": 14.242387983337068,
+    "p50": 1040.2080370113254,
+    "min": 1004.3659713119268,
+    "max": 1045.245910063386,
+    "cv_pct": 1.378771758730392
+  },
+  "torch_compile_full_model_us": {
+    "n": 20,
+    "mean": 817.9662050679326,
+    "std": 9.747136303663861,
+    "p50": 813.4783711284399,
+    "min": 807.400094345212,
+    "max": 833.4557060152292,
+    "cv_pct": 1.1916306863624464
+  },
+  "torch_compile_error": null,
+  "notes": [
+    "Full-model absolute latencies only; not Option A block parity.",
+    "Do not ratio against incomplete Custom CUDA pipeline without caveat."
+  ]
+}

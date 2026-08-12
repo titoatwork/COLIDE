@@ -1,5 +1,9 @@
 # COLIDE — Full Interim Status Report
 
+> **SUPERSEDED for current status (2026-08-12).**  
+> Living authority: `docs/PRE_MANUSCRIPT_CLOSURE.md`, `docs/DICC_EXTRACTION_TABLES.md`, `HANDOFF.md`.  
+> DICC multi-session SUCCESS **exists** on laptop; this draft’s “ABSENT / blocker” sections are **historical**.
+
 **Audience:** Prof. Dr. Por Lip Yee (PI); internal status; feedstock for a short email or slides  
 **Draft date:** 2026-07-18 (full depth expansion)  
 **Repo / audit HEAD:** evidence pack at `803c157…`; report commits on `master` thereafter  
