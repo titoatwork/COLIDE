@@ -4,7 +4,7 @@
 **Status:** **DATA REMEDIATION CLOSED; CUDA EVIDENCE AND PUBLICATION SYNCHRONIZATION PENDING**  
 **Scope of this pack:** Evidence freeze for detection / multi-objective / Option A measurement trees **before** full manuscript prose/PDF/venue formatting  
 **Authority:** Option A · JSON only · champion frozen  
-**Not submission-ready:** overall project is **not** closed for submission while CUDA production-weight parity, sanitizer/determinism gates, corrected server B3 rebench (or drop), and publication synchronization remain open. See `COLIDE_Remediation_Update_Review.md` and `docs/ISSUE_REGISTER.md`.
+**Not fully submission-ready:** local CUDA production-weight parity + full sanitizer suite are **closed with artifacts** (2026-08-14). Still open for submission quality: **DICC multi-session post_fix B3 latency rebench (or explicit drop of server B3 comparative claims)**, full **manuscript/figure synchronization**, and residual historical claim surfaces outside the active README/claim-map set. See `COLIDE_Remediation_Update_Review.md` and `docs/ISSUE_REGISTER.md`.
 
 | Artifact | Path |
 |----------|------|

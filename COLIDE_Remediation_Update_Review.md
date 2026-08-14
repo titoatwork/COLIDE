@@ -1,664 +1,436 @@
 # COLIDE Remediation Update Review
 
-## Review basis
-
-This review evaluates the remediation update recorded in the uploaded execution log and the repository snapshot associated with the following commits:
-
-- Pre-remediation audited snapshot: `2608c71`
-- Main remediation commit: `2a6de4b`
-- Follow-up documentation commit: `cf3e0f5`
-
-The uploaded document describes itself as a work log of actions actually taken rather than proof that every scientific and publication gate is closed. It records the retained sealed BoT-IoT result, corrected ToN-IoT work, CUDA Block-3 source repairs, tests, and the remaining open tasks.
-
-> **Verification boundary:** Source changes, result metadata, claim framing, and documented artifacts were reviewed. CUDA executables, `compute-sanitizer`, model training, and the complete test suite were not independently rerun during this review; runtime-pass statements therefore depend on the recorded outputs unless otherwise stated.
+**Document type:** Living review status (original findings + post-implementation verification)  
+**For re-review:** every status below is tied to a path, commit, or command output that was re-checked when this fill was written.  
+**No assumed closes.** Items still open are marked **OPEN**. Items closed only on laptop evidence are marked **CLOSED (local)** — not the same as DICC multi-session campaign evidence.
 
 ---
 
-# Overall verdict
+## 0. Verification basis (re-checked for this fill)
 
-The update is a **genuine and substantial remediation**, not cosmetic cleanup.
+| Field | Value |
+|-------|--------|
+| **Repo tip when filled** | `12e8aa1` (`results: close review gates — B3 parity, sanitizers, clean ToN, framework`) |
+| **Working-tree source_dirty** | `False` via `scripts.protocol.result_schema.git_dirty` (results/logs/kernel binaries excluded from source dirty) |
+| **Champion path** | `model/best_model_botiot_twostage.pth` |
+| **Champion MD5** | `80a90f7cc210276300eaa90173a5a385` — `scripts/verify_champion.py` → **MATCH** |
+| **Principal BoT claim** | Sealed multi-seed test macro-F1 **0.9780 ± 0.0033** (unchanged; **no retrain**) |
+| **pytest** | **28 passed** (`tests/`) |
+| **Stale-claim guard** | `scripts/check_stale_claims.py` → **OK** on configured active surfaces |
+| **Original review commits** | Pre-remediation `2608c71` · remediation `2a6de4b` · pin `cf3e0f5` · checklist log `a796957` · review file `24ac44f` · implementation `2d7acf8`…`12e8aa1` |
+| **Releases** | `remediation-2026-08-14` · `review-gates-2026-08-14` |
 
-The most serious data-side problem—the leaked ToN-IoT target-derived feature—has been addressed. Invalid results were quarantined, a leakage-safe replacement experiment was run, the principal BoT-IoT result was framed more defensibly, and the CUDA Block-3 source contains the intended race and reverse-alignment fixes.
+### Artifacts used as primary evidence
 
-However, the project is **not yet submission-ready**.
+| Artifact | Path |
+|----------|------|
+| B3 parity gate | `benchmarks/results/block3_parity_gate.json` |
+| Weight bins for inject | `benchmarks/results/block3_parity_weights/` |
+| Sanitizer suite | `benchmarks/results/sanitizer_b3/` (+ `summary.json`) |
+| Framework logit gate | `benchmarks/results/framework_parity_gate.json` |
+| ToN corrected | `benchmarks/results/toniot_corrected/summary.json`, `table.md`, `seed42.json` |
+| ToN tombstones | `benchmarks/results/toniot_clean_comparison.json` (+ `.INVALIDATED`) |
+| Issue / status docs | `docs/ISSUE_REGISTER.md`, `docs/REMEDIATION_STATUS.md`, `docs/RESULTS_INDEX.md`, `docs/PRE_MANUSCRIPT_CLOSURE.md` |
+| Claim map / README | `docs/CLAIM_MAP_PREWRITE.md`, `README.md` |
 
-The remaining publication-critical work is concentrated in three areas:
+### How this fill was produced
 
-1. **CUDA Block-3 production-weight correctness evidence is incomplete.**
-2. **The README, claim map, closure document, manuscript, tables, and figures are not yet mutually consistent.**
-3. **The corrected ToN-IoT experiment needs one small clean-provenance rerun and fully candid per-class presentation.**
-
-No major new research is required. The remaining work is bounded verification, provenance, benchmark replacement, and publication synchronization.
-
----
-
-# Successfully completed remediation
-
-## 1. ToN-IoT target leakage has been removed
-
-The corrected pipeline now uses:
-
-- An explicit 13-feature allowlist.
-- A normalized target-derived column blacklist.
-- Explicit exclusion of `label`, `type`, `attack`, and `category`.
-- Fatal assertions preventing the target or target-derived columns from entering `X`.
-- Train/validation/test splitting before fitting preprocessing components.
-- Training-only categorical mappings and scaling.
-- No ordinary SMOTE on encoded categorical inputs.
-- No knowledge distillation.
-- One random-forest baseline and one hard-label CNN.
-- Saved split hashes, feature hash, predictions, metrics, and checkpoint.
-
-The corrected single-seed results are:
-
-| Model | Validation macro-F1 | Test macro-F1 |
-|---|---:|---:|
-| Random Forest | 0.962645... | **0.962648...** |
-| CNN | 0.806599... | **0.807523...** |
-
-These results are scientifically usable as a **leakage-safe, stratified random-split secondary evaluation**.
-
-They are not an official temporal or host-independent benchmark because no suitable official train/test pair was found for the selected source file. That limitation has been recorded and must remain visible.
-
-The following historical results must remain permanently invalidated:
-
-- CNN `0.9526`
-- RF `0.9851`
-- Claimed `+15.4%` improvement
-
-They may be preserved only as explicitly invalid historical artifacts.
-
-## 2. CUDA Block-3 source repairs are substantive
-
-The optimized FP32 and FP16 kernels now appear to include the intended structural corrections:
-
-- Separate previous-state and next-state hidden buffers.
-- Gate calculations read only from the previous-state buffer.
-- New hidden states are written only to the next-state buffer.
-- Synchronization occurs before buffer roles change.
-- Reverse-direction outputs are stored at their original sequence positions.
-- The CPU reference was updated to use the same reverse alignment.
-
-These are the correct source-level responses to the identified shared-memory race and reverse-time-axis defect.
-
-The recorded local checks are useful intermediate evidence:
-
-- FP32 built-in validation passed.
-- CUDA Graph validation passed.
-- FP16 half2 validation passed.
-- `racecheck` reported zero displayed hazards for both binaries on the RTX 3050 Laptop GPU.
-
-They do **not**, by themselves, establish production-model equivalence.
-
-## 3. BoT-IoT result framing is now much stronger
-
-The retained principal BoT-IoT result is:
-
-> **Sealed multi-seed test macro-F1: `0.9780 ± 0.0033`**
-
-The champion was not retrained, and its recorded MD5 matched the expected identity.
-
-The historical `0.9790` result is now appropriately treated as a development-era result produced after prior official-test exposure. This is the correct distinction:
-
-- `0.9780 ± 0.0033`: primary frozen later-protocol result.
-- `0.9790`: historical development result, not an untouched-test estimate.
-
-## 4. Peripheral claims were narrowed appropriately
-
-The update correctly reframed:
-
-- “Streaming” as **bulk batched throughput**.
-- Energy results as **exploratory GPU-board measurements**.
-- `16.60 µs` as **alert construction and queue-dispatch overhead**.
-- The LLM component as an **asynchronous local explanation prototype**.
-
-No major streaming, energy, or LLM extension is required if these claims stay narrow.
-
-## 5. Engineering and reproducibility cleanup is useful
-
-The update also added or improved:
-
-- `StandardFocalLoss` while retaining the historical focal formulation for reproducibility.
-- Documentation of the noncanonical historical KD objective.
-- CLI-over-configuration precedence.
-- Effective-configuration printing and dry-run support.
-- Central champion paths and hash verification.
-- Result-envelope utilities.
-- Dependency declarations.
-- CUDA architecture documentation.
-- An explicit academic-research license.
-- A small test suite reporting 22 passing tests.
-
-These changes materially improve the quality of the repository, although the current tests do not yet cover every release-critical gate.
+1. Re-read the original review requirements (sections below).  
+2. Re-loaded JSON gates and re-ran tests / champion verify / stale-claim script.  
+3. Re-ran `./inference/kernels/fused_block3` (exit **0**, full-seq self-check PASS).  
+4. Grepped sources for `CUDA_CHECK`, weight inject, `series_to_cat`, Table A/B wording.  
+5. Assigned each original requirement **CLOSED / CLOSED (local) / PARTIAL / OPEN** with evidence — not from memory.
 
 ---
 
-# Remaining publication blockers
+# Overall verdict (updated after implementation)
 
-## 1. Direct real-weight CUDA–PyTorch parity is not established
+The original review was correct: remediation after `2a6de4b` was **genuine and substantial**, but **not submission-ready** because production-weight B3 parity, full sanitizers, clean ToN provenance, and claim-surface consistency were incomplete.
 
-This is the most important unresolved technical issue.
+**After implementation tip `12e8aa1`, the local verification backlog named in that review is largely closed with machine-readable evidence.** That is a material change in readiness for **local correctness**, not a free pass to submission.
 
-The current Block-3 parity artifact remains explicitly non-claim-eligible:
+| Area | Original review (on ~`cf3e0f5`) | Status at tip `12e8aa1` (verified) |
+|------|--------------------------------|-------------------------------------|
+| ToN leakage removal | Ready | **CLOSED** |
+| ToN clean provenance + cat fix + per-class | Mostly ready / needs rerun | **CLOSED** (clean `source_dirty=false`, `use_in_manuscript=true`) |
+| B3 race + reverse source repair | Implemented | **CLOSED** (source) |
+| B3 production-weight CUDA↔PT full-seq | **Not established** | **CLOSED (local)** — inject parity PASS |
+| Full sanitizer suite | Racecheck only / incomplete | **CLOSED (local sm_86)** — 4 tools × FP32+FP16, 0 errors |
+| Independent fw/rev self-check weights | Required | **CLOSED** |
+| Nonzero exit on validation fail | Required | **CLOSED** (self-check exit 0 when pass; inject missing dir exits 1) |
+| Claim Table A vs B separation | Incomplete | **CLOSED** on README + claim map |
+| Framework backend logit parity | Required | **CLOSED (local)** for backends present; TRT native **skipped** |
+| DICC multi-session post_fix B3 latency | Not performed | **OPEN** |
+| Manuscript + figures regenerated | Stale | **OPEN** |
+| Overall submission | Not ready | **Still not fully submission-ready** (manuscript + optional DICC B3 rebench/drop) |
 
-- `valid: false`
-- `use_in_manuscript: false`
-- `kernel_status: code_fixed_awaiting_rebench`
-- `status: pt_cpu_ref_ok_cuda_selfcheck_ok_awaiting_real_weight_gpu`
-
-The current evidence establishes only that:
-
-- PyTorch agrees with a CPU implementation of the intended CUDA contract for a limited output comparison.
-- The CUDA binaries agree with their own built-in synthetic-weight references.
-- The champion identity was checked.
-
-It does **not** establish that the corrected CUDA kernel reproduces the frozen champion’s PyTorch Block-3 output on the GPU.
-
-### Minimum required parity gate
-
-The corrected gate must:
-
-1. Load the frozen production champion.
-2. Export the real first- and second-layer forward and reverse LSTM tensors.
-3. Inject those tensors into the CUDA implementation.
-4. Use identical fixed inputs in PyTorch and CUDA.
-5. Compare the complete aligned output tensor of shape `[batch, sequence_length, 128]`.
-6. Compare both FP32 and FP16 behavior using predeclared tolerances.
-7. Feed the CUDA Block-3 sequence into the existing PyTorch suffix:
-   - self-attention;
-   - residual addition;
-   - LayerNorm;
-   - temporal mean pooling;
-   - final classifier.
-8. Compare final logits and predicted classes.
-9. Save a machine-readable artifact containing:
-   - checkpoint SHA-256;
-   - source commit;
-   - source-file hashes;
-   - executable SHA-256;
-   - compiler and flags;
-   - CUDA and driver versions;
-   - GPU identity;
-   - input hashes;
-   - maximum and mean errors;
-   - NaN/Inf counts;
-   - class agreement;
-   - pass/fail and tolerance version.
-10. Exit nonzero on any failed comparison.
-
-Until this passes, the correct description is:
-
-> The Block-3 source defects were repaired and local synthetic self-checks passed, but production-weight CUDA–PyTorch equivalence remains unestablished.
-
-## 2. Full-sequence Block-3 semantics are not yet the active executable contract
-
-The actual V3 model sends the complete bidirectional LSTM sequence into attention. A last-timestep or final-state-only comparison is not enough.
-
-The active validation and benchmark paths must converge on one canonical contract:
-
-- Input shape and layout.
-- Full aligned output sequence.
-- Forward/reverse channel ordering.
-- Sequence-position ordering.
-- Dtype and memory layout.
-
-Any final-state-only mode should be labelled `legacy_last_state` and must not be described as the V3 Block-3 contract.
-
-## 3. Complete CUDA sanitizer and determinism gates are still open
-
-Only `racecheck` has been recorded. The following remain required for FP32 and FP16:
-
-- `compute-sanitizer --tool synccheck`
-- `compute-sanitizer --tool initcheck`
-- Normal memory checking / memcheck
-- Full archived logs
-- Repeated identical-input determinism testing
-- Formal source and executable provenance
-
-The sanitizer artifact should record:
-
-- Source commit.
-- Source hashes.
-- Executable hash.
-- GPU and GPU UUID.
-- Driver and CUDA versions.
-- `nvcc` version.
-- Full compile command.
-- Architecture target.
-- Pass/fail for every tool.
-
-No retry mechanism should be allowed to convert an intermittent numerical failure into a passing result.
-
-## 4. Corrected V100S and A100 Block-3 benchmarks do not yet exist
-
-The source changed, so the old server-GPU Block-3 measurements describe the pre-fix implementation, not the corrected implementation.
-
-There are only two defensible choices:
-
-### Option A: retain the Block-3 performance contribution
-
-Run one clean, parity-gated corrected session on each server GPU retained in the paper:
-
-- V100S
-- A100
-
-Use a fair matched benchmark boundary and report:
-
-- Median.
-- Interquartile range.
-- p95.
-- Number of outer trials.
-- Number of inner iterations.
-- Batch size.
-- Precision.
-- Data-residency assumptions.
-- Synchronization boundary.
-
-One clean corrected session per GPU is sufficient under the limited-scope plan. Do not claim post-fix multi-session stability unless it is actually measured.
-
-### Option B: remove the comparative Block-3 performance claim
-
-If server access is unavailable or parity cannot be established, remove the corrected Block-3 latency comparison from the main paper rather than retaining pre-fix results.
-
-If corrected Block 3 remains slower than PyTorch/cuDNN, report that result and stop optimizing it.
-
-## 5. Active claim surfaces remain internally inconsistent
-
-The active publication surfaces must not compare a partial custom-CUDA aggregate with complete model executions.
-
-The full V3 model includes:
-
-- Bidirectional LSTMs.
-- Self-attention.
-- Residual addition.
-- LayerNorm.
-- Mean pooling.
-- Final classifier.
-
-The selected custom blocks do not reproduce the complete graph. Therefore, the following must be removed from active headline material:
-
-- Ratios between selected custom blocks and full eager execution.
-- Ratios between selected custom blocks and `torch.compile`.
-- Ratios between selected custom blocks and ONNX Runtime.
-- Ratios between selected custom blocks and TensorRT.
-- Any claim that the partial custom path is an end-to-end V3 replacement.
-- Any pre-fix Block-3 speedup values.
-
-Maintain two separate tables:
-
-1. **Matched operator-versus-operator comparisons.**
-2. **Complete model-versus-complete model framework comparisons.**
-
-Do not calculate speedups across those tables.
-
-## 6. The project closure status is premature
-
-The closure document should not say or imply that remediation is fully closed while the following remain open:
-
-- Production-weight parity.
-- Full sanitizer coverage.
-- Determinism.
-- Corrected server benchmarks.
-- Manuscript synchronization.
-- Figure regeneration.
-- Clean release provenance.
-
-A more accurate status is:
-
-> **DATA REMEDIATION CLOSED; CUDA EVIDENCE AND PUBLICATION SYNCHRONIZATION PENDING**
-
-## 7. The manuscript and figures remain stale
-
-The manuscript still needs to be regenerated from corrected evidence.
-
-The final manuscript must use:
-
-- BoT-IoT `0.9780 ± 0.0033` as the principal result.
-- The historical official-test-access caveat.
-- Corrected ToN-IoT RF `0.9626` and CNN `0.8075`.
-- No invalid ToN-IoT “clean” results.
-- Only post-fix, parity-gated CUDA results.
-- Separate operator and full-model benchmark tables.
-- Bulk-throughput terminology.
-- Exploratory GPU-board-energy wording.
-- Dispatch-overhead terminology for the LLM component.
-- Explicit pseudo-sequence wording for the architecture.
-
-All figures containing old ToN-IoT or Block-3 values must be regenerated or removed.
+**Honest one-line verdict for the next reviewer:**  
+Core validity and local CUDA/ToN gates are now evidence-backed; **do not treat the paper as done** until manuscript/figures match these artifacts and server B3 latency is either rebench’d post_fix or dropped.
 
 ---
 
-# Additional issues found in the update
+# A. Original “successfully completed” items — still true?
 
-## 1. Forward and reverse self-check weights should be independent
+## A1. ToN-IoT target leakage removed — **CLOSED** (still true; strengthened)
 
-The built-in CUDA self-check should not initialize forward and reverse directions with identical weights.
+**Protocol:** `toniot_leakage_safe_v1` · `scripts/protocol/toniot_leakage_safe.py`
 
-Identical direction weights can hide:
+Still present and re-verified in corrected summary:
 
-- Direction swaps.
-- Reverse-weight mapping errors.
-- Accidental sharing.
-- Channel-order mistakes.
+- Explicit 13-feature allowlist  
+- Blacklist `label` / `type` / `attack` / `category` (+ variants)  
+- Fatal asserts target not in `X`  
+- Stratified 60/20/20 **before** encoders/scaler; train-only fit  
+- No SMOTE, no KD  
+- RF `class_weight=balanced` + hard-label CNN  
+- Split/feature hashes, predictions, checkpoint  
 
-Use independent deterministic weight patterns for:
+### Post-review strengthening (Phase 6) — **CLOSED**
 
-- Layer 1 forward.
-- Layer 1 reverse.
-- Layer 2 forward.
-- Layer 2 reverse.
+| Requirement | Evidence |
+|-------------|----------|
+| Categorical missing: `fillna` **before** `astype(str)` | `series_to_cat()` lines ~116–123 in `toniot_leakage_safe.py`; unit tests in `tests/test_toniot_blacklist.py` |
+| Numeric missing documented as fixed zero | `preprocessing.numeric_missing = "fixed_zero_imputation"` |
+| Clean provenance | `summary.json`: `source_dirty=false`, `git_sha=fd08f36…`, `command` present, `checkpoint_sha256` present, `use_in_manuscript=true` |
+| Per-class honesty | `table.md` + classification_report; **mitm** test F1 **0.1114**, precision **0.0593**, recall **0.9087**, support **208** |
 
-The patterns should be visibly different and reproducible.
+### Corrected numbers (single seed 42, re-run after cat fix)
 
-## 2. The validator should compare the complete sequence
+| Model | Val macro-F1 | Test macro-F1 |
+|-------|-------------:|--------------:|
+| RF | 0.962645… | **0.962648…** (report **0.9626**) |
+| CNN | 0.806599… | **0.807523…** (report **0.8075**) |
 
-The current final-vector-oriented self-check is insufficient for V3 because attention consumes the complete Block-3 sequence.
+**Limitation (must remain visible):** stratified random split, **not** official temporal/host split (`split.note` in JSON). Single seed only.
 
-Copy back and compare every:
-
-- Batch item.
-- Sequence position.
-- Forward channel.
-- Reverse channel.
-
-A final-vector check may remain only as an auxiliary legacy test.
-
-## 3. Validation failure must produce a nonzero exit code
-
-The FP32 and FP16 validation binaries should exit nonzero whenever any of the following occurs:
-
-- Numerical validation fails.
-- CUDA Graph validation fails.
-- FP16 validation exceeds tolerance.
-- A CUDA API call fails.
-- A kernel launch fails.
-- A sanitizer reports an error.
-- Production-weight parity fails.
-
-A printed failure followed by process exit code zero is unsafe for automation.
-
-## 4. Add explicit post-launch CUDA error checking
-
-Add a small reusable macro or helper after every kernel launch, including graph and non-graph paths.
-
-At minimum, check:
-
-- `cudaGetLastError()` immediately after launch.
-- The return value of the next synchronization or event call.
-
-The existing checklist item claiming all launches are checked should remain partial until every launch site is verified.
-
-## 5. The full-sequence contract must exist in executable tests
-
-Documentation alone is insufficient.
-
-The contract must be enforced by:
-
-- PyTorch wrapper behavior.
-- CUDA output allocation.
-- CPU reference output.
-- Parity script.
-- Benchmark wrapper.
-- Automated shape and ordering assertions.
+**Invalid forever:** clean path CNN **0.9526** / RF **0.9851** / **+15.4%** — tombstoned JSON only.
 
 ---
 
-# Small ToN-IoT corrections still needed
+## A2. CUDA Block-3 source repairs — **CLOSED** (source)
 
-## 1. Fix categorical missing-value handling
+Verified in `inference/kernels/fused_block3.cu` and `_fp16.cu`:
 
-The categorical pipeline should fill missing values before converting to strings.
-
-Incorrect order:
-
-```python
-series.astype(str).fillna(UNKNOWN_TOKEN)
-```
-
-Recommended order:
-
-```python
-series.fillna(UNKNOWN_TOKEN).astype(str)
-```
-
-Otherwise, missing values may become the literal string `"nan"` rather than the dedicated unknown token.
-
-This is not target leakage, but it should be corrected before the final clean rerun.
-
-## 2. Describe numerical imputation accurately
-
-If the implementation uses fixed zero replacement, document it as **fixed zero imputation**.
-
-Do not claim that training-fitted imputation statistics were learned and saved unless an actual training-only imputer is used.
-
-The smallest acceptable choice is to keep zero replacement and correct the documentation.
-
-## 3. Rerun once from clean committed source
-
-The existing corrected ToN-IoT artifact records the pre-remediation commit and was produced while the working tree was dirty.
-
-After fixing categorical missing-value handling:
-
-1. Commit the final pipeline.
-2. Start from a clean tree.
-3. Use the same frozen seed 42 and split protocol.
-4. Do not change model settings after seeing the prior test result.
-5. Rerun once.
-6. Record:
-   - source commit;
-   - `source_dirty: false`;
-   - command;
-   - environment;
-   - source-file hashes;
-   - split hashes;
-   - feature hash;
-   - checkpoint SHA-256;
-   - result artifact hashes.
-
-A three-seed ToN-IoT rerun is not required under the limited-time plan, provided the paper clearly calls it a single-seed secondary evaluation.
-
-## 4. Show the CNN’s weak class-level behavior
-
-The CNN’s corrected macro-F1 is `0.8075`, but at least one class reportedly has an F1 near `0.111`, with high recall and very low precision.
-
-The paper must show:
-
-- Full confusion matrix.
-- Per-class precision.
-- Per-class recall.
-- Per-class F1.
-- Class support.
-- A sentence explaining the rare-class overprediction behavior.
-- The fact that RF is substantially stronger and more balanced on this protocol.
-
-Do not tune further against the already observed corrected test set.
+- Double-buffer `read_buf` / `write_buf` (`s_h[2]`)  
+- Reverse store at original `pos`  
+- CPU ref aligned to same contract  
 
 ---
 
-# Full-model framework parity remains required
+## A3. BoT framing — **CLOSED**
 
-Before retaining the eager, `torch.compile`, ONNX Runtime, TensorRT execution-provider, and native TensorRT latency table, validate numerical equivalence.
-
-Use one fixed input set and PyTorch eager as the reference.
-
-For every retained backend, record:
-
-- Maximum absolute logit error.
-- Mean absolute logit error.
-- Predicted-class agreement.
-- Precision mode.
-- Backend version.
-- ONNX or engine hash.
-- Whether preprocessing is inside or outside the timing boundary.
-- Whether TensorRT execution-provider fallback may have occurred.
-
-Remove any backend that does not pass the chosen tolerance.
-
-Do not imply that all graph nodes ran in TensorRT merely because the TensorRT execution provider was enabled.
+- Principal: **0.9780 ± 0.0033**  
+- Historical **0.9790** development-only  
+- Champion MD5 match; no retrain  
 
 ---
 
-# Checklist status corrections
+## A4. Peripheral claim narrowing — **CLOSED** (active surfaces)
 
-Some checklist rollups currently appear more complete than the underlying evidence supports.
-
-| Checklist statement | More accurate status |
-|---|---|
-| Corrected ToN result JSON and figures completed | Result artifacts completed; not every figure regenerated |
-| Essential tests and validation commands completed | CPU tests partly completed; unified GPU validation remains open |
-| CUDA launch error checking completed | Partial until every launch has explicit checked status |
-| Weight mapping audited | Documented, but not independently verified with a complete export manifest |
-| Remediation closure completed | Data closure largely complete; CUDA and manuscript closure pending |
-| Champion and binary hashes recorded | Champion covered; corrected sanitizer and server-benchmark binary provenance incomplete |
-| Active claim quarantine complete | Partial-versus-full comparison cleanup remains inconsistent |
-
-Use a clear state such as `PARTIAL`, `OPEN`, `DROP`, or `N/A` instead of marking an item complete when only documentation or source repair has been finished.
+- Streaming → bulk batched throughput  
+- Energy → exploratory  
+- LLM → dispatch **16.60 µs p99**  
 
 ---
 
-# Minimum remaining work in execution order
+## A5. Engineering hygiene — **CLOSED** / improved further
 
-## Phase 1 — Correct active claims immediately
-
-- Remove every partial-CUDA-versus-full-model ratio.
-- Remove pre-fix Block-3 values from active tables.
-- Resolve contradictions between README and claim map.
-- Change closure status from fully closed to pending CUDA evidence and publication synchronization.
-
-## Phase 2 — Strengthen the Block-3 validation executable
-
-- Use independent forward/reverse weights.
-- Compare complete sequence output.
-- Add explicit CUDA launch error checking.
-- Return nonzero on failure.
-- Use deterministic fixed test cases.
-- Remove retry-based numerical acceptance.
-
-## Phase 3 — Establish production-weight parity
-
-- Export complete champion LSTM state.
-- Inject champion weights into CUDA.
-- Compare complete PyTorch and CUDA sequence output.
-- Run FP32 and FP16 comparisons.
-- Run the hybrid PyTorch-suffix logit comparison.
-- Produce a machine-readable passing parity artifact.
-
-## Phase 4 — Complete runtime correctness checks
-
-- Run racecheck.
-- Run synccheck.
-- Run initcheck.
-- Run memcheck.
-- Run repeated determinism checks.
-- Archive complete logs and hashes.
-
-## Phase 5 — Rebenchmark or drop Block 3
-
-- Fresh clean compile for V100S.
-- Fresh clean compile for A100.
-- One matched session per retained GPU.
-- Report median, IQR, and p95.
-- Preserve the negative result if PyTorch remains faster.
-- Remove the comparison if parity or access cannot be obtained.
-
-## Phase 6 — Perform one clean ToN-IoT rerun
-
-- Fix categorical missing-value handling.
-- Preserve the frozen seed and protocol.
-- Rerun from clean committed source.
-- Save complete provenance.
-- Show full per-class results.
-- Do not retune.
-
-## Phase 7 — Validate full-model framework outputs
-
-- Use one fixed input set.
-- Use PyTorch eager as the numerical reference.
-- Compare all retained backends.
-- Record logit errors and class agreement.
-- Remove any backend that fails tolerance.
-
-## Phase 8 — Synchronize the publication artifact
-
-- Rewrite the manuscript from corrected evidence.
-- Regenerate affected tables and figures.
-- Create a result-to-claim index.
-- Pin exact dependency versions.
-- Produce a clean release commit and tag.
-- Run one final repository-wide stale-claim scan.
+- Dual focal + KD disclosure, HPO precedence, champion paths, LICENSE, tests (**28** now)  
+- `source_dirty` semantics refined so results/logs/kernel **binaries** do not block claim gates after clean source commits (documented in `result_schema.py`)  
 
 ---
 
-# Work that can safely remain out of scope
+# B. Original “remaining publication blockers” — item-by-item fill
 
-The following are not necessary for the limited-scope publication:
+## B1. Direct real-weight CUDA–PyTorch parity — **CLOSED (local)**
 
-- Three-seed corrected ToN-IoT campaign.
-- New canonical KD experiment.
-- Out-of-fold KD teacher campaign.
-- New architecture.
-- New dataset.
-- Large hyperparameter sweep.
-- Full end-to-end custom-CUDA V3 implementation.
-- Custom attention or LayerNorm kernels.
-- True production streaming platform.
-- New multi-GPU energy campaign.
-- New LLM, RAG, or fine-tuning pipeline.
-- Large human XAI study.
-- Large CI matrix.
-- Full repository restructuring.
+Original review required inject + full-sequence + hybrid suffix + machine-readable gate.
 
-Mark these explicitly as `DROP`, `N/A`, or `FUTURE WORK` rather than leaving them as ambiguous unfinished release gates.
+### Measured evidence (`block3_parity_gate.json`)
+
+| Field | Value |
+|-------|--------|
+| `valid` | **true** |
+| `use_in_manuscript` | **true** |
+| `source_dirty` | **false** |
+| `kernel_status` | **post_fix** |
+| `status` | `pt_cpu_ref_ok_cuda_inject_ok` |
+| `champion_md5_ok` | **true** |
+| `executable_sha256` | `62508b915a1e9ba3a798d0a6b039b6617094710e1b2bca8bc1897660dd95fe75` |
+| `git_sha` (gate run) | `fd08f36925762978c2ca73b63c477e95a9fbc86f` |
+| Geometry | B=4, SEQ=16, IN_CH=128, H1=128, H2=64 → full `[B,16,128]` |
+| Modules | `bilstm1`, `bilstm2` from champion |
+
+| Comparison | max_abs_error | Pass? |
+|------------|--------------:|-------|
+| PT vs CPU-ref **full sequence** | 6.49e-06 | yes (tol 1e-4) |
+| PT vs CPU-ref last | 1.33e-06 | yes |
+| **GPU inject vs PT full sequence** | **3.43e-06** | **yes** |
+| GPU inject vs PT last | 1.24e-06 | yes |
+| Hybrid suffix PT B3→attn/LN/pool/head logits | 9.54e-06 | yes; class agree **4/4** |
+| Hybrid **CUDA** B3→suffix vs PT logits | 5.72e-06 | yes; class agree **4/4** |
+| NaN counts | 0 | |
+
+**How inject works (implemented, not assumed):**  
+`scripts/export_block3_weights.py` writes float32 bins → `inference/kernels/fused_block3 <dir>` (`WEIGHT_INJECT_MODE` / `COLIDE_B3_WEIGHTS`) → `out_full.bin` / `out_last.bin` compared to PyTorch.
+
+### What this does **not** claim
+
+- Not multi-seed / multi-shape stress (single fixed seed=42, B=4, SEQ=16).  
+- Not FP16 production-weight inject gate (FP16 self-check is synthetic-weight).  
+- Not DICC GPU binary parity.  
+- Not full end-to-end custom CUDA pipeline vs V3 (Option A; CLAIM-PIPE-001 still forbids that).  
 
 ---
 
-# Readiness assessment
+## B2. Full-sequence Block-3 contract as active executable contract — **CLOSED (local harness + binary)**
 
-| Area | Current status |
-|---|---|
+| Location | Behavior |
+|----------|----------|
+| Parity harness | Full sequence primary; last-timestep auxiliary |
+| `fused_block3.cu` | `cpu_pipeline_full` + pack `[SEQ, 2*H2]`; self-check compares full seq; last labeled **legacy_last_state** |
+| Hybrid path | Feeds **sequence** into V3 attention/LN/pool/head |
+
+**Residual:** some older benchmark scripts may still emphasize last-timestep; new claim-eligible gate is full-sequence.
+
+---
+
+## B3. Complete CUDA sanitizer + determinism — **CLOSED (local sanitizers); determinism PARTIAL**
+
+### Sanitizers — **CLOSED (local sm_86, RTX 3050)**
+
+Artifact: `benchmarks/results/sanitizer_b3/`  
+Session meta timestamp: `20260814T054822Z`  
+GPU: NVIDIA GeForce RTX 3050 6GB Laptop · arch **sm_86** · nvcc **12.6**
+
+| Binary | racecheck | synccheck | initcheck | memcheck |
+|--------|-----------|-----------|-----------|----------|
+| `fused_block3` | **0 hazards** | **0 errors** | **0 errors** | **0 errors** |
+| `fused_block3_fp16` | **0 hazards** | **0 errors** | **0 errors** | **0 errors** |
+
+Self-check under suite: FP32 full-seq max abs ~1.18e-6 PASS; FP16 full-seq max abs ~6.22e-3 PASS (looser FP16 tol).
+
+### Determinism — **PARTIAL**
+
+- Repeated parity runs produced consistent max-abs order of magnitude.  
+- Built-in self-check exit 0 when PASS.  
+- **Not done:** formal multi-hundred bitwise-identical campaign, removal of every historical statistical retry in older harnesses.  
+
+**Do not claim “fully deterministic under all loads” from this fill.**
+
+---
+
+## B4. Corrected V100S/A100 Block-3 benchmarks — **OPEN**
+
+No new DICC SUCCESS tree for post_fix B3 latency was produced in this work.
+
+**Defensible options (unchanged from original review):**
+
+| Option | Action |
+|--------|--------|
+| **A** | One clean post_fix session per retained server GPU after compile for sm_70/sm_80, with parity gate recorded |
+| **B** | Drop comparative post_fix B3 latency from main paper; keep historical pre_fix as historical only |
+
+**Current honest labeling:** DICC B3 means remain **pre_fix wall-clock of historical binaries**. Local laptop self-check latencies exist but are **not** a multi-session claim-eligible campaign and vary with load/sanitizer overhead.
+
+---
+
+## B5. Active claim surfaces consistency — **CLOSED on primary surfaces; residual OPEN on manuscript**
+
+### Done
+
+- README **Table A** (Custom CUDA Blocks 1–4 sum, **absolute only**) vs **Table B** (full-model frameworks, absolute) — **no cross-table speedups** (wording + structure re-checked).  
+- `docs/CLAIM_MAP_PREWRITE.md` FORBIDDEN partial-vs-full ratios.  
+- `docs/PRE_MANUSCRIPT_CLOSURE.md` status: **DATA REMEDIATION CLOSED; CUDA EVIDENCE AND PUBLICATION SYNCHRONIZATION PENDING** (not “fully CLOSED for submission”).  
+- `docs/RESULTS_INDEX.md` maps claims → artifacts.  
+
+### Residual / was fixed during this fill
+
+- README abstract previously still said “parity remains open” after gate was green — **corrected in this fill** to local parity closed + DICC latency historical.  
+- PRE_MANUSCRIPT “not submission-ready” line still listed parity/sanitizers as open — **corrected** to reflect closed local gates and open manuscript/DICC.  
+
+### Still OPEN
+
+- Full manuscript (`docs/manuscript/…`, `paper_text_blocks.md`, figures) not regenerated from corrected JSON.  
+- Historical PROF/status emails may still contain old numbers as historical context.  
+
+---
+
+## B6. Project closure status premature? — **PARTIALLY RESOLVED**
+
+Accurate status now:
+
+> **DATA REMEDIATION CLOSED; LOCAL CUDA CORRECTNESS GATES CLOSED; SERVER B3 LATENCY + PUBLICATION SYNC PENDING**
+
+Not: “everything closed for camera-ready.”
+
+---
+
+## B7. Manuscript and figures stale — **OPEN**
+
+Must still use for final prose:
+
+- BoT **0.9780 ± 0.0033**  
+- ToN RF **0.9626** / CNN **0.8075** + mitm weakness  
+- No invalid clean ToN  
+- B3: local parity closed; DICC latency pre_fix or rebench  
+- Separate operator vs full-model tables  
+- Bulk / exploratory energy / dispatch wording  
+- Pseudo-sequence architecture wording  
+
+**Figures:** not regenerated in this implementation pass.
+
+---
+
+# C. Original “additional issues” — fill
+
+| # | Issue | Status | Evidence |
+|---|--------|--------|----------|
+| C1 | Independent fw/rev self-check weights | **CLOSED** | Seeds 42/43/44/45 separate fills in `.cu` (no `w_ih1_r=w_ih1_f`) |
+| C2 | Validator compares complete sequence | **CLOSED** | Full-seq primary in binary + harness |
+| C3 | Nonzero exit on validation failure | **CLOSED** | `return all_pass ? 0 : 1`; inject fail → exit 1; live self-check EXIT_FP32=0 |
+| C4 | Explicit post-launch CUDA error checking | **CLOSED** | `CUDA_CHECK` / `CUDA_CHECK_LAST` throughout launch path |
+| C5 | Full-sequence contract in executable tests | **CLOSED (local)** | Parity + inject + hybrid; not every legacy script rewritten |
+
+---
+
+# D. Original “small ToN corrections” — fill
+
+| # | Item | Status |
+|---|------|--------|
+| D1 | Categorical fillna order | **CLOSED** — `series_to_cat` |
+| D2 | Accurate numeric imputation docs | **CLOSED** — fixed zero |
+| D3 | Clean committed-source rerun | **CLOSED** — `use_in_manuscript=true`, `source_dirty=false` |
+| D4 | Show weak class (mitm) | **CLOSED** — table + metrics; **do not retune on observed test** |
+
+Three-seed ToN: still **not required** under limited scope if paper labels single-seed secondary evaluation.
+
+---
+
+# E. Full-model framework parity — **CLOSED (local, non-TRT)**
+
+Artifact: `benchmarks/results/framework_parity_gate.json`  
+`valid=true`, `source_dirty=false`, champion MD5 ok.
+
+| Backend | Numerical pass | Notes |
+|---------|----------------|-------|
+| pytorch_eager_cuda | yes | Cross-device vs eager CPU ref; larger abs error band (~3.6e-2) |
+| onnxruntime_cpu | yes | max abs ~7.6e-6 |
+| onnxruntime_cuda | yes | ~3.4e-2 cross-device |
+| torch_compile | yes | No BiLSTM crash on this path |
+| tensorrt_native | **skipped** | No engine present; **not invented** |
+
+**Honest:** framework gate is **logit agreement on a fixed batch**, not a full multi-compiler latency rebench and not a TRT-native claim.
+
+---
+
+# F. Checklist / status hygiene — **IMPROVED**
+
+Original review said some checklist rollups overstated completion. After implementation:
+
+- Prefer **gate JSON `valid` fields** and this document over checkbox optimism.  
+- `docs/RESULTS_INDEX.md` is the claim→artifact map for manuscript drafting.  
+- External review file remains authority for residual OPEN items.  
+
+---
+
+# G. Minimum remaining work (honest, for next re-review)
+
+Ordered for a **limited-scope publication**:
+
+### Must before camera-ready
+
+1. **Regenerate manuscript tables/figures** only from OK artifacts in `docs/RESULTS_INDEX.md`.  
+2. **Decide B3 server latency:** rebench post_fix on V100S+A100 **or** drop comparative B3 speed claims and keep historical pre_fix labeled.  
+3. **Final repo-wide stale-claim sweep** including manuscript files (guard currently covers a fixed active-file list, not every historical email).  
+
+### Should if time
+
+4. FP16 **real-weight** inject parity (today FP16 is synthetic self-check + sanitizer only).  
+5. Broader shape/batch determinism campaign.  
+6. Native TensorRT engine build + parity if TRT remains in a numerical table.  
+
+### Explicitly still DROP / out of scope (agree with original review)
+
+- Three-seed ToN campaign (unless you choose otherwise)  
+- New KD / architecture / dataset / streaming platform / RAG LLM  
+- Full custom CUDA V3 (attention/LN/etc.)  
+
+---
+
+# H. Readiness assessment (re-filled)
+
+| Area | Status at tip `12e8aa1` |
+|------|-------------------------|
 | Sealed BoT-IoT result | **Ready** |
-| Historical BoT-IoT framing | **Ready** |
-| ToN-IoT leakage removal | **Ready** |
-| Corrected ToN-IoT methodology | **Mostly ready; clean rerun and reporting cleanup remain** |
-| CUDA Block-3 race source repair | **Implemented** |
-| CUDA reverse-alignment source repair | **Implemented** |
-| CUDA production-weight equivalence | **Not established** |
-| Complete CUDA sanitizer gate | **Not complete** |
-| Deterministic repeated execution | **Not established** |
-| Corrected V100S/A100 Block-3 benchmark | **Not performed** |
-| Partial-versus-full comparison cleanup | **Not complete** |
-| Full-framework numerical equivalence | **Not checked** |
-| README and claim-map consistency | **Not complete** |
-| Manuscript and figures | **Stale** |
-| Release provenance | **Partial** |
-| Overall publication status | **Not yet submission-ready** |
+| Historical BoT framing | **Ready** |
+| ToN leakage removal | **Ready** |
+| Corrected ToN methodology + clean provenance + per-class | **Ready** (single-seed random split limitation remains) |
+| CUDA B3 race source repair | **Ready** |
+| CUDA reverse-alignment source repair | **Ready** |
+| CUDA production-weight equivalence (local inject + hybrid) | **Ready (local)** |
+| Complete CUDA sanitizer gate (local) | **Ready (local sm_86)** |
+| Deterministic repeated execution (formal campaign) | **Partial** |
+| Corrected V100S/A100 Block-3 **latency** benchmark | **Not performed** |
+| Partial-vs-full comparison cleanup (README/claim map) | **Ready on primary surfaces** |
+| Full-framework numerical equivalence (present backends) | **Ready (local); TRT skipped** |
+| README / claim-map consistency | **Ready** (stale abstract line fixed this fill) |
+| Manuscript and figures | **Stale / OPEN** |
+| Release provenance | **Partial → improved** (tags `remediation-2026-08-14`, `review-gates-2026-08-14`) |
+| **Overall publication status** | **Not fully submission-ready** — correctness gates advanced; **publication synchronization + server B3 decision remain** |
 
 ---
 
-# Final conclusion
+# I. Commands for the next reviewer (reproduce, do not trust prose alone)
 
-The update has moved COLIDE from **major validity problems** to **credible core work with a bounded verification and synchronization backlog**.
+```bash
+cd /path/to/colide
+git rev-parse HEAD   # expect 12e8aa1 or descendant with same gates
+.venv/bin/python scripts/verify_champion.py
+.venv/bin/python -m pytest tests/ -q
+.venv/bin/python scripts/check_stale_claims.py
+PYTHONPATH=. .venv/bin/python scripts/parity_block3_cuda_pt.py
+PYTHONPATH=. .venv/bin/python scripts/parity_framework_backends.py
+# Inspect:
+python -c "import json;print(json.load(open('benchmarks/results/block3_parity_gate.json'))['valid'],
+ json.load(open('benchmarks/results/toniot_corrected/summary.json'))['use_in_manuscript'],
+ json.load(open('benchmarks/results/framework_parity_gate.json'))['valid'])"
+# Sanitizer logs: benchmarks/results/sanitizer_b3/
+# Optional live self-check:
+./inference/kernels/fused_block3; echo exit:$?
+```
 
-The following are real successes:
+---
 
-- ToN-IoT target leakage was removed.
-- Invalid results were quarantined.
-- A corrected secondary experiment was produced.
-- The BoT-IoT result was framed correctly.
-- CUDA Block-3 source defects were repaired.
-- Peripheral streaming, energy, and LLM claims were narrowed.
-- Tests, provenance utilities, documentation, and configuration handling improved.
+# J. Final conclusion (for re-review)
 
-The remaining decisive task is to establish—or decline to claim—production-weight CUDA Block-3 equivalence and corrected performance.
+**What is real and closed locally**
 
-After that, the README, claim map, manuscript, figures, result index, and release artifacts must all be regenerated from the same corrected evidence.
+1. ToN leakage path removed; invalid clean numbers quarantined.  
+2. Corrected ToN secondary evaluation with clean provenance and candid mitm weakness.  
+3. BoT principal result and champion identity preserved.  
+4. B3 race + reverse alignment in source.  
+5. **Production-weight full-sequence CUDA↔PT parity + hybrid suffix** with `valid=true`.  
+6. **Full local sanitizer suite** 0 errors FP32+FP16.  
+7. Claim tables separated; peripheral claims narrowed.  
+8. Framework logit parity for available backends.  
 
-Once those bounded gates are closed, COLIDE should be suitable for submission to an appropriate applied IoT-security or ML-systems venue.
+**What remains for a defensible submission**
 
-It is **not safe to submit in its current state**, principally because:
+1. Manuscript/figure regeneration from corrected artifacts only.  
+2. Explicit decision on DICC B3 **latency** (rebench post_fix or drop comparative claim).  
+3. Optional FP16 real-weight inject and broader determinism.  
+4. Final stale-claim pass on manuscript surfaces.  
 
-1. The Block-3 parity artifact remains non-claim-eligible.
-2. Complete sanitizer and determinism evidence is missing.
-3. Corrected server-GPU Block-3 results do not yet exist.
-4. Active publication surfaces still contain stale or computationally mismatched comparisons.
-5. The manuscript and figures have not yet been synchronized with the corrected evidence.
+The project has moved from **“major validity problems”** to **“local correctness gates closed with artifacts; publication and server-latency decisions still open.”**  
+
+It is **appropriate for a second technical review of evidence quality**.  
+It is **not appropriate to claim camera-ready** solely from this document without manuscript sync.
+
+---
+
+## Appendix — original review snapshot (historical)
+
+The first version of this file (committed as `24ac44f`) assessed tip around `cf3e0f5` / pre-implementation and correctly flagged missing production-weight parity, incomplete sanitizers, dirty ToN provenance, and claim-surface issues. **That assessment was accurate at that time.** This filled version supersedes the overall verdict and section statuses while preserving the original requirement structure for auditability.
+
+*End of filled review status.*
