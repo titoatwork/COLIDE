@@ -23,17 +23,85 @@ def git_sha(cwd: Path | None = None) -> str:
         return "unknown"
 
 
+# Paths that may change during a claim-eligible experiment without implying
+# *source* dirty (generated results, weights, logs, OS junk).
+_SOURCE_DIRTY_IGNORE_PREFIXES = (
+    "benchmarks/results/",
+    "logs/",
+    "model/",  # checkpoints; code lives under model/*.py still counted if tracked
+    ".pytest_cache/",
+    "__pycache__/",
+)
+_SOURCE_DIRTY_IGNORE_SUFFIXES = (
+    ".pth",
+    ".onnx",
+    ".npz",
+    ".log",
+    ".bak",
+    ":Zone.Identifier",
+)
+_SOURCE_DIRTY_ALWAYS_IGNORE_UNTRACKED = True
+
+
+def _is_ignored_for_source_dirty(path: str) -> bool:
+    p = path.replace("\\", "/").lstrip("./")
+    # model/*.py is source; model/**/*.pth is not
+    if p.startswith("model/") and p.endswith(".py"):
+        return False
+    if p.startswith("model/"):
+        return True
+    for pref in _SOURCE_DIRTY_IGNORE_PREFIXES:
+        if p.startswith(pref):
+            return True
+    for suf in _SOURCE_DIRTY_IGNORE_SUFFIXES:
+        if p.endswith(suf) or suf in p:
+            return True
+    if p.endswith(".bak_before_review") or "Zone.Identifier" in p:
+        return True
+    return False
+
+
 def git_dirty(cwd: Path | None = None) -> bool | None:
-    """True if working tree has uncommitted changes; None if git unavailable."""
+    """True if *source* working tree has uncommitted changes; None if git unavailable.
+
+    Ignores untracked noise (logs, OS junk) and generated result/checkpoint
+    paths so experiment runs can emit claim-eligible JSON without self-dirtying
+    the tree. Tracked edits under scripts/, inference/, docs/, tests/, README,
+    and model/*.py still count as dirty.
+    """
     try:
         out = subprocess.check_output(
-            ["git", "status", "--porcelain"],
+            ["git", "status", "--porcelain", "-uall"],
             cwd=cwd,
             stderr=subprocess.DEVNULL,
-        )
-        return bool(out.strip())
+        ).decode(errors="replace")
     except Exception:
         return None
+    for line in out.splitlines():
+        if not line.strip():
+            continue
+        # porcelain: XY path  OR  XY origin -> path
+        status = line[:2]
+        rest = line[3:].strip() if len(line) > 3 else ""
+        if " -> " in rest:
+            rest = rest.split(" -> ", 1)[-1]
+        # untracked (??) under ignore prefixes: skip
+        if status == "??" and _SOURCE_DIRTY_ALWAYS_IGNORE_UNTRACKED:
+            if _is_ignored_for_source_dirty(rest):
+                continue
+            # untracked source files still dirty
+            if not _is_ignored_for_source_dirty(rest):
+                # only treat as dirty if looks like project source
+                if rest.startswith(
+                    ("scripts/", "inference/", "docs/", "tests/", "config/")
+                ) or rest in ("README.md", "LICENSE", ".gitignore"):
+                    return True
+            continue
+        if _is_ignored_for_source_dirty(rest):
+            continue
+        # any other modified/added/deleted tracked path
+        return True
+    return False
 
 
 def make_result_envelope(

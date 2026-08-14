@@ -2,6 +2,12 @@
 .venv/
 .venv-cluster/
 
+# Local run logs / thermal guards (not claim artifacts)
+logs/
+*.bak
+*.bak_before_review
+*:Zone.Identifier
+
 # Dataset — too large for git
 data/raw/
 data/processed/
