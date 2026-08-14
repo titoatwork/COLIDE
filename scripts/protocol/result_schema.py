@@ -50,6 +50,14 @@ def _is_ignored_for_source_dirty(path: str) -> bool:
         return False
     if p.startswith("model/"):
         return True
+    # Compiled CUDA binaries under inference/kernels (no extension) — source is *.cu
+    if p.startswith("inference/kernels/") and not p.endswith(
+        (".cu", ".cuh", ".h", ".hpp", ".md", ".txt", ".sh")
+    ):
+        # bare executables / .so produced by nvcc
+        base = p.rsplit("/", 1)[-1]
+        if "." not in base or base.endswith((".so", ".o", ".ptx", ".cubin")):
+            return True
     for pref in _SOURCE_DIRTY_IGNORE_PREFIXES:
         if p.startswith(pref):
             return True
