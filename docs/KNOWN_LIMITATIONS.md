@@ -2,7 +2,7 @@
 
 **Date:** 2026-08-14  
 **Purpose:** Explicit scientific and systems limitations for manuscript and README honesty.  
-**Related:** `docs/ISSUE_REGISTER.md`, `docs/CLAIM_MAP_PREWRITE.md`, `docs/PRE_MANUSCRIPT_CLOSURE.md`
+**Related:** `docs/ISSUE_REGISTER.md`, `docs/CLAIM_MAP_PREWRITE.md`, `docs/PRE_MANUSCRIPT_CLOSURE.md`, `docs/REMEDIATION_STATUS.md`, `COLIDE_Remediation_Update_Review.md`
 
 This document does **not** authorize new experiments. It records what must not be overclaimed.
 
@@ -43,25 +43,35 @@ Historical and some training paths apply SMOTE (or resampling) and scaling in or
 
 ---
 
-## 5. Incomplete Custom CUDA scope (Option A)
+## 5. Incomplete Custom CUDA scope (Option A) — partial vs full
 
-Custom CUDA implements fused Blocks 1–4 only. Full CAD-CBA V3 includes attention, LayerNorm, residual connections, and other stages **not** in the CUDA chain. Therefore:
+Custom CUDA implements fused Blocks 1–4 only. Full CAD-CBA V3 includes attention, LayerNorm, residual connections, temporal mean pooling, and the final classifier — stages **not** in the CUDA chain. Therefore:
 
 - Full Custom CUDA pipeline vs full V3 PyTorch speedup is **FORBIDDEN**.
-- Laptop “Custom CUDA pipeline” vs eager / compile / TensorRT / ORT numbers are **operation-scope incomplete** and must carry that caveat.
+- **Any ratio of a partial custom pipeline sum (Blocks 1–4) vs full-model eager / torch.compile / TensorRT / ORT is FORBIDDEN** (CLAIM-PIPE-001; review Phase 1).
+- Maintain **two separate table classes** only:
+  1. Matched operator-vs-operator (per-block).
+  2. Complete model-vs-complete model frameworks.
+- Partial Custom CUDA pipeline sums may appear only as **absolute** latencies with incomplete-scope labels — **never** with a “vs Custom CUDA” ratio column against full-model frameworks.
 - Prefer per-block Option A tables (B1/B2/B4 CUDA wins; B3 honesty).
 
-See **CLAIM-PIPE-001**.
+See **CLAIM-PIPE-001**, `docs/CLAIM_MAP_PREWRITE.md`, `COLIDE_Remediation_Update_Review.md`.
 
 ---
 
-## 6. B3 pre_fix server result
+## 6. B3: source fixed; production-weight parity not established
 
-DICC multi-session measurements show matching **PyTorch Block 3 faster than CUDA Block 3 FP16** on V100S and A100 (wall-clock of current binaries). Those timings are real as **measured latency of present kernels**, but optimized B3 still carries open correctness issues (**CUDA-B3-001/002/003**: race, reverse alignment, output contract). Until real-weight semantic parity passes:
+DICC multi-session measurements show matching **PyTorch Block 3 faster than CUDA Block 3 FP16** on V100S and A100. Those timings are real as **measured wall-clock latency of pre_fix historical binaries**, not as post_fix semantic parity.
 
-- Treat B3 CUDA vs PT as **provisional / pre_fix**.
-- Do not claim closed “matching-op correctness.”
-- Welch/Cohen stats across CUDA n=100 vs PT n=20 harnesses are secondary; direction is unambiguous for wall-clock.
+**Source status (2026-08-14):** race double-buffer and reverse-alignment fixes are in the optimized FP32/FP16 kernels; local synthetic self-checks PASS; `racecheck` reported 0 hazards on the laptop rebuild. Tracked as **CUDA-B3-001/002/003** with status **CODE_FIXED_AWAITING_REBENCH**.
+
+**Still open:** production-weight CUDA–PyTorch equivalence (export champion LSTM tensors, inject into CUDA, compare full aligned sequence and hybrid PyTorch-suffix logits), full sanitizer suite (synccheck/initcheck/memcheck), and corrected server rebench (or drop of comparative B3 claim).
+
+Until the production-weight parity gate is green:
+
+- Treat B3 CUDA vs PT as **provisional / pre_fix** wall-clock of historical kernels.
+- Do not claim closed “matching-op correctness” or post_fix speedups.
+- Welch/Cohen stats across CUDA n=100 vs PT n=20 harnesses are secondary; direction is unambiguous for wall-clock **pre_fix**.
 
 ---
 

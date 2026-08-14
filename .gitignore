@@ -51,3 +51,9 @@ v100_block*
 model/model.onnx
 *.nsys-rep
 *.sqlite
+!benchmarks/results/block3_parity_weights/
+!benchmarks/results/block3_parity_weights/**
+!benchmarks/results/framework_parity_gate.json
+!benchmarks/results/framework_parity_champion.onnx
+!benchmarks/results/sanitizer_b3/
+!benchmarks/results/sanitizer_b3/**

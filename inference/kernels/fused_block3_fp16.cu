@@ -10,13 +10,74 @@
 #include <vector>
 #include <cmath>
 #include <chrono>
+#include <cstdlib>
+#include <cstring>
+#include <fstream>
+#include <string>
 
 constexpr int SEQ      = 16;
 constexpr int IN_CH    = 128;
 constexpr int H1       = 128;
 constexpr int H1x2     = 256;
 constexpr int H2       = 64;
-constexpr int OUT_SIZE  = 128;
+constexpr int OUT_SIZE  = 128;  // last-timestep BiLSTM channels = 2*H2
+constexpr int FULL_SIZE = 2 * H2 * SEQ;  // full sequence [SEQ, 2*H2] row-major
+
+#define CUDA_CHECK(call) do { \
+  cudaError_t err__ = (call); \
+  if (err__ != cudaSuccess) { \
+    std::cerr << "CUDA error " << cudaGetErrorString(err__) \
+              << " at " << __FILE__ << ":" << __LINE__ << "\n"; \
+    std::exit(1); \
+  } \
+} while(0)
+#define CUDA_CHECK_LAST() CUDA_CHECK(cudaGetLastError())
+
+// Deterministic RNG fill (seeded caller); values in [-0.5, 0.5).
+static void fill_rand(std::vector<float>& v) {
+    for (auto& x : v) x = (float)rand() / RAND_MAX - 0.5f;
+}
+
+// Little-endian raw float32 dump (numpy tofile compatible).
+static bool load_f32_bin(const std::string& path, std::vector<float>& v, size_t expected) {
+    std::ifstream f(path, std::ios::binary);
+    if (!f) {
+        std::cerr << "Failed to open for read: " << path << "\n";
+        return false;
+    }
+    v.resize(expected);
+    f.read(reinterpret_cast<char*>(v.data()), expected * sizeof(float));
+    if (!f || static_cast<size_t>(f.gcount()) != expected * sizeof(float)) {
+        std::cerr << "Short read: " << path << " (expected " << expected << " floats)\n";
+        return false;
+    }
+    return true;
+}
+
+static bool write_f32_bin(const std::string& path, const std::vector<float>& v) {
+    std::ofstream f(path, std::ios::binary);
+    if (!f) {
+        std::cerr << "Failed to open for write: " << path << "\n";
+        return false;
+    }
+    f.write(reinterpret_cast<const char*>(v.data()), v.size() * sizeof(float));
+    return static_cast<bool>(f);
+}
+
+// Interleave layer-2 fw/rev into time-major channel-last [SEQ, 2*H2]:
+// for t: fw[0:H2] at t, then rev[0:H2] at t.
+static std::vector<float> pack_full_seq(
+    const std::vector<float>& h2_fw, const std::vector<float>& h2_rev)
+{
+    std::vector<float> full(FULL_SIZE);
+    for (int t = 0; t < SEQ; ++t) {
+        for (int h = 0; h < H2; ++h)
+            full[t * OUT_SIZE + h] = h2_fw[h * SEQ + t];
+        for (int h = 0; h < H2; ++h)
+            full[t * OUT_SIZE + H2 + h] = h2_rev[h * SEQ + t];
+    }
+    return full;
+}
 
 // ---------------------------------------------------------------------------
 // Repack transposed W_hh from (H, 4H) FP32 to (H, 2H) half2 paired layout
@@ -211,11 +272,13 @@ void lstm_direction_fp16(
     int blocks = (total+threads-1)/threads;
     linear_proj_fp16_kernel<<<blocks, threads, 0, stream>>>(
         d_input, d_w_ih_fp16, d_gate_ih_all, input_size, out_rows, seq_len);
+    CUDA_CHECK_LAST();
     // 2 * hidden_size: double-buffered previous/next hidden state (FP16)
     int smem = 2 * hidden_size * sizeof(__half);
     lstm_recurrent_fp16_kernel<<<1, hidden_size, smem, stream>>>(
         d_gate_ih_all, d_w_hh_h2, d_bias_ih, d_bias_hh,
         d_output_hidden, hidden_size, seq_len, reverse);
+    CUDA_CHECK_LAST();
 }
 
 // ---------------------------------------------------------------------------
@@ -256,7 +319,9 @@ void cpu_lstm_forward(
     }
 }
 
-std::vector<float> cpu_pipeline(
+// Primary CPU contract: full sequence [SEQ, 2*H2] time-major channel-last.
+// Also fills optional last-timestep vector (legacy_last_state auxiliary check).
+void cpu_pipeline_full(
     const std::vector<float>& input,
     const std::vector<float>& w_ih1_f, const std::vector<float>& w_hh1_f,
     const std::vector<float>& b_ih1_f, const std::vector<float>& b_hh1_f,
@@ -265,7 +330,9 @@ std::vector<float> cpu_pipeline(
     const std::vector<float>& w_ih2_f, const std::vector<float>& w_hh2_f,
     const std::vector<float>& b_ih2_f, const std::vector<float>& b_hh2_f,
     const std::vector<float>& w_ih2_r, const std::vector<float>& w_hh2_r,
-    const std::vector<float>& b_ih2_r, const std::vector<float>& b_hh2_r)
+    const std::vector<float>& b_ih2_r, const std::vector<float>& b_hh2_r,
+    std::vector<float>& out_full,
+    std::vector<float>* out_last = nullptr)
 {
     std::vector<float> h1_fw, h1_rev;
     cpu_lstm_forward(input, IN_CH, H1, SEQ, w_ih1_f, w_hh1_f, b_ih1_f, b_hh1_f, h1_fw, false);
@@ -278,42 +345,104 @@ std::vector<float> cpu_pipeline(
     std::vector<float> h2_fw, h2_rev;
     cpu_lstm_forward(in2, H1x2, H2, SEQ, w_ih2_f, w_hh2_f, b_ih2_f, b_hh2_f, h2_fw, false);
     cpu_lstm_forward(in2, H1x2, H2, SEQ, w_ih2_r, w_hh2_r, b_ih2_r, b_hh2_r, h2_rev, true);
-    std::vector<float> out(OUT_SIZE);
-    for (int i=0;i<H2;++i) out[i]=h2_fw[i*SEQ+SEQ-1];
-    for (int i=0;i<H2;++i) out[i+H2]=h2_rev[i*SEQ+SEQ-1];
-    return out;
+    out_full = pack_full_seq(h2_fw, h2_rev);
+    if (out_last) {
+        out_last->resize(OUT_SIZE);
+        for (int i=0;i<H2;++i) (*out_last)[i]=h2_fw[i*SEQ+SEQ-1];
+        for (int i=0;i<H2;++i) (*out_last)[i+H2]=h2_rev[i*SEQ+SEQ-1];
+    }
 }
 
-int main() {
+// legacy_last_state: last-timestep only (auxiliary; primary check is full sequence).
+std::vector<float> cpu_pipeline(
+    const std::vector<float>& input,
+    const std::vector<float>& w_ih1_f, const std::vector<float>& w_hh1_f,
+    const std::vector<float>& b_ih1_f, const std::vector<float>& b_hh1_f,
+    const std::vector<float>& w_ih1_r, const std::vector<float>& w_hh1_r,
+    const std::vector<float>& b_ih1_r, const std::vector<float>& b_hh1_r,
+    const std::vector<float>& w_ih2_f, const std::vector<float>& w_hh2_f,
+    const std::vector<float>& b_ih2_f, const std::vector<float>& b_hh2_f,
+    const std::vector<float>& w_ih2_r, const std::vector<float>& w_hh2_r,
+    const std::vector<float>& b_ih2_r, const std::vector<float>& b_hh2_r)
+{
+    std::vector<float> full, last;
+    cpu_pipeline_full(input,
+        w_ih1_f, w_hh1_f, b_ih1_f, b_hh1_f, w_ih1_r, w_hh1_r, b_ih1_r, b_hh1_r,
+        w_ih2_f, w_hh2_f, b_ih2_f, b_hh2_f, w_ih2_r, w_hh2_r, b_ih2_r, b_hh2_r,
+        full, &last);
+    return last;
+}
+
+int main(int argc, char** argv) {
     std::cout << "=== COLIDE Block3 FP16 Native half2 ===\n";
-    srand(42);
-    auto randf = [](){ return (float)rand()/RAND_MAX - 0.5f; };
+
+    // Optional weight-file inject: argv[1] directory or env COLIDE_B3_WEIGHTS
+    std::string weight_dir;
+    if (argc >= 2 && argv[1] && argv[1][0] != '\0')
+        weight_dir = argv[1];
+    else if (const char* env = std::getenv("COLIDE_B3_WEIGHTS"))
+        weight_dir = env;
+    const bool inject_mode = !weight_dir.empty();
+    if (inject_mode)
+        std::cout << "WEIGHT_INJECT_MODE dir=" << weight_dir << "\n";
 
     std::vector<float> h_input(IN_CH*SEQ);
-    for (auto& v : h_input) v = randf();
-
     std::vector<float> w_ih1_f(4*H1*IN_CH), w_hh1_f(4*H1*H1), b_ih1_f(4*H1), b_hh1_f(4*H1);
-    for (auto& v:w_ih1_f) v=randf(); for (auto& v:w_hh1_f) v=randf();
-    for (auto& v:b_ih1_f) v=randf(); for (auto& v:b_hh1_f) v=randf();
-    auto w_ih1_r=w_ih1_f, w_hh1_r=w_hh1_f, b_ih1_r=b_ih1_f, b_hh1_r=b_hh1_f;
-
+    std::vector<float> w_ih1_r(4*H1*IN_CH), w_hh1_r(4*H1*H1), b_ih1_r(4*H1), b_hh1_r(4*H1);
     std::vector<float> w_ih2_f(4*H2*H1x2), w_hh2_f(4*H2*H2), b_ih2_f(4*H2), b_hh2_f(4*H2);
-    for (auto& v:w_ih2_f) v=randf(); for (auto& v:w_hh2_f) v=randf();
-    for (auto& v:b_ih2_f) v=randf(); for (auto& v:b_hh2_f) v=randf();
-    auto w_ih2_r=w_ih2_f, w_hh2_r=w_hh2_f, b_ih2_r=b_ih2_f, b_hh2_r=b_hh2_f;
+    std::vector<float> w_ih2_r(4*H2*H1x2), w_hh2_r(4*H2*H2), b_ih2_r(4*H2), b_hh2_r(4*H2);
 
-    auto cpu_out = cpu_pipeline(h_input,
+    if (inject_mode) {
+        auto p = [&](const char* name) { return weight_dir + "/" + name; };
+        bool ok = true;
+        ok &= load_f32_bin(p("input.bin"), h_input, IN_CH*SEQ);
+        ok &= load_f32_bin(p("w_ih1_f.bin"), w_ih1_f, w_ih1_f.size());
+        ok &= load_f32_bin(p("w_hh1_f.bin"), w_hh1_f, w_hh1_f.size());
+        ok &= load_f32_bin(p("b_ih1_f.bin"), b_ih1_f, b_ih1_f.size());
+        ok &= load_f32_bin(p("b_hh1_f.bin"), b_hh1_f, b_hh1_f.size());
+        ok &= load_f32_bin(p("w_ih1_r.bin"), w_ih1_r, w_ih1_r.size());
+        ok &= load_f32_bin(p("w_hh1_r.bin"), w_hh1_r, w_hh1_r.size());
+        ok &= load_f32_bin(p("b_ih1_r.bin"), b_ih1_r, b_ih1_r.size());
+        ok &= load_f32_bin(p("b_hh1_r.bin"), b_hh1_r, b_hh1_r.size());
+        ok &= load_f32_bin(p("w_ih2_f.bin"), w_ih2_f, w_ih2_f.size());
+        ok &= load_f32_bin(p("w_hh2_f.bin"), w_hh2_f, w_hh2_f.size());
+        ok &= load_f32_bin(p("b_ih2_f.bin"), b_ih2_f, b_ih2_f.size());
+        ok &= load_f32_bin(p("b_hh2_f.bin"), b_hh2_f, b_hh2_f.size());
+        ok &= load_f32_bin(p("w_ih2_r.bin"), w_ih2_r, w_ih2_r.size());
+        ok &= load_f32_bin(p("w_hh2_r.bin"), w_hh2_r, w_hh2_r.size());
+        ok &= load_f32_bin(p("b_ih2_r.bin"), b_ih2_r, b_ih2_r.size());
+        ok &= load_f32_bin(p("b_hh2_r.bin"), b_hh2_r, b_hh2_r.size());
+        if (!ok) {
+            std::cerr << "WEIGHT_INJECT_MODE: failed to load one or more weight files\n";
+            return 1;
+        }
+    } else {
+        // Independent deterministic weights: seed 42 input+L1fw, 43 L1rev, 44 L2fw, 45 L2rev
+        srand(42);
+        fill_rand(h_input);
+        fill_rand(w_ih1_f); fill_rand(w_hh1_f); fill_rand(b_ih1_f); fill_rand(b_hh1_f);
+        srand(43);
+        fill_rand(w_ih1_r); fill_rand(w_hh1_r); fill_rand(b_ih1_r); fill_rand(b_hh1_r);
+        srand(44);
+        fill_rand(w_ih2_f); fill_rand(w_hh2_f); fill_rand(b_ih2_f); fill_rand(b_hh2_f);
+        srand(45);
+        fill_rand(w_ih2_r); fill_rand(w_hh2_r); fill_rand(b_ih2_r); fill_rand(b_hh2_r);
+    }
+
+    std::vector<float> cpu_full, cpu_last;
+    cpu_pipeline_full(h_input,
         w_ih1_f, w_hh1_f, b_ih1_f, b_hh1_f, w_ih1_r, w_hh1_r, b_ih1_r, b_hh1_r,
-        w_ih2_f, w_hh2_f, b_ih2_f, b_hh2_f, w_ih2_r, w_hh2_r, b_ih2_r, b_hh2_r);
+        w_ih2_f, w_hh2_f, b_ih2_f, b_hh2_f, w_ih2_r, w_hh2_r, b_ih2_r, b_hh2_r,
+        cpu_full, &cpu_last);
 
     // Upload FP32 weights
     float *d_input;
-    cudaMalloc(&d_input, h_input.size()*sizeof(float));
-    cudaMemcpy(d_input, h_input.data(), h_input.size()*sizeof(float), cudaMemcpyHostToDevice);
+    CUDA_CHECK(cudaMalloc(&d_input, h_input.size()*sizeof(float)));
+    CUDA_CHECK(cudaMemcpy(d_input, h_input.data(), h_input.size()*sizeof(float), cudaMemcpyHostToDevice));
 
     auto copy_vec = [](float*& d, const std::vector<float>& v) {
-        cudaMalloc(&d, v.size()*sizeof(float));
-        cudaMemcpy(d, v.data(), v.size()*sizeof(float), cudaMemcpyHostToDevice);
+        CUDA_CHECK(cudaMalloc(&d, v.size()*sizeof(float)));
+        CUDA_CHECK(cudaMemcpy(d, v.data(), v.size()*sizeof(float), cudaMemcpyHostToDevice));
     };
     float *d_w_ih1_f,*d_w_hh1_f,*d_b_ih1_f,*d_b_hh1_f;
     float *d_w_ih1_r,*d_w_hh1_r,*d_b_ih1_r,*d_b_hh1_r;
@@ -333,88 +462,136 @@ int main() {
     // Step 1: Transpose W_hh to (H, 4H)
     float *d_w_hh1_f_t, *d_w_hh1_r_t, *d_w_hh2_f_t, *d_w_hh2_r_t;
     int n1=4*H1*H1, n2=4*H2*H2;
-    cudaMalloc(&d_w_hh1_f_t, n1*sizeof(float));
-    cudaMalloc(&d_w_hh1_r_t, n1*sizeof(float));
-    cudaMalloc(&d_w_hh2_f_t, n2*sizeof(float));
-    cudaMalloc(&d_w_hh2_r_t, n2*sizeof(float));
+    CUDA_CHECK(cudaMalloc(&d_w_hh1_f_t, n1*sizeof(float)));
+    CUDA_CHECK(cudaMalloc(&d_w_hh1_r_t, n1*sizeof(float)));
+    CUDA_CHECK(cudaMalloc(&d_w_hh2_f_t, n2*sizeof(float)));
+    CUDA_CHECK(cudaMalloc(&d_w_hh2_r_t, n2*sizeof(float)));
     transpose_kernel<<<(n1+thr-1)/thr,thr>>>(d_w_hh1_f, d_w_hh1_f_t, 4*H1, H1);
+    CUDA_CHECK_LAST();
     transpose_kernel<<<(n1+thr-1)/thr,thr>>>(d_w_hh1_r, d_w_hh1_r_t, 4*H1, H1);
+    CUDA_CHECK_LAST();
     transpose_kernel<<<(n2+thr-1)/thr,thr>>>(d_w_hh2_f, d_w_hh2_f_t, 4*H2, H2);
+    CUDA_CHECK_LAST();
     transpose_kernel<<<(n2+thr-1)/thr,thr>>>(d_w_hh2_r, d_w_hh2_r_t, 4*H2, H2);
+    CUDA_CHECK_LAST();
 
     // Step 2: Repack transposed W_hh to half2 paired layout
     __half2 *d_w_hh1_f_h2, *d_w_hh1_r_h2, *d_w_hh2_f_h2, *d_w_hh2_r_h2;
-    cudaMalloc(&d_w_hh1_f_h2, H1*2*H1*sizeof(__half2));
-    cudaMalloc(&d_w_hh1_r_h2, H1*2*H1*sizeof(__half2));
-    cudaMalloc(&d_w_hh2_f_h2, H2*2*H2*sizeof(__half2));
-    cudaMalloc(&d_w_hh2_r_h2, H2*2*H2*sizeof(__half2));
+    CUDA_CHECK(cudaMalloc(&d_w_hh1_f_h2, H1*2*H1*sizeof(__half2)));
+    CUDA_CHECK(cudaMalloc(&d_w_hh1_r_h2, H1*2*H1*sizeof(__half2)));
+    CUDA_CHECK(cudaMalloc(&d_w_hh2_f_h2, H2*2*H2*sizeof(__half2)));
+    CUDA_CHECK(cudaMalloc(&d_w_hh2_r_h2, H2*2*H2*sizeof(__half2)));
     repack_whh_to_half2<<<(H1*H1+thr-1)/thr,thr>>>(d_w_hh1_f_t, d_w_hh1_f_h2, H1);
+    CUDA_CHECK_LAST();
     repack_whh_to_half2<<<(H1*H1+thr-1)/thr,thr>>>(d_w_hh1_r_t, d_w_hh1_r_h2, H1);
+    CUDA_CHECK_LAST();
     repack_whh_to_half2<<<(H2*H2+thr-1)/thr,thr>>>(d_w_hh2_f_t, d_w_hh2_f_h2, H2);
+    CUDA_CHECK_LAST();
     repack_whh_to_half2<<<(H2*H2+thr-1)/thr,thr>>>(d_w_hh2_r_t, d_w_hh2_r_h2, H2);
+    CUDA_CHECK_LAST();
 
     // Step 3: Convert W_ih to FP16
     __half *d_w_ih1_f_fp16, *d_w_ih1_r_fp16, *d_w_ih2_f_fp16, *d_w_ih2_r_fp16;
-    cudaMalloc(&d_w_ih1_f_fp16, 4*H1*IN_CH*sizeof(__half));
-    cudaMalloc(&d_w_ih1_r_fp16, 4*H1*IN_CH*sizeof(__half));
-    cudaMalloc(&d_w_ih2_f_fp16, 4*H2*H1x2*sizeof(__half));
-    cudaMalloc(&d_w_ih2_r_fp16, 4*H2*H1x2*sizeof(__half));
+    CUDA_CHECK(cudaMalloc(&d_w_ih1_f_fp16, 4*H1*IN_CH*sizeof(__half)));
+    CUDA_CHECK(cudaMalloc(&d_w_ih1_r_fp16, 4*H1*IN_CH*sizeof(__half)));
+    CUDA_CHECK(cudaMalloc(&d_w_ih2_f_fp16, 4*H2*H1x2*sizeof(__half)));
+    CUDA_CHECK(cudaMalloc(&d_w_ih2_r_fp16, 4*H2*H1x2*sizeof(__half)));
     fp32_to_fp16_kernel<<<(4*H1*IN_CH+thr-1)/thr,thr>>>(d_w_ih1_f, d_w_ih1_f_fp16, 4*H1*IN_CH);
+    CUDA_CHECK_LAST();
     fp32_to_fp16_kernel<<<(4*H1*IN_CH+thr-1)/thr,thr>>>(d_w_ih1_r, d_w_ih1_r_fp16, 4*H1*IN_CH);
+    CUDA_CHECK_LAST();
     fp32_to_fp16_kernel<<<(4*H2*H1x2+thr-1)/thr,thr>>>(d_w_ih2_f, d_w_ih2_f_fp16, 4*H2*H1x2);
+    CUDA_CHECK_LAST();
     fp32_to_fp16_kernel<<<(4*H2*H1x2+thr-1)/thr,thr>>>(d_w_ih2_r, d_w_ih2_r_fp16, 4*H2*H1x2);
-    cudaDeviceSynchronize();
+    CUDA_CHECK_LAST();
+    CUDA_CHECK(cudaDeviceSynchronize());
 
     // Output and scratch buffers
     float *d_h1_fw, *d_h1_rev, *d_in2, *d_h2_fw, *d_h2_rev, *d_out;
-    cudaMalloc(&d_h1_fw, H1*SEQ*sizeof(float));
-    cudaMalloc(&d_h1_rev, H1*SEQ*sizeof(float));
-    cudaMalloc(&d_in2, H1x2*SEQ*sizeof(float));
-    cudaMalloc(&d_h2_fw, H2*SEQ*sizeof(float));
-    cudaMalloc(&d_h2_rev, H2*SEQ*sizeof(float));
-    cudaMalloc(&d_out, OUT_SIZE*sizeof(float));
+    CUDA_CHECK(cudaMalloc(&d_h1_fw, H1*SEQ*sizeof(float)));
+    CUDA_CHECK(cudaMalloc(&d_h1_rev, H1*SEQ*sizeof(float)));
+    CUDA_CHECK(cudaMalloc(&d_in2, H1x2*SEQ*sizeof(float)));
+    CUDA_CHECK(cudaMalloc(&d_h2_fw, H2*SEQ*sizeof(float)));
+    CUDA_CHECK(cudaMalloc(&d_h2_rev, H2*SEQ*sizeof(float)));
+    CUDA_CHECK(cudaMalloc(&d_out, OUT_SIZE*sizeof(float)));
 
     float *d_gate1_fw, *d_gate1_rev, *d_gate2_fw, *d_gate2_rev;
-    cudaMalloc(&d_gate1_fw, 4*H1*SEQ*sizeof(float));
-    cudaMalloc(&d_gate1_rev, 4*H1*SEQ*sizeof(float));
-    cudaMalloc(&d_gate2_fw, 4*H2*SEQ*sizeof(float));
-    cudaMalloc(&d_gate2_rev, 4*H2*SEQ*sizeof(float));
+    CUDA_CHECK(cudaMalloc(&d_gate1_fw, 4*H1*SEQ*sizeof(float)));
+    CUDA_CHECK(cudaMalloc(&d_gate1_rev, 4*H1*SEQ*sizeof(float)));
+    CUDA_CHECK(cudaMalloc(&d_gate2_fw, 4*H2*SEQ*sizeof(float)));
+    CUDA_CHECK(cudaMalloc(&d_gate2_rev, 4*H2*SEQ*sizeof(float)));
 
     cudaStream_t stream;
-    cudaStreamCreate(&stream);
+    CUDA_CHECK(cudaStreamCreate(&stream));
 
     auto launch_pipeline = [&](cudaStream_t s) {
         lstm_direction_fp16(s, d_input, d_h1_fw, d_w_ih1_f_fp16, d_w_hh1_f_h2, d_b_ih1_f, d_b_hh1_f, IN_CH, H1, SEQ, false, d_gate1_fw);
         lstm_direction_fp16(s, d_input, d_h1_rev, d_w_ih1_r_fp16, d_w_hh1_r_h2, d_b_ih1_r, d_b_hh1_r, IN_CH, H1, SEQ, true, d_gate1_rev);
         int cb=(H1x2*SEQ+255)/256;
         combine_kernel<<<cb,256,0,s>>>(d_h1_fw, d_h1_rev, d_in2, H1, SEQ);
+        CUDA_CHECK_LAST();
         lstm_direction_fp16(s, d_in2, d_h2_fw, d_w_ih2_f_fp16, d_w_hh2_f_h2, d_b_ih2_f, d_b_hh2_f, H1x2, H2, SEQ, false, d_gate2_fw);
         lstm_direction_fp16(s, d_in2, d_h2_rev, d_w_ih2_r_fp16, d_w_hh2_r_h2, d_b_ih2_r, d_b_hh2_r, H1x2, H2, SEQ, true, d_gate2_rev);
+        // legacy_last_state: extract last timestep for auxiliary check / out_last.bin
         extract_last_timestep_kernel<<<1,H2,0,s>>>(d_h2_fw, d_h2_rev, H2, SEQ, d_out);
+        CUDA_CHECK_LAST();
     };
 
-    // Warmup
+    // Warmup + primary validation path
     launch_pipeline(stream);
-    cudaStreamSynchronize(stream);
+    CUDA_CHECK(cudaStreamSynchronize(stream));
 
-    // Validate
+    // Full-sequence GPU output: channel-major d_h2_fw/rev -> [SEQ, 2*H2]
+    std::vector<float> h_h2_fw(H2*SEQ), h_h2_rev(H2*SEQ);
+    CUDA_CHECK(cudaMemcpy(h_h2_fw.data(), d_h2_fw, H2*SEQ*sizeof(float), cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(h_h2_rev.data(), d_h2_rev, H2*SEQ*sizeof(float), cudaMemcpyDeviceToHost));
+    std::vector<float> gpu_full = pack_full_seq(h_h2_fw, h_h2_rev);
+
+    // legacy_last_state auxiliary check
     std::vector<float> gpu_out(OUT_SIZE);
-    cudaMemcpy(gpu_out.data(), d_out, OUT_SIZE*sizeof(float), cudaMemcpyDeviceToHost);
+    CUDA_CHECK(cudaMemcpy(gpu_out.data(), d_out, OUT_SIZE*sizeof(float), cudaMemcpyDeviceToHost));
+
+    // FP16 half2 path: disclosed tolerance 5e-2 (same for full seq and last-timestep)
+    const float tol = 5e-2f;
+    float max_err_full = 0.0f, max_err_last = 0.0f;
     bool pass = true;
-    for (int i = 0; i < OUT_SIZE; ++i) {
-        if (fabs(gpu_out[i] - cpu_out[i]) > 5e-2) {
-            std::cout << "Mismatch at " << i << ": GPU " << gpu_out[i] << " CPU " << cpu_out[i] << "\n";
-            pass = false; break;
+    for (int i = 0; i < FULL_SIZE; ++i) {
+        float e = fabsf(gpu_full[i] - cpu_full[i]);
+        if (e > max_err_full) max_err_full = e;
+        if (e > tol) {
+            if (pass)
+                std::cout << "Full-seq mismatch at " << i << ": GPU " << gpu_full[i]
+                          << " CPU " << cpu_full[i] << "\n";
+            pass = false;
         }
     }
+    for (int i = 0; i < OUT_SIZE; ++i) {
+        float e = fabsf(gpu_out[i] - cpu_last[i]);
+        if (e > max_err_last) max_err_last = e;
+        if (e > tol) {
+            if (pass)
+                std::cout << "legacy_last_state mismatch at " << i << ": GPU " << gpu_out[i]
+                          << " CPU " << cpu_last[i] << "\n";
+            pass = false;
+        }
+    }
+    std::cout << "max abs error full_seq: " << max_err_full
+              << "  legacy_last_state: " << max_err_last << "\n";
     std::cout << (pass ? "✅ FP16 half2 validation PASSED\n" : "❌ FP16 validation FAILED\n");
+
+    if (inject_mode) {
+        write_f32_bin(weight_dir + "/out_last.bin", gpu_out);
+        write_f32_bin(weight_dir + "/out_full.bin", gpu_full);
+        std::cout << "Wrote out_last.bin (" << OUT_SIZE << " floats) and out_full.bin ("
+                  << FULL_SIZE << " floats) to " << weight_dir << "\n";
+    }
 
     // Timing
     const int iters = 100;
     auto start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < iters; ++i) {
         launch_pipeline(stream);
-        cudaStreamSynchronize(stream);
+        CUDA_CHECK(cudaStreamSynchronize(stream));
     }
     auto end = std::chrono::high_resolution_clock::now();
     double fp16_us = std::chrono::duration<double, std::micro>(end-start).count()/iters;
@@ -442,5 +619,8 @@ int main() {
     cudaFree(d_w_ih1_f_fp16); cudaFree(d_w_ih1_r_fp16);
     cudaFree(d_w_ih2_f_fp16); cudaFree(d_w_ih2_r_fp16);
 
-    return 0;
+    // FP16 has no separate graph path; all_pass tracks full+legacy validation
+    bool gpass = pass;
+    bool all_pass = pass && gpass;
+    return all_pass ? 0 : 1;
 }

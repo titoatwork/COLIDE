@@ -1,0 +1,187 @@
+{
+  "experiment_id": "framework_parity_gate",
+  "protocol_id": "framework_logit_parity_v1",
+  "timestamp_utc": "2026-08-14T05:35:24.147549+00:00",
+  "git_sha": "24ac44f0eafb28fc1a8daaa78e45d01301ffae3b",
+  "source_dirty": true,
+  "valid": false,
+  "use_in_manuscript": false,
+  "invalid_reason": "source_dirty=true",
+  "champion_md5": "80a90f7cc210276300eaa90173a5a385",
+  "champion_md5_expected": "80a90f7cc210276300eaa90173a5a385",
+  "champion_md5_ok": true,
+  "champion_path": "model/best_model_botiot_twostage.pth",
+  "command": "PYTHONPATH=. python scripts/parity_framework_backends.py",
+  "seed": 42,
+  "batch": 8,
+  "input_features": 10,
+  "input_sha256": "d4b77cecf10b407ec51e7731509b5c812531ecf5b0acc4195fd10757ce4da0f3",
+  "reference": {
+    "backend": "pytorch_eager_cpu",
+    "logits_shape": [
+      8,
+      5
+    ],
+    "precision": "fp32",
+    "torch_version": "2.5.1+cu121"
+  },
+  "fp32_tolerances": {
+    "pytorch_eager_same_device": 0.0001,
+    "pytorch_eager_cross_device": 0.05,
+    "onnxruntime": 0.001,
+    "torch_compile": 0.05,
+    "note": "predeclared FP32 tolerances before result inspection"
+  },
+  "backends": [
+    {
+      "backend": "pytorch_eager_cuda",
+      "device": "cuda",
+      "skipped": false,
+      "fp32_tol": 0.05,
+      "stats": {
+        "max_abs_error": 0.03638744354248047,
+        "mean_abs_error": 0.0027702152729034424,
+        "max_rel_error": 0.04092545919132129,
+        "nan_count_a": 0,
+        "nan_count_b": 0
+      },
+      "class_agreement": {
+        "agree": 8,
+        "total": 8,
+        "rate": 1.0
+      },
+      "pass": true,
+      "precision": "fp32",
+      "torch_version": "2.5.1+cu121",
+      "valid": false,
+      "valid_reason": "source_dirty=true"
+    },
+    {
+      "backend": "onnxruntime_cpu",
+      "provider": "CPUExecutionProvider",
+      "onnx_path": "benchmarks/results/framework_parity_champion.onnx",
+      "onnx_sha256": "d70f0d4f3ccda535a17588fbc8ee74e40817856513edb779e18eec3465d4821a",
+      "skipped": false,
+      "pass": true,
+      "error": null,
+      "available_providers": [
+        "TensorrtExecutionProvider",
+        "CUDAExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "logits_shape": [
+        8,
+        5
+      ],
+      "version": "1.26.0",
+      "onnx_source": "fresh_champion_export",
+      "fp32_tol": 0.001,
+      "stats": {
+        "max_abs_error": 7.62939453125e-06,
+        "mean_abs_error": 1.989305019378662e-06,
+        "max_rel_error": 3.492744792899638e-05,
+        "nan_count_a": 0,
+        "nan_count_b": 0
+      },
+      "class_agreement": {
+        "agree": 8,
+        "total": 8,
+        "rate": 1.0
+      },
+      "precision": "fp32",
+      "valid": false,
+      "valid_reason": "source_dirty=true"
+    },
+    {
+      "backend": "onnxruntime_cuda",
+      "provider": "CUDAExecutionProvider",
+      "onnx_path": "benchmarks/results/framework_parity_champion.onnx",
+      "onnx_sha256": "d70f0d4f3ccda535a17588fbc8ee74e40817856513edb779e18eec3465d4821a",
+      "skipped": false,
+      "pass": true,
+      "error": null,
+      "available_providers": [
+        "TensorrtExecutionProvider",
+        "CUDAExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "logits_shape": [
+        8,
+        5
+      ],
+      "version": "1.26.0",
+      "onnx_source": "fresh_champion_export",
+      "fp32_tol": 0.05,
+      "stats": {
+        "max_abs_error": 0.03423666954040527,
+        "mean_abs_error": 0.0025833509862422943,
+        "max_rel_error": 0.03850645403233224,
+        "nan_count_a": 0,
+        "nan_count_b": 0
+      },
+      "class_agreement": {
+        "agree": 8,
+        "total": 8,
+        "rate": 1.0
+      },
+      "precision": "fp32",
+      "valid": false,
+      "valid_reason": "source_dirty=true"
+    },
+    {
+      "backend": "torch_compile",
+      "device": "cuda",
+      "skipped": false,
+      "pass": true,
+      "error": null,
+      "note": "BiLSTM dynamic control flow often crashes torch.compile CUDA graphs",
+      "logits_shape": [
+        8,
+        5
+      ],
+      "torch_version": "2.5.1+cu121",
+      "fp32_tol": 0.05,
+      "stats": {
+        "max_abs_error": 0.0363919734954834,
+        "mean_abs_error": 0.00277056097984314,
+        "max_rel_error": 0.04093055409188894,
+        "nan_count_a": 0,
+        "nan_count_b": 0
+      },
+      "class_agreement": {
+        "agree": 8,
+        "total": 8,
+        "rate": 1.0
+      },
+      "precision": "fp32",
+      "valid": false,
+      "valid_reason": "source_dirty=true"
+    },
+    {
+      "backend": "tensorrt_native",
+      "skipped": true,
+      "reason": "no TRT engine present; not inventing engines",
+      "pass": null,
+      "valid": false,
+      "valid_reason": "no TRT engine present; not inventing engines"
+    }
+  ],
+  "summary": {
+    "n_backends": 5,
+    "n_skipped": 1,
+    "n_pass": 4,
+    "n_fail": 0,
+    "class_agreement_rates": {
+      "pytorch_eager_cuda": 1.0,
+      "onnxruntime_cpu": 1.0,
+      "onnxruntime_cuda": 1.0,
+      "torch_compile": 1.0
+    },
+    "max_abs_errors": {
+      "pytorch_eager_cuda": 0.03638744354248047,
+      "onnxruntime_cpu": 7.62939453125e-06,
+      "onnxruntime_cuda": 0.03423666954040527,
+      "torch_compile": 0.0363919734954834
+    }
+  }
+}

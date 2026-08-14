@@ -53,7 +53,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from model.cnn_bilstm_v3_attention import CNNBiLSTMAttention  # noqa: E402
 from scripts.protocol.metrics import compute_classification_metrics  # noqa: E402
-from scripts.protocol.result_schema import git_sha  # noqa: E402
+from scripts.protocol.result_schema import git_dirty, git_sha  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Protocol constants
@@ -101,6 +101,8 @@ TARGET_BLACKLIST_CANONICAL = frozenset(
 )
 
 UNKNOWN_CAT_TOKEN = "__UNK__"
+# Literal strings that may arise from prior astype(str) on missing values.
+_NAN_STRING_TOKENS = frozenset({"nan", "None", "NaN", "<NA>", "NaT"})
 
 
 def normalize_col(name: str) -> str:
@@ -109,6 +111,22 @@ def normalize_col(name: str) -> str:
     s = re.sub(r"[\s\-\.]+", "_", s)
     s = re.sub(r"_+", "_", s).strip("_")
     return s
+
+
+def series_to_cat(values: pd.Series | np.ndarray | list) -> pd.Series:
+    """Convert categorical column to string codes with correct missing-value order.
+
+    Order matters: fillna BEFORE astype(str). Doing astype(str) first turns real
+    NaN into the literal string ``"nan"``, which then survives fillna and
+    becomes a spurious category instead of the dedicated unknown token.
+    """
+    vals = pd.Series(values).fillna(UNKNOWN_CAT_TOKEN).astype(str)
+    # Normalize edge-case string forms of missing values from prior conversions.
+    mask = vals.isin(_NAN_STRING_TOKENS)
+    if mask.any():
+        vals = vals.copy()
+        vals.loc[mask] = UNKNOWN_CAT_TOKEN
+    return vals
 
 
 def feature_list_sha256(features: list[str]) -> str:
@@ -147,7 +165,7 @@ class TrainOnlyCatEncoder:
         self.unknown_code: int = 0
 
     def fit(self, values: pd.Series | np.ndarray) -> "TrainOnlyCatEncoder":
-        vals = pd.Series(values).astype(str).fillna(UNKNOWN_CAT_TOKEN)
+        vals = series_to_cat(values)
         classes = sorted(vals.unique().tolist())
         self.classes_ = classes
         self.map_ = {c: i for i, c in enumerate(classes)}
@@ -155,7 +173,7 @@ class TrainOnlyCatEncoder:
         return self
 
     def transform(self, values: pd.Series | np.ndarray) -> np.ndarray:
-        vals = pd.Series(values).astype(str).fillna(UNKNOWN_CAT_TOKEN)
+        vals = series_to_cat(values)
         return np.array(
             [self.map_.get(v, self.unknown_code) for v in vals], dtype=np.float32
         )
@@ -588,6 +606,7 @@ def main() -> int:
 
     ckpt_path = CKPT_DIR / f"cnn_hardlabel_seed{args.seed}.pth"
     torch.save(model.state_dict(), ckpt_path)
+    checkpoint_sha256 = file_sha256(ckpt_path)
 
     # Predictions (compact)
     pred_path = OUT_DIR / f"predictions_seed{args.seed}.npz"
@@ -616,9 +635,33 @@ def main() -> int:
         "n_test": int(len(data["y_test"])),
     }
 
+    # Provenance / claim-gate fields
+    sha = git_sha(PROJECT_ROOT)
+    dirty = git_dirty(PROJECT_ROOT)
+    source_dirty = bool(dirty) if dirty is not None else True  # unknown → treat as dirty
+    command = " ".join(sys.argv)
+    protocol_ok = True
+    use_in_manuscript = protocol_ok and (not source_dirty)
+    manuscript_note = None
+    if source_dirty:
+        manuscript_note = (
+            "use_in_manuscript=false because source_dirty is true "
+            "(working tree has uncommitted changes or git status unavailable); "
+            "commit a clean tree and rerun for claim-eligible artifacts."
+        )
+
+    cnn_per_class_f1 = {k: v["f1"] for k, v in cnn_test["per_class"].items()}
+    rf_per_class_f1 = {k: v["f1"] for k, v in rf_test["per_class"].items()}
+    cnn_min_f1 = float(min(cnn_per_class_f1.values())) if cnn_per_class_f1 else 0.0
+    weak_cnn_classes = sorted(
+        [name for name, f1 in cnn_per_class_f1.items() if f1 < 0.2]
+    )
+
     result = {
-        "valid": True,
-        "use_in_manuscript": True,
+        "valid": protocol_ok,
+        "use_in_manuscript": use_in_manuscript,
+        "source_dirty": source_dirty,
+        "command": command,
         "protocol_id": PROTOCOL_ID,
         "experiment_id": "toniot_corrected_leakage_safe_minimal",
         "label": "corrected leakage-safe random split",
@@ -626,6 +669,7 @@ def main() -> int:
         "split_seed": data["split"]["seed"],
         "feature_columns": data["feature_columns"],
         "feature_hash_sha256": data["feature_hash"],
+        "feature_hash": data["feature_hash"],
         "target_column": data["label_col"],
         "label_mapping": data["label_mapping"],
         "class_names": data["class_names"],
@@ -642,8 +686,12 @@ def main() -> int:
         "preprocessing": {
             "encoders_fit_on": "train_only",
             "scaler_fit_on": "train_only",
+            "scaler": "MinMaxScaler_fit_train_only",
+            "numeric_missing": "fixed_zero_imputation",
+            "numeric_inf_handling": "inf_to_nan_then_zero",
             "smote": False,
             "unknown_category_token": UNKNOWN_CAT_TOKEN,
+            "categorical_missing": "fillna_unknown_token_before_astype_str",
             "cat_vocab": data["cat_vocab"],
             "n_dropped_invalid_target": data["n_dropped_invalid_target"],
             "n_duplicates_removed": data["n_duplicates_removed"],
@@ -664,9 +712,7 @@ def main() -> int:
             "test_metrics": rf_test,
             "val_macro_f1": float(rf_val["macro_f1"]),
             "test_macro_f1": float(rf_test["macro_f1"]),
-            "per_class_f1_test": {
-                k: v["f1"] for k, v in rf_test["per_class"].items()
-            },
+            "per_class_f1_test": rf_per_class_f1,
             "wall_sec": float(rf_wall),
         },
         "cnn": {
@@ -682,11 +728,12 @@ def main() -> int:
             "test_metrics": cnn_test,
             "val_macro_f1": float(cnn_val["macro_f1"]),
             "test_macro_f1": float(cnn_test["macro_f1"]),
-            "per_class_f1_test": {
-                k: v["f1"] for k, v in cnn_test["per_class"].items()
-            },
+            "per_class_f1_test": cnn_per_class_f1,
+            "min_per_class_f1_test": cnn_min_f1,
+            "weak_classes_f1_lt_0_2": weak_cnn_classes,
             "history": cnn_hist["history"],
             "checkpoint": str(ckpt_path.relative_to(PROJECT_ROOT)),
+            "checkpoint_sha256": checkpoint_sha256,
             "wall_sec": float(cnn_wall),
         },
         "comparators_note": (
@@ -694,18 +741,35 @@ def main() -> int:
             "results (0.9526 CNN / 0.9851 RF). Those are marked invalid."
         ),
         "bot_champion_untouched": True,
-        "git_sha": git_sha(PROJECT_ROOT),
+        "git_sha": sha,
+        "environment": {
+            "python": sys.version.split()[0],
+            "python_full": sys.version,
+            "torch": torch.__version__,
+            "numpy": np.__version__,
+            "pandas": pd.__version__,
+            "device": str(device),
+            "cuda_available": bool(torch.cuda.is_available()),
+            "cuda_device_name": (
+                torch.cuda.get_device_name(0) if torch.cuda.is_available() else None
+            ),
+        },
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
         "device": str(device),
         "wall_sec": float(time.time() - t0),
         "predictions_file": str(pred_path.relative_to(PROJECT_ROOT)),
+        "checkpoint_sha256": checkpoint_sha256,
     }
+    if manuscript_note is not None:
+        result["use_in_manuscript_reason"] = manuscript_note
 
     out_json = OUT_DIR / "summary.json"
     out_json.write_text(json.dumps(result, indent=2) + "\n")
-    (OUT_DIR / f"seed{args.seed}.json").write_text(json.dumps(result, indent=2) + "\n")
+    seed_json = OUT_DIR / f"seed{args.seed}.json"
+    seed_json.write_text(json.dumps(result, indent=2) + "\n")
 
-    md = [
+    # table.md: macro metrics + candid per-class F1 (especially CNN weak classes)
+    md_lines = [
         "# ToN-IoT corrected leakage-safe results\n\n",
         f"- Protocol: `{PROTOCOL_ID}`\n",
         f"- Features ({n_features}): `{data['feature_columns']}`\n",
@@ -715,25 +779,75 @@ def main() -> int:
         f"(val {rf_val['macro_f1']:.4f})\n",
         f"- CNN test macro-F1: **{cnn_test['macro_f1']:.4f}** "
         f"(val {cnn_val['macro_f1']:.4f})\n",
-        f"- valid: true | use_in_manuscript: true\n",
+        f"- valid: {str(protocol_ok).lower()} | "
+        f"use_in_manuscript: {str(use_in_manuscript).lower()} | "
+        f"source_dirty: {str(source_dirty).lower()}\n",
+        f"- git_sha: `{sha}`\n",
+        f"- checkpoint_sha256: `{checkpoint_sha256}`\n",
         f"- SMOTE: false | KD: false\n",
+        f"- numeric_missing: fixed_zero_imputation | scaler: MinMaxScaler train-only\n",
+        "\n## RF per-class F1 (test)\n\n",
     ]
-    (OUT_DIR / "table.md").write_text("".join(md))
+    for name in data["class_names"]:
+        pc = rf_test["per_class"][name]
+        md_lines.append(
+            f"- `{name}`: F1={pc['f1']:.4f}  "
+            f"P={pc['precision']:.4f}  R={pc['recall']:.4f}  "
+            f"support={pc['support']}\n"
+        )
+    md_lines.append("\n## CNN per-class F1 (test)\n\n")
+    for name in data["class_names"]:
+        pc = cnn_test["per_class"][name]
+        md_lines.append(
+            f"- `{name}`: F1={pc['f1']:.4f}  "
+            f"P={pc['precision']:.4f}  R={pc['recall']:.4f}  "
+            f"support={pc['support']}\n"
+        )
+    if cnn_min_f1 < 0.2:
+        weak_note = ", ".join(f"`{c}`" for c in weak_cnn_classes) or "(none named)"
+        mitm_note = ""
+        if any("mitm" in c.lower() for c in weak_cnn_classes):
+            mitm_note = (
+                " The `mitm` class is among the weak set; treat rare-class CNN "
+                "scores as exploratory and prefer RF for balanced per-class behavior "
+                "on this protocol."
+            )
+        md_lines.append(
+            "\n## Rare-class note\n\n"
+            f"CNN min per-class F1 is **{cnn_min_f1:.4f}** "
+            f"(classes with F1 < 0.2: {weak_note}). "
+            "Low F1 with high recall and low precision indicates rare-class "
+            "overprediction under class-weighted CE; do not retune against this "
+            "already-observed test set. RF remains substantially stronger and more "
+            f"balanced on this leakage-safe split.{mitm_note}\n"
+        )
+    table_path = OUT_DIR / "table.md"
+    table_path.write_text("".join(md_lines))
 
     print(
         json.dumps(
             {
-                "valid": True,
+                "valid": protocol_ok,
+                "use_in_manuscript": use_in_manuscript,
+                "source_dirty": source_dirty,
                 "protocol_id": PROTOCOL_ID,
+                "git_sha": sha,
+                "checkpoint_sha256": checkpoint_sha256,
                 "rf_test_macro_f1": float(rf_test["macro_f1"]),
                 "cnn_test_macro_f1": float(cnn_test["macro_f1"]),
                 "rf_val_macro_f1": float(rf_val["macro_f1"]),
                 "cnn_val_macro_f1": float(cnn_val["macro_f1"]),
+                "cnn_min_per_class_f1_test": cnn_min_f1,
+                "weak_cnn_classes": weak_cnn_classes,
                 "out": str(out_json.relative_to(PROJECT_ROOT)),
+                "seed_json": str(seed_json.relative_to(PROJECT_ROOT)),
+                "table": str(table_path.relative_to(PROJECT_ROOT)),
+                "checkpoint": str(ckpt_path.relative_to(PROJECT_ROOT)),
             },
             indent=2,
         )
     )
+    print(f"[ton-safe] artifact summary: {out_json}")
     return 0
 
 

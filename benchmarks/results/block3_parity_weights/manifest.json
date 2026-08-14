@@ -1,0 +1,377 @@
+{
+  "created_utc": "2026-08-14T05:33:01.350101+00:00",
+  "geometry": {
+    "seq": 16,
+    "in_ch": 128,
+    "h1": 128,
+    "h2": 64,
+    "out_size": 128,
+    "batch": 4
+  },
+  "seed": 42,
+  "gate_order": [
+    "i",
+    "f",
+    "g",
+    "o"
+  ],
+  "weight_files": {
+    "w_ih1_f.bin": {
+      "shape": [
+        512,
+        128
+      ],
+      "dtype": "float32",
+      "nbytes": 262144,
+      "sha256": "4093dad5957389e47d091980357279b029d9598e785d4f5c26528a8ebcd1af61",
+      "byte_order": "little",
+      "layout": "row_major_pytorch_lstm"
+    },
+    "w_hh1_f.bin": {
+      "shape": [
+        512,
+        128
+      ],
+      "dtype": "float32",
+      "nbytes": 262144,
+      "sha256": "612bbd01230e0400bfa5f8b2f658a41c89e46318015afe4ef13922e6263aaf7d",
+      "byte_order": "little",
+      "layout": "row_major_pytorch_lstm"
+    },
+    "b_ih1_f.bin": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32",
+      "nbytes": 2048,
+      "sha256": "d523d766075523a2c511c3348d2f464cd0392425c2f76a36ed3b1ffb7790d555",
+      "byte_order": "little",
+      "layout": "row_major_pytorch_lstm"
+    },
+    "b_hh1_f.bin": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32",
+      "nbytes": 2048,
+      "sha256": "0975e24ee2099105718a7bb3b2d1b42846d657a9bb6dacc3aae4ab2573b72234",
+      "byte_order": "little",
+      "layout": "row_major_pytorch_lstm"
+    },
+    "w_ih1_r.bin": {
+      "shape": [
+        512,
+        128
+      ],
+      "dtype": "float32",
+      "nbytes": 262144,
+      "sha256": "40ad971e3597d4bd31be2346433f87040afe9fb8d763c48ca088fb4ed5727aac",
+      "byte_order": "little",
+      "layout": "row_major_pytorch_lstm"
+    },
+    "w_hh1_r.bin": {
+      "shape": [
+        512,
+        128
+      ],
+      "dtype": "float32",
+      "nbytes": 262144,
+      "sha256": "673c647f39ea8af8347fefc4186f139103ba2fdf3f37d991b034b26d62a3a481",
+      "byte_order": "little",
+      "layout": "row_major_pytorch_lstm"
+    },
+    "b_ih1_r.bin": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32",
+      "nbytes": 2048,
+      "sha256": "e9d5d68730c2ce55544c5d3e369f2c62817098433ada75d69258609330da97d2",
+      "byte_order": "little",
+      "layout": "row_major_pytorch_lstm"
+    },
+    "b_hh1_r.bin": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32",
+      "nbytes": 2048,
+      "sha256": "58398fd2b5ad3ef9568165ecc781c471fddd22c1892e340470b283698270d82c",
+      "byte_order": "little",
+      "layout": "row_major_pytorch_lstm"
+    },
+    "w_ih2_f.bin": {
+      "shape": [
+        256,
+        256
+      ],
+      "dtype": "float32",
+      "nbytes": 262144,
+      "sha256": "4ef13f7b49dfb2c5095759109a68bc75cdc7a0530c7b215e7a8bb4562c17928f",
+      "byte_order": "little",
+      "layout": "row_major_pytorch_lstm"
+    },
+    "w_hh2_f.bin": {
+      "shape": [
+        256,
+        64
+      ],
+      "dtype": "float32",
+      "nbytes": 65536,
+      "sha256": "9700dee9cd07380bba9e7ea5a297c86f9b77a183fc4318d8dc94b781d339172b",
+      "byte_order": "little",
+      "layout": "row_major_pytorch_lstm"
+    },
+    "b_ih2_f.bin": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32",
+      "nbytes": 1024,
+      "sha256": "e716fe7b07260d1291439fbcabccc450240e5b4f1c1cbb23c95093b2d564db18",
+      "byte_order": "little",
+      "layout": "row_major_pytorch_lstm"
+    },
+    "b_hh2_f.bin": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32",
+      "nbytes": 1024,
+      "sha256": "eb2b772330af7523046db7dceefd76115b89b14712f0abb4a1488aa8ac187c1f",
+      "byte_order": "little",
+      "layout": "row_major_pytorch_lstm"
+    },
+    "w_ih2_r.bin": {
+      "shape": [
+        256,
+        256
+      ],
+      "dtype": "float32",
+      "nbytes": 262144,
+      "sha256": "3dab63a2c8fe6e5205d533ce2ab1b0d5ab2ea08ea2e0658646d50a07c4d4e844",
+      "byte_order": "little",
+      "layout": "row_major_pytorch_lstm"
+    },
+    "w_hh2_r.bin": {
+      "shape": [
+        256,
+        64
+      ],
+      "dtype": "float32",
+      "nbytes": 65536,
+      "sha256": "3f3d651f186d115a2feecd9fc25aaff094ac1e3f3984507610b3bd821720b1fa",
+      "byte_order": "little",
+      "layout": "row_major_pytorch_lstm"
+    },
+    "b_ih2_r.bin": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32",
+      "nbytes": 1024,
+      "sha256": "a4d71bd203a6e3c530dade72994b3f6793fd907ed34fa86d10570472fcec3ea8",
+      "byte_order": "little",
+      "layout": "row_major_pytorch_lstm"
+    },
+    "b_hh2_r.bin": {
+      "shape": [
+        256
+      ],
+      "dtype": "float32",
+      "nbytes": 1024,
+      "sha256": "e64d19bd6183bd29a847dfe7f3e7147a38f6ae9ad553bac9e3b649b22c992325",
+      "byte_order": "little",
+      "layout": "row_major_pytorch_lstm"
+    },
+    "l1_fw_w_ih.bin": {
+      "alias_of": "w_ih1_f.bin",
+      "sha256": "4093dad5957389e47d091980357279b029d9598e785d4f5c26528a8ebcd1af61"
+    },
+    "l1_fw_w_hh.bin": {
+      "alias_of": "w_hh1_f.bin",
+      "sha256": "612bbd01230e0400bfa5f8b2f658a41c89e46318015afe4ef13922e6263aaf7d"
+    },
+    "l1_fw_b_ih.bin": {
+      "alias_of": "b_ih1_f.bin",
+      "sha256": "d523d766075523a2c511c3348d2f464cd0392425c2f76a36ed3b1ffb7790d555"
+    },
+    "l1_fw_b_hh.bin": {
+      "alias_of": "b_hh1_f.bin",
+      "sha256": "0975e24ee2099105718a7bb3b2d1b42846d657a9bb6dacc3aae4ab2573b72234"
+    },
+    "l1_rev_w_ih.bin": {
+      "alias_of": "w_ih1_r.bin",
+      "sha256": "40ad971e3597d4bd31be2346433f87040afe9fb8d763c48ca088fb4ed5727aac"
+    },
+    "l1_rev_w_hh.bin": {
+      "alias_of": "w_hh1_r.bin",
+      "sha256": "673c647f39ea8af8347fefc4186f139103ba2fdf3f37d991b034b26d62a3a481"
+    },
+    "l1_rev_b_ih.bin": {
+      "alias_of": "b_ih1_r.bin",
+      "sha256": "e9d5d68730c2ce55544c5d3e369f2c62817098433ada75d69258609330da97d2"
+    },
+    "l1_rev_b_hh.bin": {
+      "alias_of": "b_hh1_r.bin",
+      "sha256": "58398fd2b5ad3ef9568165ecc781c471fddd22c1892e340470b283698270d82c"
+    },
+    "l2_fw_w_ih.bin": {
+      "alias_of": "w_ih2_f.bin",
+      "sha256": "4ef13f7b49dfb2c5095759109a68bc75cdc7a0530c7b215e7a8bb4562c17928f"
+    },
+    "l2_fw_w_hh.bin": {
+      "alias_of": "w_hh2_f.bin",
+      "sha256": "9700dee9cd07380bba9e7ea5a297c86f9b77a183fc4318d8dc94b781d339172b"
+    },
+    "l2_fw_b_ih.bin": {
+      "alias_of": "b_ih2_f.bin",
+      "sha256": "e716fe7b07260d1291439fbcabccc450240e5b4f1c1cbb23c95093b2d564db18"
+    },
+    "l2_fw_b_hh.bin": {
+      "alias_of": "b_hh2_f.bin",
+      "sha256": "eb2b772330af7523046db7dceefd76115b89b14712f0abb4a1488aa8ac187c1f"
+    },
+    "l2_rev_w_ih.bin": {
+      "alias_of": "w_ih2_r.bin",
+      "sha256": "3dab63a2c8fe6e5205d533ce2ab1b0d5ab2ea08ea2e0658646d50a07c4d4e844"
+    },
+    "l2_rev_w_hh.bin": {
+      "alias_of": "w_hh2_r.bin",
+      "sha256": "3f3d651f186d115a2feecd9fc25aaff094ac1e3f3984507610b3bd821720b1fa"
+    },
+    "l2_rev_b_ih.bin": {
+      "alias_of": "b_ih2_r.bin",
+      "sha256": "a4d71bd203a6e3c530dade72994b3f6793fd907ed34fa86d10570472fcec3ea8"
+    },
+    "l2_rev_b_hh.bin": {
+      "alias_of": "b_hh2_r.bin",
+      "sha256": "e64d19bd6183bd29a847dfe7f3e7147a38f6ae9ad553bac9e3b649b22c992325"
+    },
+    "input_btc.bin": {
+      "shape": [
+        4,
+        16,
+        128
+      ],
+      "dtype": "float32",
+      "nbytes": 32768,
+      "sha256": "8ec1d8c91cca0e30106fd59aef6c9590da9301592c2c091995484799af40b185",
+      "layout": "batch_time_channel"
+    },
+    "input.bin": {
+      "shape": [
+        128,
+        16
+      ],
+      "dtype": "float32",
+      "nbytes": 8192,
+      "sha256": "831aab4bf7cccabc620e3749fbc2c5d34abb1ffff54b6fac1373e0997441519e",
+      "layout": "channel_major",
+      "note": "sample 0; fused_block3.cu inject layout"
+    },
+    "input_b0.bin": {
+      "shape": [
+        128,
+        16
+      ],
+      "dtype": "float32",
+      "sha256": "831aab4bf7cccabc620e3749fbc2c5d34abb1ffff54b6fac1373e0997441519e",
+      "layout": "channel_major"
+    },
+    "input_b1.bin": {
+      "shape": [
+        128,
+        16
+      ],
+      "dtype": "float32",
+      "sha256": "4c87ccdce473943616892f989337f2c632c4848a795e75811e338c2fc5821bb3",
+      "layout": "channel_major"
+    },
+    "input_b2.bin": {
+      "shape": [
+        128,
+        16
+      ],
+      "dtype": "float32",
+      "sha256": "b01021160026c4bb07fdfc3e5058ebe065a1f4cf7505ce6b266c94f078b4a2c7",
+      "layout": "channel_major"
+    },
+    "input_b3.bin": {
+      "shape": [
+        128,
+        16
+      ],
+      "dtype": "float32",
+      "sha256": "ae33966d26f224f6fb0c51ac525b85abbddbbb642d263ba8b9a1ba7df0a66318",
+      "layout": "channel_major"
+    }
+  },
+  "state_dict_map": {
+    "w_ih1_f": "bilstm1.weight_ih_l0",
+    "w_hh1_f": "bilstm1.weight_hh_l0",
+    "b_ih1_f": "bilstm1.bias_ih_l0",
+    "b_hh1_f": "bilstm1.bias_hh_l0",
+    "w_ih1_r": "bilstm1.weight_ih_l0_reverse",
+    "w_hh1_r": "bilstm1.weight_hh_l0_reverse",
+    "b_ih1_r": "bilstm1.bias_ih_l0_reverse",
+    "b_hh1_r": "bilstm1.bias_hh_l0_reverse",
+    "w_ih2_f": "bilstm2.weight_ih_l0",
+    "w_hh2_f": "bilstm2.weight_hh_l0",
+    "b_ih2_f": "bilstm2.bias_ih_l0",
+    "b_hh2_f": "bilstm2.bias_hh_l0",
+    "w_ih2_r": "bilstm2.weight_ih_l0_reverse",
+    "w_hh2_r": "bilstm2.weight_hh_l0_reverse",
+    "b_ih2_r": "bilstm2.bias_ih_l0_reverse",
+    "b_hh2_r": "bilstm2.bias_hh_l0_reverse"
+  },
+  "alias_map": {
+    "l1_fw_w_ih": "w_ih1_f",
+    "l1_fw_w_hh": "w_hh1_f",
+    "l1_fw_b_ih": "b_ih1_f",
+    "l1_fw_b_hh": "b_hh1_f",
+    "l1_rev_w_ih": "w_ih1_r",
+    "l1_rev_w_hh": "w_hh1_r",
+    "l1_rev_b_ih": "b_ih1_r",
+    "l1_rev_b_hh": "b_hh1_r",
+    "l2_fw_w_ih": "w_ih2_f",
+    "l2_fw_w_hh": "w_hh2_f",
+    "l2_fw_b_ih": "b_ih2_f",
+    "l2_fw_b_hh": "b_hh2_f",
+    "l2_rev_w_ih": "w_ih2_r",
+    "l2_rev_w_hh": "w_hh2_r",
+    "l2_rev_b_ih": "b_ih2_r",
+    "l2_rev_b_hh": "b_hh2_r"
+  },
+  "cuda_inject": {
+    "env": "COLIDE_B3_WEIGHTS=<dir>",
+    "argv": "fused_block3 <dir>",
+    "required_bins": [
+      "b_hh1_f.bin",
+      "b_hh1_r.bin",
+      "b_hh2_f.bin",
+      "b_hh2_r.bin",
+      "b_ih1_f.bin",
+      "b_ih1_r.bin",
+      "b_ih2_f.bin",
+      "b_ih2_r.bin",
+      "input.bin",
+      "w_hh1_f.bin",
+      "w_hh1_r.bin",
+      "w_hh2_f.bin",
+      "w_hh2_r.bin",
+      "w_ih1_f.bin",
+      "w_ih1_r.bin",
+      "w_ih2_f.bin",
+      "w_ih2_r.bin"
+    ],
+    "outputs": [
+      "out_last.bin",
+      "out_full.bin"
+    ],
+    "out_full_layout": "time_major [16, 128] fw|rev"
+  },
+  "champion_path": "model/best_model_botiot_twostage.pth",
+  "champion_md5": "80a90f7cc210276300eaa90173a5a385",
+  "champion_md5_ok": true
+}

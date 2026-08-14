@@ -1,9 +1,12 @@
-# Claim map — pre-write authority (pre-manuscript closed)
+# Claim map — pre-write authority
 
-**Date:** 2026-08-14 (Phase 2 corrected ToN + Phase 1 quarantine)  
+**Date:** 2026-08-14 (Phase 1 claim hygiene + Phase 2 corrected ToN)  
 **Use:** manuscript drafting only. Every number must trace to JSON or a locked doc table.  
 **Champion:** md5 `80a90f7…`  
-**Also read:** `docs/ISSUE_REGISTER.md` · `docs/KNOWN_LIMITATIONS.md` · `docs/PRE_MANUSCRIPT_CLOSURE.md`
+**Also read:** `docs/ISSUE_REGISTER.md` · `docs/KNOWN_LIMITATIONS.md` · `docs/PRE_MANUSCRIPT_CLOSURE.md` · `docs/REMEDIATION_STATUS.md`  
+**External readiness review:** `COLIDE_Remediation_Update_Review.md` (Phases 1–8; project **not** submission-ready while CUDA evidence + publication sync pending)
+
+**Closure posture:** DATA remediation closed; CUDA evidence and publication synchronization **pending**. Do not draft as if remediation is fully closed.
 
 ---
 
@@ -27,17 +30,18 @@
 
 | Claim | Status | Source |
 |-------|--------|--------|
-| B1/B2/B4 CUDA much faster than matching PT on V100S/A100 | **OK** | extraction tables |
-| B3 CUDA FP16 **slower** than matching PT B3 (both GPUs, 3 sessions) as wall-clock of **current** binaries | **OK — required honesty** | B3 report + extraction; label **pre_fix** |
-| B3 CUDA vs PT as closed matching-op / post_fix parity result | **FORBIDDEN** until CUDA-B3-001/002/003 + real-weight parity | Issue register |
-| Session-stable B3 means | **OK** | max spread ≪ 2% B3 |
-| Full Custom CUDA pipeline vs full V3 PT speedup | **FORBIDDEN** | Option A / harness `valid=false` |
-| Portable “CUDA BiLSTM beats PT/cuDNN on servers” | **FORBIDDEN** | PT wins B3 wall-clock |
+| B1/B2/B4 CUDA much faster than matching PT on V100S/A100 | **OK** | extraction tables (matched operator-vs-operator) |
+| B3 CUDA FP16 **slower** than matching PT B3 (both GPUs, 3 sessions) as wall-clock of **pre_fix** historical binaries | **OK — required honesty** | B3 report + extraction; label **pre_fix** / not post_fix parity |
+| B3 CUDA vs PT as closed matching-op / post_fix parity result | **FORBIDDEN** until CUDA-B3-001/002/003 rebench + production-weight parity green | Issue register |
+| Session-stable B3 means (**pre_fix** trees) | **OK** | max spread ≪ 2% B3 |
+| Full Custom CUDA pipeline vs full V3 PT speedup | **FORBIDDEN** | Option A / CLAIM-PIPE-001 |
+| Any ratio of **partial** custom pipeline (Blocks 1–4 sum) vs full V3 / eager / compile / TRT / ORT | **FORBIDDEN** | CLAIM-PIPE-001; review Phase 1 |
+| Portable “CUDA BiLSTM beats PT/cuDNN on servers” | **FORBIDDEN** | PT wins B3 wall-clock **pre_fix** |
 | All metrics session-stable S1–Day2 without caveat | **FORBIDDEN** | V100 B1 11% formal spread |
 
-### B3 Welch-style summary (S1/S2/Day2, trial distributions)
+### B3 Welch-style summary (S1/S2/Day2, trial distributions) — **pre_fix** wall-clock only
 
-Protocol caveat: CUDA n=100 kernel trials vs PT n=20 subprocess trials — different harnesses; direction is unambiguous for wall-clock. Optimized B3 remains **pre_fix**.
+Protocol caveat: CUDA n=100 kernel trials vs PT n=20 subprocess trials — different harnesses; direction is unambiguous for wall-clock. Source race+align fixed; **production-weight parity open**. Numbers describe **pre_fix** historical binaries until rebench.
 
 | GPU | Session | CUDA mean±std | PT mean±std | Welch t | Cohen d | Winner |
 |-----|---------|---------------|-------------|---------|---------|--------|
@@ -50,14 +54,26 @@ Protocol caveat: CUDA n=100 kernel trials vs PT n=20 subprocess trials — diffe
 
 ---
 
-## C. Multi-compiler
+## C. Multi-compiler and laptop tables (strict separation)
 
-### C1 Laptop (RTX 3050 / WSL) — multi-session **ranges**
+### Rule (CLAIM-PIPE-001 / review Phase 1)
+
+| Table class | What is allowed |
+|-------------|-----------------|
+| **Matched operator-vs-operator** | Per-block Custom CUDA vs matching PyTorch op (B1–B4). Ratios **OK within** this class only. |
+| **Full-model-vs-full-model** | Eager / compile / ORT / TRT (and ORT CPU) absolute latencies. Ratios **OK within** this class only. |
+| **Partial custom pipeline sum** | Absolute ranges only (e.g. Blocks 1–4 sum). **No** ratios vs full-model rows. |
+
+**FORBIDDEN:** any speedup or ratio computed **across** partial custom pipeline and full V3 / eager / compile / TRT / ORT tables.
+
+### C1 Laptop (RTX 3050 / WSL)
 
 | Claim | Status |
 |-------|--------|
-| Custom pipeline ranges vs eager/compile/TRT/ORT-GPU as ranges (incomplete CUDA scope labeled) | **OK** (local) |
-| Same ratios portable to DICC without remeasure | **FORBIDDEN** |
+| Table A: Custom CUDA Blocks 1–4 sum absolute multi-session range **594–675 µs** (incomplete scope labeled) | **OK** (absolute only) |
+| Table B: Full-model eager / compile / TRT / ORT multi-session absolute ranges | **OK** (full-model only) |
+| Ratios between Table A (partial) and Table B (full model), e.g. “3.60×–4.99× over TensorRT” | **FORBIDDEN** |
+| Same laptop numbers portable to DICC without remeasure | **FORBIDDEN** |
 
 ### C2 DICC multi-compiler matrix (batch-1 absolutes, n=20)
 
@@ -70,7 +86,8 @@ Protocol caveat: CUDA n=100 kernel trials vs PT n=20 subprocess trials — diffe
 | ORT TRT EP | 766 | 2033 | **OK** (active TRT EP; A100 slow) |
 | TRT native FP16 | **528** | **588** | **OK** (fastest GPU path here) |
 
-Source: `docs/DICC_MULTI_COMPILER_MATRIX.md` · jobs 395433 / 395417.
+Source: `docs/DICC_MULTI_COMPILER_MATRIX.md` · jobs 395433 / 395417.  
+**OK** as full-model-vs-full-model only. **FORBIDDEN** to ratio against incomplete Custom CUDA pipeline sums.
 
 ---
 
@@ -90,25 +107,28 @@ Source: `docs/DICC_MULTI_COMPILER_MATRIX.md` · jobs 395433 / 395417.
 ## E. Explicitly do **not** write
 
 1. Full-pipeline Custom CUDA × vs full V3.  
-2. “CUDA Block 3 beats PyTorch on V100/A100.”  
-3. Mixing laptop framework ratios with DICC absolute µs in one headline.  
-4. Treating ORT CPU win as the main GPU systems result.  
-5. Claiming multi-day “all metrics stable” without B1 caveat.  
-6. Inventing Nsight / clean-A100 / energy-on-DICC numbers (not run).  
-7. ToN clean **0.9526** / **0.9851** / **+15.4%** as valid accuracy evidence (**INVALID** / tombstone).  
-8. Principal BoT accuracy as bare **0.9790** without historical/legacy label (use sealed **0.9780 ± 0.0033**).  
-9. “Streaming latency” or paced-arrival claims from the bulk harness.  
-10. Title-level validated LLM explainability.
+2. **Any ratio of partial custom pipeline (Blocks 1–4) vs full V3 / eager / compile / TRT / ORT.**  
+3. “CUDA Block 3 beats PyTorch on V100/A100.”  
+4. Mixing laptop framework numbers with DICC absolute µs in one headline.  
+5. Treating ORT CPU win as the main GPU systems result.  
+6. Claiming multi-day “all metrics stable” without B1 caveat.  
+7. Inventing Nsight / clean-A100 / energy-on-DICC numbers (not run).  
+8. ToN clean **0.9526** / **0.9851** / **+15.4%** as valid accuracy evidence (**INVALID** / tombstone).  
+9. Principal BoT accuracy as bare **0.9790** without historical/legacy label (use sealed **0.9780 ± 0.0033**).  
+10. “Streaming latency” or paced-arrival claims from the bulk harness.  
+11. Title-level validated LLM explainability.  
+12. Post_fix B3 matching-op claims before production-weight parity + rebench green.  
+13. “Remediation fully closed / submission-ready” while CUDA evidence + publication sync pending.
 
 ---
 
 ## F. Preferred paper tables (pre-write)
 
 1. Detection dual bars + sealed test (**0.9780 ± 0.0033**).  
-2. Option A per-block table (B1–B4) with B3 PT win highlighted (**pre_fix** label).  
-3. DICC multi-session stability for B3 / full PT.  
-4. DICC multi-compiler absolute table (both GPUs, batch-1).  
-5. Laptop multi-compiler as **separate** subsection with environment label.  
+2. Option A **per-block** table (B1–B4) with B3 PT win highlighted (**pre_fix** label).  
+3. DICC multi-session stability for B3 / full PT (**pre_fix** until rebench).  
+4. DICC multi-compiler absolute table (both GPUs, batch-1) — full-model only.  
+5. Laptop: **separate** Table A (incomplete Custom CUDA absolute) and Table B (full-model absolute); no cross ratios.  
 6. ToN corrected leakage-safe (**0.8075** CNN / **0.9626** RF); optional older 13-feat ~0.811 vs ~0.939 as comparable prior.  
 7. Bulk throughput + exploratory energy appendix (not streaming chapter).
 

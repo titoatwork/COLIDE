@@ -67,18 +67,21 @@ Severity: `P0` (blocking) · `P1` (required cleanup) · `P2` (small improvement)
 
 ---
 
-## CUDA-B3-003 — CUDA / PyTorch output-contract mismatch
+## CUDA-B3-003 — CUDA / PyTorch output-contract mismatch / production-weight parity
+
+> **2026-08-14 update:** contract documented; race+align fixed in source; synthetic/self-check path intermediate. **Production-weight CUDA–PyTorch parity is not established** (`valid: false`, `use_in_manuscript: false`, `kernel_status: code_fixed_awaiting_rebench`). Status remains **CODE_FIXED_AWAITING_REBENCH**.
+
 
 | Field | Value |
 |-------|--------|
 | **Severity** | P0 |
-| **Summary** | PyTorch path typically takes `output[:, -1, :]` (last time index); CUDA extract uses last recurrence-step semantics that can diverge for the reverse direction under misalignment. |
-| **Affected files** | Block-3 harnesses; `scripts/numerical_fidelity.py`; real-weight validators |
-| **Affected results** | Fidelity / “matching Block 3” language |
-| **Affected claims** | Full or per-block “same computation” framing |
-| **Remediation decision** | **Contract documented + harness in place.** Full sequence aligned so `fw[k]` and `rev[k]` are both at input time `k`; last timestep = `output[:, -1, :]` on aligned sequence. Race+align fixed in source 2026-08-14; wall-clock remains **pre_fix** until rebench + parity gate green. Option A still forbids full-pipeline CUDA vs full V3. |
-| **Completion evidence** | `docs/CUDA_WEIGHT_MAPPING.md`; `scripts/parity_block3_cuda_pt.py` → `benchmarks/results/block3_parity_gate.json`; fused_block3 extract comments |
-| **Status** | **CODE_FIXED_AWAITING_REBENCH** |
+| **Summary** | PyTorch path typically takes `output[:, -1, :]` (last time index); CUDA extract uses last recurrence-step semantics that can diverge for the reverse direction under misalignment. Full V3 attention needs the complete aligned sequence. Production champion weights have not been shown to match CUDA Block-3 output on GPU. |
+| **Affected files** | Block-3 harnesses; `scripts/numerical_fidelity.py`; real-weight validators; `scripts/parity_block3_cuda_pt.py` |
+| **Affected results** | Fidelity / “matching Block 3” language; any post_fix B3 claim |
+| **Affected claims** | Full or per-block “same computation” framing; post_fix matching-op speedups |
+| **Remediation decision** | **Contract documented + harness in place.** Full sequence aligned so `fw[k]` and `rev[k]` are both at input time `k`; last timestep = `output[:, -1, :]` on aligned sequence. Race+align fixed in source 2026-08-14; wall-clock remains **pre_fix** until rebench + **production-weight** parity gate green. Option A still forbids full-pipeline CUDA vs full V3. |
+| **Completion evidence** | `docs/CUDA_WEIGHT_MAPPING.md`; `scripts/parity_block3_cuda_pt.py` → `benchmarks/results/block3_parity_gate.json` (`valid: false`); fused_block3 extract comments |
+| **Status** | **CODE_FIXED_AWAITING_REBENCH** (parity open) |
 | **Date** | 2026-08-14 |
 | **Closed commit** | — |
 
@@ -86,16 +89,19 @@ Severity: `P0` (blocking) · `P1` (required cleanup) · `P2` (small improvement)
 
 ## CLAIM-PIPE-001 — Incomplete CUDA pipeline vs full V3
 
+> **2026-08-14 Phase 1 update:** active surfaces rewritten to **two strictly separated tables** — Table A = Custom CUDA Blocks 1–4 sum **absolute** ranges only; Table B = full-model framework **absolute** multi-session ranges. Explicit ban on computing speedups across Table A and Table B. Literature bullets that cited partial-CUDA-versus-full-TRT ratios removed/qualified. See `COLIDE_Remediation_Update_Review.md` Phase 1.
+
+
 | Field | Value |
 |-------|--------|
 | **Severity** | P0 |
-| **Summary** | Custom CUDA covers fused Blocks 1–4 only; full CAD-CBA V3 includes attention, LayerNorm, residual, pooling paths not in the CUDA chain. |
-| **Affected files** | `inference/kernels/*`; README framework table; claim map; harness full-pipeline flag |
-| **Affected results** | Laptop Custom CUDA pipeline latency ranges vs eager/compile/TRT/ORT |
-| **Affected claims** | End-to-end Custom CUDA vs full V3 PyTorch speedup |
-| **Remediation decision** | **FORBIDDEN** as model-level speedup. Report Option A per-block only; laptop pipeline ranges only with incomplete-scope caveat. |
-| **Completion evidence** | `docs/CLAIM_MAP_PREWRITE.md`; README Option A wording; harness `valid=false` |
-| **Status** | **QUARANTINED** (claim forbidden; incomplete scope remains by design under Option A) |
+| **Summary** | Custom CUDA covers fused Blocks 1–4 only; full CAD-CBA V3 includes attention, LayerNorm, residual, pooling, classifier paths not in the CUDA chain. Partial pipeline sums must never be ratioed against full-model backends. |
+| **Affected files** | `inference/kernels/*`; README Framework Comparison; claim map; harness full-pipeline flag; literature notes |
+| **Affected results** | Laptop Custom CUDA Blocks 1–4 sum ranges; full-model eager/compile/TRT/ORT ranges (separate) |
+| **Affected claims** | End-to-end Custom CUDA vs full V3; any “vs Custom CUDA” ratio of full-model frameworks vs incomplete block sum (e.g. 3.60×–4.99× over TensorRT) |
+| **Remediation decision** | **FORBIDDEN** as model-level speedup and as cross-table ratio. Report (1) matched operator-vs-operator per-block only, (2) full-model-vs-full-model frameworks only, (3) partial pipeline as **absolute** incomplete-scope ranges only. No ratios across (3) and (2). |
+| **Completion evidence** | `docs/CLAIM_MAP_PREWRITE.md` §C + §E; README Table A / Table B; `docs/KNOWN_LIMITATIONS.md` §5; `docs/PRE_MANUSCRIPT_CLOSURE.md` Phase 1 row |
+| **Status** | **QUARANTINED** (claim forbidden; incomplete scope remains by design under Option A; Phase 1 table separation applied on active surfaces) |
 | **Date** | 2026-08-14 |
 | **Closed commit** | — |
 
@@ -192,7 +198,9 @@ Severity: `P0` (blocking) · `P1` (required cleanup) · `P2` (small improvement)
 |-------|------|
 | Principal BoT number | Sealed multi-seed **0.9780 ± 0.0033** is principal; historical single-run **0.9790** is development/legacy only |
 | Batch-1 multi-compiler | DICC matrix is batch-1 absolute protocol — do not mix with laptop ranges |
-| B3 pre_fix server result | DICC “PT wins B3” is wall-clock of **pre_fix** binaries; race+align fixed in source (`CODE_FIXED_AWAITING_REBENCH`); rebench + `scripts/parity_block3_cuda_pt.py` green before post_fix claims |
+| Partial vs full ratios | CLAIM-PIPE-001: no speedups across incomplete Custom CUDA sum and full-model tables |
+| B3 pre_fix server result | DICC “PT wins B3” is wall-clock of **pre_fix** historical binaries; race+align fixed in source (`CODE_FIXED_AWAITING_REBENCH`); **production-weight parity open**; rebench + parity gate green before post_fix claims |
+| Project closure | DATA closed; CUDA evidence + publication synchronization **pending** (`COLIDE_Remediation_Update_Review.md`) |
 
 ## Maintenance
 

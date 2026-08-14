@@ -1,9 +1,16 @@
-"""Unit tests for ToN-IoT leakage-safe schema helpers."""
+"""Unit tests for ToN-IoT leakage-safe schema helpers and categorical NaN handling."""
 
 from __future__ import annotations
 
+import numpy as np
+import pandas as pd
 import pytest
 
+from scripts.protocol.toniot_leakage_safe import (
+    UNKNOWN_CAT_TOKEN,
+    TrainOnlyCatEncoder,
+    series_to_cat,
+)
 from scripts.protocol.toniot_schema import (
     TARGET_BLACKLIST,
     assert_features_leakage_free,
@@ -56,3 +63,49 @@ def test_assert_accepts_clean_allowlist():
 def test_blacklist_contains_required_names():
     for name in ("label", "type", "attack", "category"):
         assert name in TARGET_BLACKLIST
+
+
+# ---------------------------------------------------------------------------
+# Categorical missing-value order (fillna before astype(str))
+# ---------------------------------------------------------------------------
+
+
+def test_series_to_cat_maps_nan_to_unknown_token():
+    """Real NaN must become UNKNOWN_CAT_TOKEN, not the literal string 'nan'."""
+    s = pd.Series(["tcp", np.nan, "udp", None, "tcp"])
+    out = series_to_cat(s)
+    assert list(out) == ["tcp", UNKNOWN_CAT_TOKEN, "udp", UNKNOWN_CAT_TOKEN, "tcp"]
+    assert "nan" not in set(out)
+    assert UNKNOWN_CAT_TOKEN in set(out)
+
+
+def test_series_to_cat_normalizes_string_nan_edge_cases():
+    """Literal 'nan'/'None'/'NaN' from prior str conversion map to unknown."""
+    s = pd.Series(["http", "nan", "None", "NaN", "dns"])
+    out = series_to_cat(s)
+    assert list(out) == [
+        "http",
+        UNKNOWN_CAT_TOKEN,
+        UNKNOWN_CAT_TOKEN,
+        UNKNOWN_CAT_TOKEN,
+        "dns",
+    ]
+    assert "nan" not in set(out)
+    assert "None" not in set(out)
+    assert "NaN" not in set(out)
+
+
+def test_train_only_cat_encoder_nan_not_separate_class():
+    """Fit/transform must not invent a 'nan' string class for missing values."""
+    train = pd.Series(["tcp", "udp", np.nan, "tcp"])
+    enc = TrainOnlyCatEncoder()
+    enc.fit(train)
+    assert "nan" not in enc.classes_
+    assert UNKNOWN_CAT_TOKEN in enc.classes_
+    # Missing and unseen map to unknown path (UNK gets a train code; truly unseen → unknown_code)
+    codes = enc.transform(pd.Series([np.nan, "tcp", "sctp", None]))
+    unk_code = enc.map_[UNKNOWN_CAT_TOKEN]
+    assert codes[0] == unk_code  # NaN → UNK class code seen in train
+    assert codes[1] == enc.map_["tcp"]
+    assert codes[2] == enc.unknown_code  # unseen category
+    assert codes[3] == unk_code  # None → UNK
