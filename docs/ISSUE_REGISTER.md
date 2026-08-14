@@ -29,7 +29,7 @@ Severity: `P0` (blocking) · `P1` (required cleanup) · `P2` (small improvement)
 
 ## CUDA-B3-001 — Optimized Block-3 hidden-state race
 
-> **2026-08-14 update:** source double-buffer applied; local RTX 3050 rebuild + self-check PASS; `compute-sanitizer --tool racecheck` reports **0 hazards** on FP32 and FP16. Status remains **CODE_FIXED_AWAITING_REBENCH** for claim-eligible multi-session latency (DICC) and real-weight GPU inject.
+> **2026-08-14 close (local):** double-buffer in source; full sanitizer suite (racecheck/synccheck/initcheck/memcheck) **0 errors** on FP32+FP16 (`benchmarks/results/sanitizer_b3/`); production-weight inject parity **PASS** (`block3_parity_gate.json` `valid=true`, `kernel_status=post_fix`). **DICC multi-session post_fix latency rebench still not run** — server wall-clock B3 numbers remain historical pre_fix.
 
 
 | Field | Value |
@@ -39,11 +39,11 @@ Severity: `P0` (blocking) · `P1` (required cleanup) · `P2` (small improvement)
 | **Affected files** | `inference/kernels/fused_block3.cu`; `inference/kernels/fused_block3_fp16.cu` (and related); CUDA stats JSONs under `benchmarks/results/` and DICC SUCCESS trees |
 | **Affected results** | All optimized B3 latency means (laptop ranges, DICC ~513 / ~667–671 µs CUDA B3) |
 | **Affected claims** | Matching-op B3 speedup vs PyTorch; progression table FP16 step; “beats cuDNN” on laptop |
-| **Remediation decision** | **Race+align fixed in source 2026-08-14** (double-buffer + reverse store at original pos). Wall-clock DICC/laptop numbers remain **pre_fix** until rebench + real-weight parity gate green. |
-| **Completion evidence** | `inference/kernels/fused_block3.cu`; `inference/kernels/fused_block3_fp16.cu`; `docs/CUDA_WEIGHT_MAPPING.md`; `scripts/parity_block3_cuda_pt.py` → `benchmarks/results/block3_parity_gate.json` (`kernel_status: code_fixed_awaiting_rebench`) |
-| **Status** | **CLOSED (parity + local sanitizers)** — DICC multi-session post_fix latency still optional/historical pre_fix |
+| **Remediation decision** | **Race fixed in source + local sanitizers green + local real-weight parity green.** DICC multi-session **latency** still historical pre_fix until rebench or claim drop. |
+| **Completion evidence** | Source double-buffer; `benchmarks/results/sanitizer_b3/summary.json`; `benchmarks/results/block3_parity_gate.json` (`valid: true`, `kernel_status: post_fix`) |
+| **Status** | **CLOSED (local correctness)** — server latency rebench optional / OPEN |
 | **Date** | 2026-08-14 |
-| **Closed commit** | see tip after artifacts commit |
+| **Closed commit** | `12e8aa1` (gates) / tip after review fill |
 
 ---
 

@@ -45,9 +45,12 @@ Guard: `python scripts/check_stale_claims.py`.
 | Corrected ToN leakage-safe experiment | **DONE** — protocol `toniot_leakage_safe_v1`; test macro-F1 **CNN 0.8075** / **RF 0.9626**; no SMOTE, no KD; `benchmarks/results/toniot_corrected/` (`valid: true`, `use_in_manuscript: true`) |
 | Invalid clean path | Remains **tombstoned** (0.9526 / 0.9851 / +15.4% never active) |
 | Older 13-feat package path | Optional comparable prior only (~0.811 vs RF ~0.939, `toniot_final/`) |
-| CUDA B3 race/alignment/contract fixes | Source fixed — **CODE_FIXED_AWAITING_REBENCH**; production-weight CUDA–PyTorch parity **not established**; DICC B3 numbers stay **pre_fix** until SUCCESS rebench + parity gate green |
+| CUDA B3 race/alignment | Source fixed (double-buffer + reverse `pos`) |
+| CUDA B3 production-weight parity (local) | **DONE** — `block3_parity_gate.json` `valid=true`, `kernel_status=post_fix` |
+| CUDA B3 sanitizers (local sm_86) | **DONE** — racecheck/synccheck/initcheck/memcheck 0 errors FP32+FP16 |
+| CUDA B3 DICC multi-session post_fix latency | **OPEN** — historical pre_fix means only until rebench or claim drop |
 
-**Overall readiness:** Data-side remediation (ToN leakage, BoT principal framing, claim quarantine for invalid ToN) is closed. CUDA evidence gates and publication synchronization are **pending** per `COLIDE_Remediation_Update_Review.md` Phases 2–8. This pack is **not** a submission-ready closure.
+**Overall readiness:** Data-side remediation and **local** CUDA correctness gates are closed with artifacts. Still pending for full submission: **manuscript/figure synchronization** and **DICC B3 latency decision** (rebench post_fix or drop comparative claims). See filled `COLIDE_Remediation_Update_Review.md`.
 
 ---
 
