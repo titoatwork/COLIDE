@@ -26,9 +26,9 @@ Do not overwrite the champion without backup and explicit approval.
 | Issue ID | Summary | Status |
 |----------|---------|--------|
 | **DATA-TON-001** | Target-derived `label` in ToN features | **CLOSED offline** — quarantined; superseded by corrected run |
-| **CUDA-B3-001** | Optimized B3 hidden-state race | **CODE FIXED** — double-buffer in `fused_block3.cu` / `_fp16.cu`; **AWAITING DICC rebench + sanitizer** |
-| **CUDA-B3-002** | Reverse-sequence output alignment | **CODE FIXED** — store at original `pos`; **AWAITING rebench / parity** |
-| **CUDA-B3-003** | CUDA / PyTorch output-contract mismatch | **PARTIAL** — documented in `docs/CUDA_WEIGHT_MAPPING.md`; full-sequence parity gate still open |
+| **CUDA-B3-001** | Optimized B3 hidden-state race | **CODE FIXED** — double-buffer; local **racecheck 0 hazards**; **AWAITING DICC rebench** (synccheck/initcheck not run) |
+| **CUDA-B3-002** | Reverse-sequence output alignment | **CODE FIXED** — store at original `pos`; self-check PASS; **AWAITING rebench / real-weight inject** |
+| **CUDA-B3-003** | CUDA / PyTorch output-contract mismatch | **PARTIAL** — documented + harness; last-timestep still used; gate `valid=false` |
 | **CLAIM-PIPE-001** | Incomplete CUDA pipeline vs full V3 | **QUARANTINED** — full custom-CUDA vs full V3 **FORBIDDEN** (docs) |
 | **LOSS-FOCAL-001** | Class-weighted focal formulation | **DISCLOSED** — `StandardFocalLoss` + `LegacyFocalLoss` (no champion retrain) |
 | **KD-001** | Noncanonical temperature / KD mix | **DISCLOSED** — `docs/KD_OBJECTIVES.md` (no formula change / no retrain) |

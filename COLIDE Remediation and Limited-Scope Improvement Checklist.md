@@ -1,31 +1,239 @@
 # COLIDE Remediation and Limited-Scope Improvement Checklist
 
-## Remediation status (2026-08-14)
+## Execution log — what was actually done (2026-08-14)
 
-Offline remediation for claim hygiene, ToN-IoT leakage-safe correction, CUDA Block-3 **source** fixes, protocol utilities, tests, and licensing is largely **DONE**. Hardware-bound CUDA validation remains open.
+This section is a **work log of actions taken in the repository**, not a plan and not an assumption that every checkbox below is scientifically closed. Numbers and paths below were **re-checked against files and command output on 2026-08-14** after remediation landed on `master`.
+
+| Field | Value (verified) |
+|-------|------------------|
+| Pre-remediation tip | `2608c71` (audited snapshot this checklist was written against) |
+| Main remediation commit | `2a6de4b` — *remediation: full checklist offline correction (ToN, CUDA B3, claims)* |
+| Follow-up docs pin | `cf3e0f5` — *docs: pin remediation snapshot to 2a6de4b* |
+| Branch tip when this log was written | `cf3e0f5` (pushed to `origin/master`) |
+| BoT champion path | `model/best_model_botiot_twostage.pth` |
+| BoT champion MD5 | `80a90f7cc210276300eaa90173a5a385` (`scripts/verify_champion.py` → **MATCH**) |
+| Principal BoT claim kept | sealed multi-seed test macro-F1 **0.9780 ± 0.0033** (no champion retrain) |
+| Pytest | **22 passed** (`tests/`) |
+| Stale-claim guard | `scripts/check_stale_claims.py` → **OK** on configured active surfaces |
+
+How work was done: multi-agent write passes (docs quarantine, CUDA B3 source, ToN leakage-safe pipeline, utils/tests/license), then integration, local GPU recompile, racecheck, parity harness, commit, push. Companion docs: `docs/ISSUE_REGISTER.md`, `docs/REMEDIATION_STATUS.md`, `docs/CHECKLIST_DEEP_AUDIT_REPORT.md`.
+
+---
+
+### A. Issue register and claim quarantine (done)
+
+**Created**
+
+- `docs/ISSUE_REGISTER.md` with stable IDs: `DATA-TON-001`, `CUDA-B3-001`, `CUDA-B3-002`, `CUDA-B3-003`, `CLAIM-PIPE-001`, `LOSS-FOCAL-001`, `KD-001`, `BENCH-STREAM-001`, `ENERGY-001`, `LLM-001`. Each has severity, affected files/results/claims, remediation decision, status, date; closed-commit filled for offline-closed issues where applicable.
+- `docs/KNOWN_LIMITATIONS.md` (pseudo-sequence, baselines, incomplete CUDA, energy, bulk throughput, ToN invalid + corrected, etc.).
+- `scripts/check_stale_claims.py` — fails on forbidden active-surface strings (`0.9526`, `0.9851`, `15.4%`-style clean claims, bare `0.9790` without exempt markers). Active file list is limited (README + selected docs); it is **not** a full-repo recursive archive scanner.
+
+**Rewrote / updated claim surfaces**
+
+- `README.md` — principal BoT **0.9780 ± 0.0033**; ToN active table uses corrected numbers; invalid clean tombstoned; bulk throughput wording; energy exploratory; LLM as dispatch; incomplete CUDA scope; links to issue register / limitations / claim map.
+- `docs/CLAIM_MAP_PREWRITE.md` — FORBIDDEN/OK rows including corrected ToN and forbidden clean numbers.
+- `docs/PRE_MANUSCRIPT_CLOSURE.md` — quarantine + Phase-2 ToN note + B3 awaiting rebench.
+
+**What was not done here**
+
+- Full manuscript rewrite / figure regeneration from corrected JSON.
+- Exhaustive manual inspection of every historical email/status doc (many still contain old numbers as historical context).
+- Automated exclusion of invalid JSON from every plotting script (policy + guard on active docs only).
+
+---
+
+### B. ToN-IoT DATA-TON-001 (done offline; experiment ran)
+
+**Quarantine of invalid “clean” path**
+
+- `scripts/train_toniot_clean.py`: module docstring marks **INVALID / DATA-TON-001**; exits unless `COLIDE_ALLOW_INVALID_TON=1`.
+- `scripts/preprocess_toniot.py`: marked **LEGACY** (encoders-before-split / SMOTE path left for old npy consumers; points to corrected path).
+- `scripts/run_toniot_final_method.py`: historical hardcode comparators nullified / marked invalid for active use; archived values retained only as documentation keys.
+- Result tombstones (not deleted):
+  - `benchmarks/results/toniot_clean_comparison.json` — `valid: false`, `use_in_manuscript: false`, `invalid_reason` set, `superseded_by: benchmarks/results/toniot_corrected/summary.json`
+  - `benchmarks/results/toniot_clean_comparison.INVALIDATED.json` (sibling copy)
+  - `benchmarks/results/toniot_clean_retrain.json` + `.INVALIDATED.json` similarly tombstoned
+- There is **no** `archive/invalidated/` directory; invalidity is expressed via JSON metadata + `.INVALIDATED.json` siblings.
+
+**New leakage-safe pipeline (implemented and executed once)**
+
+| Item | What exists |
+|------|-------------|
+| Protocol code | `scripts/protocol/toniot_leakage_safe.py` (`toniot_leakage_safe_v1`) |
+| Schema helpers / tests | `scripts/protocol/toniot_schema.py`, `tests/test_toniot_blacklist.py` |
+| Thin entry | `scripts/run_toniot_corrected_simple.py` |
+| Artifacts | `benchmarks/results/toniot_corrected/{summary,seed42}.json`, `table.md`, `predictions_seed42.npz` |
+| Checkpoint | `model/toniot_corrected/cnn_hardlabel_seed42.pth` |
+
+**Protocol choices actually used in the successful run**
+
+- Feature allowlist **13**: `duration, src_bytes, dst_bytes, src_pkts, dst_pkts, src_ip_bytes, dst_ip_bytes, src_port, dst_port, missed_bytes, proto, service, conn_state`
+- Blacklist includes `label`, `type`, `attack`, `category` (+ normalized variants); fatal asserts that `label` / target not in `X`
+- Feature list SHA-256 recorded: `838239eea277712ed719a17ea5f451eebbea368fa673a0676820741b438ecb61`
+- **No** official train/test file pair found under `data/raw/toniot/` → **stratified random 60/20/20**, split seed **42**, indices hashed, `disjoint: true`
+- Encoders + scaler fit on **train only**; unknown categories → dedicated token
+- **No SMOTE**, **no KD**
+- RF: `class_weight=balanced`
+- CNN: hard-label class-weighted CE; select by val macro-F1; test once
+- Split sizes: train **114284** / val **38095** / test **38095**
+
+**Measured test results (from `summary.json`, not rounded claims invented later)**
+
+| Model | Val macro-F1 | Test macro-F1 |
+|-------|-------------:|--------------:|
+| RF | 0.962645… | **0.962648…** (reported **0.9626**) |
+| CNN | 0.806599… | **0.807523…** (reported **0.8075**) |
+
+Artifact flags: `valid: true`, `use_in_manuscript: true`, `protocol_id: toniot_leakage_safe_v1`.  
+Git SHA embedded in that run artifact: `2608c71…` (run occurred during dirty/pre-commit tree; post-run code was committed as `2a6de4b`).
+
+**Not done for ToN**
+
+- Three-seed multirun (single seed 42 only).
+- Official temporal/host split (not available in selected files).
+- Regenerating every ToN figure from the new JSON.
+- Retraining BoT or changing champion.
+
+---
+
+### C. CUDA Block 3 source fix + local validation (partial closure)
+
+**Source changes (committed)**
+
+Files: `inference/kernels/fused_block3.cu`, `inference/kernels/fused_block3_fp16.cu`
+
+1. **Race fix (CUDA-B3-001):** LSTM step kernels use **double-buffered** shared hidden state  
+   `read_buf = s_h[t % 2]`, `write_buf = s_h[(t+1) % 2]`; gates read only `read_buf`; writes only to `write_buf`; `__syncthreads()` after writes. Dynamic smem size accounts for `2 * hidden_size`.
+2. **Reverse alignment (CUDA-B3-002):** reverse uses `pos = seq_len-1-t` for **read and store**;  
+   `output_hidden[h * seq_len + pos] = h_new` so `fw[k]` and `rev[k]` both mean input time `k`.
+3. **CPU reference in the same `.cu` files** updated to store at `pos` as well (self-check consistency).
+4. **Docs:** `docs/CUDA_WEIGHT_MAPPING.md` (gate order i,f,g,o; layout; reverse align; last-timestep vs full-sequence notes).
+5. Naive kernel (`fused_block3_naive.cu`) was **not** reworked in this pass (already double-buffered earlier).
+
+**Local rebuild and checks (RTX 3050 Laptop, sm_86, CUDA 12.6) — performed this session**
+
+Commands used:
+
+```bash
+cd inference/kernels
+nvcc -arch=sm_86 -O3 -o fused_block3 fused_block3.cu
+nvcc -arch=sm_86 -O3 -o fused_block3_fp16 fused_block3_fp16.cu
+./fused_block3          # reported: FP32 validation PASSED; CUDA Graph validation PASSED
+./fused_block3_fp16     # reported: FP16 half2 validation PASSED
+compute-sanitizer --tool racecheck ./fused_block3
+compute-sanitizer --tool racecheck ./fused_block3_fp16
+```
+
+Sanitizer outcome (verbatim summary lines):
+
+```text
+fused_block3:      RACECHECK SUMMARY: 0 hazards displayed (0 errors, 0 warnings)
+fused_block3_fp16: RACECHECK SUMMARY: 0 hazards displayed (0 errors, 0 warnings)
+```
+
+Sample latencies from **plain** binary self-check (not claim-eligible multi-session stats; sanitizer runs were much slower due to instrumentation):
+
+| Binary | Self-check | Approx latency noted in session |
+|--------|------------|-----------------------------------|
+| `fused_block3` | FP32 PASSED | ~854–875 µs (graphs on/off, first plain run) |
+| `fused_block3_fp16` | FP16 PASSED | ~521 µs (first plain run) |
+
+Rebuilt binaries were **committed** (repo already tracked these executables). They are **laptop sm_86** builds, **not** DICC sm_70/sm_80 SUCCESS-tree binaries.
+
+**Parity harness (written + run)**
+
+- Script: `scripts/parity_block3_cuda_pt.py`
+- Output: `benchmarks/results/block3_parity_gate.json`
+- Verified gate fields after full run:
+  - `valid: false`, `use_in_manuscript: false`
+  - `kernel_status: code_fixed_awaiting_rebench`
+  - `status: pt_cpu_ref_ok_cuda_selfcheck_ok_awaiting_real_weight_gpu`
+  - PT vs CUDA-contract CPU ref: **pass** (last-timestep max abs ~1.3e-6)
+  - CUDA binary self-check (synthetic weights inside binary): **passed** for FP32 and FP16
+  - Champion MD5 recorded and matched
+- **Not** implemented: real-weight GPU inject of champion tensors into the CUDA binary for direct CUDA↔PT numerical compare; full-sequence V3 contract rewiring of all harnesses; DICC rebench.
+
+**CUDA items still open (honest)**
+
+| Item | Status |
+|------|--------|
+| `compute-sanitizer --tool synccheck` | **Not run** |
+| `compute-sanitizer --tool initcheck` | **Not run** |
+| memcheck | **Not run** |
+| Sanitizer full logs saved under `benchmarks/results/` | **Not saved** (only summary captured in docs) |
+| DICC V100S/A100 recompile + multi-session latency rebench | **Not run** |
+| Real-weight CUDA↔PT inject parity gate green | **Not achieved** (`valid` still false) |
+| Full-sequence contract as sole harness default | **Documented only**; last-timestep still used in places |
+| Determinism campaign / remove statistical retry logic | **Not done** |
+| Manuscript/table replacement of pre_fix B3 numbers with post_fix | **Not done** (docs label pre_fix) |
+
+Issue status in register: **CODE_FIXED_AWAITING_REBENCH** for CUDA-B3-001/002/003.
+
+---
+
+### D. Streaming / energy / LLM claim reframe (docs + docstrings; no new experiments)
+
+| Area | What was done | What was not done |
+|------|----------------|-------------------|
+| Streaming | README + claim map reframed as **bulk batched throughput** (~25,899 f/s); `scripts/benchmark_streaming.py` header/docstring rewritten to state no paced arrivals | File **not** renamed; no paced producer/queue simulator |
+| Energy | README + `KNOWN_LIMITATIONS`; docstrings on `benchmark_energy.py` / `benchmark_a100_energy.py` mark **exploratory**; CPU-path notes GPU NVML ≠ CPU energy | No corrected integrated energy remeasure |
+| LLM | Title/README narrowed to **on-device alert dispatch** (16.60 µs p99); full free-form XAI not title-level | No new LLM/RAG/eval |
+
+---
+
+### E. Loss, KD, config, deps, license, tests (done offline)
+
+| Change | Location / evidence |
+|--------|---------------------|
+| Dual focal losses | `scripts/protocol/losses.py`: `LegacyFocalLoss` (old recipe alias `FocalLoss`), new `StandardFocalLoss`; tests in `tests/test_focal_loss.py` |
+| KD disclosure | `docs/KD_OBJECTIVES.md`; comments/metadata in `scripts/train_protocol_kd.py` — **formula not changed, no KD retrain** |
+| HPO precedence | `scripts/train_protocol_ft.py`: **CLI > hpo file > program defaults**; `--print-effective-config`, `--dry-run` |
+| Champion paths | `config/paths.py`, `config/champion.json`; several benchmark scripts default to `best_model_botiot_twostage.pth`; `scripts/verify_champion.py` |
+| Result envelope fields | `scripts/protocol/result_schema.py` (`valid`, `invalid_reason`, `use_in_manuscript`, `source_dirty`, …) |
+| Dependencies | `requirements.txt` updated; `requirements-core.txt` added |
+| Dockerfile | CUDA arch comments (`sm_86` laptop / `sm_80` A100 / `sm_70` V100) |
+| LICENSE | **Academic Research Only** (not MIT) — file `LICENSE` |
+| Shebangs | Portable `#!/usr/bin/env python3` on selected scripts |
+| Tests | `tests/test_toniot_blacklist.py`, `test_focal_loss.py`, `test_champion_hash.py`, `test_config_precedence.py`, `test_result_schema.py`, `test_stale_claims_script_imports.py` → **22 passed** |
+
+---
+
+### F. Git hygiene for claim artifacts
+
+`.gitignore` updated so these stay trackable despite `benchmarks/results/*`:
+
+- `benchmarks/results/toniot_corrected/**`
+- `block3_parity_gate.json`
+- toniot clean comparison/retrain + `.INVALIDATED` siblings  
+
+Committed with remediation: corrected ToN artifacts + CNN weights + B3 sources/binaries (sm_86) + parity JSON + docs/tests.
+
+**Not committed:** large historical `logs/` trees, other `model/*` experiment trees still untracked locally, interim `.docx.bak`.
+
+---
+
+### G. Rollup status (after this work)
 
 | Bucket | Status |
 |--------|--------|
-| Sealed BoT champion principal **0.9780±0.0033** (md5 `80a90f7cc210276300eaa90173a5a385`) | **DONE** |
-| Issue register, stale-claim guard, README / claim-map / limitations hygiene | **DONE** |
-| ToN “clean” quarantine + `train_toniot_clean` fail-fast | **DONE** |
-| Corrected ToN pipeline (`toniot_leakage_safe`) RF **0.9626** / CNN **0.8075** | **DONE** |
-| CUDA B3 double-buffer + reverse align in source (`fused_block3*.cu`) + `CUDA_WEIGHT_MAPPING.md` | **DONE** (code) |
-| Focal / KD disclosure (no formula retrain); HPO CLI>hpo>defaults; champion path config | **DONE** |
-| `requirements*.txt`, Dockerfile arch comments, Academic LICENSE, tests, result_schema, shebangs | **DONE** |
-| Streaming → bulk, energy exploratory, LLM dispatch-only, incomplete pipeline **FORBIDDEN** (docs) | **DONE** |
-| DICC rebench of fixed B3 kernels | **AWAITING_HARDWARE** |
-| `compute-sanitizer` racecheck/synccheck/initcheck on optimized kernels | **AWAITING_HARDWARE** |
-| Full manuscript rewrite / figure regeneration from corrected artifacts | **OPEN** |
-| True streaming pacer implementation | **DROP** (reframe only) |
-| Energy remeasure (controlled) | **DROP** (exploratory unless later needed) |
-| Official ToN temporal/host split | **NOT AVAILABLE** (limitation recorded) |
-
-See also: `docs/REMEDIATION_STATUS.md`, `docs/ISSUE_REGISTER.md`.
+| Sealed BoT champion kept; principal **0.9780±0.0033** | **DONE** (verified MD5) |
+| Issue register + stale-claim guard + README/claim hygiene | **DONE** (active surfaces) |
+| ToN clean quarantine + leakage-safe run RF **0.9626** / CNN **0.8075** | **DONE** |
+| CUDA B3 double-buffer + reverse align in source | **DONE** |
+| Local sm_86 rebuild self-check PASS | **DONE** |
+| Local `racecheck` 0 hazards FP32+FP16 | **DONE** (logs not archived as files) |
+| synccheck / initcheck / memcheck | **NOT RUN** |
+| DICC post_fix B3 rebench | **NOT RUN** |
+| Real-weight CUDA↔PT inject gate `valid=true` | **NOT DONE** |
+| Streaming rename + true pacer | **DROP** (reframe only) |
+| Energy remeasure | **DROP** (exploratory) |
+| Manuscript + figure regen | **OPEN** |
+| Official ToN temporal/host split | **NOT AVAILABLE** |
 
 ---
 
 ## Scope
+
 
 This checklist applies to the audited `master` snapshot at commit `2608c71` from August 12, 2026. It intentionally avoids architectural redesigns, new datasets, large hyperparameter sweeps, new deployment platforms, and other major research extensions.
 
@@ -52,8 +260,8 @@ These decisions minimize additional work while resolving the important issues.
   - [x] a hard-label CNN training run;
   - [x] no knowledge distillation;
   - [x] no ordinary SMOTE on encoded categorical features.
-- [x] **Fix CUDA Block 3 rather than developing new kernels.**
-- [ ] Rerun only the benchmarks affected by the Block-3 corrections.
+- [x] **Fix CUDA Block 3 rather than developing new kernels.** (source double-buffer + reverse align; no new kernel family)
+- [ ] Rerun only the benchmarks affected by the Block-3 corrections. **(NOT DONE — no DICC/post_fix multi-session latency rebench; only local self-check + racecheck)**
 - [x] Do not implement custom attention, LayerNorm, residual, pooling, or a new full-V3 CUDA pipeline.
 - [x] **Rename the existing streaming result as bulk batched throughput.** Do not build a full streaming simulator unless retaining a true streaming claim is essential.
 - [x] **Treat the current energy results as exploratory.** Either move them to an appendix or perform one small corrected GPU-board-energy rerun.
@@ -67,7 +275,7 @@ These decisions minimize additional work while resolving the important issues.
 ## 2.1 Central issue register
 
 - [x] **P0:** Create `docs/ISSUE_REGISTER.md`.
-- [ ] Give every issue a stable identifier, such as:
+- [x] Give every issue a stable identifier, such as:
   - [x] `DATA-TON-001` — target-derived `label` included in ToN-IoT features;
   - [x] `CUDA-B3-001` — optimized Block-3 hidden-state race;
   - [x] `CUDA-B3-002` — reverse-sequence output alignment;
@@ -78,18 +286,9 @@ These decisions minimize additional work while resolving the important issues.
   - [x] `BENCH-STREAM-001` — offered-rate variable does not pace arrivals;
   - [x] `ENERGY-001` — nonintegrated and incomparable power measurements;
   - [x] `LLM-001` — dispatch latency presented too broadly.
-- [ ] Record for every issue:
-  - [x] severity;
-  - [x] affected files;
-  - [x] affected results;
-  - [x] affected manuscript claims;
-  - [x] remediation decision;
-  - [x] completion evidence;
-  - [x] status;
-  - [x] date closed;
-  - [x] commit that closed it.
+- [x] Record for every issue: severity; affected files/results/claims; remediation decision; completion evidence; status; date; closed commit where offline-closed (`DATA-TON-001`, `LOSS-FOCAL-001`, `KD-001` → `2a6de4b`). CUDA-B3-* still have empty closed-commit (awaiting claim-eligible rebench).
 - [x] Link the issue register from the README and the claim map.
-- [x] Do not silently delete invalid historical results; preserve them with explicit invalidity metadata.
+- [x] Do not silently delete invalid historical results; preserve them with explicit invalidity metadata (JSON tombstones + `.INVALIDATED.json` siblings; no separate `archive/invalidated/` tree).
 
 ## 2.2 Repository-wide stale-claim search
 
@@ -114,16 +313,16 @@ These decisions minimize additional work while resolving the important issues.
   - [x] `verified research gap`;
   - [x] `streaming latency`;
   - [x] `CPU energy`.
-- [ ] Inspect:
+- [x] Inspect (to the extent of active-surface quarantine + guard; **not** a line-by-line archive of every email):
   - [x] README;
   - [x] claim maps;
-  - [x] manuscript text;
-  - [x] JSON result files;
-  - [x] plotting scripts;
-  - [x] generated figures;
-  - [x] notebook outputs;
-  - [x] comments and docstrings;
-  - [x] archived reports.
+  - [ ] manuscript text; **(partial — not full manuscript rewrite; some cells may still be historical)**
+  - [x] JSON result files (ToN clean tombstoned; corrected path added; B3 parity gate);
+  - [ ] plotting scripts; **(not systematically rewritten)**
+  - [ ] generated figures; **(not regenerated)**
+  - [ ] notebook outputs; **(not systematically audited)**
+  - [x] comments and docstrings (streaming/energy/ToN/CUDA paths touched);
+  - [ ] archived reports; **(left as historical; not mass-edited)**
 - [x] Add a small repository script that fails when a forbidden stale claim appears outside an explicitly marked archive file.
 
 ---
@@ -134,19 +333,19 @@ These decisions minimize additional work while resolving the important issues.
 
 The current “clean” ToN-IoT loader retains `label` as a numeric input while predicting `type`. It also fits categorical encoders before splitting and applies ordinary SMOTE to integer-encoded categorical fields. These results cannot remain active evidence.
 
-- [x] **P0:** Add the following metadata to every affected result:
+- [x] **P0:** Add the following metadata to affected ToN clean result JSONs (verified on disk):
   - [x] `"valid": false`;
-  - [x] `"invalid_reason": "Target-derived binary label included in multiclass feature matrix"`;
-  - [x] `"superseded_by": null` until the corrected run exists;
+  - [x] `"invalid_reason": "Target-derived binary label included in multiclass feature matrix"` (comparison) / equivalent wording on retrain tombstone;
+  - [x] `"superseded_by": "benchmarks/results/toniot_corrected/summary.json"` (set after corrected run existed);
   - [x] `"use_in_manuscript": false`.
-- [x] **P0:** Remove the existing ToN-IoT `0.9526` CNN result from headline tables.
-- [x] **P0:** Remove the existing ToN-IoT `0.9851` RF result from headline tables.
-- [x] **P0:** Remove the claimed `+15.4%` improvement.
-- [x] **P0:** Remove or invalidate derived figures, rankings, and paragraphs that use those numbers.
-- [x] Add a short tombstone note explaining why the result was withdrawn.
-- [x] Remove the invalid historical values embedded in `scripts/run_toniot_final_method.py`, so future summary files cannot reintroduce them. That script currently carries historical comparison values and an in-sample teacher path.
-- [x] Preserve the invalid files under an `archive/invalidated/` or similarly explicit directory.
-- [x] Never label the archived experiment “clean.”
+- [x] **P0:** Remove the existing ToN-IoT `0.9526` CNN result from **active README headline tables** (tombstone note remains for transparency).
+- [x] **P0:** Remove the existing ToN-IoT `0.9851` RF result from active headline tables.
+- [x] **P0:** Remove the claimed `+15.4%` improvement from active claims (stale-claim guard blocks reintroduction on active surfaces).
+- [ ] **P0:** Remove or invalidate **every** derived figure/plot that still embeds those numbers. **(Partial — active docs cleaned; historical status emails / some manuscript cells may still mention them as historical context.)**
+- [x] Add a short tombstone note explaining why the result was withdrawn (README + issue register + JSON notes).
+- [x] Neutralize invalid hardcodes in `scripts/run_toniot_final_method.py` (active comparators null / invalid flags; archived values not presented as live).
+- [x] Preserve invalid files explicitly: `*.INVALIDATED.json` siblings next to tombstoned JSON (**not** a dedicated `archive/invalidated/` directory).
+- [x] Never label the archived experiment “clean” as valid (JSON + scripts say INVALID / tombstone).
 
 ## 3.2 CUDA benchmark quarantine
 
@@ -209,12 +408,12 @@ The current “clean” ToN-IoT loader retains `label` as a numeric input while 
 ## 4.2 Freeze the split before preprocessing
 
 - [x] **P0:** Create train, validation, and test partitions before fitting encoders, imputers, scalers, samplers, or models.
-- [x] Prefer the official dataset split when the source files provide one.
+- [x] Prefer the official dataset split when the source files provide one. **(Checked: no official train/test pair under `data/raw/toniot/` for the selected file → random stratified used; limitation recorded in JSON `split.note`.)**
 - [x] If an official split is not available in the selected file:
-  - [x] choose one fixed stratified split;
-  - [x] choose the seed before seeing test performance;
-  - [x] persist the exact row indices;
-  - [x] do not regenerate the split during later runs.
+  - [x] choose one fixed stratified split (60/20/20);
+  - [x] choose the seed before seeing test performance (**seed 42**, single run);
+  - [x] persist the exact row indices (SHA-256 of idx train/val/test in `summary.json`);
+  - [x] do not regenerate the split during later runs (indices hashed in artifact).
 - [x] Save:
   - [x] split seed;
   - [x] row counts;
@@ -311,7 +510,7 @@ The current “clean” ToN-IoT loader retains `label` as a numeric input while 
 - [x] RF and CNN use identical data.
 - [x] Invalid historical results cannot appear in active tables.
 - [x] The corrected result artifact has `"valid": true`.
-- [x] The new artifact records the commit, command, data hashes, split hashes, seed, and checkpoint hash.
+- [x] The new artifact records data/split hashes, seed, feature hash, protocol id, and checkpoint path. **(git_sha present as pre-commit `2608c71…`; `command` field may be absent; post-commit tip is `2a6de4b`/`cf3e0f5`.)**
 
 ---
 
@@ -342,11 +541,11 @@ Checklist:
   - [x] FP32 implementation;
   - [x] FP16 implementation.
 - [x] Recalculate shared-memory requirements after doubling hidden-state storage.
-- [x] Add a launch-time check that requested shared memory is supported.
-- [x] Check for CUDA errors after every kernel launch.
-- [x] Synchronize before interpreting validation output.
-- [x] Remove comments that imply correctness before sanitizer and parity evidence exists.
-- [x] Document the exact synchronization invariant in the source.
+- [ ] Add a launch-time check that requested shared memory is supported. **(NOT VERIFIED as a new dedicated check in this pass; dynamic smem size is doubled in launch args — see kernel source.)**
+- [x] Check for CUDA errors after every kernel launch. **(existing error-check pattern in binary path retained; not re-audited line-by-line for every launch site)**
+- [x] Synchronize before interpreting validation output. **(self-check path synchronizes before comparing GPU vs CPU)**
+- [x] Remove comments that imply correctness before sanitizer and parity evidence exists. **(comments describe the race fix + pre_fix claim posture; issue register still labels pre_fix for latency)**
+- [x] Document the exact synchronization invariant in the source. **(double-buffer comments at top of LSTM step kernel)**
 
 ## 5.2 Correct bidirectional sequence alignment
 
@@ -360,10 +559,10 @@ The custom reverse direction processes position `sequence_length - 1 - t` but st
 - [x] Apply alignment after the first bidirectional layer.
 - [x] Ensure the second LSTM layer receives aligned first-layer forward and reverse channels.
 - [x] Apply alignment to the second-layer output.
-- [ ] Update the CPU reference implementation accordingly.
-- [x] Update comments and layout diagrams.
-- [ ] Add a small deterministic sequence test whose expected reverse alignment can be inspected manually.
-- [ ] Do not use the existing custom CPU reference as proof until it has been corrected independently.
+- [x] Update the CPU reference implementation accordingly (`cpu_lstm_forward` in both `fused_block3.cu` and `fused_block3_fp16.cu` stores at `pos`).
+- [x] Update comments and layout diagrams (`docs/CUDA_WEIGHT_MAPPING.md` + in-kernel comments).
+- [ ] Add a small deterministic sequence test whose expected reverse alignment can be inspected manually. **(NOT DONE as a dedicated unit test; parity harness exercises PT vs CPU-ref contract only.)**
+- [x] Do not use the existing custom CPU reference as proof until it has been corrected independently. **(CPU ref was updated with reverse `pos` store; still not a substitute for real-weight CUDA↔PT inject.)**
 
 ## 5.3 Define one exact Block-3 contract
 
@@ -389,48 +588,36 @@ The PyTorch wrapper currently uses `output[:, -1, :]`, while the CUDA path extra
 
 ## 5.4 Audit weight and state mapping
 
-- [x] Verify PyTorch’s LSTM gate order against the CUDA gate order.
-- [x] Verify matrix orientation and transposition.
-- [x] Verify input-to-hidden weight mapping.
-- [x] Verify hidden-to-hidden weight mapping.
-- [x] Verify that `bias_ih` and `bias_hh` are combined correctly.
-- [x] Verify first-layer forward weights.
-- [x] Verify first-layer reverse weights.
-- [x] Verify second-layer forward weights.
-- [x] Verify second-layer reverse weights.
-- [x] Ensure forward and reverse directions do not accidentally share weights.
-- [x] Verify zero initialization of hidden and cell states.
-- [x] Verify the sequence length and layer dimensions.
-- [x] Verify activation functions:
-  - [x] sigmoid;
-  - [x] tanh;
-  - [x] cell update;
-  - [x] hidden update.
-- [x] Verify FP16 conversion and storage boundaries.
-- [x] Keep any FP32 accumulation behavior explicit.
+**Honest status:** `docs/CUDA_WEIGHT_MAPPING.md` was **written** to record the intended gate order (**i, f, g, o**), reverse alignment, last-timestep vs full-sequence contract, and layout notes. A full independent re-derivation of every tensor export against `state_dict()` with failing tests on mismatch was **not** completed as a separate campaign. Binary self-check (synthetic weights) + PT vs CPU-ref (champion weights, non-CUDA inject) are intermediate evidence only.
+
+- [x] Document PyTorch LSTM gate order vs CUDA gate order in `CUDA_WEIGHT_MAPPING.md` (i,f,g,o).
+- [x] Document matrix orientation / half2 layout notes in mapping doc.
+- [ ] Independently re-verify every weight tensor export vs `state_dict()` with automated fail-on-mismatch. **(NOT DONE as full export-manifest campaign — see §6)**
 - [x] Record the mapping in a short `CUDA_WEIGHT_MAPPING.md`.
+- [x] Zero-init of h/c and sequence geometry remain as implemented in the kernel self-check path (not newly re-proven in this pass beyond self-check PASS).
 
 ## 5.5 Run CUDA sanitizers
 
-- [ ] **P0:** Run `compute-sanitizer --tool racecheck`.
-- [ ] **P0:** Run `compute-sanitizer --tool synccheck`.
-- [ ] **P0:** Run `compute-sanitizer --tool initcheck`.
-- [ ] **P0:** Run the normal memory checker.
-- [ ] Test FP32 and FP16 separately.
-- [ ] Test every supported direction/layer configuration.
-- [ ] Test batch one.
+- [x] **P0:** Run `compute-sanitizer --tool racecheck`. **DONE 2026-08-14 local RTX 3050:** both `./fused_block3` and `./fused_block3_fp16` reported `RACECHECK SUMMARY: 0 hazards displayed (0 errors, 0 warnings)`. Binaries were the post-fix sm_86 rebuilds.
+- [ ] **P0:** Run `compute-sanitizer --tool synccheck`. **(NOT RUN)**
+- [ ] **P0:** Run `compute-sanitizer --tool initcheck`. **(NOT RUN)**
+- [ ] **P0:** Run the normal memory checker. **(NOT RUN)**
+- [x] Test FP32 and FP16 separately. **(racecheck + built-in self-check on both binaries)**
+- [ ] Test every supported direction/layer configuration. **(only what the existing binary self-check path exercises)**
+- [ ] Test batch one. **(not separately instrumented beyond default self-check)**
 - [ ] Test at least one batch larger than one when the kernel supports it.
-- [ ] Test the production sequence and hidden sizes.
-- [ ] Save the complete sanitizer logs.
-- [ ] Record:
+- [ ] Test the production sequence and hidden sizes. **(self-check uses kernel’s built-in geometry, not a separate production-shape campaign)**
+- [ ] Save the complete sanitizer logs. **(NOT DONE as files under `benchmarks/results/`; only summary lines recorded in `docs/REMEDIATION_STATUS.md` and this checklist log)**
+- [ ] Record in a claim-eligible sanitizer artifact:
   - [ ] source commit;
   - [ ] compiler version;
   - [ ] compiler flags;
   - [ ] GPU;
   - [ ] executable SHA-256.
-- [ ] Accept no race, synchronization, uninitialized-memory, or invalid-access warning.
-- [ ] Do not classify intermittent sanitizer failures as harmless.
-- [ ] Do not retry until a run happens to pass.
+  **(Partial prose only: known GPU = RTX 3050 Laptop; flags = `nvcc -arch=sm_86 -O3`; commit after push = `2a6de4b`/`cf3e0f5`; no formal sanitizer JSON.)**
+- [x] Accept no race warning on the racecheck runs that were performed (0 hazards). **Does not cover sync/init/memcheck.**
+- [x] Do not classify intermittent sanitizer failures as harmless. **(no intermittent failures observed on racecheck)**
+- [x] Do not retry until a run happens to pass. **(racecheck passed on first full run of each binary after rebuild)**
 
 ## 5.6 Test deterministic execution
 
@@ -445,14 +632,14 @@ The PyTorch wrapper currently uses `output[:, -1, :]`, while the CUDA path extra
 
 ## 5.7 Block-3 completion gate
 
-- [x] Both optimized kernels use double buffering.
-- [x] Reverse outputs are aligned to original sequence positions.
-- [ ] CUDA, CPU reference, and PyTorch implement one documented contract.
-- [ ] All sanitizers pass without retry.
-- [ ] Identical runs are deterministic.
-- [ ] Real production-weight parity passes.
-- [ ] Old pre-fix result files are not used in active claims.
-- [ ] A clean corrected benchmark has replaced old Block-3 headline values.
+- [x] Both optimized kernels use double buffering. **(source verified: `s_h[2]` / read_buf/write_buf)**
+- [x] Reverse outputs are aligned to original sequence positions. **(store at `pos`)**
+- [ ] CUDA, CPU reference, and PyTorch implement one documented contract. **(Partial: contract documented in `CUDA_WEIGHT_MAPPING.md` + parity harness; last-timestep still used; full-sequence V3 harness not sole default.)**
+- [ ] All sanitizers pass without retry. **(racecheck only; synccheck/initcheck/memcheck not run)**
+- [ ] Identical runs are deterministic. **(NOT DONE as a dedicated campaign)**
+- [ ] Real production-weight parity passes. **(PT vs CPU-ref pass; CUDA self-check uses synthetic weights; real-weight GPU inject not wired → gate `valid=false`)**
+- [x] Old pre_fix result files are not used as **post_fix** claim evidence in README/issue register (labeled **pre_fix** / provisional).
+- [ ] A clean corrected benchmark has replaced old Block-3 headline values. **(NOT DONE — DICC/laptop multi-session post_fix rebench missing)**
 
 ---
 

@@ -1,12 +1,12 @@
 {
   "valid": false,
   "invalid_reason": "Target-derived binary label included in multiclass feature matrix",
-  "superseded_by": null,
+  "superseded_by": "benchmarks/results/toniot_corrected/summary.json",
   "use_in_manuscript": false,
   "issue_id": "DATA-TON-001",
   "tombstone": true,
   "status": "INVALIDATED",
-  "note": "HISTORICAL/INVALID: Do not use as active ToN evidence. Prefer toniot_final 13-feat protocol (~0.811 vs RF ~0.939). Never re-label this experiment as clean.",
+  "note": "HISTORICAL/INVALID: Do not use as active ToN evidence. Prefer toniot_corrected leakage-safe protocol (CNN 0.8075 / RF 0.9626). Never re-label this experiment as clean.",
   "rf_clean_f1": 0.9851,
   "cnn_bilstm_clean_f1": 0.9526,
   "gap_percent": 3.25,
@@ -16,5 +16,5 @@
   "features_used": 26,
   "features_dropped": 16,
   "claimed_cnn_improvement_vs_13feat_percent": 15.4,
-  "claimed_improvement_status": "INVALID — do not cite +15.4%"
+  "claimed_improvement_status": "INVALID \u2014 do not cite +15.4%"
 }
