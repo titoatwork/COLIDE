@@ -156,8 +156,10 @@ despite an intervening `__syncthreads()`. Fixed by double-buffering the hidden s
 **0 hazards under racecheck** (was reporting thousands), **100/100 runs pass** at the standard 1e-2
 tolerance (was ~6/30), and **20/20 pass even at a 1e-5 tolerance** — i.e. genuinely close to the CPU
 reference, not just passing a loose threshold. The naive kernel's latency figure above is now a real
-n=100-trial mean of this fixed, verified kernel. **Optimized Block-3 kernels now use the same double-buffer
-pattern in source (CUDA-B3-001 CODE_FIXED_AWAITING_REBENCH); production-weight GPU parity remains open.**
+n=100-trial mean of this fixed, verified kernel. **Optimized Block-3 kernels use the same double-buffer
+pattern in source; local production-weight full-sequence CUDA↔PT parity is closed
+(`benchmarks/results/block3_parity_gate.json`, `valid=true`, `kernel_status=post_fix`). DICC multi-session
+B3 latency remains historical pre_fix until rebench.**
 
 #### Measurement Stability (new finding, 2026-07-01)
 
