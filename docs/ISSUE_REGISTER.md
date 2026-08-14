@@ -23,7 +23,7 @@ Severity: `P0` (blocking) · `P1` (required cleanup) · `P2` (small improvement)
 | **Completion evidence** | `scripts/protocol/toniot_leakage_safe.py`; `benchmarks/results/toniot_corrected/summary.json` (RF macro-F1 **0.9626**, CNN **0.8075**, `valid: true`); `scripts/train_toniot_clean.py` fail-fast; historical clean JSON remains invalid |
 | **Status** | **CLOSED** (corrected path; historical clean still quarantined/invalid) |
 | **Date** | 2026-08-14 |
-| **Closed commit** | — |
+| **Closed commit** | `2a6de4b` |
 
 ---
 
@@ -114,7 +114,7 @@ Severity: `P0` (blocking) · `P1` (required cleanup) · `P2` (small improvement)
 | **Completion evidence** | `scripts/protocol/losses.py` (`StandardFocalLoss`, `LegacyFocalLoss`); `tests/test_focal_loss.py`; package freeze / imbalance notes |
 | **Status** | **CLOSED** (disclosure; no retrain) |
 | **Date** | 2026-08-14 |
-| **Closed commit** | — |
+| **Closed commit** | `2a6de4b` |
 
 ---
 
@@ -131,7 +131,7 @@ Severity: `P0` (blocking) · `P1` (required cleanup) · `P2` (small improvement)
 | **Completion evidence** | `docs/KD_OBJECTIVES.md`; README KD table + freeze cards |
 | **Status** | **CLOSED** (disclosure; no retrain) |
 | **Date** | 2026-08-14 |
-| **Closed commit** | — |
+| **Closed commit** | `2a6de4b` |
 
 ---
 

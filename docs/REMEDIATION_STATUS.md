@@ -2,7 +2,7 @@
 
 **Date:** 2026-08-14  
 **Scope:** Offline claim hygiene, ToN leakage-safe correction, CUDA B3 source fixes, protocol utilities, tests, license.  
-**Commit snapshot:** will be next (this tree is the pre-commit handoff state).  
+**Commit snapshot:** `2a6de4b` (remediation: full checklist offline correction)
 **Authority:** `docs/ISSUE_REGISTER.md` · checklist `COLIDE Remediation and Limited-Scope Improvement Checklist.md`
 
 ---
