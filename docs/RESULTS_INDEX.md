@@ -31,7 +31,7 @@ Only rows with `use_in_manuscript: true` (or explicit OK in claim map) may appea
 |-------|-------|----------|--------|
 | B1/B2/B4 CUDA faster than matching PT (DICC) | extraction tables | `docs/DICC_EXTRACTION_TABLES.md` | **OK** wall-clock historical |
 | B3 PT faster than CUDA FP16 (DICC) | ~363 vs ~513 V100S; ~385–391 vs ~667–671 A100 | B3 report | **pre_fix** binaries until post_fix rebench |
-| B3 production-weight parity | gate | `benchmarks/results/block3_parity_gate.json` | **open** until `valid: true` |
+| B3 production-weight parity | GPU inject vs PT full seq max abs ~6.5e-6 | `benchmarks/results/block3_parity_gate.json` | **OK** (`valid: true`, post_fix) |
 | Full custom pipeline vs full V3 | — | — | **FORBIDDEN** |
 
 ## Full-model multi-compiler (batch-1, DICC)
@@ -39,7 +39,7 @@ Only rows with `use_in_manuscript: true` (or explicit OK in claim map) may appea
 | Method | V100S / A100 | Artifact | Status |
 |--------|--------------|----------|--------|
 | Eager / compile / ORT / TRT | matrix | `docs/DICC_MULTI_COMPILER_MATRIX.md` | **OK** absolute only |
-| Framework logit parity | — | `benchmarks/results/framework_parity_gate.json` | **pending** |
+| Framework logit parity | eager CUDA/ORT/compile pass; TRT native skipped | `benchmarks/results/framework_parity_gate.json` | **OK** for non-skipped backends |
 
 ## Throughput / energy / LLM
 

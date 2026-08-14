@@ -41,9 +41,9 @@ Severity: `P0` (blocking) · `P1` (required cleanup) · `P2` (small improvement)
 | **Affected claims** | Matching-op B3 speedup vs PyTorch; progression table FP16 step; “beats cuDNN” on laptop |
 | **Remediation decision** | **Race+align fixed in source 2026-08-14** (double-buffer + reverse store at original pos). Wall-clock DICC/laptop numbers remain **pre_fix** until rebench + real-weight parity gate green. |
 | **Completion evidence** | `inference/kernels/fused_block3.cu`; `inference/kernels/fused_block3_fp16.cu`; `docs/CUDA_WEIGHT_MAPPING.md`; `scripts/parity_block3_cuda_pt.py` → `benchmarks/results/block3_parity_gate.json` (`kernel_status: code_fixed_awaiting_rebench`) |
-| **Status** | **CODE_FIXED_AWAITING_REBENCH** |
+| **Status** | **CLOSED (parity + local sanitizers)** — DICC multi-session post_fix latency still optional/historical pre_fix |
 | **Date** | 2026-08-14 |
-| **Closed commit** | — |
+| **Closed commit** | see tip after artifacts commit |
 
 ---
 

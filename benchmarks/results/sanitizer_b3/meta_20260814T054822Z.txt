@@ -1,0 +1,66 @@
+timestamp_utc=20260814T054822Z
+pwd=/home/titoisalive/colide
+git_sha=639ce5ef8c251fd97b33802bd833636bddfdb7e8
+git_dirty=21
+nvcc=Build cuda_12.6.r12.6/compiler.34431801_0
+gpu=GPU 0: NVIDIA GeForce RTX 3050 6GB Laptop GPU (UUID: GPU-005dfc6a-e1fa-c334-b81b-19b656e854e4)
+driver=592.82
+arch=sm_86
+62508b915a1e9ba3a798d0a6b039b6617094710e1b2bca8bc1897660dd95fe75  fused_block3
+d6c1d20402457f8c9af0219a4335b2a45a376ae590e36a889e6977d5abeecd33  fused_block3_fp16
+=== COLIDE Block3 (transposed W_hh + CUDA Graphs) ===
+max abs error full_seq: 1.17533e-06  legacy_last_state: 5.36442e-07
+✅ FP32 validation PASSED
+⏱️  Without CUDA Graphs: 1433.72 µs
+graph max abs error full_seq: 1.17533e-06  legacy_last_state: 5.36442e-07
+✅ CUDA Graph validation PASSED
+⏱️  With CUDA Graphs:    1337.47 µs
+   Speedup from graphs:  1.07197x
+   PyTorch GPU target:   784.1 µs (n=50-trial mean, see benchmark_pytorch_block3_stats.py)
+PASS fused_block3 racecheck
+========= COMPUTE-SANITIZER
+========= RACECHECK SUMMARY: 0 hazards displayed (0 errors, 0 warnings)
+PASS fused_block3 synccheck
+========= COMPUTE-SANITIZER
+========= ERROR SUMMARY: 0 errors
+PASS fused_block3 initcheck
+========= COMPUTE-SANITIZER
+========= ERROR SUMMARY: 0 errors
+PASS fused_block3 memcheck
+========= COMPUTE-SANITIZER
+========= ERROR SUMMARY: 0 errors
+=== COLIDE Block3 FP16 Native half2 ===
+max abs error full_seq: 0.00621648  legacy_last_state: 0.00383837
+✅ FP16 half2 validation PASSED
+⏱️  Block3 FP16 half2:    1732.06 µs
+   Block3 FP32:          1007.3 µs
+   Speedup FP16/FP32:    0.58156x
+   PyTorch GPU target:   784.1 µs (n=50-trial mean, see benchmark_pytorch_block3_stats.py)
+PASS fused_block3_fp16 racecheck
+========= COMPUTE-SANITIZER
+========= RACECHECK SUMMARY: 0 hazards displayed (0 errors, 0 warnings)
+PASS fused_block3_fp16 synccheck
+========= COMPUTE-SANITIZER
+========= ERROR SUMMARY: 0 errors
+PASS fused_block3_fp16 initcheck
+========= COMPUTE-SANITIZER
+========= ERROR SUMMARY: 0 errors
+PASS fused_block3_fp16 memcheck
+========= COMPUTE-SANITIZER
+========= ERROR SUMMARY: 0 errors
+total 52
+drwxr-xr-x  2 titoisalive titoisalive 4096 Aug 14 05:52 .
+drwxr-xr-x 30 titoisalive titoisalive 4096 Aug 14 05:48 ..
+-rw-r--r--  1 titoisalive titoisalive    0 Aug 14 05:48 compile_fused_block3_20260814T054822Z.log
+-rw-r--r--  1 titoisalive titoisalive    0 Aug 14 05:48 compile_fused_block3_fp16_20260814T054822Z.log
+-rw-r--r--  1 titoisalive titoisalive  407 Aug 14 05:52 fused_block3_fp16_initcheck_20260814T054822Z.log
+-rw-r--r--  1 titoisalive titoisalive  407 Aug 14 05:52 fused_block3_fp16_memcheck_20260814T054822Z.log
+-rw-r--r--  1 titoisalive titoisalive  445 Aug 14 05:52 fused_block3_fp16_racecheck_20260814T054822Z.log
+-rw-r--r--  1 titoisalive titoisalive  343 Aug 14 05:51 fused_block3_fp16_selfcheck_20260814T054822Z.log
+-rw-r--r--  1 titoisalive titoisalive  406 Aug 14 05:52 fused_block3_fp16_synccheck_20260814T054822Z.log
+-rw-r--r--  1 titoisalive titoisalive  526 Aug 14 05:50 fused_block3_initcheck_20260814T054822Z.log
+-rw-r--r--  1 titoisalive titoisalive  524 Aug 14 05:51 fused_block3_memcheck_20260814T054822Z.log
+-rw-r--r--  1 titoisalive titoisalive  563 Aug 14 05:50 fused_block3_racecheck_20260814T054822Z.log
+-rw-r--r--  1 titoisalive titoisalive  464 Aug 14 05:48 fused_block3_selfcheck_20260814T054822Z.log
+-rw-r--r--  1 titoisalive titoisalive  526 Aug 14 05:50 fused_block3_synccheck_20260814T054822Z.log
+-rw-r--r--  1 titoisalive titoisalive 2077 Aug 14 05:52 meta_20260814T054822Z.txt

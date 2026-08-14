@@ -1,12 +1,12 @@
 {
   "experiment_id": "framework_parity_gate",
   "protocol_id": "framework_logit_parity_v1",
-  "timestamp_utc": "2026-08-14T05:35:24.147549+00:00",
-  "git_sha": "24ac44f0eafb28fc1a8daaa78e45d01301ffae3b",
-  "source_dirty": true,
-  "valid": false,
-  "use_in_manuscript": false,
-  "invalid_reason": "source_dirty=true",
+  "timestamp_utc": "2026-08-14T05:51:58.118689+00:00",
+  "git_sha": "fd08f36925762978c2ca73b63c477e95a9fbc86f",
+  "source_dirty": false,
+  "valid": true,
+  "use_in_manuscript": true,
+  "invalid_reason": null,
   "champion_md5": "80a90f7cc210276300eaa90173a5a385",
   "champion_md5_expected": "80a90f7cc210276300eaa90173a5a385",
   "champion_md5_ok": true,
@@ -53,8 +53,7 @@
       "pass": true,
       "precision": "fp32",
       "torch_version": "2.5.1+cu121",
-      "valid": false,
-      "valid_reason": "source_dirty=true"
+      "valid": true
     },
     {
       "backend": "onnxruntime_cpu",
@@ -89,8 +88,7 @@
         "rate": 1.0
       },
       "precision": "fp32",
-      "valid": false,
-      "valid_reason": "source_dirty=true"
+      "valid": true
     },
     {
       "backend": "onnxruntime_cuda",
@@ -125,8 +123,7 @@
         "rate": 1.0
       },
       "precision": "fp32",
-      "valid": false,
-      "valid_reason": "source_dirty=true"
+      "valid": true
     },
     {
       "backend": "torch_compile",
@@ -154,8 +151,7 @@
         "rate": 1.0
       },
       "precision": "fp32",
-      "valid": false,
-      "valid_reason": "source_dirty=true"
+      "valid": true
     },
     {
       "backend": "tensorrt_native",

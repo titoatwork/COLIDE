@@ -1,0 +1,11 @@
+========= COMPUTE-SANITIZER
+=== COLIDE Block3 (transposed W_hh + CUDA Graphs) ===
+max abs error full_seq: 1.17533e-06  legacy_last_state: 5.36442e-07
+✅ FP32 validation PASSED
+⏱️  Without CUDA Graphs: 70234.5 µs
+graph max abs error full_seq: 1.17533e-06  legacy_last_state: 5.36442e-07
+✅ CUDA Graph validation PASSED
+⏱️  With CUDA Graphs:    109730 µs
+   Speedup from graphs:  0.640067x
+   PyTorch GPU target:   784.1 µs (n=50-trial mean, see benchmark_pytorch_block3_stats.py)
+========= ERROR SUMMARY: 0 errors

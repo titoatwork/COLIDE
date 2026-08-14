@@ -1,0 +1,31 @@
+{
+  "experiment_id": "b3_sanitizer_suite",
+  "timestamp_utc": "2026-08-14T06:05:34.742183+00:00",
+  "git_sha": "fd08f36925762978c2ca73b63c477e95a9fbc86f",
+  "gpu": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+  "arch": "sm_86",
+  "tools": [
+    "racecheck",
+    "synccheck",
+    "initcheck",
+    "memcheck"
+  ],
+  "binaries": {
+    "fused_block3": {
+      "racecheck": "PASS 0 hazards",
+      "synccheck": "PASS 0 errors",
+      "initcheck": "PASS 0 errors",
+      "memcheck": "PASS 0 errors"
+    },
+    "fused_block3_fp16": {
+      "racecheck": "PASS 0 hazards",
+      "synccheck": "PASS 0 errors",
+      "initcheck": "PASS 0 errors",
+      "memcheck": "PASS 0 errors"
+    }
+  },
+  "valid": true,
+  "use_in_manuscript": true,
+  "note": "Local laptop suite only; not a DICC multi-session latency rebench. Latencies under sanitizer are not claim-eligible.",
+  "meta_excerpt": "822Z.log\n-rw-r--r--  1 titoisalive titoisalive  343 Aug 14 05:51 fused_block3_fp16_selfcheck_20260814T054822Z.log\n-rw-r--r--  1 titoisalive titoisalive  406 Aug 14 05:52 fused_block3_fp16_synccheck_20260814T054822Z.log\n-rw-r--r--  1 titoisalive titoisalive  526 Aug 14 05:50 fused_block3_initcheck_20260814T054822Z.log\n-rw-r--r--  1 titoisalive titoisalive  524 Aug 14 05:51 fused_block3_memcheck_20260814T054822Z.log\n-rw-r--r--  1 titoisalive titoisalive  563 Aug 14 05:50 fused_block3_racecheck_20260814T054822Z.log\n-rw-r--r--  1 titoisalive titoisalive  464 Aug 14 05:48 fused_block3_selfcheck_20260814T054822Z.log\n-rw-r--r--  1 titoisalive titoisalive  526 Aug 14 05:50 fused_block3_synccheck_20260814T054822Z.log\n-rw-r--r--  1 titoisalive titoisalive 2077 Aug 14 05:52 meta_20260814T054822Z.txt\n"
+}

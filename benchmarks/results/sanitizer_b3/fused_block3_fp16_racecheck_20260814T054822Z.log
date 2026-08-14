@@ -1,0 +1,9 @@
+========= COMPUTE-SANITIZER
+=== COLIDE Block3 FP16 Native half2 ===
+max abs error full_seq: 0.00621648  legacy_last_state: 0.00383837
+✅ FP16 half2 validation PASSED
+⏱️  Block3 FP16 half2:    498692 µs
+   Block3 FP32:          1007.3 µs
+   Speedup FP16/FP32:    0.00201988x
+   PyTorch GPU target:   784.1 µs (n=50-trial mean, see benchmark_pytorch_block3_stats.py)
+========= RACECHECK SUMMARY: 0 hazards displayed (0 errors, 0 warnings)

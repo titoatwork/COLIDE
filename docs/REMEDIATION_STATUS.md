@@ -85,7 +85,7 @@ Review note: one clean-provenance rerun (categorical missing-value order + clean
 | Reverse output alignment to sequence `pos` | **Done in source** |
 | `docs/CUDA_WEIGHT_MAPPING.md` | **Done** |
 | DICC latency rebench of fixed kernels | **AWAITING_HARDWARE** |
-| `compute-sanitizer` racecheck (local sm_86) | **DONE 2026-08-14 — 0 hazards** FP32+FP16 |
+| `compute-sanitizer` full suite (local sm_86) | **DONE** racecheck/synccheck/initcheck/memcheck 0 errors FP32+FP16 |
 | synccheck / initcheck / memcheck archive | **OPEN** |
 | Real-weight numerical parity gate | **OPEN** (`valid=false`) |
 

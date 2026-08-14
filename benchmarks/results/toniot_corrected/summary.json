@@ -1,6 +1,8 @@
 {
   "valid": true,
   "use_in_manuscript": true,
+  "source_dirty": false,
+  "command": "scripts/run_toniot_corrected_simple.py",
   "protocol_id": "toniot_leakage_safe_v1",
   "experiment_id": "toniot_corrected_leakage_safe_minimal",
   "label": "corrected leakage-safe random split",
@@ -22,6 +24,7 @@
     "conn_state"
   ],
   "feature_hash_sha256": "838239eea277712ed719a17ea5f451eebbea368fa673a0676820741b438ecb61",
+  "feature_hash": "838239eea277712ed719a17ea5f451eebbea368fa673a0676820741b438ecb61",
   "target_column": "type",
   "label_mapping": {
     "backdoor": 0,
@@ -105,8 +108,12 @@
   "preprocessing": {
     "encoders_fit_on": "train_only",
     "scaler_fit_on": "train_only",
+    "scaler": "MinMaxScaler_fit_train_only",
+    "numeric_missing": "fixed_zero_imputation",
+    "numeric_inf_handling": "inf_to_nan_then_zero",
     "smote": false,
     "unknown_category_token": "__UNK__",
+    "categorical_missing": "fillna_unknown_token_before_astype_str",
     "cat_vocab": {
       "proto": {
         "classes": [
@@ -722,7 +729,7 @@
       "scanning": 0.9893300248138958,
       "xss": 0.9630585578319084
     },
-    "wall_sec": 3.4902684688568115
+    "wall_sec": 9.307627201080322
   },
   "cnn": {
     "model": "CNNBiLSTMAttention",
@@ -1279,6 +1286,10 @@
       "scanning": 0.9523563589412524,
       "xss": 0.8666111573688593
     },
+    "min_per_class_f1_test": 0.11137301119622864,
+    "weak_classes_f1_lt_0_2": [
+      "mitm"
+    ],
     "history": [
       {
         "epoch": 1,
@@ -1477,13 +1488,25 @@
       }
     ],
     "checkpoint": "model/toniot_corrected/cnn_hardlabel_seed42.pth",
-    "wall_sec": 291.03451561927795
+    "checkpoint_sha256": "1974ac3ed299d8c5f785e733607e5ed73ff197348a5d04eb231be5e3fea68dcd",
+    "wall_sec": 741.3742599487305
   },
   "comparators_note": "Do not compare these metrics against invalidated clean-path results (0.9526 CNN / 0.9851 RF). Those are marked invalid.",
   "bot_champion_untouched": true,
-  "git_sha": "2608c713ef22b8958656d63bee002b919f60bec1",
-  "timestamp_utc": "2026-08-14T04:10:00.229169+00:00",
+  "git_sha": "fd08f36925762978c2ca73b63c477e95a9fbc86f",
+  "environment": {
+    "python": "3.12.3",
+    "python_full": "3.12.3 (main, Jun 19 2026, 12:46:00) [GCC 13.3.0]",
+    "torch": "2.5.1+cu121",
+    "numpy": "2.4.4",
+    "pandas": "3.0.3",
+    "device": "cuda",
+    "cuda_available": true,
+    "cuda_device_name": "NVIDIA GeForce RTX 3050 6GB Laptop GPU"
+  },
+  "timestamp_utc": "2026-08-14T06:04:59.739110+00:00",
   "device": "cuda",
-  "wall_sec": 297.36630058288574,
-  "predictions_file": "benchmarks/results/toniot_corrected/predictions_seed42.npz"
+  "wall_sec": 760.4462814331055,
+  "predictions_file": "benchmarks/results/toniot_corrected/predictions_seed42.npz",
+  "checkpoint_sha256": "1974ac3ed299d8c5f785e733607e5ed73ff197348a5d04eb231be5e3fea68dcd"
 }
