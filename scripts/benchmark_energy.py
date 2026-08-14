@@ -1,7 +1,18 @@
 """
-COLIDE - Energy Efficiency Benchmark
-Measures GPU power draw during inference vs idle.
-Reports energy per inference and throughput per watt.
+COLIDE - Energy Efficiency Benchmark (EXPLORATORY — ENERGY-001)
+
+Measures GPU board power draw during inference vs idle via nvidia-smi /
+NVML-style sampling. Reports energy per inference and throughput per watt.
+
+Caveats (ENERGY-001):
+  - Results are **exploratory** board-power estimates, not a controlled
+    system-level efficiency contest (heterogeneous boundaries, sampling rate).
+  - Prefer multi-session WP6b laptop ranges (0.920–0.943 mJ/flow) for systems
+    prose over single-script figures from this file.
+  - Do not present bare GPU mJ/flow vs cuML as definitive without caveats.
+  - The CPU-inference section samples **GPU** power while the model runs on
+    CPU; that is NOT true CPU package energy — do not claim CPU energy from
+    those NVML/GPU-board readings alone.
 """
 
 import sys
@@ -40,7 +51,7 @@ with open('config/config.yaml') as f:
     config = yaml.safe_load(f)
 
 model = CNNBiLSTM(config)
-model.load_state_dict(torch.load('model/best_model.pth', map_location='cpu', weights_only=True))
+model.load_state_dict(torch.load('model/best_model_botiot_twostage.pth', map_location='cpu', weights_only=True))
 model.eval()
 
 model_cpu = copy.deepcopy(model)
@@ -136,9 +147,12 @@ print(f"Throughput:        {gpu_b128_throughput:.0f} flows/sec")
 print(f"Energy/flow:       {gpu_b128_energy_per_flow:.4f} mJ")
 
 # ================================================================
-# 4. CPU inference power (batch=1)
+# 4. CPU inference — EXPLORATORY ONLY (GPU-board power, not CPU energy)
 # ================================================================
-print("\n--- CPU Inference (batch=1) ---")
+# WARNING (ENERGY-001): sample_power() reads GPU board power via nvidia-smi.
+# During CPU inference this is GPU idle / residual draw, NOT CPU package
+# energy (RAPL/etc.). Do not treat cpu_* mJ figures as true CPU energy.
+print("\n--- CPU Inference (batch=1) [WARNING: GPU-board NVML, not CPU energy] ---")
 inp_cpu = torch.randn(1, 10)
 
 readings = []
@@ -157,13 +171,15 @@ stop_event.set()
 monitor.join()
 
 powers = [r[1] for r in readings]
+# GPU-board watts while model runs on CPU — NOT CPU package power.
 cpu_power = np.mean(powers)
 cpu_latency = elapsed / iters
 cpu_throughput = iters / elapsed
-cpu_energy_per_inf = cpu_power * cpu_latency * 1000
+cpu_energy_per_inf = cpu_power * cpu_latency * 1000  # mislabeled if read as CPU energy
 
-print(f"Avg power (GPU):   {cpu_power:.2f} W (GPU idle during CPU inference)")
+print(f"Avg GPU-board power during CPU run: {cpu_power:.2f} W (NOT CPU package energy)")
 print(f"Throughput:        {cpu_throughput:.0f} inf/sec")
+print("WARNING: cpu mJ/inf uses GPU-board power × CPU latency — exploratory only (ENERGY-001)")
 
 # ================================================================
 # Summary table
@@ -176,14 +192,24 @@ print(f"{'-'*60}")
 print(f"{'Idle':<25} {idle_power:>10.2f} {'---':>12} {'---':>10}")
 print(f"{'GPU batch=1':<25} {gpu_b1_power:>10.2f} {gpu_b1_throughput:>12.0f} {gpu_b1_energy_per_inf:>10.3f}")
 print(f"{'GPU batch=128':<25} {gpu_b128_power:>10.2f} {gpu_b128_throughput:>12.0f} {gpu_b128_energy_per_flow:>10.4f}")
-print(f"{'CPU batch=1':<25} {cpu_power:>10.2f} {cpu_throughput:>12.0f} {cpu_energy_per_inf:>10.3f}")
+print(f"{'CPU run (GPU-board W)':<25} {cpu_power:>10.2f} {cpu_throughput:>12.0f} {cpu_energy_per_inf:>10.3f}")
+print("NOTE: last row is exploratory; power is GPU-board during CPU inference (ENERGY-001)")
 
 # Save
 out = {
+    'exploratory': True,
+    'energy_issue_id': 'ENERGY-001',
+    'note': 'Exploratory GPU-board power sampling. CPU section uses GPU NVML during CPU inference — not true CPU energy.',
     'idle_power_w': idle_power,
     'gpu_batch1': {'power_w': gpu_b1_power, 'throughput': gpu_b1_throughput, 'mj_per_inf': gpu_b1_energy_per_inf},
     'gpu_batch128': {'power_w': gpu_b128_power, 'throughput': gpu_b128_throughput, 'mj_per_flow': gpu_b128_energy_per_flow},
-    'cpu_batch1': {'power_w': cpu_power, 'throughput': cpu_throughput, 'mj_per_inf': cpu_energy_per_inf},
+    'cpu_batch1': {
+        'power_w': cpu_power,
+        'throughput': cpu_throughput,
+        'mj_per_inf': cpu_energy_per_inf,
+        'power_source': 'gpu_board_nvml_during_cpu_inference',
+        'warning': 'NOT true CPU package energy; do not claim CPU energy from this field',
+    },
 }
 with open('benchmarks/results/energy_efficiency.json', 'w') as f:
     json.dump(out, f, indent=2)

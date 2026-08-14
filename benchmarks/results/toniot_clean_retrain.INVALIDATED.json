@@ -1,0 +1,12 @@
+{
+  "valid": false,
+  "invalid_reason": "Sibling tombstone for toniot_clean_retrain.json — DATA-TON-001.",
+  "superseded_by": "benchmarks/results/toniot_corrected/summary.json",
+  "use_in_manuscript": false,
+  "issue_id": "DATA-TON-001",
+  "tombstone": true,
+  "status": "INVALIDATED",
+  "note": "HISTORICAL/INVALID: Do not use as active ToN evidence.",
+  "dataset": "toniot_clean",
+  "macro_f1": 0.9526283476667281
+}

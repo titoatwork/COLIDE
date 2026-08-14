@@ -1,4 +1,4 @@
-# COLIDE: CUDA-Optimized CNN-BiLSTM with LLM-Based Explainability for IoT Intrusion Detection
+# COLIDE: CUDA-Optimized CNN-BiLSTM for IoT Intrusion Detection (On-Device Alert Dispatch Prototype)
 
 [![CUDA](https://img.shields.io/badge/CUDA-12.1+-green.svg)](https://developer.nvidia.com/cuda-toolkit)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.5+-red.svg)](https://pytorch.org/)
@@ -6,15 +6,26 @@
 
 ## Abstract
 
-COLIDE is a multi-objective IoT IDS systems project: a sealed-protocol CAD-CBA detection package (competitive but not pure-F1 SOTA vs RF/LGBM) plus **Option A** Custom CUDA kernels (per-block vs matching ops) and measured multi-GPU multi-session latency on UM DICC (V100S + A100). On a **laptop RTX 3050 (WSL2)**, Custom CUDA pipeline ranges beat full-model eager / torch.compile / TensorRT / ORT-GPU when reported as multi-session ranges (see below; incomplete CUDA scope caveats apply). On **DICC**, three sessions show stable means: matching **PyTorch Block 3 is faster than CUDA Block 3 FP16** (~363 vs ~513 µs V100S; ~385–391 vs ~667–671 µs A100), while CUDA remains much faster on Blocks 1/2/4. Full Custom CUDA vs full V3 speedup is **not** claimed. Async on-device LLM dispatch is **16.60 µs p99** (not full generation). See `docs/DICC_EXTRACTION_TABLES.md` and `docs/PRE_MANUSCRIPT_CLOSURE.md`.
+COLIDE is a multi-objective IoT IDS systems project: a sealed-protocol CAD-CBA detection package (competitive but not pure-F1 SOTA vs RF/LGBM) plus **Option A** Custom CUDA kernels (per-block vs matching ops) and measured multi-GPU multi-session latency on UM DICC (V100S + A100). The principal BoT-IoT detection result is sealed multi-seed test macro-F1 **0.9780 ± 0.0033** (n=5). On a **laptop RTX 3050 (WSL2)**, Custom CUDA pipeline ranges beat full-model eager / torch.compile / TensorRT / ORT-GPU when reported as multi-session ranges (see below; **incomplete CUDA scope** caveats apply — not full V3). On **DICC**, three sessions show stable means: matching **PyTorch Block 3 is faster than CUDA Block 3 FP16** (~363 vs ~513 µs V100S; ~385–391 vs ~667–671 µs A100), while CUDA remains much faster on Blocks 1/2/4. Full Custom CUDA vs full V3 speedup is **not** claimed. B3 server numbers are **wall-clock of current binaries** and remain **pre_fix** until race/alignment/parity gates close (see `docs/ISSUE_REGISTER.md`). Async on-device LLM **dispatch** is **16.60 µs p99** (not full generation or validated free-form explainability). Authority: `docs/CLAIM_MAP_PREWRITE.md`, `docs/PRE_MANUSCRIPT_CLOSURE.md`, `docs/KNOWN_LIMITATIONS.md`, `docs/ISSUE_REGISTER.md`.
 
 ## Key Contributions
 
-1. **Multi-objective CAD-CBA package** under sealed protocol (HPO, focal + ensemble KD, ablations, dual bars vs classical baselines) — accuracy–efficiency story, not F1 supremacy.
-2. **Option A Custom CUDA** for CNN-BiLSTM blocks: large wins on B1/B2/B4 vs matching PT; **honest B3 result on DICC** (PT B3 faster than CUDA FP16 B3 on V100S/A100).
+1. **Multi-objective CAD-CBA package** under sealed protocol (HPO, focal + ensemble KD, ablations, dual bars vs classical baselines) — accuracy–efficiency story, not F1 supremacy. Principal test macro-F1 **0.9780 ± 0.0033**.
+2. **Option A Custom CUDA** for CNN-BiLSTM blocks: large wins on B1/B2/B4 vs matching PT; **honest B3 result on DICC** (PT B3 faster than CUDA FP16 B3 on V100S/A100; pre_fix correctness caveats apply).
 3. **Multi-session multi-GPU measurement** (3 sessions × V100S + A100 SUCCESS trees) with formal compares — not RTX-only portability claims.
-4. **Multi-compiler on laptop + DICC** — laptop multi-session ranges (eager/compile/TRT/ORT vs Custom pipeline) **and** full DICC matrix (eager/compile/ORT/TRT native on V100S+A100); do not mix laptop ratios with server absolutes.
-5. **On-device LLM dispatch** micro-benchmark (**16.60 µs p99**); full free-form LLM explainability is **not** a title-level claim.
+4. **Multi-compiler on laptop + DICC** — laptop multi-session ranges (eager/compile/TRT/ORT vs Custom pipeline) **and** full DICC batch-1 matrix (eager/compile/ORT/TRT native on V100S+A100); do not mix laptop ratios with server absolutes.
+5. **On-device alert dispatch prototype** micro-benchmark (**16.60 µs p99**); full free-form LLM explainability is **not** a title-level claim.
+
+## Claim hygiene (read first)
+
+| Doc | Role |
+|-----|------|
+| [`docs/ISSUE_REGISTER.md`](docs/ISSUE_REGISTER.md) | Stable issue IDs (DATA-TON-001 … LLM-001), severity, status |
+| [`docs/KNOWN_LIMITATIONS.md`](docs/KNOWN_LIMITATIONS.md) | Pseudo-sequence, test access, baselines, CUDA scope, energy, bulk throughput, ToN invalid path |
+| [`docs/CLAIM_MAP_PREWRITE.md`](docs/CLAIM_MAP_PREWRITE.md) | OK / FORBIDDEN claim rows for manuscript drafting |
+| [`docs/PRE_MANUSCRIPT_CLOSURE.md`](docs/PRE_MANUSCRIPT_CLOSURE.md) | Pre-manuscript evidence freeze + Option A fork |
+
+Stale-claim guard: `python scripts/check_stale_claims.py` (fails on forbidden ToN-clean strings in active surfaces).
 
 ## Results Summary
 
@@ -34,6 +45,10 @@ earlier version of this table. Significance is a two-sample Welch's t-test (fram
 Custom CUDA's 100 trials), not a one-sample test against a fixed point; the exact CI/p-value shown is
 from the most recent session — see below for which comparisons are robust across sessions and which
 aren't.
+
+**Scope caveat (CLAIM-PIPE-001):** Custom CUDA covers fused Blocks 1–4 only. Full CAD-CBA V3 includes
+attention / LN / residual paths **not** in the CUDA chain. Do **not** read these rows as full-model
+Custom CUDA vs full V3 speedup.
 
 | Method | Mean (us) range | vs Custom CUDA (range) |
 |---|---|---|
@@ -59,17 +74,18 @@ torch.compile with CUDA graph capture **crashes** on BiLSTM (dynamic recurrent c
 
 | GPU | CUDA B3 FP16 mean | PT B3 mean | PT full V3 mean | Note |
 |-----|------------------:|-----------:|----------------:|------|
-| **V100S** | ~**513 µs** | ~**363 µs** | ~**964–973 µs** | PT B3 **faster** than CUDA B3 FP16 |
-| **A100** | ~**667–671 µs** | ~**384–391 µs** | ~**945–962 µs** | same direction |
+| **V100S** | ~**513 µs** | ~**363 µs** | ~**964–973 µs** | PT B3 **faster** than CUDA B3 FP16 (**pre_fix** binaries) |
+| **A100** | ~**667–671 µs** | ~**384–391 µs** | ~**945–962 µs** | same direction (**pre_fix**) |
 | RTX 3050 (laptop) | framework table above | local ranges | local | laptop multi-compiler only; DICC matrix is separate table below |
 
 Legacy June single-shot pipeline (~551 / ~592 µs CUDA-only) remains **legacy** (no same-GPU PT that day).  
 **Do not** claim full Custom CUDA pipeline vs full V3 PT. Prefer per-block tables (esp. B3 honesty + B1/B2/B4 CUDA wins).  
+B3 correctness issues (race, reverse alignment, contract) are tracked as **CUDA-B3-001/002/003** — DICC “PT wins B3” is a wall-clock observation of current kernels, not closed semantic parity.  
 Details: `docs/DICC_EXTRACTION_TABLES.md`, `docs/DICC_B3_CUDA_VS_PT_REPORT.md`.
 
-### DICC multi-compiler matrix (full-model absolute, not Option A)
+### DICC multi-compiler matrix (full-model absolute, batch-1, not Option A)
 
-**Source:** `docs/DICC_MULTI_COMPILER_MATRIX.md` · jobs 395433 (V100S) / 395417 (A100) · n=20, inner=200, warmup=50.
+**Source:** `docs/DICC_MULTI_COMPILER_MATRIX.md` · jobs 395433 (V100S) / 395417 (A100) · n=20, inner=200, warmup=50 · **batch-1**.
 
 | Method | V100S mean (µs) | A100 mean (µs) |
 |--------|----------------:|---------------:|
@@ -80,7 +96,7 @@ Details: `docs/DICC_EXTRACTION_TABLES.md`, `docs/DICC_B3_CUDA_VS_PT_REPORT.md`.
 | ORT TensorRT EP | **766** | **2033** |
 | TensorRT native FP16 | **528** | **588** |
 
-Absolute framework latencies only — **not** Custom CUDA parity. Fastest GPU framework path here is **TensorRT native**. ORT CPU is measured but is not a GPU-deployment claim. Laptop multi-compiler ranges remain a separate local story.
+Absolute framework latencies only — **not** Custom CUDA parity. Fastest GPU framework path here is **TensorRT native**. ORT CPU is measured but is not a GPU-deployment claim. Laptop multi-compiler ranges remain a separate local story. Do not mix laptop ratios with these server absolutes.
 
 ### Per-Block Performance (RTX 3050)
 
@@ -91,8 +107,7 @@ Absolute framework latencies only — **not** Custom CUDA parity. Fastest GPU fr
 | 3: BiLSTM FP16 half2 | 784 | 532–602* | 1.30x–1.47x* |
 | 4: Dense Head | 122 | 20 | 6.07x |
 
-\* Range across five independent n=100-trial measurement sessions on this dev box, not a lingering
-ambiguity — see "Measurement Stability" below.
+\* Range across five independent n=100-trial measurement sessions on this dev box. Optimized B3 remains **pre_fix** for semantic parity (see Issue Register). Laptop “beats cuDNN” ratios are **not** portable to DICC, where PT B3 wins wall-clock.
 
 ### Block 3 Optimization Progression (7.55x–9.50x)
 
@@ -107,10 +122,10 @@ reference used for per-step ratios is a real n=50-trial mean, **784us** (std 89u
 independent subprocess trials — mirrors the CUDA kernel statistical harness so both sides of the ratio are
 backed by a real distribution). This resolves an earlier ambiguity between two single-run point estimates
 (740.7us vs 943.6us) that bracketed the true mean. With the real baseline, **the FP16 step beats cuDNN in
-all five sessions (1.30x–1.47x)**; the transposed-W_hh steps (with or without CUDA Graphs) land at/around
-parity with PyTorch across all five sessions (0.77x–1.08x, occasionally edging past parity) — that
-conclusion (transposed steps don't clearly beat cuDNN) is robust across the session-to-session drift, even
-though the exact ratios aren't.
+all five sessions (1.30x–1.47x) on this laptop**; the transposed-W_hh steps (with or without CUDA Graphs)
+land at/around parity with PyTorch across all five sessions (0.77x–1.08x). **DICC does not reproduce a
+portable CUDA-B3 win** (PT B3 faster). Optimized kernels (steps 2–4) still need race/alignment/parity
+remediation before post_fix claims.
 
 | Step | Configuration | Latency (us) | Cumulative |
 |---|---|---|---|
@@ -120,7 +135,7 @@ though the exact ratios aren't.
 | 3 | + CUDA Graphs | 724–905 | 5.02x–6.97x |
 | 4 | + FP16 half2 FMA gate packing | 532–602 | **7.55x–9.50x** |
 
-#### Naive Kernel Fix (was a disclosed limitation, now resolved)
+#### Naive Kernel Fix (was a disclosed limitation, now resolved for step 0 only)
 
 The naive kernel (step 0) previously carried a disclosed caveat: it failed numerical validation against
 the PyTorch reference in a majority of repeated runs (~6/30 passing), attributed to "accumulated FP32
@@ -133,7 +148,8 @@ despite an intervening `__syncthreads()`. Fixed by double-buffering the hidden s
 **0 hazards under racecheck** (was reporting thousands), **100/100 runs pass** at the standard 1e-2
 tolerance (was ~6/30), and **20/20 pass even at a 1e-5 tolerance** — i.e. genuinely close to the CPU
 reference, not just passing a loose threshold. The naive kernel's latency figure above is now a real
-n=100-trial mean of this fixed, verified kernel.
+n=100-trial mean of this fixed, verified kernel. **Optimized Block-3 kernels are not yet double-buffered
+the same way** (CUDA-B3-001).
 
 #### Measurement Stability (new finding, 2026-07-01)
 
@@ -157,38 +173,71 @@ then `scripts/compare_dicc_sessions.py` (rejects provenance mismatches; requires
 `SUCCESS` markers). If DICC session means are stable, describe that as *consistent with WSL2-specific
 drift* — not as proof that WSL2 is the sole cause. Operator guide: `dicc_scripts/README.md`.
 
-### Detection Accuracy — BoT-IoT (733,705 test samples)
+### Detection Accuracy — BoT-IoT (principal = sealed multi-seed test)
+
+**Principal result (use this in headlines and abstracts):** sealed multi-seed **test** macro-F1  
+**0.9780 ± 0.0033** (n=5, seeds 42–46, protocol `botiot_v1`, path A).  
+Source: `benchmarks/results/sealed_test/summary.json`.  
+Min-class F1 mean **0.9292**; Theft F1 mean **1.0**. Champion weights md5  
+`80a90f7cc210276300eaa90173a5a385` (unchanged by sealed runs).
+
+Protocol-era dual bars (val, same protocol family): LightGBM **0.9818** (still tops pure F1); RF **0.9778**.  
+Detection is an **accuracy–efficiency** story — **not** pure-F1 supremacy over all classical models.
+
+#### Development / legacy single-run table (not principal)
+
+Historical single-run two-stage checkpoint evaluation (development era). The rounded **0.9790** figure is
+**legacy / historical only** — do not promote it above the sealed multi-seed mean.
 
 | Model | Macro-F1 | Method | Parameters |
 |---|---|---|---|
-| **Two-stage CNN-BiLSTM** | **0.9790** | **KD (a=0.6,T=10.0) + focal + real-data FT** | **530,181** |
+| Two-stage CNN-BiLSTM (**historical / legacy**) | **0.9790** | KD (a=0.6,T=10.0) + focal + real-data FT | 530,181 |
 | KD + Focal CNN-BiLSTM | 0.9763 | a=0.6, T=10.0, g=2.0 | 530,181 |
 | MLP (distilled) | 0.9624 | Same KD recipe | 400,901 |
 | MLP (two-stage) | 0.9542 | Same FT recipe | 400,901 |
 | Ensemble KD | 0.9529 | RF+XGB+LGB teacher | 530,181 |
 | GPU RF (cuML) | 0.9471 | 200 trees, GPU | -- |
 | Original V3 | 0.9352 | CE + SMOTE | 530,181 |
-| CPU RF (sklearn) | 0.9864* | 200 trees, CPU | -- |
+| CPU RF (sklearn, processed splits) | 0.9864* | 200 trees, CPU | -- |
 
-Gap to RF: **0.74%** (was 5.12%).
+Gap of historical **0.9790** to processed-split RF **0.9864**: **0.74%** (narrative dual bar only).
 
 \* Trained/evaluated on the exact same preprocessed splits (`data/processed/*.npy`) the CNN-BiLSTM
 itself uses — the apples-to-apples comparison. `scripts/rf_baseline.py` and `train_distill.py`'s
 inline RF teacher each apply their own independent resampling straight from the raw CSVs and give
 different (also legitimate, but not directly comparable) numbers — 0.9768 and ~0.975 respectively;
 see `scripts/rf_baseline_processed.py` (`benchmarks/results/rf_baseline_processed.json`) for this
-figure's source, confirmed reproducible byte-for-byte 2026-07-01.
+figure's source, confirmed reproducible byte-for-byte 2026-07-01. Protocol RF val **0.9778** is the
+protocol-fair classical bar for sealed-era dual plots.
 
-### Detection Accuracy — ToN-IoT (42,209 test samples)
+### Detection Accuracy — ToN-IoT (corrected leakage-safe protocol)
 
-| Model | Macro-F1 | Features |
-|---|---|---|
-| **CNN-BiLSTM (clean)** | **0.9526** | 26 features |
-| CPU RF (clean) | 0.9851 | 26 features |
-| CNN-BiLSTM (original) | 0.8254 | 13 features |
-| CPU RF (original) | 0.9396 | 13 features |
+**Active evidence:** corrected leakage-safe rerun under protocol `toniot_leakage_safe_v1`  
+(13-feature allowlist, split seed 42, 60/20/20 stratified, train-only preprocess, **no SMOTE**, **no KD**).  
+Source: `benchmarks/results/toniot_corrected/summary.json` · `table.md`.  
+Issue / quarantine trail: [`docs/ISSUE_REGISTER.md`](docs/ISSUE_REGISTER.md) **DATA-TON-001**.
 
-Dropping 16 sparse columns improved CNN-BiLSTM by +15.4% and RF by +4.9%.
+| Model | Test macro-F1 | Features | Protocol |
+|---|---|---|---|
+| **CNN-BiLSTM (hard-label, class-weighted CE)** | **0.8075** | 13 allowlist | `toniot_leakage_safe_v1` |
+| CPU RF (same split) | **0.9626** | 13 allowlist | same |
+
+Feature SHA-256: `838239eea277712ed719a17ea5f451eebbea368fa673a0676820741b438ecb61`.  
+`valid: true`, `use_in_manuscript: true`. Split is **random stratified**, not an official temporal/host split.  
+This is a **simple corrected experiment** on the same feature allowlist family as the older 13-feat path — not BoT weight transfer. The RF gap is disclosed.
+
+**Comparable older package path (honest, not superseded as invalid):** WP8 CAD-CBA-v1 mapped on `data/processed_toniot` — neural test ~**0.811** vs same-split RF ~**0.939** (`benchmarks/results/toniot_final/summary.json`). Prefer the **corrected** table above for multi-dataset manuscript rows.
+
+#### Tombstone — historical “clean” 26-feat path (INVALID / withdrawn)
+
+> **INVALID / tombstone (DATA-TON-001).** Prior tables listed CNN **0.9526** and RF **0.9851**
+> (26-feat “clean”) and claimed **+15.4%** CNN lift vs 13 features — all **INVALID**. Those results are
+> **withdrawn**: the loader retained target-derived `label` in the feature matrix while predicting `type`,
+> fit encoders before split, and applied ordinary SMOTE to integer-encoded categoricals.  
+> Artifacts: `benchmarks/results/toniot_clean_comparison.json` (`valid: false`),
+> `toniot_clean_comparison.INVALIDATED.json`, `toniot_clean_retrain.json` (`valid: false`).  
+> **Do not use in manuscript headline tables.** See `docs/ISSUE_REGISTER.md` DATA-TON-001 and
+> `benchmarks/results/toniot_corrected/` for the active replacement.
 
 ### KD Sweep (BoT-IoT, 14 configurations)
 
@@ -218,49 +267,61 @@ real, useful negative result rather than dropped.
 
 ### MLP Ablation
 
-| Model | Params | Latency (A100) | Test F1 |
+| Model | Params | Latency (A100, legacy chain) | Test F1 (historical single-run) |
 |---|---|---|---|
-| **CNN-BiLSTM** | 530,181 | 592 us | **0.9790** |
+| **CNN-BiLSTM** | 530,181 | 592 us | **0.9790** (historical / legacy) |
 | MLP | 400,901 | 175 us | 0.9542 |
 
-MLP is 3.4x faster but CNN-BiLSTM wins accuracy. The recurrent architecture's dynamic control flow exposes compiler limitations — the core systems contribution.
+MLP is 3.4x faster on this legacy A100 chain figure but CNN-BiLSTM wins accuracy on the historical
+single-run path. Principal detection remains sealed **0.9780 ± 0.0033**. The recurrent architecture's
+dynamic control flow exposes compiler limitations — a core systems contribution. Pseudo-sequence
+limits: see `docs/KNOWN_LIMITATIONS.md`.
 
-### cuML GPU RF Comparison (A100)
+### cuML GPU RF Comparison (A100) — exploratory energy
 
 | Metric | cuML RF | CNN-BiLSTM |
 |---|---|---|
 | VRAM | 444 MB | ~2 MB |
-| F1 (GPU) | 0.9471 | 0.9790 |
-| Throughput | 2,065,669 f/s | 87,791 f/s |
-| Energy | 0.048 mJ/flow | 1.089 mJ/flow |
+| F1 (GPU path / historical labels) | 0.9471 | 0.9790 (historical / legacy single-run) |
+| Throughput (exploratory) | 2,065,669 f/s | 87,791 f/s |
+| Energy (exploratory, GPU-board) | 0.048 mJ/flow | 1.089 mJ/flow |
 
-Throughput and Energy are both measured on the A100 for both methods (an earlier version of this table
-mixed in the RTX 3050's 25,410 f/s streaming figure under an A100 header — fixed 2026-07-01). The
-CNN-BiLSTM's A100 throughput above is derived from `a100_energy.json`'s batch=128 timing
-(`128 / (avg_batch_time_ms / 1000)` = 128 / 1.458ms ≈ 87,791 flows/sec). The RTX 3050 streaming
-throughput (25,899 f/s) is reported separately above under "Streaming and Energy".
+**Caveats (ENERGY-001):** throughput and energy rows are **exploratory** — heterogeneous measurement
+boundaries and board-power sampling; **not** a controlled efficiency contest. Do **not** present **1.089**
+as a definitive efficiency loss (or win) vs cuML without those caveats. Prefer WP6b multi-session laptop
+energy ranges **0.920–0.943** mJ/flow for systems discussion. CNN-BiLSTM still shows a large **VRAM**
+advantage (~222× less in this table) with higher GPU-path F1 under the historical labels used here.
 
-CNN-BiLSTM uses **222x less VRAM** with **higher GPU accuracy**.
+The CNN-BiLSTM A100 throughput above is derived from `a100_energy.json` batch=128 timing
+(`128 / (avg_batch_time_ms / 1000)` ≈ 87,791 flows/sec). RTX 3050 **bulk batched** throughput (~25,899 f/s)
+is reported under “Bulk batched throughput and exploratory energy” — **not** as a streaming-arrival rate.
 
-### Streaming and Energy
+### Bulk batched throughput and exploratory energy
+
+| Metric | Value | Label |
+|---|---|---|
+| Bulk batched throughput (RTX 3050) | ~**25,899** flows/sec (batch=128) | **Not** paced streaming arrivals (BENCH-STREAM-001) |
+| Energy (RTX 3050, single-script) | 0.79 mJ/flow | Exploratory |
+| Energy (A100, single-script) | 1.089 mJ/flow | Exploratory board-power estimate |
+| Energy (WP6b laptop multi-session) | **0.920–0.943** mJ/flow | Preferred systems range |
+| Preprocessing overhead | 43.7 us (6.1% of pipeline) | Secondary |
+| End-to-end latency (legacy pipeline note) | 717.7 us | Secondary |
+
+The historical “streaming” artifact (`streaming_throughput.json`) does **not** pace arrivals at an offered
+rate; report it only as **bulk batched processing throughput**.
+
+### LLM dispatch prototype (not free-form explainability)
 
 | Metric | Value |
 |---|---|
-| Streaming throughput | 25,899 flows/sec (batch=128) |
-| Energy (RTX 3050) | 0.79 mJ/flow |
-| Energy (A100) | 1.089 mJ/flow |
-| Preprocessing overhead | 43.7 us (6.1% of pipeline) |
-| End-to-end latency | 717.7 us |
-
-### LLM Explainability
-
-| Metric | Value |
-|---|---|
-| Dispatch overhead | 16.60 us p99 (~2.5%) |
-| Generation time | ~8.5 sec/alert (background) |
+| Dispatch overhead | 16.60 us p99 (~2.5% of a local pipeline slice) |
+| Generation time | ~8.5 sec/alert (background; not the 16.60 µs figure) |
 | Model | TinyLlama 1.1B Q4 (0.77 GB) |
-| Alert aggregation | 25,000 DDoS alerts to 10 LLM calls |
-| Deployment | Fully on-device, air-gapped |
+| Alert aggregation | 25,000 DDoS alerts to 10 LLM calls (design note) |
+| Deployment intent | On-device / air-gapped prototype |
+
+**LLM-001:** **16.60 µs** is alert construction and queue **dispatch** only. Free-form text quality is
+weak in XAI suite checks — do **not** title the work as validated LLM-based explainability.
 
 ### GPU Hardware Profile (RTX 3050)
 
@@ -289,33 +350,43 @@ Four fused kernels replacing PyTorch operators:
 
 **BoT-IoT** (Koroniotis et al., FGCS, 2019): 10 features, 5 classes, 733,705 test samples
 
-**ToN-IoT** (Moustafa, 2021): 26 features (clean) / 13 (original), 10 classes, 42,209 test samples
+**ToN-IoT** (Moustafa, 2021): active protocol is **`toniot_leakage_safe_v1`** (13 allowlist features, 10 classes; `benchmarks/results/toniot_corrected/`); historical 26-feature “clean” path is **INVALID** (DATA-TON-001)
 
-## Verified Research Gaps
+## Scoped literature notes
 
-1. **Custom CUDA for CNN-BiLSTM IDS** — closest prior work (Ibrahim et al., *Computer Networks*, 2026) applies custom CUDA kernels to a GNN-based IDS vs. a CPU baseline only (1.22x-1.48x); we target a recurrent CNN-BiLSTM benchmarked against production ML frameworks. On **laptop RTX 3050**, Custom CUDA pipeline ranges show **3.60x–4.99x** over TensorRT (multi-session ranges; incomplete CUDA scope caveats apply). On **DICC**, Option A shows CUDA wins on B1/B2/B4 and **PT wins B3**.
-2. **On-device LLM for IDS** — Jamshidi et al. (2026) used cloud APIs; we provide fully local with 16.60 us p99 dispatch
-3. **TensorRT vs custom CUDA for sub-1M models** — no prior comparison on laptop; TensorRT is 3.60x–4.99x slower than Custom pipeline **on RTX 3050** (not re-proven on DICC)
-4. **torch.compile on recurrent models** — laptop CUDA-graph path can crash on BiLSTM; DICC full multi-compiler matrix includes compile means ~**865 µs** (V100S) / ~**770 µs** (A100) vs eager ~**1041 / 932** (see multi-compiler table)
+(Formerly phrased as “Verified Research Gaps.” These are **bounded literature notes**, not exhaustive
+proofs of global uniqueness.)
+
+1. **Custom CUDA for CNN-BiLSTM IDS** — closest prior work identified in our review (Ibrahim et al., *Computer Networks*, 2026) applies custom CUDA kernels to a GNN-based IDS vs. a CPU baseline only (1.22x-1.48x); we target a recurrent CNN-BiLSTM benchmarked against production ML frameworks under Option A. On **laptop RTX 3050**, Custom CUDA pipeline ranges show **3.60x–4.99x** over TensorRT (multi-session ranges; incomplete CUDA scope caveats apply). On **DICC**, Option A shows CUDA wins on B1/B2/B4 and **PT wins B3** wall-clock (pre_fix kernels).
+2. **On-device LLM dispatch for IDS alerts** — Jamshidi et al. (2026) used cloud APIs; we measure fully local **dispatch** at 16.60 us p99 (not full validated free-form explainability).
+3. **TensorRT vs custom CUDA for sub-1M models** — laptop comparison: TensorRT is 3.60x–4.99x slower than Custom pipeline **on RTX 3050** (not re-proven as Custom CUDA parity on DICC; DICC multi-compiler is full-model frameworks only).
+4. **torch.compile on recurrent models** — laptop CUDA-graph path can crash on BiLSTM; DICC full multi-compiler matrix includes compile means ~**865 µs** (V100S) / ~**770 µs** (A100) vs eager ~**1041 / 932** (see multi-compiler table).
 
 ## Limitations
 
-- **RF accuracy gap**: 0.9790 vs 0.9864 on BoT-IoT (0.74%)
-- **SMOTE dependency**: 52 Theft samples require synthetic augmentation
-- **Pseudo-sequence**: MLP ablation shows sequential bias is not essential; architecture retained for compiler stress-testing
-- **Energy**: cuML RF (0.048 mJ/flow) is more efficient than CNN-BiLSTM (1.089 mJ/flow) on same A100 hardware
-- **Measurement environment**: WSL2/RTX 3050 session drift → framework ratios as ranges. DICC multi-session SUCCESS (V100S+A100) with same-GPU PT is available under `benchmarks/results/dicc/`; Block 3 CUDA does **not** beat matching PT on servers (see `docs/DICC_B3_CUDA_VS_PT_REPORT.md`)
-- **Numerical fidelity**: export path is bit-identical on n=10 reference samples; CUDA block self-checks PASS at disclosed tolerances (FP16 Block 3: 5e-2) — see `docs/paper_text_blocks.md` §15–§16 and `scripts/numerical_fidelity.py`
+- **Principal accuracy is sealed multi-seed, not pure-F1 SOTA:** **0.9780 ± 0.0033** test; protocol LGBM val **0.9818** still leads pure F1. Historical single-run **0.9790** is development-only.
+- **ToN clean path invalid:** 26-feat clean numbers quarantined (DATA-TON-001). Active corrected: CNN **0.8075** / RF **0.9626** (`toniot_leakage_safe_v1`). Older 13-feat package path ~**0.811** vs RF ~**0.939** remains comparable only.
+- **SMOTE / order sensitivity:** rare Theft and some Stage-A paths depend on synthetic augmentation; historical ToN clean also mis-applied SMOTE to encoded categoricals (corrected path uses **no SMOTE**).
+- **Pseudo-sequence:** MLP ablation shows sequential bias is not essential; architecture retained for compiler stress-testing.
+- **Incomplete CUDA:** Option A only; full-pipeline Custom CUDA vs full V3 **forbidden**.
+- **B3 pre_fix:** optimized kernels need race + reverse alignment + parity before matching-op claims.
+- **Energy exploratory:** prefer WP6b **0.920–0.943** mJ/flow; do not treat 1.089 vs cuML 0.048 as controlled system energy.
+- **Bulk throughput ≠ streaming:** ~25,899 f/s is batched processing, not paced arrivals.
+- **LLM dispatch-only:** 16.60 µs is not generation or validated XAI.
+- **Measurement environment:** WSL2/RTX 3050 session drift → framework ratios as ranges. DICC multi-session SUCCESS (V100S+A100) with same-GPU PT is available under `benchmarks/results/dicc/`.
+- **Numerical fidelity:** export path is bit-identical on n=10 reference samples; CUDA block self-checks PASS at disclosed tolerances (FP16 Block 3: 5e-2) for exercised paths — optimized B3 parity still open — see `docs/paper_text_blocks.md` §15–§16 and `scripts/numerical_fidelity.py`.
+
+Full narrative: [`docs/KNOWN_LIMITATIONS.md`](docs/KNOWN_LIMITATIONS.md).
 
 ## Citation
 
 ```bibtex
 @article{colide2026,
-  title={COLIDE: CUDA-Optimized CNN-BiLSTM with LLM-Based Explainability for IoT Intrusion Detection},
+  title={COLIDE: CUDA-Optimized CNN-BiLSTM for IoT Intrusion Detection with On-Device Alert Dispatch Prototype},
   author={Haque, Ibteshamul and Por, Lip Yee},
   journal={Future Generation Computer Systems},
   year={2026},
-  note={Under preparation}
+  note={Under preparation; LLM component is dispatch-only, not free-form explainability}
 }
 ```
 

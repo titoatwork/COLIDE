@@ -1,5 +1,32 @@
-#!/home/user/ibteshamulhaque/.conda/envs/colide/bin/python
+#!/usr/bin/env python3
 """
+=============================================================================
+INVALID / DATA-TON-001 — DO NOT USE FOR CLAIMS OR MANUSCRIPT NUMBERS
+=============================================================================
+
+This "clean" ToN-IoT path is quarantined:
+
+  - Retains target-derived ``label`` as a numeric feature while predicting ``type``
+    (label leakage).
+  - Fits categorical LabelEncoders on the full dataframe before the train/val/test
+    split.
+  - Applies ordinary SMOTE to integer-encoded categorical fields.
+
+Historical headline numbers from this path (CNN macro-F1 ≈ 0.9526, RF ≈ 0.9851)
+are INVALID and must not appear as active evidence.
+
+Prefer the corrected leakage-safe minimal experiment:
+
+  PYTHONPATH=. python scripts/run_toniot_corrected_simple.py
+  # implementation: scripts/protocol/toniot_leakage_safe.py
+  # artifacts: benchmarks/results/toniot_corrected/
+
+To force-run this invalid script for archival reproduction only:
+
+  COLIDE_ALLOW_INVALID_TON=1 PYTHONPATH=. python scripts/train_toniot_clean.py
+
+=============================================================================
+Original description (historical):
 Retrain CNN‑BiLSTM on ToN‑IoT after dropping columns that are >99.8% empty.
 Uses the same KD + Focal Loss recipe as the winning BoT‑IoT configuration.
 Saves results to benchmarks/results/toniot_clean_retrain.json.
@@ -21,6 +48,17 @@ from torch.amp import autocast, GradScaler
 
 sys.path.insert(0, "model")
 from cnn_bilstm_v3_attention import CNNBiLSTMAttention as CNNBiLSTM
+
+# Fail-fast unless explicitly allowed (DATA-TON-001 quarantine)
+if os.environ.get("COLIDE_ALLOW_INVALID_TON", "") != "1":
+    sys.stderr.write(
+        "ERROR: train_toniot_clean.py is INVALID (DATA-TON-001 label leakage / "
+        "encoder-before-split / SMOTE on encoded cats).\n"
+        "Do not use for claims. Prefer:\n"
+        "  PYTHONPATH=. python scripts/run_toniot_corrected_simple.py\n"
+        "To force this legacy script: COLIDE_ALLOW_INVALID_TON=1 ...\n"
+    )
+    raise SystemExit(2)
 
 # ---------------------------------------------------------------------------
 # Configuration

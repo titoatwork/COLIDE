@@ -19,7 +19,7 @@ with open('config/config.yaml') as f:
     config = yaml.safe_load(f)
 
 model = CNNBiLSTM(config)
-model.load_state_dict(torch.load('model/best_model.pth', map_location='cpu', weights_only=True))
+model.load_state_dict(torch.load('model/best_model_botiot_twostage.pth', map_location='cpu', weights_only=True))
 model.eval()
 model_cpu = copy.deepcopy(model)
 model_gpu = model.cuda()

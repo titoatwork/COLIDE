@@ -550,12 +550,26 @@ def main() -> int:
         data["y_test"], rf_test_pred, data["class_names"]
     )
 
+    # DATA-TON-001: historical 26-feat "clean" hardcodes are INVALID (label leakage /
+    # encoder-before-split / SMOTE on encoded cats). Do not emit as active comparators.
     historical = {
-        "toniot_clean_cnn_macro_f1": 0.9526,
-        "toniot_clean_rf_macro_f1": 0.9851,
-        "note": "Historical clean used 26 features; this run uses processed_toniot 13-feat splits",
+        "valid": False,
+        "invalid_reason": "Target-derived binary label included in multiclass feature matrix",
+        "use_in_manuscript": False,
+        "issue_id": "DATA-TON-001",
+        "status": "INVALIDATED",
+        "tombstone": True,
+        "toniot_clean_cnn_macro_f1": None,
+        "toniot_clean_rf_macro_f1": None,
+        "historical_clean_cnn_INVALID_archived": 0.9526,
+        "historical_clean_rf_INVALID_archived": 0.9851,
+        "note": (
+            "INVALID/HISTORICAL/DATA-TON-001: archived clean-path scores "
+            "(0.9526 CNN / 0.9851 RF) must not be active comparators or manuscript tables. "
+            "This run's 13-feat results are separate (toniot_processed_v1)."
+        ),
         "features_this_run": data["n_features"],
-        "features_historical_clean": 26,
+        "features_historical_clean_INVALID": 26,
     }
 
     val_f1 = float(ft_metrics.get("macro_f1", 0.0))
@@ -626,17 +640,27 @@ def main() -> int:
             "this_val_macro_f1": val_f1,
             "this_test_macro_f1": test_f1,
             "rf_test_macro_f1": rf_test_f1,
-            "historical_clean_cnn": 0.9526,
-            "historical_clean_rf": 0.9851,
+            # Null active historical comparators (invalid clean path; DATA-TON-001)
+            "historical_clean_cnn": None,
+            "historical_clean_rf": None,
+            "historical_clean_cnn_INVALID_archived": 0.9526,
+            "historical_clean_rf_INVALID_archived": 0.9851,
+            "historical_clean_invalid": True,
+            "historical_clean_use_in_manuscript": False,
+            "historical_clean_status": "INVALIDATED (DATA-TON-001)",
         },
+        "protocol_note": (
+            "13-feat processed_toniot protocol (toniot_processed_v1). Historical 26-feat "
+            "clean hardcodes are INVALID (DATA-TON-001). A fully leakage-safe corrected "
+            "ToN protocol remains future work; until then label 13-feat as honest gap only."
+        ),
         "decision": "RUN_DOCUMENTED",
         "decision_note": (
             f"CAD-CBA-v1 on ToN processed (13-feat): val macro-F1={val_f1:.4f}"
             + (f", test macro-F1={test_f1:.4f}" if test_f1 is not None else ", test sealed")
             + f"; same-split RF test={rf_test_f1:.4f}. "
-            "Not weight-transfer from BoT. Feature set differs from historical 26-feat clean "
-            "(0.9526) — do not claim identity with that number. Multi-dataset support is "
-            "evidence of recipe transferability under documented protocol."
+            "Not weight-transfer from BoT. Historical clean 0.9526/0.9851 are INVALID "
+            "(DATA-TON-001) and are not active comparators."
         ),
         "wall_sec": float(time.time() - t0),
         "git_sha": git_sha(PROJECT_ROOT),
@@ -676,7 +700,8 @@ def main() -> int:
         f"- Test macro-F1: **{test_f1}**\n" if test_f1 is not None else "- Test: sealed\n",
         f"- RF same-split test macro-F1: **{rf_test_f1:.4f}**\n",
         f"- Ensemble teacher val: **{teacher_pack['ensemble_val_macro_f1']:.4f}**\n",
-        f"- Features: **{data['n_features']}** (historical clean used 26)\n",
+        f"- Features: **{data['n_features']}**\n",
+        "- Historical clean 0.9526/0.9851: **INVALID/tombstone** (DATA-TON-001; not active)\n",
         f"- Decision: **{summary['decision']}**\n\n",
         summary["decision_note"] + "\n",
     ]

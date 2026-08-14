@@ -6,6 +6,12 @@ from .botiot import (
     load_botiot,
     load_config,
 )
+from .losses import (
+    FocalLoss,
+    FocalLossLegacy,
+    LegacyFocalLoss,
+    StandardFocalLoss,
+)
 from .metrics import compute_classification_metrics
 
 __all__ = [
@@ -14,4 +20,8 @@ __all__ = [
     "load_botiot",
     "load_config",
     "compute_classification_metrics",
+    "FocalLoss",
+    "LegacyFocalLoss",
+    "FocalLossLegacy",
+    "StandardFocalLoss",
 ]

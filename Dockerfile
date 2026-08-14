@@ -32,8 +32,12 @@ RUN python3 -m pip install --no-cache-dir --break-system-packages \
 COPY . .
 
 # Compile CUDA kernels
-# Default sm_86 (Ampere: RTX 3050-3090, A100)
-# Override with: docker build --build-arg CUDA_ARCH=sm_89 -t colide .
+# Default sm_86 = RTX Ampere consumer (3050–3090). Not A100 / not V100.
+#   sm_70  — V100 (Volta)
+#   sm_80  — A100 (server Ampere)
+#   sm_86  — RTX 3050–3090 (consumer Ampere)  [default]
+#   sm_89  — RTX 40xx (Ada)
+# Override: docker build --build-arg CUDA_ARCH=sm_80 -t colide .
 ARG CUDA_ARCH=sm_86
 RUN nvcc -arch=${CUDA_ARCH} -o inference/kernels/fused_block1 inference/kernels/fused_block1.cu && \
     nvcc -arch=${CUDA_ARCH} -o inference/kernels/fused_block2 inference/kernels/fused_block2.cu && \

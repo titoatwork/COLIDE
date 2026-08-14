@@ -6,6 +6,13 @@ Stage: stage_a_kd (SMOTE path; historical KD recipe).
 Selection: validation macro-F1 only. Test sealed unless --allow-test.
 Champion path is never written (save under model/teachers_kd/).
 
+KD objective (historical name: legacy_teacher_smoothed_kl)
+---------------------------------------------------------
+Teacher probabilities are temperature-softened offline; the student KL term does
+**not** apply the same temperature or the conventional T² factor. This is the
+frozen champion recipe — see docs/KD_OBJECTIVES.md. Do not change the training
+formula when renaming or documenting the objective.
+
 Teachers (soft labels on train):
   none     — hard-label focal only (no KD control)
   rf       — sklearn RandomForest (n=200, historical)
@@ -408,7 +415,17 @@ def main() -> int:
                 if use_kd:
                     pb = pb.to(device, non_blocking=True)
                     student_log = F.log_softmax(logits, dim=1)
-                    # teacher probs already temperature-scaled offline
+                    # -----------------------------------------------------------------
+                    # KD objective name: legacy_teacher_smoothed_kl
+                    # (see docs/KD_OBJECTIVES.md)
+                    #
+                    # Historical / champion recipe — DO NOT change the formula:
+                    #   * teacher probs softened offline with T (prob-space p^(1/T))
+                    #   * student uses log_softmax at T=1 (no student temperature)
+                    #   * no conventional T^2 scaling on the KL term
+                    #   * mix: alpha * KL(student || teacher_soft) + (1-alpha) * hard
+                    # This is NOT canonical Hinton KD (T on both sides + T^2).
+                    # -----------------------------------------------------------------
                     kd = F.kl_div(student_log, pb, reduction="batchmean")
                     loss = args.alpha * kd + (1.0 - args.alpha) * hard
                 else:
@@ -477,6 +494,12 @@ def main() -> int:
             "max_train": args.max_train,
             "subsample": subsample_note,
             "recipe": "CAD-CBA-v1 KD defaults (α=0.6,T=10,γ=2) unless overridden",
+            # Historical objective name; formula unchanged (see docs/KD_OBJECTIVES.md)
+            "kd_objective": "legacy_teacher_smoothed_kl",
+            "temperature_applied_to": "teacher_probs_only",
+            "t_squared_scaling": False,
+            "teacher_probs_on": "teacher_training_rows",
+            "loss_version": "legacy_pt_from_weighted_ce",
         },
         metrics={
             "best_val_macro_f1": float(best_val_f1),

@@ -1,8 +1,20 @@
 """
-COLIDE - Streaming Throughput Benchmark
-Simulates continuous network traffic at increasing rates.
-Measures latency vs throughput and finds saturation point.
-Tests both single-sample and batched inference modes.
+COLIDE — Bulk batched throughput benchmark (NOT true streaming arrivals).
+
+Historical name: "streaming throughput". This harness does **not** pace
+flows at an offered arrival process or measure sustainable stream rate under
+a real-time traffic model (see BENCH-STREAM-001).
+
+What it actually measures:
+  - Bulk / batched processing throughput (esp. GPU batch=128)
+  - Approximate latency percentiles under a synthetic loop that may use an
+    "offered_rate" parameter for bookkeeping only — not a paced queue
+
+Report results as **bulk batched processing throughput** only
+(e.g. ~25,899 flows/sec on RTX 3050, batch=128). Do **not** claim
+streaming latency, offered-load saturation, or controlled stream capacity.
+
+Artifact: benchmarks/results/streaming_throughput.json
 """
 
 import sys
@@ -22,7 +34,9 @@ with open('config/config.yaml') as f:
     config = yaml.safe_load(f)
 
 model = CNNBiLSTM(config)
-model.load_state_dict(torch.load('model/best_model.pth', map_location='cpu', weights_only=True))
+# Canonical champion (config/paths.py); latency is shape-not-weight dependent but
+# keep production weights for consistency with other benchmarks.
+model.load_state_dict(torch.load('model/best_model_botiot_twostage.pth', map_location='cpu', weights_only=True))
 model.eval()
 
 # Load real test data for realistic inference
@@ -30,7 +44,8 @@ X_test = np.load('data/processed/X_test.npy')
 print(f"Loaded {len(X_test)} test flows")
 
 print("=" * 70)
-print("COLIDE STREAMING THROUGHPUT BENCHMARK")
+print("COLIDE BULK BATCHED THROUGHPUT BENCHMARK")
+print("(Not paced streaming arrivals — BENCH-STREAM-001)")
 print("=" * 70)
 
 # ================================================================

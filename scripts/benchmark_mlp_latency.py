@@ -1,4 +1,4 @@
-#!/home/user/ibteshamulhaque/.conda/envs/colide/bin/python
+#!/usr/bin/env python3
 """
 Measure single‑sample GPU inference latency for the distilled MLP.
 Saves result to benchmarks/results/mlp_latency.json.

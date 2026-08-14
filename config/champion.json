@@ -1,0 +1,7 @@
+{
+  "name": "CAD-CBA-v1 production champion",
+  "relpath": "model/best_model_botiot_twostage.pth",
+  "md5": "80a90f7cc210276300eaa90173a5a385",
+  "protocol_id": "botiot_v1",
+  "note": "Frozen two-stage BoT-IoT weights. Do not overwrite without backup and explicit approval. Historical identity uses MD5; prefer SHA-256 for new artifacts."
+}

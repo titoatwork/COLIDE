@@ -41,6 +41,18 @@ __global__ void linear_proj_kernel(
     out[idx] = sum;
 }
 
+// Double-buffer invariant: within one timestep, every thread reads previous
+// hidden only from read_buf and writes its new hidden only to write_buf
+// (disjoint shared arrays). __syncthreads() after all writes; buffer roles
+// swap each timestep via t%2. Never read and overwrite the same shared
+// hidden array in one sync epoch (race fixed; see fused_block3_naive.cu).
+//
+// Reverse alignment: when reverse=true, pos = seq_len-1-t is the original
+// sequence index. Gates read input at pos and h_new is stored at pos so
+// output_hidden[h, k] always corresponds to input position k for both
+// directions. Forward has pos==t. After layer-1 reverse is position-aligned,
+// combine_kernel concatenates fw|rev into a time-aligned BiLSTM sequence
+// for layer 2.
 __global__ void lstm_recurrent_kernel(
     const float* __restrict__ gate_ih_all,
     const float* __restrict__ w_hh_t,
@@ -49,10 +61,12 @@ __global__ void lstm_recurrent_kernel(
     float* __restrict__ output_hidden,
     int hidden_size, int seq_len, bool reverse
 ) {
-    extern __shared__ float s_h_prev[];
+    extern __shared__ float shmem[];
+    float* s_h[2] = { &shmem[0], &shmem[hidden_size] };
     int h = threadIdx.x;
     if (h >= hidden_size) return;
-    s_h_prev[h] = 0.0f;
+    s_h[0][h] = 0.0f;
+    s_h[1][h] = 0.0f;
     __syncthreads();
 
     float c = 0.0f;
@@ -60,13 +74,16 @@ __global__ void lstm_recurrent_kernel(
 
     for (int t = 0; t < seq_len; ++t) {
         int pos = reverse ? (seq_len - 1 - t) : t;
+        float* read_buf  = s_h[t % 2];
+        float* write_buf = s_h[(t + 1) % 2];
+
         float i_gate = gate_ih_all[h*seq_len+pos] + bias_ih[h] + bias_hh[h];
         float f_gate = gate_ih_all[(hidden_size+h)*seq_len+pos] + bias_ih[hidden_size+h] + bias_hh[hidden_size+h];
         float g_gate = gate_ih_all[(2*hidden_size+h)*seq_len+pos] + bias_ih[2*hidden_size+h] + bias_hh[2*hidden_size+h];
         float o_gate = gate_ih_all[(3*hidden_size+h)*seq_len+pos] + bias_ih[3*hidden_size+h] + bias_hh[3*hidden_size+h];
 
         for (int j = 0; j < hidden_size; ++j) {
-            float prev_h = s_h_prev[j];
+            float prev_h = read_buf[j];
             int base = j * four_h;
             i_gate += w_hh_t[base + h] * prev_h;
             f_gate += w_hh_t[base + hidden_size + h] * prev_h;
@@ -80,8 +97,9 @@ __global__ void lstm_recurrent_kernel(
         float o_val = 1.0f/(1.0f+expf(-o_gate));
         c = f_val*c + i_val*g_val;
         float h_new = o_val * tanhf(c);
-        output_hidden[h*seq_len + t] = h_new;
-        s_h_prev[h] = h_new;
+        // Store at original sequence position (pos), not recurrence index t.
+        output_hidden[h*seq_len + pos] = h_new;
+        write_buf[h] = h_new;
         __syncthreads();
     }
 }
@@ -97,6 +115,11 @@ __global__ void combine_kernel(
     out[idx] = (idx < half) ? fw[idx] : rev[idx - half];
 }
 
+// After reverse alignment, fw/rev sequences are time-aligned to input
+// positions. Index (seq_len-1) matches PyTorch output[:, -1, :] semantics
+// (not reverse recurrence's final state at original pos 0). Full sequence
+// is preferred for V3 attention; last-timestep is the current harness
+// contract for parity with existing Block-3 benchmarks.
 __global__ void extract_last_timestep_kernel(
     const float* __restrict__ fw, const float* __restrict__ rev,
     int hidden, int seq_len, float* __restrict__ out
@@ -122,12 +145,15 @@ void lstm_direction(
     int blocks = (total+threads-1)/threads;
     linear_proj_kernel<<<blocks, threads, 0, stream>>>(
         d_input, d_w_ih, d_gate_ih_all, input_size, out_rows, seq_len);
-    int smem = hidden_size * sizeof(float);
+    // 2 * hidden_size: double-buffered previous/next hidden state
+    int smem = 2 * hidden_size * sizeof(float);
     lstm_recurrent_kernel<<<1, hidden_size, smem, stream>>>(
         d_gate_ih_all, d_w_hh_t, d_bias_ih, d_bias_hh,
         d_output_hidden, hidden_size, seq_len, reverse);
 }
 
+// CPU reference: same reverse alignment as GPU (store at original pos).
+// Gate order: i, f, g, o (matches PyTorch LSTM; see docs/CUDA_WEIGHT_MAPPING.md).
 void cpu_lstm_forward(
     const std::vector<float>& input, int input_size, int hidden_size, int seq_len,
     const std::vector<float>& w_ih, const std::vector<float>& w_hh,
@@ -155,7 +181,8 @@ void cpu_lstm_forward(
                   g_val=tanhf(g_g), o_val=1.0f/(1.0f+expf(-o_g));
             c_new[h]=f_val*c_prev[h]+i_val*g_val;
             h_new[h]=o_val*tanhf(c_new[h]);
-            output_h[h*seq_len+t]=h_new[h];
+            // Align to original sequence position (same as GPU).
+            output_h[h*seq_len+pos]=h_new[h];
         }
         h_prev=h_new; c_prev=c_new;
     }

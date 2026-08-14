@@ -14,8 +14,10 @@ Comparability notes (encoded in the JSON):
   - Full CUDA-vs-PyTorch pipeline speedup is NOT valid:
       * PyTorch V3 runs attention + LayerNorm + global average pooling
       * CUDA kernels implement none of those; fused_pipeline skips Block 3
-  - Block 3 (BiLSTM only, last-timestep reduce) IS a valid head-to-head vs
-    fused_block3 / fused_block3_fp16 CUDA binaries.
+  - Block 3 (BiLSTM only, last-timestep reduce) is a latency head-to-head vs
+    fused_block3 / fused_block3_fp16 only when CUDA reverse outputs are stored
+    at original sequence positions (aligned) so extract at seq_len-1 matches
+    PyTorch output[:, -1, :]. Full sequence remains preferred for V3 attention.
 
 Usage:
     PYTHONPATH=. python scripts/benchmark_pytorch_gpu_stats.py \\
@@ -154,7 +156,11 @@ def run_worker(checkpoint: str, inner: int, warmup: int, seed: int) -> None:
             return self.pool(x)
 
     class Block3(torch.nn.Module):
-        """BiLSTM stack + last-timestep — matches CUDA Block 3 contract."""
+        """BiLSTM stack + last-timestep.
+
+        Matches CUDA Block 3 only after reverse sequence alignment (store at
+        original pos). Prefer full sequence for V3 attention parity.
+        """
 
         def __init__(self, m):
             super().__init__()
@@ -409,8 +415,11 @@ def main(argv: list[str] | None = None) -> int:
             "block3_cuda_vs_pytorch": {
                 "valid": True,
                 "reason": (
-                    "Block 3 isolates the 2-layer BiLSTM + last-timestep reduce, which matches "
-                    "the CUDA Block 3 contract (fused_block3 / fused_block3_fp16 / naive)."
+                    "Block 3 isolates the 2-layer BiLSTM + last-timestep reduce. Latency "
+                    "comparability holds when CUDA reverse outputs are position-aligned "
+                    "(store at original pos) so seq_len-1 extract matches PyTorch "
+                    "output[:, -1, :]. Full sequence is preferred for V3 attention; "
+                    "last-timestep is the current harness contract."
                 ),
                 "pytorch_metric": "block3_us",
                 "cuda_metrics": [

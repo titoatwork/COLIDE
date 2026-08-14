@@ -1,6 +1,7 @@
 # =============================================================================
 # COLIDE Python Dependencies
 # Install: pip install -r requirements.txt
+# Minimal CPU/protocol subset: pip install -r requirements-core.txt
 # =============================================================================
 
 # Core ML
@@ -15,6 +16,15 @@ joblib>=1.4.0
 pyyaml>=6.0
 optuna>=3.6.0
 
+# Data / classical teachers / plots
+pandas>=2.0.0
+matplotlib>=3.8.0
+xgboost>=2.0.0
+lightgbm>=4.0.0
+
+# GPU power sampling (energy benchmarks; optional at runtime)
+pynvml>=11.5.0
+
 # Inference frameworks
 onnx>=1.16.0
 onnxruntime-gpu>=1.18.0
@@ -23,3 +33,6 @@ onnxruntime-gpu>=1.18.0
 transformers>=4.40.0
 accelerate>=0.30.0
 bitsandbytes>=0.43.0
+
+# Tests (dev)
+pytest>=8.0.0

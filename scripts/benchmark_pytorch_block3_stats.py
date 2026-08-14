@@ -15,9 +15,8 @@ one run. Each trial internally times 200 iterations and takes the median
 (same methodology benchmark_pipeline.py already uses per-invocation) -- the
 statistics here are across trials, not within one.
 
-Uses model/best_model.pth (same checkpoint benchmark_pipeline.py uses) --
-latency is shape-, not weight-, dependent, so the stale-vs-twostage
-checkpoint distinction that matters for accuracy claims doesn't apply here.
+Uses model/best_model_botiot_twostage.pth (canonical champion; same as
+benchmark_pipeline.py). Latency is shape-, not weight-, dependent.
 
 Usage:
     PYTHONPATH=. python scripts/benchmark_pytorch_block3_stats.py --n-trials 50
@@ -50,7 +49,7 @@ def run_worker(runs):
 
     model = CNNBiLSTM(config)
     model.load_state_dict(
-        torch.load(PROJECT_ROOT / "model" / "best_model.pth", map_location="cpu", weights_only=True)
+        torch.load(PROJECT_ROOT / "model" / "best_model_botiot_twostage.pth", map_location="cpu", weights_only=True)
     )
     model.eval()
 
@@ -66,7 +65,10 @@ def run_worker(runs):
             x = self.dropout(x)
             x, _ = self.bilstm2(x)
             x = self.dropout(x)
-            x = x[:, -1, :]  # last timestep, matching CUDA block 3
+            # Last timestep on the time-aligned BiLSTM sequence (PyTorch
+            # output[:, -1, :]). Matches CUDA only after reverse outputs are
+            # stored at original sequence positions (not recurrence index t).
+            x = x[:, -1, :]
             return x
 
     block_gpu = copy.deepcopy(Block3(model)).eval().cuda()

@@ -1,4 +1,17 @@
-"""Imbalance-aware losses for Phase 4 (class-aware package)."""
+"""Imbalance-aware losses for Phase 4 (class-aware package).
+
+Focal formulations
+------------------
+* ``LegacyFocalLoss`` / ``FocalLossLegacy`` (historical; also aliased as ``FocalLoss``)
+  obtains ``pt = exp(-CE)`` where CE may already be class-weighted. That makes the
+  focusing factor depend on the weight, which is **not** the usual class-weighted
+  focal formulation. Historical CAD-CBA / BoT-IoT runs used this path; do not claim
+  they used the corrected form.
+
+* ``StandardFocalLoss`` computes ``pt`` from the unweighted target log-probability
+  and multiplies class weights only on the final focal term. With ``gamma=0`` and
+  no weights this equals ordinary CE; with weights it equals weighted CE.
+"""
 
 from __future__ import annotations
 
@@ -7,8 +20,15 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class FocalLoss(nn.Module):
-    """Standard focal loss with optional per-class alpha weights."""
+class LegacyFocalLoss(nn.Module):
+    """
+    Historical focal loss: ``pt = exp(-weighted_CE)``.
+
+    When ``alpha`` (class weight) is set, cross-entropy is weighted *before*
+    ``pt`` is formed, so the focusing factor ``(1 - pt)^gamma`` is distorted by
+    the weight. Preserved for reproduction of champion / protocol recipes.
+    Prefer ``StandardFocalLoss`` for new work.
+    """
 
     def __init__(
         self,
@@ -19,15 +39,75 @@ class FocalLoss(nn.Module):
         super().__init__()
         self.gamma = gamma
         self.reduction = reduction
+        self.loss_version = "legacy_pt_from_weighted_ce"
         if alpha is not None:
             self.register_buffer("alpha", alpha.float())
         else:
             self.alpha = None
 
     def forward(self, logits: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+        # weight enters CE → pt is not the true class probability when alpha is set
         ce = F.cross_entropy(logits, targets, weight=self.alpha, reduction="none")
         pt = torch.exp(-ce)
         loss = ((1.0 - pt) ** self.gamma) * ce
+        if self.reduction == "mean":
+            return loss.mean()
+        if self.reduction == "sum":
+            return loss.sum()
+        return loss
+
+
+# Aliases for the historical implementation
+FocalLossLegacy = LegacyFocalLoss
+# Backward-compatible name used throughout existing training scripts
+FocalLoss = LegacyFocalLoss
+
+
+class StandardFocalLoss(nn.Module):
+    """
+    Standard class-weighted focal loss (Lin et al. style).
+
+    * ``pt`` is derived from the **unweighted** target log-probability.
+    * Class weight (if any) multiplies the **final** focal term only.
+
+    Contract:
+      - gamma=0, alpha=None  → ordinary mean CE
+      - gamma=0, alpha set   → weighted CE (same reduction)
+    """
+
+    def __init__(
+        self,
+        gamma: float = 2.0,
+        alpha: torch.Tensor | None = None,
+        reduction: str = "mean",
+    ):
+        super().__init__()
+        self.gamma = gamma
+        self.reduction = reduction
+        self.loss_version = "standard_focal_v1"
+        if alpha is not None:
+            self.register_buffer("alpha", alpha.float())
+        else:
+            self.alpha = None
+
+    def forward(self, logits: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+        # Unweighted log-prob of the true class → pt independent of alpha
+        log_probs = F.log_softmax(logits, dim=-1)
+        targets_long = targets.long()
+        log_pt = log_probs.gather(1, targets_long.unsqueeze(1)).squeeze(1)
+        pt = log_pt.exp()
+        # CE per-sample without class weight
+        ce = -log_pt
+        loss = ((1.0 - pt) ** self.gamma) * ce
+        if self.alpha is not None:
+            at = self.alpha.gather(0, targets_long)
+            loss = at * loss
+            if self.reduction == "mean":
+                # Match F.cross_entropy(weight=...): sum(w*l) / sum(w)
+                return loss.sum() / at.sum().clamp(min=1e-12)
+            if self.reduction == "sum":
+                return loss.sum()
+            return loss
         if self.reduction == "mean":
             return loss.mean()
         if self.reduction == "sum":

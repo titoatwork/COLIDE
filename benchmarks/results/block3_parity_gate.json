@@ -1,0 +1,117 @@
+{
+  "experiment_id": "block3_parity_gate",
+  "protocol_id": "block3_real_weight_parity_v1",
+  "timestamp_utc": "2026-08-14T04:17:10.317678+00:00",
+  "git_sha": "2608c713ef22b8958656d63bee002b919f60bec1",
+  "source_dirty": true,
+  "valid": false,
+  "use_in_manuscript": false,
+  "kernel_status": "code_fixed_awaiting_rebench",
+  "status": "pt_cpu_ref_ok_cuda_selfcheck_ok_awaiting_real_weight_gpu",
+  "pre_fix_vs_post_fix": "pre_fix",
+  "invalid_reason": "kernel_status=code_fixed_awaiting_rebench: source race+align fixed; wall-clock DICC/laptop B3 numbers stay pre_fix until rebench; real-weight GPU inject into fused_block3 binaries not yet wired \u2014 PT vs CUDA-contract CPU ref is intermediate evidence only",
+  "champion_md5": "80a90f7cc210276300eaa90173a5a385",
+  "champion_md5_expected": "80a90f7cc210276300eaa90173a5a385",
+  "champion_md5_ok": true,
+  "champion_path": "model/best_model_botiot_twostage.pth",
+  "seed": 42,
+  "batch": 4,
+  "geometry": {
+    "seq": 16,
+    "in_ch": 128,
+    "h1": 128,
+    "h2": 64,
+    "out_size": 128
+  },
+  "fp32_tol_pt_vs_cpu_ref": 0.0001,
+  "contract_notes": [
+    "Full sequence is time-aligned: fw[k] and rev[k] both correspond to input time k.",
+    "Reverse path: pos = seq_len-1-t; gates read input[pos]; store h_new at pos (not recurrence index t).",
+    "Last timestep = output[:, -1, :] on the aligned sequence (CUDA extract at seq_len-1 for both fw and rev channels).",
+    "Do not equate last-timestep reverse channels with reverse h_n (final reverse recurrence state after processing pos 0).",
+    "Matching ops only (2-layer BiLSTM). V3 attention/LN/GAP not in CUDA Block 3.",
+    "kernel_status=code_fixed_awaiting_rebench: race+align fixed in source 2026-08-14; DICC/laptop wall-clock numbers remain pre_fix until rebench + this gate green."
+  ],
+  "comparison": {
+    "method": "pytorch_bilstm_vs_cuda_contract_cpu_ref",
+    "weights": "champion_real",
+    "pt_vs_cpu_ref_full_sequence": {
+      "max_abs_error": 6.4890089435318266e-06,
+      "mean_abs_error": 1.4693428301350356e-07,
+      "max_rel_error": 0.006473498011680679
+    },
+    "pt_vs_cpu_ref_last_timestep": {
+      "max_abs_error": 1.3302745854731901e-06,
+      "mean_abs_error": 1.1446329189440896e-07,
+      "max_rel_error": 0.0001740980764820557
+    },
+    "pt_last_equals_full_seq_last": {
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "max_rel_error": 0.0
+    },
+    "pt_cpu_ref_pass": true,
+    "max_abs_error": 1.3302745854731901e-06,
+    "mean_abs_error": 1.1446329189440896e-07,
+    "max_abs_error_full_sequence": 6.4890089435318266e-06,
+    "mean_abs_error_full_sequence": 1.4693428301350356e-07
+  },
+  "cuda_binaries": {
+    "fused_block3": true,
+    "fused_block3_fp16": true,
+    "fused_block3_naive": true
+  },
+  "cuda_selfcheck": [
+    {
+      "binary": "fused_block3",
+      "path": "inference/kernels/fused_block3",
+      "exists": true,
+      "tolerance": 0.01,
+      "passed": true,
+      "error": null,
+      "stdout_tail": "=== COLIDE Block3 (transposed W_hh + CUDA Graphs) ===\n\u2705 FP32 validation PASSED\n\u23f1\ufe0f  Without CUDA Graphs: 1723.64 \u00b5s\n\u2705 CUDA Graph validation PASSED\n\u23f1\ufe0f  With CUDA Graphs:    1633.34 \u00b5s\n   Speedup from graphs:  1.05528x\n   PyTorch GPU target:   784.1 \u00b5s (n=50-trial mean, see benchmark_pytorch_block3_stats.py)\n",
+      "note": "Synthetic RNG weights inside binary (not champion real weights).",
+      "returncode": 0
+    },
+    {
+      "binary": "fused_block3_fp16",
+      "path": "inference/kernels/fused_block3_fp16",
+      "exists": true,
+      "tolerance": 0.05,
+      "passed": true,
+      "error": null,
+      "stdout_tail": "=== COLIDE Block3 FP16 Native half2 ===\n\u2705 FP16 half2 validation PASSED\n\u23f1\ufe0f  Block3 FP16 half2:    1544.97 \u00b5s\n   Block3 FP32:          1007.3 \u00b5s\n   Speedup FP16/FP32:    0.651988x\n   PyTorch GPU target:   784.1 \u00b5s (n=50-trial mean, see benchmark_pytorch_block3_stats.py)\n",
+      "note": "Synthetic RNG weights inside binary (not champion real weights).",
+      "returncode": 0
+    }
+  ],
+  "weight_keys": [
+    "l1_fw_b_hh",
+    "l1_fw_b_ih",
+    "l1_fw_w_hh",
+    "l1_fw_w_ih",
+    "l1_rev_b_hh",
+    "l1_rev_b_ih",
+    "l1_rev_w_hh",
+    "l1_rev_w_ih",
+    "l2_fw_b_hh",
+    "l2_fw_b_ih",
+    "l2_fw_w_hh",
+    "l2_fw_w_ih",
+    "l2_rev_b_hh",
+    "l2_rev_b_ih",
+    "l2_rev_w_hh",
+    "l2_rev_w_ih"
+  ],
+  "remediation": {
+    "cuda_b3_001": "double-buffer race fix in fused_block3.cu / fp16 (2026-08-14)",
+    "cuda_b3_002": "reverse store at original pos (2026-08-14)",
+    "cuda_b3_003": "contract documented; last-timestep = aligned output[:, -1, :]",
+    "docs": [
+      "docs/CUDA_WEIGHT_MAPPING.md",
+      "scripts/parity_block3_cuda_pt.py",
+      "inference/kernels/fused_block3.cu",
+      "inference/kernels/fused_block3_fp16.cu"
+    ]
+  }
+}

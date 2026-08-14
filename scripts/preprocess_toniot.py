@@ -1,6 +1,23 @@
 """
 COLIDE - ToN-IoT Dataset Preprocessing
-Matches the BoT-IoT preprocessing pipeline methodology:
+
+=============================================================================
+LEGACY / INVALID for clean-style manuscript claims (checklist §4 / DATA-TON-001
+related pipeline issues on sibling clean path; this script has its own issues):
+  - Categorical LabelEncoders are fit on the FULL dataframe BEFORE train/val/test
+    split (information leakage risk into val/test encodings).
+  - Ordinary SMOTE is applied to integer-encoded categorical fields.
+  - Downstream npy users (rf_baseline_toniot, train_toniot, run_toniot_final_method)
+    depend on this layout — do NOT silently change encoder/SMOTE order here
+    without regenerating all consumers.
+
+CORRECTED leakage-safe path (train-only encoders/scaler, NO SMOTE, allowlist):
+  PYTHONPATH=. python scripts/run_toniot_corrected_simple.py
+  # or: scripts/protocol/toniot_leakage_safe.py
+  # results → benchmarks/results/toniot_corrected/
+=============================================================================
+
+Matches the BoT-IoT preprocessing pipeline methodology (legacy):
   - Select numeric + categorical network flow features
   - Handle class imbalance (undersample majority, SMOTE minority)
   - MinMax normalization
@@ -77,17 +94,22 @@ def main():
     print(f"\nClass distribution:")
     print(df[LABEL_COL].value_counts().to_string())
 
+    # NOTE (LEGACY): categorical encoders fit on FULL df before split — see module docstring.
+    # Corrected protocol fits encoders on train only (scripts/protocol/toniot_leakage_safe.py).
     X = df[NUMERIC_FEATURES].copy()
     X = X.replace([np.inf, -np.inf], np.nan).fillna(0)
 
     cat_encoders = {}
     for col in CATEGORICAL_FEATURES:
         le = LabelEncoder()
+        # LEGACY/INVALID pattern for claims: fit_transform on all rows before split.
         X[col] = le.fit_transform(df[col].astype(str))
         cat_encoders[col] = le
         print(f"\n{col} categories ({len(le.classes_)}): {list(le.classes_[:10])}{'...' if len(le.classes_) > 10 else ''}")
 
     print(f"\nFeatures ({len(ALL_FEATURES)}): {ALL_FEATURES}")
+    # Allowlist excludes label/type; still not the corrected train-only path.
+    assert 'label' not in ALL_FEATURES and LABEL_COL not in ALL_FEATURES
 
     label_encoder = LabelEncoder()
     y = label_encoder.fit_transform(df[LABEL_COL])

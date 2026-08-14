@@ -1,7 +1,15 @@
-#!/home/user/ibteshamulhaque/.conda/envs/colide/bin/python
+#!/usr/bin/env python3
 """
 Measure CNN‑BiLSTM inference energy (mJ/flow) on the current GPU (intended for A100).
-Uses pynvml for real‑time power draw and computes energy per flow.
+
+EXPLORATORY ONLY (ENERGY-001):
+  - Uses pynvml for GPU board power samples around each batch — not a full
+    system / host energy protocol (no RAPL, no multi-session envelope).
+  - Figures such as ~1.089 mJ/flow are exploratory board-power estimates.
+  - Do not present as a controlled efficiency win/loss vs cuML or other stacks
+    without those caveats. Prefer WP6b multi-session laptop ranges where
+    systems energy is the claim surface.
+
 Saves results to benchmarks/results/a100_energy.json.
 """
 

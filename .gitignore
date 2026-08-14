@@ -9,6 +9,10 @@ data/splits/
 
 # Model weights — exported separately
 model/weights/
+# Note: model/*.pth is NOT ignored. Champion
+# (model/best_model_botiot_twostage.pth) is tracked. New trees such as
+# model/toniot_corrected/*.pth can be added normally (or git add -f if
+# a future ignore rule blocks them).
 
 # Python cache
 __pycache__/
@@ -20,7 +24,15 @@ __pycache__/
 .ipynb_checkpoints/
 
 # Benchmark raw results — keep plots, not raw data
-benchmarks/results/
+# Exceptions: claim-hygiene / remediation artifacts that must stay tracked.
+benchmarks/results/*
+!benchmarks/results/toniot_corrected/
+!benchmarks/results/toniot_corrected/**
+!benchmarks/results/block3_parity_gate.json
+!benchmarks/results/toniot_clean_comparison.json
+!benchmarks/results/toniot_clean_comparison.INVALIDATED.json
+!benchmarks/results/toniot_clean_retrain.json
+!benchmarks/results/toniot_clean_retrain.INVALIDATED.json
 
 # Compiled CUDA artifacts
 *.so

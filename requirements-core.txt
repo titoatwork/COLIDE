@@ -1,0 +1,18 @@
+# =============================================================================
+# COLIDE core / protocol subset (CPU-friendly; no LLM / ORT GPU)
+# Install: pip install -r requirements-core.txt
+# =============================================================================
+
+torch>=2.5.0
+numpy>=2.0.0
+scipy>=1.13.0
+scikit-learn>=1.5.0
+imbalanced-learn>=0.12.0
+joblib>=1.4.0
+pyyaml>=6.0
+optuna>=3.6.0
+pandas>=2.0.0
+matplotlib>=3.8.0
+xgboost>=2.0.0
+lightgbm>=4.0.0
+pytest>=8.0.0

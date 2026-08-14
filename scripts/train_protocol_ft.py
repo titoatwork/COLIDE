@@ -8,7 +8,15 @@ Fine-tune a distill / KD checkpoint on BoT-IoT under the canonical protocol (sta
 - NEVER overwrites model/best_model_botiot_twostage.pth unless --allow-overwrite-champion
 
 Supports CAD-CBA-v1 train HPs (Optuna WP3): dropout, attention_dropout, weight_decay,
-scheduler (AdamW + cosine/step). Optional --hpo-config loads defaults from hpo_best.yaml.
+scheduler (AdamW + cosine/step). Optional --hpo-config fills *unset* train HPs from
+hpo_best.yaml.
+
+Config precedence (highest wins):
+  1. explicit CLI arguments
+  2. --hpo-config file (best_params), only for fields left unset on the CLI
+  3. program defaults
+
+Use --print-effective-config to dump the resolved config (and exit with --dry-run).
 
 Example:
   PYTHONPATH=. .venv/bin/python scripts/train_protocol_ft.py \\
@@ -141,8 +149,95 @@ def _load_hpo_best_params(path: Path) -> dict:
     return {k: params[k] for k in params}
 
 
+# Program defaults for fields that HPO may also set. CLI uses None so we can
+# distinguish "user set this" from "still unset → fill from HPO then defaults".
+# Precedence: explicit CLI > hpo file > these defaults.
+PROGRAM_DEFAULTS = {
+    "lr": 1e-4,
+    "batch_size": 256,
+    "focal_gamma": 2.0,
+    "weight_decay": 0.0,
+    "scheduler": "none",
+    # dropout_rate / attention_dropout stay None → fall through to config.yaml
+}
+
+# CLI dest → key in hpo best_params
+HPO_FIELD_MAP = {
+    "lr": ("lr", float),
+    "batch_size": ("batch_size", int),
+    "focal_gamma": ("focal_gamma", float),
+    "dropout_rate": ("dropout_rate", float),
+    "attention_dropout": ("attention_dropout", float),
+    "weight_decay": ("weight_decay", float),
+    "scheduler": ("scheduler", str),
+}
+
+
+def _resolve_train_hps(args: argparse.Namespace) -> tuple[argparse.Namespace, str | None]:
+    """
+    Apply precedence: CLI (non-None) > hpo file > PROGRAM_DEFAULTS.
+
+    Returns (args, hpo_src_path_or_None).
+    """
+    hpo_src = None
+    hp: dict = {}
+    if args.hpo_config:
+        hpo_path = Path(args.hpo_config)
+        if not hpo_path.is_file():
+            raise FileNotFoundError(f"hpo config missing: {hpo_path}")
+        hp = _load_hpo_best_params(hpo_path)
+        hpo_src = str(hpo_path)
+
+    for dest, (hp_key, caster) in HPO_FIELD_MAP.items():
+        cur = getattr(args, dest)
+        if cur is not None:
+            continue  # explicit CLI wins
+        if hp_key in hp:
+            setattr(args, dest, caster(hp[hp_key]))
+        elif dest in PROGRAM_DEFAULTS:
+            setattr(args, dest, PROGRAM_DEFAULTS[dest])
+        # else leave None (dropout → config.yaml)
+
+    # optimizer: only auto-promote to adamw when HPO is loaded and user left auto
+    if args.optimizer == "auto" and hpo_src is not None and args.weight_decay and float(args.weight_decay) > 0:
+        args.optimizer = "adamw"
+
+    return args, hpo_src
+
+
+def _effective_config_dict(args: argparse.Namespace, hpo_src: str | None) -> dict:
+    return {
+        "precedence": "CLI > hpo file > program defaults",
+        "hpo_config": hpo_src,
+        "init_checkpoint": args.init_checkpoint,
+        "seed": args.seed,
+        "epochs": args.epochs,
+        "lr": args.lr,
+        "batch_size": args.batch_size,
+        "focal_gamma": args.focal_gamma,
+        "dropout_rate": args.dropout_rate,
+        "attention_dropout": args.attention_dropout,
+        "weight_decay": args.weight_decay,
+        "scheduler": args.scheduler,
+        "optimizer": args.optimizer,
+        "loss": args.loss,
+        "logit_tau": args.logit_tau,
+        "patience": args.patience,
+        "save_path": args.save_path or None,
+        "results_path": args.results_path or None,
+        "allow_test": args.allow_test,
+        "config": args.config,
+        "drop_last_train": args.drop_last_train,
+        "train_sampler": args.train_sampler,
+        "command": " ".join(sys.argv),
+    }
+
+
 def main() -> int:
-    p = argparse.ArgumentParser(description=__doc__)
+    p = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
     p.add_argument(
         "--init-checkpoint",
         type=str,
@@ -150,9 +245,25 @@ def main() -> int:
     )
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--epochs", type=int, default=10)
-    p.add_argument("--lr", type=float, default=1e-4)
-    p.add_argument("--batch-size", type=int, default=256)
-    p.add_argument("--focal-gamma", type=float, default=2.0)
+    # None = unset → may be filled from --hpo-config then PROGRAM_DEFAULTS
+    p.add_argument(
+        "--lr",
+        type=float,
+        default=None,
+        help="Learning rate (default 1e-4; or from --hpo-config). Explicit CLI wins over HPO.",
+    )
+    p.add_argument(
+        "--batch-size",
+        type=int,
+        default=None,
+        help="Batch size (default 256; or from --hpo-config). Explicit CLI wins over HPO.",
+    )
+    p.add_argument(
+        "--focal-gamma",
+        type=float,
+        default=None,
+        help="Focal gamma (default 2.0; or from --hpo-config). Explicit CLI wins over HPO.",
+    )
     p.add_argument(
         "--dropout-rate",
         type=float,
@@ -168,15 +279,15 @@ def main() -> int:
     p.add_argument(
         "--weight-decay",
         type=float,
-        default=0.0,
-        help="AdamW weight decay (0 + default optim=Adam matches pre-HPO FT)",
+        default=None,
+        help="AdamW weight decay (default 0.0; or from --hpo-config)",
     )
     p.add_argument(
         "--scheduler",
         type=str,
-        default="none",
+        default=None,
         choices=["none", "cosine", "step"],
-        help="LR schedule after each epoch (matches WP3 HPO)",
+        help="LR schedule (default none; or from --hpo-config)",
     )
     p.add_argument(
         "--optimizer",
@@ -189,7 +300,7 @@ def main() -> int:
         "--hpo-config",
         type=str,
         default="",
-        help="If set, fill unset train HPs from config/hpo_best.yaml best_params",
+        help="If set, fill *unset* train HPs from best_params (CLI always wins)",
     )
     p.add_argument(
         "--loss",
@@ -234,28 +345,28 @@ def main() -> int:
             "(WeightedRandomSampler inverse class-frequency; D6)"
         ),
     )
+    p.add_argument(
+        "--print-effective-config",
+        action="store_true",
+        help="Print resolved train config JSON (after CLI/HPO/default merge) to stdout",
+    )
+    p.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Resolve config only; do not train (implies --print-effective-config)",
+    )
     args = p.parse_args()
 
-    # Merge HPO winner params when requested (CLI explicit values win after merge for
-    # fields that were intentionally left at argparse defaults).
-    hpo_src = None
-    if args.hpo_config:
-        hpo_path = Path(args.hpo_config)
-        if not hpo_path.is_file():
-            print(f"ERROR: hpo config missing: {hpo_path}", file=sys.stderr)
-            return 1
-        hp = _load_hpo_best_params(hpo_path)
-        hpo_src = str(hpo_path)
-        # Always apply full HPO train recipe when --hpo-config is given (package mode).
-        args.lr = float(hp["lr"])
-        args.batch_size = int(hp["batch_size"])
-        args.focal_gamma = float(hp["focal_gamma"])
-        args.dropout_rate = float(hp["dropout_rate"])
-        args.attention_dropout = float(hp["attention_dropout"])
-        args.weight_decay = float(hp["weight_decay"])
-        args.scheduler = str(hp["scheduler"])
-        if args.optimizer == "auto":
-            args.optimizer = "adamw"
+    try:
+        args, hpo_src = _resolve_train_hps(args)
+    except FileNotFoundError as e:
+        print(f"ERROR: {e}", file=sys.stderr)
+        return 1
+
+    if args.print_effective_config or args.dry_run:
+        print(json.dumps(_effective_config_dict(args, hpo_src), indent=2, default=str))
+        if args.dry_run:
+            return 0
 
     set_seed(args.seed)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -444,30 +555,20 @@ def main() -> int:
         test_final = eval_split(model, test_loader, device, bundle.class_names)
 
     elapsed = time.time() - t0
+    effective = _effective_config_dict(args, hpo_src)
+    effective["dropout_rate"] = cfg["model"].get("dropout_rate")
+    effective["attention_dropout"] = cfg["model"].get("attention_dropout")
+    effective["optimizer"] = optim_name
+    effective["drop_last_train"] = drop_last
+    effective["save_path"] = str(save_path)
+    effective["init_checkpoint"] = str(init_ckpt.resolve())
+
     payload = make_result_envelope(
         experiment_id=f"protocol_ft_seed{args.seed}",
         protocol_id=bundle.protocol_id,
         stage="stage_b_ft",
         seed=args.seed,
-        config={
-            "init_checkpoint": str(init_ckpt),
-            "epochs": args.epochs,
-            "lr": args.lr,
-            "batch_size": args.batch_size,
-            "focal_gamma": args.focal_gamma,
-            "dropout_rate": cfg["model"].get("dropout_rate"),
-            "attention_dropout": cfg["model"].get("attention_dropout"),
-            "weight_decay": args.weight_decay,
-            "scheduler": args.scheduler,
-            "optimizer": optim_name,
-            "loss": args.loss,
-            "logit_tau": args.logit_tau,
-            "patience": args.patience,
-            "drop_last_train": drop_last,
-            "train_sampler": args.train_sampler,
-            "hpo_config": hpo_src,
-            "save_path": str(save_path),
-        },
+        config=effective,
         metrics={
             "best_val_macro_f1": float(best_val_f1),
             "val": val_final,
@@ -479,8 +580,12 @@ def main() -> int:
             "allow_test": bool(args.allow_test),
             "device": str(device),
             "data_summary": bundle.summary(),
+            "loss_version": "legacy_pt_from_weighted_ce",
         },
         project_root=PROJECT_ROOT,
+        command=" ".join(sys.argv),
+        use_in_manuscript=True,
+        valid=True,
     )
     with open(results_path, "w") as f:
         json.dump(payload, f, indent=2)

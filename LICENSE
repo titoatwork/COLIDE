@@ -1,0 +1,39 @@
+COLIDE Academic Research License
+================================
+
+Copyright (c) 2024–2026 Ibteshamul Haque and contributors.
+All rights reserved.
+
+ACADEMIC RESEARCH USE ONLY
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to use,
+copy, and modify the Software solely for non-commercial academic research and
+educational purposes, subject to the following conditions:
+
+1. The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+2. Commercial use, including but not limited to use in products, services,
+   consulting deliverables, or production systems operated for commercial
+   gain, is prohibited without a separate written license from the authors.
+
+3. Redistribution of the Software (modified or unmodified) is permitted only
+   for non-commercial academic research and educational purposes, and must
+   retain this license text and attribution.
+
+4. Publications that use this Software or results derived from it should cite
+   the COLIDE project and any associated paper(s) as specified by the authors.
+
+5. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+   DEALINGS IN THE SOFTWARE.
+
+For commercial licensing, contact the authors.
+
+This is not an OSI-approved open-source license (not MIT/Apache/BSD).
+The README badge "Academic" refers to this academic-research-only grant.

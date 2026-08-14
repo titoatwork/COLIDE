@@ -145,7 +145,7 @@ def simulate_detection(num_flows=20):
     feature_names = config['data']['feature_columns']
 
     model = CNNBiLSTM(config)
-    model.load_state_dict(torch.load('model/best_model.pth', map_location='cpu', weights_only=True))
+    model.load_state_dict(torch.load('model/best_model_botiot_twostage.pth', map_location='cpu', weights_only=True))
     model.eval()
 
     # Load some real test data

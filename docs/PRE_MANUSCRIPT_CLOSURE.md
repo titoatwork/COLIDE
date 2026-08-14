@@ -13,9 +13,35 @@
 | Compare outcomes | `docs/DICC_COMPARE_OUTCOMES.md` |
 | Results + flags | `docs/DICC_RESULTS_AND_FLAGS.md` |
 | Claim map (pre-write) | `docs/CLAIM_MAP_PREWRITE.md` |
+| Issue register (Phase 1 quarantine) | `docs/ISSUE_REGISTER.md` |
+| Known limitations | `docs/KNOWN_LIMITATIONS.md` |
 | Session handoff | `HANDOFF.md` |
 
 **Champion:** `model/best_model_botiot_twostage.pth` md5 **`80a90f7cc210276300eaa90173a5a385`**
+
+### Phase 1 claim quarantine (2026-08-14) — documentation only
+
+Evidence freeze above is unchanged for BoT/DICC (no BoT retrain, no new DICC). Active claim surfaces were corrected:
+
+| Quarantine | Action |
+|------------|--------|
+| Principal BoT | Sealed **0.9780 ± 0.0033**; historical **0.9790** development-only |
+| ToN clean 0.9526 / 0.9851 / +15.4% | **INVALID** tombstone (DATA-TON-001) |
+| Streaming | Reframed as **bulk batched throughput** (~25,899 f/s) |
+| Energy | **Exploratory**; WP6b ranges preferred over bare 1.089 vs cuML |
+| B3 DICC | Wall-clock honesty retained; **pre_fix** until CUDA-B3-* closed + rebench |
+| LLM | Dispatch-only; title narrowed |
+
+Guard: `python scripts/check_stale_claims.py`.
+
+### Phase 2 corrected ToN (complete) + CUDA B3 code status
+
+| Item | Status |
+|------|--------|
+| Corrected ToN leakage-safe experiment | **DONE** — protocol `toniot_leakage_safe_v1`; test macro-F1 **CNN 0.8075** / **RF 0.9626**; no SMOTE, no KD; `benchmarks/results/toniot_corrected/` (`valid: true`, `use_in_manuscript: true`) |
+| Invalid clean path | Remains **tombstoned** (0.9526 / 0.9851 / +15.4% never active) |
+| Older 13-feat package path | Optional comparable prior only (~0.811 vs RF ~0.939, `toniot_final/`) |
+| CUDA B3 race/alignment/contract fixes | Code fixed in remediation tree — **awaiting rebench** before any post_fix B3 claim; DICC B3 numbers stay **pre_fix** until SUCCESS rebench artifacts exist |
 
 ---
 
@@ -87,6 +113,9 @@ No further evidence collection is required for the Option A + multi-GPU + multi-
 5. **LLM dispatch** micro-result; no full free-form XAI title claim.  
 
 Defensible for **systems / FGCS-leaning** venues; not for “we beat cuDNN BiLSTM everywhere.”
+
+**Principal detection number for prose:** sealed test **0.9780 ± 0.0033** (not historical 0.9790).  
+**ToN:** corrected leakage-safe **CNN 0.8075 / RF 0.9626** (`toniot_leakage_safe_v1`); clean 0.9526/0.9851 **FORBIDDEN**; older 13-feat ~0.811 vs ~0.939 optional comparable only.
 
 ---
 

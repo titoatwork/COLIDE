@@ -1,4 +1,13 @@
 {
+  "valid": false,
+  "invalid_reason": "Historical clean retrain artifact; same DATA-TON-001 leakage path as toniot_clean_comparison (target-derived label / encoder-before-split / SMOTE on encoded categoricals). Macro-F1 0.9526 is INVALID for manuscript use.",
+  "superseded_by": "benchmarks/results/toniot_corrected/summary.json",
+  "use_in_manuscript": false,
+  "issue_id": "DATA-TON-001",
+  "tombstone": true,
+  "status": "INVALIDATED",
+  "note": "HISTORICAL/INVALID: Do not use as active ToN evidence. Prefer toniot_corrected leakage-safe protocol (CNN 0.8075 / RF 0.9626). Never re-label this experiment as clean.",
   "dataset": "toniot_clean",
-  "macro_f1": 0.9526283476667281
+  "macro_f1": 0.9526283476667281,
+  "claimed_improvement_status": "INVALID — do not cite associated clean path or +15.4%"
 }
