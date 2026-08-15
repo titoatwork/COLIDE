@@ -2,7 +2,9 @@
 
 **Date:** 2026-08-15  
 **From:** Ibteshamul Haque  
-**Role for this pack:** all experimental evidence, claim hygiene, draft text, figures, and gates are prepared so **you can lead paper writing**.  
+**Pre-manuscript:** **CLOSED** — see `docs/PRE_MANUSCRIPT_INDEX.md`.  
+**Role for this pack:** frozen evidence + a *working-draft* MD (not a finished paper) so **you can lead paper writing**.  
+**Do not use** `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf` (22 Jul) as current — it is stale vs the Markdown.  
 **Supervisor:** Prof. Por (updated on progress as you prefer).
 
 ---

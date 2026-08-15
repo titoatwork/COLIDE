@@ -1,10 +1,13 @@
 # Pre-manuscript closure pack
 
-**Date (UTC):** 2026-08-14  
-**Status:** **DATA REMEDIATION CLOSED; CUDA EVIDENCE AND PUBLICATION SYNCHRONIZATION PENDING**  
-**Scope of this pack:** Evidence freeze for detection / multi-objective / Option A measurement trees **before** full manuscript prose/PDF/venue formatting  
-**Authority:** Option A · JSON only · champion frozen  
-**Not fully submission-ready:** local CUDA production-weight parity + full sanitizer suite are **closed with artifacts** (2026-08-14). Still open for submission quality: **DICC multi-session post_fix B3 latency rebench (or explicit drop of server B3 comparative claims)**, full **manuscript/figure synchronization**, and residual historical claim surfaces outside the active README/claim-map set. See `COLIDE_Remediation_Update_Review.md` and `docs/ISSUE_REGISTER.md`.
+**Date (UTC):** 2026-08-15  
+**Status:** **PRE-MANUSCRIPT CLOSED**  
+**Scope:** Evidence freeze, claim hygiene, tables/figures from artifacts, B3 Option B, writer handoff — **before** venue manuscript writing.  
+**Next:** Cheran leads paper writing from `docs/CHERAN_MANUSCRIPT_HANDOFF.md`.  
+**Start page:** `docs/PRE_MANUSCRIPT_INDEX.md`  
+**Not the same as camera-ready:** a working draft MD exists; the Jul 22 PDF is stale; venue prose is still to write.
+
+**Decision already taken (was listed as open):** DICC B3 post_fix latency → **Option B** (`docs/B3_SERVER_LATENCY_DECISION.md`): drop active comparative post_fix server-B3 claim; keep historical pre_fix labeled.
 
 | Artifact | Path |
 |----------|------|
@@ -48,9 +51,10 @@ Guard: `python scripts/check_stale_claims.py`.
 | CUDA B3 race/alignment | Source fixed (double-buffer + reverse `pos`) |
 | CUDA B3 production-weight parity (local) | **DONE** — `block3_parity_gate.json` `valid=true`, `kernel_status=post_fix` |
 | CUDA B3 sanitizers (local sm_86) | **DONE** — racecheck/synccheck/initcheck/memcheck 0 errors FP32+FP16 |
-| CUDA B3 DICC multi-session post_fix latency | **OPEN** — historical pre_fix means only until rebench or claim drop |
+| CUDA B3 DICC multi-session post_fix latency | **CLOSED as Option B** — comparative post_fix claim dropped; historical pre_fix retained only as historical (`docs/B3_SERVER_LATENCY_DECISION.md`) |
 
-**Overall readiness:** Data-side remediation and **local** CUDA correctness gates are closed with artifacts. Still pending for full submission: **manuscript/figure synchronization** and **DICC B3 latency decision** (rebench post_fix or drop comparative claims). See filled `COLIDE_Remediation_Update_Review.md`.
+**Pre-manuscript readiness:** **CLOSED** (see `docs/PRE_MANUSCRIPT_INDEX.md`).  
+**Camera-ready / venue manuscript:** **NOT started as a finished paper** — working-draft MD + tables/figures are feedstock for Cheran.
 
 ---
 
@@ -68,16 +72,17 @@ Guard: `python scripts/check_stale_claims.py`.
 | Cross-session compare A100 | **DONE** with `--allow-dirty` (stable); dirty provenance noted |
 | Fork decision (B3 CUDA vs PT) | **DONE** — PT wins wall-clock **pre_fix**; Welch/d recorded in B3 report |
 | Tracker DICC rows honest language | **DONE** (subject to Phase 1 claim hygiene) |
-| README / claim hygiene (S1c) | **IN PROGRESS** — Phase 1 of review: partial-vs-full ratios removed; tables separated |
+| README / claim hygiene (S1c) | **DONE** — Table A/B split; Option B B3; stale files labeled |
 | Full multi-compiler DICC (eager/compile/ORT/TRT) | **DONE** both GPUs |
-| Production-weight B3 CUDA–PT parity (local) | **DONE** (CUDA-B3-003 local; `block3_parity_gate.json` valid=true) |
-| Corrected server B3 rebench (or drop claim) | **OPEN** (DICC post_fix latency) |
-| Full sanitizer suite + determinism archive | **DONE** local sm_86 (racecheck/synccheck/initcheck/memcheck 0 errors FP32+FP16); archive hygiene optional |
-| Manuscript multi-GPU prose / figure sync | **OPEN** (publication synchronization pending) |
-| PI journal class file / BibTeX | **OUT OF SCOPE** (PI after venue) |
+| Production-weight B3 CUDA–PT parity (local) | **DONE** (`block3_parity_gate.json` valid=true) |
+| Corrected server B3 rebench **or drop claim** | **DONE — Option B drop** (rebench remains optional later, not blocking pre-ms) |
+| Full sanitizer suite (local) | **DONE** sm_86 four tools × FP32+FP16 |
+| Figures / tables from artifacts | **DONE** — `FIGURE_STATUS.md`, `TABLES_FROM_ARTIFACTS.md` |
+| Writer handoff | **DONE** — `CHERAN_MANUSCRIPT_HANDOFF.md` |
+| Venue manuscript / BibTeX / journal class | **NEXT PHASE** (Cheran) — not a pre-ms gate |
 
-**Pre-manuscript evidence freeze (BoT sealed + DICC historical trees): held.**  
-**Submission readiness: NOT CLOSED** — CUDA evidence + publication sync pending (`COLIDE_Remediation_Update_Review.md`).
+**Pre-manuscript evidence freeze: CLOSED.**  
+**Venue submission: not yet — that is manuscript writing.**
 
 ---
 

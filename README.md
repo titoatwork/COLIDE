@@ -12,6 +12,7 @@
 
 | If you are… | Open |
 |-------------|------|
+| Checking if pre-manuscript is done | [`docs/PRE_MANUSCRIPT_INDEX.md`](docs/PRE_MANUSCRIPT_INDEX.md) |
 | Writing the paper (Cheran / coauthor) | [`docs/CHERAN_MANUSCRIPT_HANDOFF.md`](docs/CHERAN_MANUSCRIPT_HANDOFF.md) |
 | Checking what may be claimed | [`docs/CLAIM_MAP_PREWRITE.md`](docs/CLAIM_MAP_PREWRITE.md) + [`docs/RESULTS_INDEX.md`](docs/RESULTS_INDEX.md) |
 | Reading results only | Abstract + Results Summary below; numbers from `benchmarks/results/` |

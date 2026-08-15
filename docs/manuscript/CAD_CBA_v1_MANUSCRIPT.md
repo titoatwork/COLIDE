@@ -1,11 +1,15 @@
 # CAD-CBA: A Class-Aware Distilled CNN–BiLSTM for Multi-Objective IoT Intrusion Detection with Operation-Matched CUDA Acceleration
 
-**Document type:** Camera-ready **local-complete** manuscript (PI venue polish pass)  
+> **Status: WORKING DRAFT / WRITER FEEDSTOCK — not the finished paper and not “camera-ready”.**  
+> This Markdown was synced to locked artifacts so Cheran can *lead manuscript writing*.  
+> Pre-manuscript authority is `docs/PRE_MANUSCRIPT_INDEX.md` + `docs/RESULTS_INDEX.md` + gate JSON.  
+> The sibling `CAD_CBA_v1_MANUSCRIPT.pdf` (22 Jul 2026) is **STALE** vs this MD — do not share the PDF as current.
+
+**Document type:** Working draft (numbers synced Aug 2026; prose still for venue rewrite)  
 **Method freeze:** CAD-CBA-v1 · **Option A** CUDA (per-block / operation-matched only)  
-**Claims package:** 64 protocol claims · `PYTHONPATH=. python3 scripts/verify_claims.py` must stay green  
 **Champion weights:** `model/best_model_botiot_twostage.pth` · md5 `80a90f7cc210276300eaa90173a5a385`  
-**Authority for numbers:** `docs/RESULTS_INDEX.md` · `docs/execution_plan/CLAIMS_REGISTRY.md` · on-disk gates under `benchmarks/results/`  
-**Open ops (not claimed):** DICC B3 **post_fix** multi-session latency rebench (historical B3 wall-clock is **PRE_FIX only**); never invent post_fix server µs  
+**Authority for numbers:** `docs/RESULTS_INDEX.md` · on-disk gates under `benchmarks/results/`  
+**Open (not claimed):** DICC B3 **post_fix** server latency (Option B: historical PRE_FIX only)  
 
 | Field | Value |
 |-------|-------|

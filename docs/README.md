@@ -14,15 +14,17 @@ Start here if you are writing or checking claims.
 
 | Path | Role |
 |------|------|
-| [`CHERAN_MANUSCRIPT_HANDOFF.md`](CHERAN_MANUSCRIPT_HANDOFF.md) | **Manuscript-lead start** — read order, locked numbers, hard rules |
+| [`PRE_MANUSCRIPT_INDEX.md`](PRE_MANUSCRIPT_INDEX.md) | **Is pre-manuscript done?** Yes — this is the closure start page |
+| [`PRE_MANUSCRIPT_CLOSURE.md`](PRE_MANUSCRIPT_CLOSURE.md) | Formal closure pack (evidence freeze) |
+| [`CHERAN_MANUSCRIPT_HANDOFF.md`](CHERAN_MANUSCRIPT_HANDOFF.md) | **Next phase:** manuscript-lead start |
 | [`CLAIM_MAP_PREWRITE.md`](CLAIM_MAP_PREWRITE.md) | OK / FORBIDDEN claims for drafting |
 | [`RESULTS_INDEX.md`](RESULTS_INDEX.md) | Claim → artifact map (principal authority for numbers) |
 | [`KNOWN_LIMITATIONS.md`](KNOWN_LIMITATIONS.md) | Discussion-safe limitation language |
 | [`ISSUE_REGISTER.md`](ISSUE_REGISTER.md) | Stable issue IDs (DATA-TON-001, CUDA-B3-*, CLAIM-PIPE-001, …) |
-| [`B3_SERVER_LATENCY_DECISION.md`](B3_SERVER_LATENCY_DECISION.md) | **Option B (2026-08-15):** DICC B3 latency is historical **pre_fix** only |
-| [`PRE_MANUSCRIPT_CLOSURE.md`](PRE_MANUSCRIPT_CLOSURE.md) | Data closed; remaining publication notes |
-| [`manuscript/CAD_CBA_v1_MANUSCRIPT.md`](manuscript/CAD_CBA_v1_MANUSCRIPT.md) | Current draft spine |
-| [`manuscript/figures/`](manuscript/figures/) | Manuscript figures (synced copies also under `benchmarks/results/figures_current/`) |
+| [`B3_SERVER_LATENCY_DECISION.md`](B3_SERVER_LATENCY_DECISION.md) | **Option B:** DICC B3 latency is historical **pre_fix** only |
+| [`manuscript/CAD_CBA_v1_MANUSCRIPT.md`](manuscript/CAD_CBA_v1_MANUSCRIPT.md) | **Working draft** (not the finished paper) |
+| [`manuscript/CAD_CBA_v1_MANUSCRIPT.pdf`](manuscript/CAD_CBA_v1_MANUSCRIPT.pdf) | **STALE** (22 Jul) vs the MD — do not send |
+| [`manuscript/figures/`](manuscript/figures/) | CURRENT figures from artifacts |
 | [`manuscript/TABLES_FROM_ARTIFACTS.md`](manuscript/TABLES_FROM_ARTIFACTS.md) | Tables pulled from locked JSON |
 | [`FIGURE_STATUS.md`](FIGURE_STATUS.md) | Figure inventory (CURRENT / STALE / INVALIDATED) |
 
