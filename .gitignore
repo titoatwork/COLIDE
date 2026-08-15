@@ -67,3 +67,4 @@ model/model.onnx
 !benchmarks/results/figures_current/**
 !benchmarks/results/figures_archived/
 !benchmarks/results/figures_archived/**
+COLIDE_Cheran_manuscript_pack_*.zip
