@@ -1,3 +1,9 @@
+> **Status: INTERNAL correspondence / NOT CURRENT AUTHORITY (frozen ~2026-08-12).**  
+> Do not cite this file as the live claim surface or as manuscript evidence. Current authority: `README.md`, `docs/CLAIM_MAP_PREWRITE.md`, `docs/RESULTS_INDEX.md`, `docs/CHERAN_MANUSCRIPT_HANDOFF.md`.  
+> Email / coordination drafts only. Not a claim register.  
+> Kept for audit trail. Stale numbers here may be superseded (ToN clean 0.9526 INVALID; principal BoT is 0.9780±0.0033; DICC B3 latency is pre_fix / Option B).  
+> Public GitHub visitors: this is internal correspondence, not a results paper.
+
 # Follow-up emails after Prof. Por’s reply (2026-08-12)
 
 **Prof said:** share all paper materials with Cheran; work with him on manuscript; certificate → Dr. Erma / UM admin (not Por).  

@@ -1,3 +1,9 @@
+> **Status: HISTORICAL / STALE / NOT CURRENT AUTHORITY (placeholders remain; frozen ~early campaign).**  
+> Do not cite this file as the live claim surface. Current authority: `README.md`, `docs/CLAIM_MAP_PREWRITE.md`, `docs/RESULTS_INDEX.md`, `docs/CHERAN_MANUSCRIPT_HANDOFF.md`.  
+> Rows below include unfilled PyTorch/Python fields and may not match the measurement tree used in published tables.  
+> Kept for audit trail. Stale numbers here may be superseded (ToN clean 0.9526 INVALID; principal BoT is 0.9780±0.0033; DICC B3 latency is pre_fix / Option B).  
+> Public GitHub visitors: do not treat this as the live environment or results card.
+
 # COLIDE — Environment Documentation
 
 ## Local Development Machine (WSL2)

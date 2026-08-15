@@ -1,3 +1,9 @@
+> **Status: HISTORICAL / NOT CURRENT AUTHORITY (frozen ~2026-07-19).**  
+> Do not cite this file as the live claim surface. Current authority: `README.md`, `docs/CLAIM_MAP_PREWRITE.md`, `docs/RESULTS_INDEX.md`, `docs/CHERAN_MANUSCRIPT_HANDOFF.md`.  
+> The body line **AUTHORITATIVE for post-interim work** is **not** live truth. This is historical feedstock only.  
+> Kept for audit trail. Stale numbers here may be superseded (ToN clean 0.9526 INVALID; principal BoT is 0.9780±0.0033; DICC B3 latency is pre_fix / Option B).  
+> Public GitHub visitors: treat this as an old execution roadmap, not manuscript evidence.
+
 # COLIDE — Prof Por Feedback Execution Roadmap
 
 **Source:** `docs/feedback1.docx` (Prof. Por Lip Yee) + email reply  

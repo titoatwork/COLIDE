@@ -1,3 +1,9 @@
+> **Status: HISTORICAL / NOT CURRENT AUTHORITY (frozen ~2026-07-11 last dated entry).**  
+> Do not cite this file as the live claim surface. Current authority: `README.md`, `docs/CLAIM_MAP_PREWRITE.md`, `docs/RESULTS_INDEX.md`, `docs/CHERAN_MANUSCRIPT_HANDOFF.md`.  
+> Chronological work log only. Entries below are an audit trail, not live claim status.  
+> Kept for audit trail. Stale numbers here may be superseded (ToN clean 0.9526 INVALID; principal BoT is 0.9780±0.0033; DICC B3 latency is pre_fix / Option B).  
+> Public GitHub visitors: do not treat this log as manuscript evidence.
+
 # COLIDE — Daily Progress Log
 
 ---

@@ -3,7 +3,8 @@
 .venv-cluster/
 
 # Local run logs / thermal guards (not claim artifacts)
-logs/
+logs/*
+!logs/README.md
 *.bak
 *.bak_before_review
 *:Zone.Identifier

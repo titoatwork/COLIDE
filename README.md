@@ -4,6 +4,41 @@
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.5+-red.svg)](https://pytorch.org/)
 [![License](https://img.shields.io/badge/License-Academic-blue.svg)](#license)
 
+**Public academic research repo** (Academic Research License — not MIT).  
+**Manuscript lead:** see [`docs/CHERAN_MANUSCRIPT_HANDOFF.md`](docs/CHERAN_MANUSCRIPT_HANDOFF.md).  
+**Doc map:** [`docs/README.md`](docs/README.md) (current vs historical — stale files are **kept and labeled**, not deleted).
+
+### Start here
+
+| If you are… | Open |
+|-------------|------|
+| Writing the paper (Cheran / coauthor) | [`docs/CHERAN_MANUSCRIPT_HANDOFF.md`](docs/CHERAN_MANUSCRIPT_HANDOFF.md) |
+| Checking what may be claimed | [`docs/CLAIM_MAP_PREWRITE.md`](docs/CLAIM_MAP_PREWRITE.md) + [`docs/RESULTS_INDEX.md`](docs/RESULTS_INDEX.md) |
+| Reading results only | Abstract + Results Summary below; numbers from `benchmarks/results/` |
+| Reviewing remediation | [`COLIDE_Remediation_Update_Review.md`](COLIDE_Remediation_Update_Review.md) |
+
+**Principal BoT:** sealed multi-seed test macro-F1 **0.9780 ± 0.0033** · champion md5 `80a90f7cc210276300eaa90173a5a385`.  
+**Corrected ToN:** CNN **0.8075** / RF **0.9626**. Historical “clean” 0.9526 / 0.9851 are **INVALID**.
+
+### Repository layout
+
+| Path | Contents |
+|------|----------|
+| `docs/` | Documentation index — **current authority, manuscript, DICC, historical packs** |
+| `docs/manuscript/` | Draft manuscript + figures |
+| `scripts/` | Training, benchmarks, parity gates, stale-claim guard |
+| `inference/kernels/` | Option A Custom CUDA sources (+ laptop sm_86 binaries) |
+| `model/` | Weights — see [`model/README.md`](model/README.md) (champion vs historical vs **invalid** ToN-clean) |
+| `benchmarks/results/` | Claim-eligible JSON/gates (many raw benches stay local / gitignored) |
+| `tests/` | Unit tests (`pytest tests/`) |
+| `dicc_scripts/` | UM DICC campaign helpers |
+| `HANDOFF.md`, `DAILY_LOG.md`, `AGENTS.md`, `CLAUDE.md` | **Internal / historical** coding-session notes — not paper authority |
+| Root `COLIDE Remediation…Checklist.md` | Long checklist; some boxes lag later gate JSONs — prefer review + RESULTS_INDEX |
+
+### What is *not* current authority
+
+Older status emails, `docs/PROF_POR_*`, `docs/STATUS_REPORT_DRAFT.md`, `docs/execution_plan/`, `docs/audit/`, and `HANDOFF.md` (Aug 12 “pre-manuscript closed”) are **kept for audit**. If they conflict with `docs/RESULTS_INDEX.md` or the claim map, **the latter wins**.
+
 ## Abstract
 
 COLIDE is a multi-objective IoT IDS systems project: a sealed-protocol CAD-CBA detection package (competitive but not pure-F1 SOTA vs RF/LGBM) plus **Option A** Custom CUDA kernels (per-block vs matching ops) and measured multi-GPU multi-session latency on UM DICC (V100S + A100). The principal BoT-IoT detection result is sealed multi-seed test macro-F1 **0.9780 ± 0.0033** (n=5). On a **laptop RTX 3050 (WSL2)**, report incomplete Custom CUDA Blocks 1–4 pipeline sums and full-model framework latencies as **separate absolute tables only** — **do not** compute speedups across those tables (CLAIM-PIPE-001). On **DICC**, historical multi-session trees show matching **PyTorch Block 3 faster than CUDA Block 3 FP16** (~363 vs ~513 µs V100S; ~385–391 vs ~667–671 µs A100) as **pre_fix** wall-clock only (**Option B**, 2026-08-15: not a post_fix server rebench — `docs/B3_SERVER_LATENCY_DECISION.md`), while CUDA remains much faster on Blocks 1/2/4. Full Custom CUDA vs full V3 speedup is **not** claimed. B3 source race+alignment is fixed; **local production-weight CUDA–PyTorch full-sequence parity is closed** (`benchmarks/results/block3_parity_gate.json`, `valid=true`, `kernel_status=post_fix`); local parity is **not** DICC latency. Async on-device LLM **dispatch** is **16.60 µs p99** (not full generation or validated free-form explainability). Authority: `docs/CLAIM_MAP_PREWRITE.md`, `docs/B3_SERVER_LATENCY_DECISION.md`, `docs/PRE_MANUSCRIPT_CLOSURE.md`, `docs/KNOWN_LIMITATIONS.md`, `docs/ISSUE_REGISTER.md`, `COLIDE_Remediation_Update_Review.md`.
@@ -24,8 +59,10 @@ COLIDE is a multi-objective IoT IDS systems project: a sealed-protocol CAD-CBA d
 | [`docs/KNOWN_LIMITATIONS.md`](docs/KNOWN_LIMITATIONS.md) | Pseudo-sequence, test access, baselines, CUDA scope, energy, bulk throughput, ToN invalid path |
 | [`docs/CLAIM_MAP_PREWRITE.md`](docs/CLAIM_MAP_PREWRITE.md) | OK / FORBIDDEN claim rows for manuscript drafting |
 | [`docs/B3_SERVER_LATENCY_DECISION.md`](docs/B3_SERVER_LATENCY_DECISION.md) | **Option B (2026-08-15):** DICC B3 latency is **historical pre_fix only** — not post_fix rebench |
-| [`docs/PRE_MANUSCRIPT_CLOSURE.md`](docs/PRE_MANUSCRIPT_CLOSURE.md) | Data remediation closed; CUDA evidence + publication sync **pending** (not submission-ready) |
-| [`COLIDE_Remediation_Update_Review.md`](COLIDE_Remediation_Update_Review.md) | External readiness review (Phases 1–8) |
+| [`docs/PRE_MANUSCRIPT_CLOSURE.md`](docs/PRE_MANUSCRIPT_CLOSURE.md) | Data + **local** CUDA gates closed; DICC B3 post_fix latency still Option B; manuscript prep underway |
+| [`docs/CHERAN_MANUSCRIPT_HANDOFF.md`](docs/CHERAN_MANUSCRIPT_HANDOFF.md) | Pack for manuscript lead (locked numbers + claim rules) |
+| [`COLIDE_Remediation_Update_Review.md`](COLIDE_Remediation_Update_Review.md) | Evidence-backed readiness review (local gates vs remaining pub items) |
+| [`docs/README.md`](docs/README.md) | Full documentation map (current / historical / correspondence) |
 
 Stale-claim guard: `python scripts/check_stale_claims.py` (fails on forbidden ToN-clean strings and risky post_fix+B3+DICC phrasing in active surfaces).
 

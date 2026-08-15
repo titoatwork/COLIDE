@@ -1,3 +1,9 @@
+> **Status: INTERNAL correspondence / NOT CURRENT AUTHORITY (frozen ~2026-07, as sent).**  
+> Do not cite this file as the live claim surface or as manuscript evidence. Current authority: `README.md`, `docs/CLAIM_MAP_PREWRITE.md`, `docs/RESULTS_INDEX.md`, `docs/CHERAN_MANUSCRIPT_HANDOFF.md`.  
+> Email / coordination text only. Numbers or “local wrap-up / DICC next week” wording below are historical.  
+> Kept for audit trail. Stale numbers here may be superseded (ToN clean 0.9526 INVALID; principal BoT is 0.9780±0.0033; DICC B3 latency is pre_fix / Option B).  
+> Public GitHub visitors: this is internal correspondence, not a results paper.
+
 # Prof Por — short summary email (as sent)
 
 **Status:** **SENT** (user) · CC: CHERANRACH  

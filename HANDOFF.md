@@ -1,3 +1,9 @@
+> **Status: HISTORICAL / NOT CURRENT AUTHORITY (frozen ~2026-08-12).**  
+> Do not cite this file as the live claim surface. Current authority: `README.md`, `docs/CLAIM_MAP_PREWRITE.md`, `docs/RESULTS_INDEX.md`, `docs/CHERAN_MANUSCRIPT_HANDOFF.md`.  
+> The header **PRE-MANUSCRIPT FULLY CLOSED** below is **not** live truth (superseded 2026-08-14/15). CUDA evidence / publication sync remain open; see `docs/PRE_MANUSCRIPT_CLOSURE.md`.  
+> Kept for audit trail. Stale numbers here may be superseded (ToN clean 0.9526 INVALID; principal BoT is 0.9780±0.0033; DICC B3 latency is pre_fix / Option B).  
+> Public GitHub visitors: treat this as a frozen session log, not manuscript evidence.
+
 # COLIDE — Session Handoff
 
 **MODE:** ✅ **PRE-MANUSCRIPT FULLY CLOSED** · **next = manuscript writing only**  

@@ -1,3 +1,9 @@
+> **Status: INTERNAL coding-agent notes / NOT CURRENT AUTHORITY (frozen ~2026-08).**  
+> Do not cite this file as the live claim surface. Current authority: `README.md`, `docs/CLAIM_MAP_PREWRITE.md`, `docs/RESULTS_INDEX.md`, `docs/CHERAN_MANUSCRIPT_HANDOFF.md`.  
+> Internal agent guidance (session handoff, Option A, champion lock). Not manuscript evidence.  
+> Kept for audit trail. Stale numbers here may be superseded (ToN clean 0.9526 INVALID; principal BoT is 0.9780±0.0033; DICC B3 latency is pre_fix / Option B).  
+> Public GitHub visitors: ignore as coding-agent notes.
+
 # AGENTS.md
 
 This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
