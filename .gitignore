@@ -63,3 +63,7 @@ model/model.onnx
 !benchmarks/results/framework_parity_champion.onnx
 !benchmarks/results/sanitizer_b3/
 !benchmarks/results/sanitizer_b3/**
+!benchmarks/results/figures_current/
+!benchmarks/results/figures_current/**
+!benchmarks/results/figures_archived/
+!benchmarks/results/figures_archived/**

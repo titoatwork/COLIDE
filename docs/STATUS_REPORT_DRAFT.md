@@ -1,8 +1,9 @@
 # COLIDE — Full Interim Status Report
 
-> **SUPERSEDED for current status (2026-08-12).**  
-> Living authority: `docs/PRE_MANUSCRIPT_CLOSURE.md`, `docs/DICC_EXTRACTION_TABLES.md`, `HANDOFF.md`.  
-> DICC multi-session SUCCESS **exists** on laptop; this draft’s “ABSENT / blocker” sections are **historical**.
+> **SUPERSEDED for current status (2026-08-15).**  
+> Living authority: `docs/PRE_MANUSCRIPT_CLOSURE.md`, `docs/CLAIM_MAP_PREWRITE.md`, `docs/DICC_EXTRACTION_TABLES.md`, `HANDOFF.md`.  
+> DICC multi-session SUCCESS **exists** on laptop; this draft’s “ABSENT / blocker” sections are **historical**.  
+> **Claim hygiene (tombstone):** bare **0.9790** is **historical / legacy**; ToN clean **0.9526** / **0.9851** / **+15.4%** are **INVALID / tombstone** only — principal BoT is sealed **0.9780 ± 0.0033**; active ToN is CNN **0.8075** / RF **0.9626**.
 
 **Audience:** Prof. Dr. Por Lip Yee (PI); internal status; feedstock for a short email or slides  
 **Draft date:** 2026-07-18 (full depth expansion)  
@@ -37,9 +38,9 @@ COLIDE is a **systems / measurement** project for **custom CUDA inference** of a
 
 **Done (local, early July 2026 arc + freeze):**
 
-- Production two-stage model **macro-F1 0.9790** (checkpoint md5 frozen); RF apples-to-apples **0.9864** → honest gap **0.74%** (we do **not** beat RF).
+- Production two-stage model **historical / legacy** single-run **macro-F1 0.9790** (checkpoint md5 frozen); principal sealed multi-seed is **0.9780 ± 0.0033**. RF apples-to-apples **0.9864** → honest gap **0.74%** on the legacy path (we do **not** beat RF).
 - Laptop (WSL2 RTX 3050) latency reported as **multi-session ranges**, not lucky points; Block 3 FP16 **532–602 µs** vs cuDNN-style baseline **784 µs** locally.
-- Real LLM dispatch **16.60 µs p99**; streaming ~**25,899** flows/s; energy and cuML comparison tables sourced.
+- Real LLM dispatch **16.60 µs p99**; **bulk batched** throughput ~**25,899** flows/s (**not** paced streaming); energy and cuML comparison tables sourced.
 - Numerical fidelity: export bit-identical; **6/6** CUDA self-checks PASS (CUDA contract = last-timestep, not full V3).
 - Extensive claim hygiene: fabricated/unsourced numbers removed; `verify_claims.py` green (**66 pass / 0 fail** this audit).
 - **Option A** locked: **per-block** Custom CUDA vs matching PyTorch only; **no** full-pipeline Custom CUDA vs full V3 as apples-to-apples speedup; **no** “same computation” language.
@@ -77,7 +78,7 @@ Build and measure a **hand-written CUDA inference path** for a production-style 
 | **Forbidden** | Full-pipeline Custom CUDA vs **full** PyTorch V3 as apples-to-apples speedup |
 | **Forbidden language** | Custom CUDA and eager V3 are “**the same computation**” — they are **not** |
 | **Why invalid** | V3 has MultiheadAttention + residual LayerNorm + global average pool after BiLSTM; **no CUDA kernel implements these**. CUDA uses **last timestep**; V3 uses **mean over sequence after attention**. `fused_pipeline.cu` times B1+B2+B4 and adds B3 as a **separate timed addend**, not true B3→B4 device dataflow. Harness already sets `full_pipeline_cuda_vs_pytorch.valid = false`. |
-| **Accuracy honesty** | RF **0.9864** > CNN **0.9790**; do not claim beating RF / SOTA |
+| **Accuracy honesty** | RF **0.9864** > CNN **historical / legacy 0.9790** (principal sealed **0.9780 ± 0.0033**); do not claim beating RF / SOTA |
 | **Champion freeze** | `model/best_model_botiot_twostage.pth` md5 **`80a90f7cc210276300eaa90173a5a385`** — **no training, no clobber** |
 | **Official cluster** | **UM DICC only** (not Rostam) |
 | **June 551/592 µs** | **LEGACY single-shot** only |
@@ -101,7 +102,7 @@ This section is the bulk of the interim report: **work packages + frozen results
 |--------|--------|---------|
 | **~2026-06-21** | Historical UM single jobs | V100S ~**551 µs**, A100 ~**592 µs** pipeline totals (CUDA-only summaries) — now **LEGACY** |
 | **~2026-07-01** | Provenance crisis / claim hygiene | Fabricated LLM overhead, unsourced speedups, bad citation, wrong weight export path **found and fixed**; verifier + CUDA stats harness introduced |
-| **~2026-07-01–02** | Accuracy + latency re-grounding | KD path → **0.9790**; RF **0.9864** sourced; Block 3 cuDNN **784 µs**; race fix; multi-session **ranges** |
+| **~2026-07-01–02** | Accuracy + latency re-grounding | KD path → **historical / legacy 0.9790**; RF **0.9864** sourced; Block 3 cuDNN **784 µs**; race fix; multi-session **ranges** |
 | **~2026-07 mid** | Local sessions S4–S7; cluster tooling | Ensemble/RF strengthen (champion kept); fidelity; DICC `run_campaign` hardened; Rostam Day 1 **tooling trial** |
 | **2026-07-14** | Design freeze | **Option A approved**; Prof 3-day playbook written; multi-day UM still not started on hardened stack |
 | **2026-07-17** | Final plan | P0–P5 phases; **numbers-match hard gate** before final Prof multi-day email |
@@ -112,7 +113,7 @@ This section is the bulk of the interim report: **work packages + frozen results
 | Work | Status | Outcome |
 |------|--------|---------|
 | BoT-IoT preprocessing (per-flow v2) | **Done** | Windowed pipeline abandoned; processed features shared with RF baseline |
-| Two-stage training: KD + real-data fine-tune | **Done / frozen** | Test macro-F1 **0.9790** |
+| Two-stage training: KD + real-data fine-tune | **Done / frozen** | Test macro-F1 **0.9790** (**historical / legacy** single-run; sealed principal **0.9780 ± 0.0033**) |
 | Stage-1 KD winner | **Done** | α=**0.6**, T=**10**, focal γ=**2** → test **0.9763** |
 | Stage-1 bit-identical repro | **Done** | Repro JSON macros match winner |
 | Focal γ ∈ {1, 3, 4} | **Done (negative)** | Did not displace γ=2 path; champion unchanged |
@@ -122,22 +123,22 @@ This section is the bulk of the interim report: **work packages + frozen results
 | Ensemble KD path | **Done (not champion)** | Val-F1 bug fixed (S5); ensemble F1 **0.9529** |
 | Balanced-RF KD (S6) | **Skipped** | Low expected value |
 | MLP ablation | **Done** | Two-stage MLP **0.9542** (faster, not champion) |
-| ToN-IoT clean | **Done** | CNN **0.9526**, RF **0.9851**, gap ~**3.25–3.3%** |
-| Weight export for CUDA | **Done** | Re-exported against 0.9790; real-weight validation path updated |
+| ToN-IoT clean | **INVALID / tombstone** | CNN **0.9526**, RF **0.9851**, +15.4% — **DATA-TON-001**; active ToN CNN **0.8075** / RF **0.9626** |
+| Weight export for CUDA | **Done** | Re-exported against historical 0.9790 champion; real-weight validation path updated |
 | Superseded two-stage **0.9639** | **Superseded** | Must not be stated as current |
 
 #### Frozen accuracy numbers (with sources)
 
 | Metric | Value | Source path | Confidence |
 |--------|------:|-------------|------------|
-| Champion test macro-F1 | **0.9790** | `benchmarks/results/twostage_botiot.json` | HIGH |
+| Champion test macro-F1 (historical / legacy single-run) | **0.9790** | `benchmarks/results/twostage_botiot.json` | HIGH as **legacy** only; principal sealed **0.9780 ± 0.0033** |
 | Champion md5 | **`80a90f7cc210276300eaa90173a5a385`** | `model/best_model_botiot_twostage.pth` | HIGH (disk-confirmed audit) |
 | RF test macro-F1 | **0.9864** | `rf_baseline_processed.json` | HIGH |
 | Gap RF − CNN | **0.74%** | computed | HIGH |
 | Stage-1 KD test F1 | **0.9763** | `distill_botiot_a0.6_T10.0_focal2.json` | HIGH |
 | MLP two-stage | **0.9542** | `mlp_twostage.json` | HIGH |
 | Ensemble | **0.9529** | `ensemble_distill.json` | HIGH (not champion) |
-| ToN clean CNN / RF | **0.9526** / **0.9851** | `toniot_clean_*` | HIGH |
+| ToN clean CNN / RF | **0.9526** / **0.9851** | `toniot_clean_*` | **INVALID / tombstone** (DATA-TON-001) |
 | RF strengthen best | ~**0.9885** | `rf_teacher_strengthen.json` | HIGH as **diagnostic only** |
 
 **Honesty line for every status surface:** We **do not** claim beating RF or SOTA accuracy. Systems contribution is the lead.
@@ -154,7 +155,7 @@ This section is the bulk of the interim report: **work packages + frozen results
 | Custom CUDA derived pipeline total | **Done as ranges** | **594–675 µs** multi-session composition (derived/additive) |
 | Measurement stability narrative | **Done** | Within-session CV understates uncertainty; **ranges required** |
 | LLM async dispatch | **Done** | p99 **16.60 µs** (n=5000); generation multi-second / illustrative quality |
-| Streaming throughput | **Done** | ~**25,899** flows/s batch=128 RTX 3050 |
+| Bulk batched throughput (not streaming) | **Done** | ~**25,899** flows/s batch=128 RTX 3050 (**not** offered-load saturation) |
 | Energy (RTX / A100) | **Done (single-protocol)** | ~**0.79** / ~**1.089** mJ/flow |
 | cuML RF resources | **Done** | Higher throughput/energy efficiency on A100; **much higher VRAM** (~444 MB vs ~2 MB) |
 | torch.compile BiLSTM crash note | **Documented** | Methods / limitations material |
@@ -185,7 +186,7 @@ This section is the bulk of the interim report: **work packages + frozen results
 | Fabricated LLM **5.19 µs** | **Fixed** | Real p99 **16.60** |
 | Unsourced pipeline **2.76×** / cross-HW DICC ratios | **Fixed / removed** | No June vs-PyTorch ratios |
 | One-sample significance abuse | **Fixed** | Two-sample Welch |
-| Stale pre-KD weight export | **Fixed** | Re-export for 0.9790 |
+| Stale pre-KD weight export | **Fixed** | Re-export for historical 0.9790 champion |
 | Fabricated Sophimatics citation | **Fixed** | Replaced with Ibrahim et al. (CN 2026) with honest caveats |
 | RF 0.9864 uncorroborated | **Fixed** | Traced to real script/JSON |
 | Branch unify `final-polish` → `master` | **Done** | Single canonical branch |
@@ -235,7 +236,7 @@ Sources: `benchmarks/results/dicc_v100_summary.txt`, `dicc_a100_summary.txt`. Va
 | Metric | Value | Source |
 |--------|------:|--------|
 | LLM dispatch p99 | **16.60 µs** (n=5000) | `llm_explainability.json` |
-| Streaming max (batched) | **~25,899** flows/s | `streaming_throughput.json` |
+| Bulk batched max (not streaming SLA) | **~25,899** flows/s | `streaming_throughput.json` (BENCH-STREAM-001) |
 | Energy RTX | **~0.79 mJ/flow** | `energy_efficiency.json` |
 | Energy A100 | **~1.089 mJ/flow** | `a100_energy.json` |
 | A100 CNN throughput (derived) | **~87,791** flows/s | from A100 energy timing |
@@ -375,7 +376,7 @@ Prefer partitions over fixed nodelists; prefer venv over conda under `set -u`; p
 - Per-block latency (laptop + DICC when available)  
 - Block 3 CUDA vs PT (valid head-to-head)  
 - Multi-day stability (when L3 accepts)  
-- Accuracy vs RF (0.9790 vs 0.9864)  
+- Accuracy vs RF (historical / legacy 0.9790 vs 0.9864; principal sealed 0.9780±0.0033)  
 - LLM dispatch overhead  
 
 **Clock (plan):** ~**1.5–3 months** calendar for solid FGCS-leaning draft + PI feedback (separate from P0–P3).
@@ -420,7 +421,7 @@ Prefer partitions over fixed nodelists; prefer venv over conda under `set -u`; p
 
 ## 6. Threats to validity (status-facing summary)
 
-1. **Accuracy second to RF** (0.9864 vs 0.9790) — systems paper framing required.  
+1. **Accuracy second to RF** (0.9864 vs historical / legacy 0.9790; principal sealed 0.9780±0.0033) — systems paper framing required.  
 2. **WSL2 session drift** — laptop latency must stay **ranges**.  
 3. **Architecture parity** — custom CUDA ≠ full V3; no “same computation.”  
 4. **Derived pipeline totals** — additive composition; B3 not necessarily true device chain into head.  
@@ -431,7 +432,7 @@ Prefer partitions over fixed nodelists; prefer venv over conda under `set -u`; p
 9. **Gitignored claim sources** — packaging/repro risk for coauthors.  
 10. **June 551/592** — legacy single-shot only.  
 11. **Stage-2 not bit-reproved** — Stage-1 is; Stage-2 uses same discipline but not empirically bit-identical.  
-12. **Energy / streaming** — single-protocol artifacts (not multi-session ranges).
+12. **Energy / bulk throughput** — single-protocol artifacts (not multi-session ranges; not paced streaming).
 
 ---
 
@@ -460,7 +461,7 @@ Prefer partitions over fixed nodelists; prefer venv over conda under `set -u`; p
 | a0.6 T10 focal2 | 0.6 | 10 | 2 | **0.9763** | Stage-1 winner (+ bit-repro) |
 | a0.6 T10 focal1/3/4 | 0.6 | 10 | 1/3/4 | lower / not champion path | Negative γ sweep |
 | a0.7 T10 focal2 | 0.7 | 10 | 2 | **0.9033** | Outlier negative |
-| Two-stage FT after winner | — | — | — | **0.9790** | **Champion** |
+| Two-stage FT after winner | — | — | — | **0.9790** | **Champion (historical / legacy single-run)** |
 
 Full grid: audit `09_RAW_NUMBER_TABLES.md` / on-disk `distill_botiot_*.json`.
 
@@ -468,16 +469,16 @@ Full grid: audit `09_RAW_NUMBER_TABLES.md` / on-disk `distill_botiot_*.json`.
 
 | metric | value | source | label |
 |--------|------:|--------|-------|
-| champion_macro_f1 | 0.9790 | twostage_botiot.json | CURRENT |
-| champion_md5 | 80a90f7cc210276300eaa90173a5a385 | model ckpt | CURRENT |
-| rf_test_macro_f1 | 0.9864 | rf_baseline_processed.json | CURRENT published bar |
-| rf_gap_pct | 0.74 | computed | CURRENT |
-| kd_stage1_f1 | 0.9763 | distill_…focal2.json | CURRENT |
-| ton_clean_cnn_f1 | 0.9526 | toniot_clean_* | CURRENT |
-| llm_overhead_p99_us | 16.60 | llm_explainability.json | CURRENT |
-| streaming_gpu_batched_max | ~25899 | streaming_throughput.json | CURRENT |
-| energy_rtx_mj_per_flow | 0.79 | energy_efficiency.json | CURRENT |
-| energy_a100_mj_per_flow | 1.089 | a100_energy.json | CURRENT |
+| champion_macro_f1 | 0.9790 | twostage_botiot.json | **HISTORICAL / LEGACY** (principal sealed 0.9780±0.0033) |
+| champion_md5 | 80a90f7cc210276300eaa90173a5a385 | model ckpt | CURRENT weights fingerprint |
+| rf_test_macro_f1 | 0.9864 | rf_baseline_processed.json | CURRENT published dual-bar only |
+| rf_gap_pct | 0.74 | computed | HISTORICAL vs legacy 0.9790 |
+| kd_stage1_f1 | 0.9763 | distill_…focal2.json | CURRENT stage-1 |
+| ton_clean_cnn_f1 | 0.9526 | toniot_clean_* | **INVALID / TOMBSTONE** |
+| llm_overhead_p99_us | 16.60 | llm_explainability.json | CURRENT dispatch-only |
+| streaming_gpu_batched_max | ~25899 | streaming_throughput.json | **BULK BATCHED** (not streaming SLA) |
+| energy_rtx_mj_per_flow | 0.79 | energy_efficiency.json | EXPLORATORY |
+| energy_a100_mj_per_flow | 1.089 | a100_energy.json | EXPLORATORY |
 | pytorch_b3_mean_us | 784 | pytorch_block3_stats_rtx3050.json | CURRENT |
 | cuda_b3_fp16_range_us | 532–602 | multi-session | CURRENT |
 | cuda_pipeline_range_us | 594–675 | multi-session composition | CURRENT |

@@ -29,7 +29,8 @@ Severity: `P0` (blocking) · `P1` (required cleanup) · `P2` (small improvement)
 
 ## CUDA-B3-001 — Optimized Block-3 hidden-state race
 
-> **2026-08-14 close (local):** double-buffer in source; full sanitizer suite (racecheck/synccheck/initcheck/memcheck) **0 errors** on FP32+FP16 (`benchmarks/results/sanitizer_b3/`); production-weight inject parity **PASS** (`block3_parity_gate.json` `valid=true`, `kernel_status=post_fix`). **DICC multi-session post_fix latency rebench still not run** — server wall-clock B3 numbers remain historical pre_fix.
+> **2026-08-14 close (local):** double-buffer in source; full sanitizer suite (racecheck/synccheck/initcheck/memcheck) **0 errors** on FP32+FP16 (`benchmarks/results/sanitizer_b3/`); production-weight inject parity **PASS** (`block3_parity_gate.json` `valid=true`, `kernel_status=post_fix`). **DICC multi-session post_fix latency rebench still not run** — server wall-clock B3 numbers remain historical pre_fix.  
+> **2026-08-15 publication path (Option B):** comparative DICC B3 latency claim **dropped from active tables** pending rebench; historical pre_fix only. Decision: `docs/B3_SERVER_LATENCY_DECISION.md`.
 
 
 | Field | Value |
@@ -39,9 +40,9 @@ Severity: `P0` (blocking) · `P1` (required cleanup) · `P2` (small improvement)
 | **Affected files** | `inference/kernels/fused_block3.cu`; `inference/kernels/fused_block3_fp16.cu` (and related); CUDA stats JSONs under `benchmarks/results/` and DICC SUCCESS trees |
 | **Affected results** | All optimized B3 latency means (laptop ranges, DICC ~513 / ~667–671 µs CUDA B3) |
 | **Affected claims** | Matching-op B3 speedup vs PyTorch; progression table FP16 step; “beats cuDNN” on laptop |
-| **Remediation decision** | **Race fixed in source + local sanitizers green + local real-weight parity green.** DICC multi-session **latency** still historical pre_fix until rebench or claim drop. |
-| **Completion evidence** | Source double-buffer; `benchmarks/results/sanitizer_b3/summary.json`; `benchmarks/results/block3_parity_gate.json` (`valid: true`, `kernel_status: post_fix`) |
-| **Status** | **CLOSED (local correctness)** — server latency rebench optional / OPEN |
+| **Remediation decision** | **Race fixed in source + local sanitizers green + local real-weight parity green.** DICC multi-session **latency** still historical pre_fix. **Option B (2026-08-15):** drop comparative server B3 speed claim from active path; keep pre_fix labeled historical; rebench path documented if Option A later. |
+| **Completion evidence** | Source double-buffer; `benchmarks/results/sanitizer_b3/summary.json`; `benchmarks/results/block3_parity_gate.json` (`valid: true`, `kernel_status: post_fix`); decision `docs/B3_SERVER_LATENCY_DECISION.md` |
+| **Status** | **CLOSED (local correctness)** — server latency **OPEN**; active comparative claim **dropped (Option B)** |
 | **Date** | 2026-08-14 |
 | **Closed commit** | `12e8aa1` (gates) / tip after review fill |
 
@@ -49,7 +50,7 @@ Severity: `P0` (blocking) · `P1` (required cleanup) · `P2` (small improvement)
 
 ## CUDA-B3-002 — Reverse-sequence output alignment
 
-> **2026-08-14 update:** reverse stores at original sequence `pos`; CUDA self-check PASS after rebuild. Full real-weight CUDA↔PT gate still intermediate (`valid=false` until inject).
+> **2026-08-14 close (local):** reverse store at original `pos`; GPU inject vs PT full-sequence max abs ~3.4e-6 PASS; hybrid suffix logits PASS.
 
 
 | Field | Value |
@@ -59,31 +60,31 @@ Severity: `P0` (blocking) · `P1` (required cleanup) · `P2` (small improvement)
 | **Affected files** | Optimized Block-3 CUDA sources; numerical validators |
 | **Affected results** | Same B3 numerical/timing artifacts as CUDA-B3-001 |
 | **Affected claims** | Semantic parity of Custom CUDA B3 with matching PT B3 |
-| **Remediation decision** | **Alignment fixed in source 2026-08-14** (reverse store at original `pos`). Wall-clock DICC/laptop numbers remain **pre_fix** until rebench + parity gate green. |
-| **Completion evidence** | `inference/kernels/fused_block3.cu` / `fused_block3_fp16.cu` reverse-alignment comments + store path; `docs/CUDA_WEIGHT_MAPPING.md`; `scripts/parity_block3_cuda_pt.py` |
-| **Status** | **CODE_FIXED_AWAITING_REBENCH** |
+| **Remediation decision** | **Alignment fixed; local production-weight full-sequence parity green.** |
+| **Completion evidence** | Source store-at-`pos`; `block3_parity_gate.json` `gpu_pt_pass: true` |
+| **Status** | **CLOSED (local)** |
 | **Date** | 2026-08-14 |
-| **Closed commit** | — |
+| **Closed commit** | `12e8aa1` |
 
 ---
 
 ## CUDA-B3-003 — CUDA / PyTorch output-contract mismatch / production-weight parity
 
-> **2026-08-14 update:** contract documented; race+align fixed in source; synthetic/self-check path intermediate. **Production-weight CUDA–PyTorch parity is not established** (`valid: false`, `use_in_manuscript: false`, `kernel_status: code_fixed_awaiting_rebench`). Status remains **CODE_FIXED_AWAITING_REBENCH**.
+> **2026-08-14 close (local):** full-sequence contract primary; champion weight inject into `fused_block3`; GPU vs PT full-seq max abs ~3.4e-6; hybrid V3 suffix logits PASS (class 4/4). Gate: `valid=true`, `use_in_manuscript=true`, `kernel_status=post_fix`. Scope: fixed seed/batch/geometry on laptop; not DICC multi-session latency.
 
 
 | Field | Value |
 |-------|--------|
 | **Severity** | P0 |
-| **Summary** | PyTorch path typically takes `output[:, -1, :]` (last time index); CUDA extract uses last recurrence-step semantics that can diverge for the reverse direction under misalignment. Full V3 attention needs the complete aligned sequence. Production champion weights have not been shown to match CUDA Block-3 output on GPU. |
-| **Affected files** | Block-3 harnesses; `scripts/numerical_fidelity.py`; real-weight validators; `scripts/parity_block3_cuda_pt.py` |
+| **Summary** | PyTorch path typically takes `output[:, -1, :]` (last time index); CUDA extract uses last recurrence-step semantics that can diverge for the reverse direction under misalignment. Full V3 attention needs the complete aligned sequence. Production champion weights must match CUDA Block-3 output on GPU. |
+| **Affected files** | Block-3 harnesses; real-weight validators; `scripts/parity_block3_cuda_pt.py`; `scripts/export_block3_weights.py` |
 | **Affected results** | Fidelity / “matching Block 3” language; any post_fix B3 claim |
 | **Affected claims** | Full or per-block “same computation” framing; post_fix matching-op speedups |
-| **Remediation decision** | **Contract documented + harness in place.** Full sequence aligned so `fw[k]` and `rev[k]` are both at input time `k`; last timestep = `output[:, -1, :]` on aligned sequence. Race+align fixed in source 2026-08-14; wall-clock remains **pre_fix** until rebench + **production-weight** parity gate green. Option A still forbids full-pipeline CUDA vs full V3. |
-| **Completion evidence** | `docs/CUDA_WEIGHT_MAPPING.md`; `scripts/parity_block3_cuda_pt.py` → `benchmarks/results/block3_parity_gate.json` (`valid: false`); fused_block3 extract comments |
-| **Status** | **CODE_FIXED_AWAITING_REBENCH** (parity open) |
+| **Remediation decision** | **Local production-weight full-sequence parity closed.** Last-timestep is auxiliary/legacy. Option A still forbids full-pipeline CUDA vs full V3. DICC latency rebench still separate. |
+| **Completion evidence** | `benchmarks/results/block3_parity_gate.json` (`valid: true`, `kernel_status: post_fix`, hybrid PASS); weight inject bins under `block3_parity_weights/` |
+| **Status** | **CLOSED (local)** |
 | **Date** | 2026-08-14 |
-| **Closed commit** | — |
+| **Closed commit** | `12e8aa1` |
 
 ---
 
@@ -199,8 +200,8 @@ Severity: `P0` (blocking) · `P1` (required cleanup) · `P2` (small improvement)
 | Principal BoT number | Sealed multi-seed **0.9780 ± 0.0033** is principal; historical single-run **0.9790** is development/legacy only |
 | Batch-1 multi-compiler | DICC matrix is batch-1 absolute protocol — do not mix with laptop ranges |
 | Partial vs full ratios | CLAIM-PIPE-001: no speedups across incomplete Custom CUDA sum and full-model tables |
-| B3 pre_fix server result | DICC “PT wins B3” is wall-clock of **pre_fix** historical binaries; race+align fixed in source (`CODE_FIXED_AWAITING_REBENCH`); **production-weight parity open**; rebench + parity gate green before post_fix claims |
-| Project closure | DATA closed; CUDA evidence + publication synchronization **pending** (`COLIDE_Remediation_Update_Review.md`) |
+| B3 server latency | **OPEN (latency) / Option B active path (2026-08-15):** comparative post_fix DICC B3 speed claim **dropped from active manuscript path** pending rebench. Historical pre_fix wall-clock may appear **only** as labeled historical. Local parity/sanitizers **closed**. Rebench path (Option A later): `docs/B3_SERVER_LATENCY_DECISION.md` · `docs/REMEDIATION_STATUS.md` |
+| Project closure | DATA closed; local B3 correctness closed; server B3 latency comparative claim not active; publication synchronization **pending** (`COLIDE_Remediation_Update_Review.md`) |
 
 ## Maintenance
 

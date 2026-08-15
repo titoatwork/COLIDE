@@ -1,8 +1,9 @@
 # COLIDE — Prof. Por update (≤3 days) — command plan
 
-> **SUPERSEDED for current status (2026-08-12).**  
-> Campaign + stretch executed. Living authority: `HANDOFF.md`, `docs/PRE_MANUSCRIPT_CLOSURE.md`, `docs/DICC_EXTRACTION_TABLES.md`.  
-> This file remains as a historical run plan only.
+> **SUPERSEDED for current status (2026-08-15).**  
+> Campaign + stretch executed. Living authority: `HANDOFF.md`, `docs/PRE_MANUSCRIPT_CLOSURE.md`, `docs/CLAIM_MAP_PREWRITE.md`, `docs/DICC_EXTRACTION_TABLES.md`.  
+> This file remains as a **historical / legacy** run plan only.  
+> **Claim hygiene (tombstone):** bare **0.9790** is **historical / legacy** only; ToN **0.9526** is **INVALID**; partial-vs-full CUDA ratios are **FORBIDDEN**. Principal BoT: **0.9780 ± 0.0033**. Active ToN: CNN **0.8075** / RF **0.9626**.
 
 **Deadline:** give Prof. Dr. Por Lip Yee a **quick status update with numbers within ≤3 days**  
 **Priority freeze:** **DICC multi-day numbers first**; manuscript spine / deep claim rewrites / stretch WPs **after** the update.  
@@ -34,14 +35,14 @@ Prof gets a **status pack**, not a finished paper. Include:
 |--------|--------|--------|
 | Production model | Two-stage CNN-BiLSTM | `best_model_botiot_twostage.pth` |
 | Checkpoint md5 | `80a90f7cc210276300eaa90173a5a385` | laptop |
-| BoT-IoT test macro-F1 | **0.9790** | `twostage_botiot.json` |
+| BoT-IoT test macro-F1 | **0.9790** (**historical / legacy**) | `twostage_botiot.json`; principal sealed **0.9780 ± 0.0033** |
 | CPU RF (same splits) | **0.9864** | `rf_baseline_processed.json` |
-| Gap to RF | **0.74%** | 0.9864 − 0.9790 |
-| ToN-IoT clean macro-F1 | **0.9526** | README / toniot clean results |
+| Gap to RF | **0.74%** | vs historical 0.9790 |
+| ToN-IoT clean macro-F1 | **0.9526** (**INVALID / tombstone**) | DATA-TON-001; active ToN CNN **0.8075** / RF **0.9626** |
 | LLM dispatch p99 | **16.60 µs** | `llm_explainability.json` |
-| Streaming throughput (RTX 3050) | **25,899 flows/s** (batch=128) | `streaming_throughput.json` |
-| Custom CUDA FP16 “pipeline” range (laptop) | **594–675 µs** | multi-session; **sum-of-blocks methodology** |
-| Framework speedup **ranges** (laptop, scoped) | Eager **3.04–3.78×**, torch.compile **2.25–2.99×**, TensorRT **3.60–4.99×**, ORT-GPU **5.72–7.83×** | README; WSL2 ranges |
+| Bulk batched throughput (RTX 3050) | **~25,899 flows/s** (batch=128) | **not** paced streaming (BENCH-STREAM-001) |
+| Custom CUDA FP16 “pipeline” range (laptop) | **594–675 µs** | multi-session; **sum-of-blocks**; incomplete scope |
+| Framework speedup **ranges** (laptop) | Eager **3.04–3.78×**, … TensorRT **3.60–4.99×** | **HISTORICAL / FORBIDDEN as active** partial-vs-full (CLAIM-PIPE-001) |
 | Block 3 FP16 progression (laptop) | **7.55–9.50×** vs naive; vs cuDNN-style block **1.30–1.47×** | ranges |
 | Numerical fidelity | Export path bit-identical n=10; 6 CUDA self-checks PASS | `numerical_fidelity.json` |
 | Tarball for cluster | `~/colide-master-for-dicc.tar.gz` (~356 MB) | already packed |
@@ -212,15 +213,15 @@ Summary (local half locked; DICC multi-day honest TBD):
 >  
 > **Goal:** FGCS-class systems paper: custom CUDA inference for CNN-BiLSTM IoT IDS + on-device LLM explainability; contribution is systems/measurement, not SOTA accuracy.  
 >  
-> **Accuracy (final local, frozen):** BoT-IoT two-stage model **macro-F1 = 0.9790** (checkpoint md5 `80a90f7c…`). Apples-to-apples CPU RF on same splits **0.9864** → gap **0.74%**. ToN-IoT clean **0.9526**. We do **not** claim beating RF.  
+> **Accuracy (historical pack; superseded):** two-stage single-run **macro-F1 = 0.9790** (**historical / legacy**; checkpoint md5 `80a90f7c…`). Principal sealed multi-seed is **0.9780 ± 0.0033**. RF same splits **0.9864**. ToN clean **0.9526** is **INVALID**; active ToN CNN **0.8075** / RF **0.9626**. We do **not** claim beating RF.  
 >  
-> **Latency (laptop RTX 3050 / WSL2):** Custom CUDA FP16 block-sum pipeline **594–675 µs** (multi-session range). Framework comparisons as **ranges**: eager **3.04–3.78×**, torch.compile **2.25–2.99×**, TensorRT **3.60–4.99×**, ORT-GPU **5.72–7.83×**. Block 3 FP16 ladder **7.55–9.50×** vs naive.  
+> **Latency (laptop RTX 3050 / WSL2):** Custom CUDA FP16 block-sum pipeline **594–675 µs** (incomplete scope, absolute). Full-model framework latencies as separate absolute ranges. **Historical / FORBIDDEN:** partial-vs-full “eager 3.04–3.78× / TensorRT 3.60–4.99×” headlines (CLAIM-PIPE-001). Intra-CUDA Block 3 FP16 ladder **7.55–9.50×** vs naive remains valid within-CUDA.  
 >  
 > **Important scientific caveat:** full-model Custom CUDA vs full PyTorch V3 speedup is **not** claimed — V3 has attention/LayerNorm/GAP that CUDA does not implement. Valid head-to-head is **per-block**, especially **Block 3 (BiLSTM)**.  
 >  
 > **LLM:** async on-device TinyLlama; dispatch overhead **16.60 µs p99** (5k trials).  
 >  
-> **Throughput:** **25,899 flows/s** streaming (batch=128, RTX 3050).  
+> **Throughput:** **~25,899 flows/s** **bulk batched** (batch=128, RTX 3050) — **not** paced streaming.  
 >  
 > **UM DICC:** June 2026 **legacy single-shot** pipeline totals — V100S **~551 µs**, A100 **~592 µs** (CUDA only; no same-GPU PT baseline). Multi-day Day1+Day2 + PT baselines are scripted; ops method locked: **OnDemand VNC + screen + batch `run_campaign.sh`** (`docs/DICC_OPS_METHOD.md`); SUCCESS tree still pending execution.  
 >  

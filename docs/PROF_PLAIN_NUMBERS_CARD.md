@@ -38,15 +38,18 @@
 
 ## Second dataset (ToN-IoT)
 
-- Same-style recipe on 13 features: neural test ~**0.811** vs same-split RF ~**0.939** (honest gap)
+- **Active (prefer):** leakage-safe CNN test **0.8075** / RF **0.9626** (`toniot_leakage_safe_v1`)
+- Optional older 13-feat package path: neural ~**0.811** vs RF ~**0.939** (comparable prior only)
+- Clean 26-feat **0.9526 / 0.9851 / +15.4%**: **INVALID** (do not cite)
 
 ## UM DICC multi-session (measured — three sessions, V100S + A100)
 
-- **Block 3 (same ops):** matching PyTorch is **faster** than our FP16 Custom CUDA on both GPUs  
+- **Block 3 (same ops):** matching PyTorch is **faster** than our FP16 Custom CUDA on both GPUs (**pre_fix** historical binaries; not post_fix rebench)  
   - V100S: ~**363 µs** PT vs ~**513 µs** CUDA  
   - A100: ~**385–391 µs** PT vs ~**667–671 µs** CUDA  
 - Custom CUDA remains much faster on Blocks **1, 2, and 4**  
-- Full Custom CUDA pipeline vs full PyTorch model: **not claimed** (architecture parity incomplete)  
+- Local production-weight B3 CUDA↔PT parity: **closed** (`block3_parity_gate.json` valid=true)  
+- Full Custom CUDA pipeline vs full PyTorch model: **not claimed** (Option A)  
 - Full-model PyTorch absolute: V100S ~**964–973 µs**; A100 ~**945–962 µs**  
 - Full multi-compiler on DICC (batch-1 protocol): TensorRT native ~**528 µs** (V100S) / ~**588 µs** (A100); torch.compile ~**865 / 770**; eager ~**1041 / 932** 
 

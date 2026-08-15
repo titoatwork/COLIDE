@@ -12,7 +12,7 @@
 | Area | Assessment |
 |------|------------|
 | **Data remediation** | **CLOSED** — ToN leakage removed; invalid clean path tombstoned; principal BoT **0.9780 ± 0.0033** framed |
-| **CUDA evidence** | **PENDING** — race+align fixed in source; racecheck local 0 hazards; production-weight parity open; server rebench open; full sanitizer suite partial |
+| **CUDA evidence** | **PARTIAL** — race+align fixed; local sanitizers 0 errors; **local production-weight parity closed** (`block3_parity_gate.json` valid=true); **DICC multi-session post_fix B3 latency rebench open** |
 | **Publication synchronization** | **PENDING** — README/claim map Phase 1 hygiene in progress; manuscript/figures not yet fully synced |
 | **Submission-ready** | **NO** |
 
@@ -41,9 +41,9 @@ Do not overwrite the champion without backup and explicit approval.
 | Issue ID | Summary | Status |
 |----------|---------|--------|
 | **DATA-TON-001** | Target-derived `label` in ToN features | **CLOSED offline** — quarantined; superseded by corrected run |
-| **CUDA-B3-001** | Optimized B3 hidden-state race | **CODE_FIXED_AWAITING_REBENCH** — double-buffer; local **racecheck 0 hazards**; production-weight parity still open |
-| **CUDA-B3-002** | Reverse-sequence output alignment | **CODE_FIXED_AWAITING_REBENCH** — store at original `pos`; self-check PASS; real-weight inject open |
-| **CUDA-B3-003** | CUDA / PyTorch output-contract / production-weight parity | **CODE_FIXED_AWAITING_REBENCH** — contract documented; parity gate `valid=false`; **production-weight parity not established** |
+| **CUDA-B3-001** | Optimized B3 hidden-state race | **CLOSED (local)** — double-buffer; sanitizers 0 errors; DICC latency rebench still open |
+| **CUDA-B3-002** | Reverse-sequence output alignment | **CLOSED (local)** — store at original `pos`; local real-weight inject PASS |
+| **CUDA-B3-003** | CUDA / PyTorch output-contract / production-weight parity | **CLOSED (local)** — `block3_parity_gate.json` `valid=true`, `kernel_status=post_fix`; DICC post_fix latency separate |
 | **CLAIM-PIPE-001** | Incomplete CUDA pipeline vs full V3 | **QUARANTINED** — partial-vs-full ratios **FORBIDDEN**; Table A absolutes / Table B full-model separated |
 | **LOSS-FOCAL-001** | Class-weighted focal formulation | **DISCLOSED** — `StandardFocalLoss` + `LegacyFocalLoss` (no champion retrain) |
 | **KD-001** | Noncanonical temperature / KD mix | **DISCLOSED** — `docs/KD_OBJECTIVES.md` (no formula change / no retrain) |

@@ -6,12 +6,12 @@
 
 ## Abstract
 
-COLIDE is a multi-objective IoT IDS systems project: a sealed-protocol CAD-CBA detection package (competitive but not pure-F1 SOTA vs RF/LGBM) plus **Option A** Custom CUDA kernels (per-block vs matching ops) and measured multi-GPU multi-session latency on UM DICC (V100S + A100). The principal BoT-IoT detection result is sealed multi-seed test macro-F1 **0.9780 ± 0.0033** (n=5). On a **laptop RTX 3050 (WSL2)**, report incomplete Custom CUDA Blocks 1–4 pipeline sums and full-model framework latencies as **separate absolute tables only** — **do not** compute speedups across those tables (CLAIM-PIPE-001). On **DICC**, three sessions show stable means: matching **PyTorch Block 3 is faster than CUDA Block 3 FP16** (~363 vs ~513 µs V100S; ~385–391 vs ~667–671 µs A100) as **pre_fix** wall-clock of historical binaries, while CUDA remains much faster on Blocks 1/2/4. Full Custom CUDA vs full V3 speedup is **not** claimed. B3 source race+alignment is fixed; **local production-weight CUDA–PyTorch full-sequence parity is closed** (`benchmarks/results/block3_parity_gate.json`, `valid=true`, `kernel_status=post_fix`); DICC multi-session **latency** numbers remain historical **pre_fix** wall-clock until rebench (see `docs/ISSUE_REGISTER.md`). Async on-device LLM **dispatch** is **16.60 µs p99** (not full generation or validated free-form explainability). Authority: `docs/CLAIM_MAP_PREWRITE.md`, `docs/PRE_MANUSCRIPT_CLOSURE.md`, `docs/KNOWN_LIMITATIONS.md`, `docs/ISSUE_REGISTER.md`, `COLIDE_Remediation_Update_Review.md`.
+COLIDE is a multi-objective IoT IDS systems project: a sealed-protocol CAD-CBA detection package (competitive but not pure-F1 SOTA vs RF/LGBM) plus **Option A** Custom CUDA kernels (per-block vs matching ops) and measured multi-GPU multi-session latency on UM DICC (V100S + A100). The principal BoT-IoT detection result is sealed multi-seed test macro-F1 **0.9780 ± 0.0033** (n=5). On a **laptop RTX 3050 (WSL2)**, report incomplete Custom CUDA Blocks 1–4 pipeline sums and full-model framework latencies as **separate absolute tables only** — **do not** compute speedups across those tables (CLAIM-PIPE-001). On **DICC**, historical multi-session trees show matching **PyTorch Block 3 faster than CUDA Block 3 FP16** (~363 vs ~513 µs V100S; ~385–391 vs ~667–671 µs A100) as **pre_fix** wall-clock only (**Option B**, 2026-08-15: not a post_fix server rebench — `docs/B3_SERVER_LATENCY_DECISION.md`), while CUDA remains much faster on Blocks 1/2/4. Full Custom CUDA vs full V3 speedup is **not** claimed. B3 source race+alignment is fixed; **local production-weight CUDA–PyTorch full-sequence parity is closed** (`benchmarks/results/block3_parity_gate.json`, `valid=true`, `kernel_status=post_fix`); local parity is **not** DICC latency. Async on-device LLM **dispatch** is **16.60 µs p99** (not full generation or validated free-form explainability). Authority: `docs/CLAIM_MAP_PREWRITE.md`, `docs/B3_SERVER_LATENCY_DECISION.md`, `docs/PRE_MANUSCRIPT_CLOSURE.md`, `docs/KNOWN_LIMITATIONS.md`, `docs/ISSUE_REGISTER.md`, `COLIDE_Remediation_Update_Review.md`.
 
 ## Key Contributions
 
 1. **Multi-objective CAD-CBA package** under sealed protocol (HPO, focal + ensemble KD, ablations, dual bars vs classical baselines) — accuracy–efficiency story, not F1 supremacy. Principal test macro-F1 **0.9780 ± 0.0033**.
-2. **Option A Custom CUDA** for CNN-BiLSTM blocks: large wins on B1/B2/B4 vs matching PT; **honest B3 result on DICC** (PT B3 faster than CUDA FP16 B3 on V100S/A100; pre_fix correctness caveats apply).
+2. **Option A Custom CUDA** for CNN-BiLSTM blocks: large wins on B1/B2/B4 vs matching PT; DICC B3 wall-clock is **historical pre_fix only** (not a post_fix server rebench; Option B active path — `docs/B3_SERVER_LATENCY_DECISION.md`).
 3. **Multi-session multi-GPU measurement** (3 sessions × V100S + A100 SUCCESS trees) with formal compares — not RTX-only portability claims.
 4. **Multi-compiler on laptop + DICC** — laptop full-model multi-session **absolute** ranges (eager/compile/TRT/ORT) **and** full DICC batch-1 matrix (eager/compile/ORT/TRT native on V100S+A100); incomplete Custom CUDA block-sum ranges stay in a **separate** table — no cross-table speedups; do not mix laptop numbers with server absolutes.
 5. **On-device alert dispatch prototype** micro-benchmark (**16.60 µs p99**); full free-form LLM explainability is **not** a title-level claim.
@@ -23,10 +23,11 @@ COLIDE is a multi-objective IoT IDS systems project: a sealed-protocol CAD-CBA d
 | [`docs/ISSUE_REGISTER.md`](docs/ISSUE_REGISTER.md) | Stable issue IDs (DATA-TON-001 … LLM-001), severity, status |
 | [`docs/KNOWN_LIMITATIONS.md`](docs/KNOWN_LIMITATIONS.md) | Pseudo-sequence, test access, baselines, CUDA scope, energy, bulk throughput, ToN invalid path |
 | [`docs/CLAIM_MAP_PREWRITE.md`](docs/CLAIM_MAP_PREWRITE.md) | OK / FORBIDDEN claim rows for manuscript drafting |
+| [`docs/B3_SERVER_LATENCY_DECISION.md`](docs/B3_SERVER_LATENCY_DECISION.md) | **Option B (2026-08-15):** DICC B3 latency is **historical pre_fix only** — not post_fix rebench |
 | [`docs/PRE_MANUSCRIPT_CLOSURE.md`](docs/PRE_MANUSCRIPT_CLOSURE.md) | Data remediation closed; CUDA evidence + publication sync **pending** (not submission-ready) |
 | [`COLIDE_Remediation_Update_Review.md`](COLIDE_Remediation_Update_Review.md) | External readiness review (Phases 1–8) |
 
-Stale-claim guard: `python scripts/check_stale_claims.py` (fails on forbidden ToN-clean strings in active surfaces).
+Stale-claim guard: `python scripts/check_stale_claims.py` (fails on forbidden ToN-clean strings and risky post_fix+B3+DICC phrasing in active surfaces).
 
 ## Results Summary
 
@@ -78,18 +79,19 @@ for this sub-1M parameter model (full-model comparison within Table B).
 
 ### Cross-Hardware (UM DICC multi-session campaign, Option A)
 
-**Source:** `docs/DICC_EXTRACTION_TABLES.md` · three sessions (S1, S2, Day2) · SUCCESS on laptop.
+**Source:** `docs/DICC_EXTRACTION_TABLES.md` · three sessions (S1, S2, Day2) · SUCCESS on laptop.  
+**B3 server latency (Option B, 2026-08-15):** B3 columns below are **historical pre_fix wall-clock only**. They are **not** a post_fix rebench on the server and are **not** parity-gated DICC performance. Comparative post_fix B3 speed claims are **out of the active path** until a new SUCCESS tree exists — see `docs/B3_SERVER_LATENCY_DECISION.md`.
 
 | GPU | CUDA B3 FP16 mean | PT B3 mean | PT full V3 mean | Note |
 |-----|------------------:|-----------:|----------------:|------|
-| **V100S** | ~**513 µs** | ~**363 µs** | ~**964–973 µs** | PT B3 **faster** wall-clock (**pre_fix** binaries; not post_fix parity) |
-| **A100** | ~**667–671 µs** | ~**384–391 µs** | ~**945–962 µs** | same direction (**pre_fix**; not post_fix parity) |
+| **V100S** | ~**513 µs** | ~**363 µs** | ~**964–973 µs** | **historical pre_fix** only — **not** post_fix rebench |
+| **A100** | ~**667–671 µs** | ~**384–391 µs** | ~**945–962 µs** | same (**historical pre_fix**; not post_fix) |
 | RTX 3050 (laptop) | Table A / per-block | local ranges | Table B | laptop only; DICC matrix is separate below |
 
 Legacy June single-shot pipeline (~551 / ~592 µs CUDA-only) remains **legacy** (no same-GPU PT that day).  
-**Do not** claim full Custom CUDA pipeline vs full V3 PT. Prefer per-block tables (esp. B3 honesty + B1/B2/B4 CUDA wins).  
-**B3 note (2026-08-14):** source **race + reverse-alignment fixed**; local racecheck 0 hazards and synthetic self-checks PASS; **production-weight CUDA–PyTorch parity is still open** (CUDA-B3-003). DICC “PT wins B3” is wall-clock of **pre_fix** historical kernels — **not** a closed post_fix matching-op result.  
-Details: `docs/DICC_EXTRACTION_TABLES.md`, `docs/DICC_B3_CUDA_VS_PT_REPORT.md`, `docs/ISSUE_REGISTER.md`.
+**Do not** claim full Custom CUDA pipeline vs full V3 PT. Prefer per-block tables (B1/B2/B4 CUDA wins; B3 server cells historical-only under Option B).  
+**B3 note (2026-08-15):** source **race + reverse-alignment fixed**; **local** production-weight CUDA–PyTorch full-sequence parity is **closed** (`block3_parity_gate.json` `valid=true`, `kernel_status=post_fix`); local sanitizers 0 errors. **Local parity ≠ DICC latency rebench.** DICC multi-session B3 means remain **historical pre_fix** wall-clock of the original SUCCESS trees.  
+Details: `docs/B3_SERVER_LATENCY_DECISION.md`, `docs/DICC_EXTRACTION_TABLES.md`, `docs/DICC_B3_CUDA_VS_PT_REPORT.md`, `docs/ISSUE_REGISTER.md`.
 
 ### DICC multi-compiler matrix (full-model absolute, batch-1, not Option A)
 
@@ -115,7 +117,7 @@ Absolute framework latencies only — **not** Custom CUDA parity and **not** to 
 | 3: BiLSTM FP16 half2 | 784 | 532–602* | 1.30x–1.47x* |
 | 4: Dense Head | 122 | 20 | 6.07x |
 
-\* Range across five independent n=100-trial measurement sessions on this dev box. Optimized B3: source race+align **fixed**; production-weight parity **open** — treat laptop matching-op ratios as **pre_fix** until CUDA-B3-003 green. Laptop “beats cuDNN” ratios are **not** portable to DICC, where PT B3 wins wall-clock (**pre_fix** historical binaries).
+\* Range across five independent n=100-trial measurement sessions on this dev box. Optimized B3: source race+align **fixed**; **local** production-weight parity **closed** (`block3_parity_gate.json` valid=true). Laptop matching-op latency ratios are non-portable. DICC B3 wall-clock is **historical pre_fix only** (Option B — not a post_fix server rebench; `docs/B3_SERVER_LATENCY_DECISION.md`).
 
 ### Block 3 Optimization Progression (7.55x–9.50x)
 
@@ -131,9 +133,10 @@ independent subprocess trials — mirrors the CUDA kernel statistical harness so
 backed by a real distribution). This resolves an earlier ambiguity between two single-run point estimates
 (740.7us vs 943.6us) that bracketed the true mean. With the real baseline, **the FP16 step beats cuDNN in
 all five sessions (1.30x–1.47x) on this laptop**; the transposed-W_hh steps (with or without CUDA Graphs)
-land at/around parity with PyTorch across all five sessions (0.77x–1.08x). **DICC does not reproduce a
-portable CUDA-B3 win** (PT B3 faster wall-clock, **pre_fix**). Source race+alignment is fixed;
-**production-weight parity** and claim-eligible rebench remain open before post_fix claims.
+land at/around parity with PyTorch across all five sessions (0.77x–1.08x). **DICC B3 wall-clock is
+historical pre_fix only** (PT B3 faster in those trees) — **not** a post_fix server rebench
+(Option B; `docs/B3_SERVER_LATENCY_DECISION.md`). Source race+alignment is fixed; **local**
+production-weight parity is **closed**; claim-eligible **DICC** post_fix latency still requires a new SUCCESS tree.
 
 | Step | Configuration | Latency (us) | Cumulative |
 |---|---|---|---|
@@ -159,7 +162,7 @@ reference, not just passing a loose threshold. The naive kernel's latency figure
 n=100-trial mean of this fixed, verified kernel. **Optimized Block-3 kernels use the same double-buffer
 pattern in source; local production-weight full-sequence CUDA↔PT parity is closed
 (`benchmarks/results/block3_parity_gate.json`, `valid=true`, `kernel_status=post_fix`). DICC multi-session
-B3 latency remains historical pre_fix until rebench.**
+B3 latency remains **historical pre_fix only** (Option B — not a post_fix server rebench).**
 
 #### Measurement Stability (new finding, 2026-07-01)
 
@@ -367,7 +370,7 @@ Four fused kernels replacing PyTorch operators:
 (Formerly phrased as “Verified Research Gaps.” These are **bounded literature notes**, not exhaustive
 proofs of global uniqueness.)
 
-1. **Custom CUDA for CNN-BiLSTM IDS** — closest prior work identified in our review (Ibrahim et al., *Computer Networks*, 2026) applies custom CUDA kernels to a GNN-based IDS vs. a CPU baseline only (1.22x-1.48x); we target a recurrent CNN-BiLSTM under Option A with **matched operator-vs-operator** tables and **separate** full-model framework tables. On **DICC**, CUDA wins on B1/B2/B4 and **PT wins B3** wall-clock (**pre_fix** historical kernels; production-weight parity **closed locally** (`block3_parity_gate.json` valid=true); DICC multi-session latency still historical pre_fix). **Do not** cite partial Custom CUDA pipeline sums as end-to-end speedups over TensorRT/eager/ORT.
+1. **Custom CUDA for CNN-BiLSTM IDS** — closest prior work identified in our review (Ibrahim et al., *Computer Networks*, 2026) applies custom CUDA kernels to a GNN-based IDS vs. a CPU baseline only (1.22x-1.48x); we target a recurrent CNN-BiLSTM under Option A with **matched operator-vs-operator** tables and **separate** full-model framework tables. On **DICC**, CUDA wins on B1/B2/B4; B3 server wall-clock is **historical pre_fix only** (Option B — not post_fix rebench; local parity closed separately — `docs/B3_SERVER_LATENCY_DECISION.md`). **Do not** cite partial Custom CUDA pipeline sums as end-to-end speedups over TensorRT/eager/ORT.
 2. **On-device LLM dispatch for IDS alerts** — Jamshidi et al. (2026) used cloud APIs; we measure fully local **dispatch** at 16.60 us p99 (not full validated free-form explainability).
 3. **Full-model framework latencies for sub-1M models** — on laptop RTX 3050, Table B absolute multi-session ranges show TensorRT FP16 slower than eager for this model size; DICC multi-compiler is full-model frameworks only (fastest GPU path there: TensorRT native). Incomplete Custom CUDA block sums (Table A) are **not** ratioed against these full-model rows.
 4. **torch.compile on recurrent models** — laptop CUDA-graph path can crash on BiLSTM; DICC full multi-compiler matrix includes compile means ~**865 µs** (V100S) / ~**770 µs** (A100) vs eager ~**1041 / 932** (see multi-compiler table).
@@ -379,12 +382,12 @@ proofs of global uniqueness.)
 - **SMOTE / order sensitivity:** rare Theft and some Stage-A paths depend on synthetic augmentation; historical ToN clean also mis-applied SMOTE to encoded categoricals (corrected path uses **no SMOTE**).
 - **Pseudo-sequence:** MLP ablation shows sequential bias is not essential; architecture retained for compiler stress-testing.
 - **Incomplete CUDA:** Option A only; full-pipeline Custom CUDA vs full V3 **forbidden**; no partial-pipeline-vs-full-model ratios (CLAIM-PIPE-001).
-- **B3 pre_fix:** source race+align fixed; production-weight parity and claim-eligible rebench still open before post_fix matching-op claims.
+- **B3 server latency (Option B):** source race+align fixed; **local** production-weight parity closed; DICC B3 means remain **historical pre_fix only** — not post_fix rebench; active comparative post_fix server B3 claim dropped pending Option A rebench (`docs/B3_SERVER_LATENCY_DECISION.md`).
 - **Energy exploratory:** prefer WP6b **0.920–0.943** mJ/flow; do not treat 1.089 vs cuML 0.048 as controlled system energy.
 - **Bulk throughput ≠ streaming:** ~25,899 f/s is batched processing, not paced arrivals.
 - **LLM dispatch-only:** 16.60 µs is not generation or validated XAI.
 - **Measurement environment:** WSL2/RTX 3050 session drift → framework ratios as ranges. DICC multi-session SUCCESS (V100S+A100) with same-GPU PT is available under `benchmarks/results/dicc/`.
-- **Numerical fidelity:** export path is bit-identical on n=10 reference samples; CUDA block self-checks PASS at disclosed tolerances (FP16 Block 3: 5e-2) for exercised paths — optimized B3 parity still open — see `docs/paper_text_blocks.md` §15–§16 and `scripts/numerical_fidelity.py`.
+- **Numerical fidelity:** export path is bit-identical on n=10 reference samples; CUDA block self-checks PASS at disclosed tolerances (FP16 Block 3: 5e-2); **local** B3 production-weight full-sequence parity closed (`block3_parity_gate.json`); native TensorRT engine numerical equivalence is **not** claimed (TRT path skipped in framework gate) — see `docs/paper_text_blocks.md` §15–§16 and `scripts/numerical_fidelity.py`.
 
 Full narrative: [`docs/KNOWN_LIMITATIONS.md`](docs/KNOWN_LIMITATIONS.md).
 

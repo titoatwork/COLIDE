@@ -1,8 +1,9 @@
 # COLIDE — Status Report for Prof. Dr. Por Lip Yee
 
-> **SUPERSEDED for current status (2026-08-12).**  
-> Living authority: `docs/PRE_MANUSCRIPT_CLOSURE.md`, `docs/DICC_B3_CUDA_VS_PT_REPORT.md`, `HANDOFF.md`.  
-> DICC multi-session campaign is **done** (6 SUCCESS); B3 PT wins on servers. Historical “blocker / SUCCESS absent” text below is frozen.
+> **SUPERSEDED for current status (2026-08-15).**  
+> Living authority: `docs/PRE_MANUSCRIPT_CLOSURE.md`, `docs/CLAIM_MAP_PREWRITE.md`, `docs/DICC_B3_CUDA_VS_PT_REPORT.md`, `HANDOFF.md`.  
+> DICC multi-session campaign is **done** (6 SUCCESS); B3 PT wins on servers (**pre_fix** wall-clock). Historical “blocker / SUCCESS absent” text below is frozen.  
+> **Claim hygiene (tombstone):** numbers below with **0.9790** are **historical / legacy** only; ToN **0.9526** is **INVALID**. Principal BoT: sealed **0.9780 ± 0.0033**. Active ToN: CNN **0.8075** / RF **0.9626**. Partial-vs-full CUDA ratios are **FORBIDDEN**.
 
 **Date:** 2026-07-18  
 **Student:** Ibteshamul Haque (`titoatwork`)  
@@ -28,10 +29,10 @@ COLIDE is a **systems / performance** project: hand-written CUDA C++ inference k
 |--------|-------|--------|
 | Production model | Two-stage CNN-BiLSTM (KD + focal + fine-tune) | `model/best_model_botiot_twostage.pth` |
 | Checkpoint md5 | `80a90f7cc210276300eaa90173a5a385` | laptop |
-| BoT-IoT test macro-F1 | **0.9790** | `benchmarks/results/twostage_botiot.json` |
+| BoT-IoT test macro-F1 | **0.9790** (**historical / legacy** single-run) | `benchmarks/results/twostage_botiot.json`; principal sealed **0.9780 ± 0.0033** |
 | CPU RF (same preprocessed splits) | **0.9864** | `benchmarks/results/rf_baseline_processed.json` |
-| Gap to RF | **0.74%** | 0.9864 − 0.9790 |
-| ToN-IoT clean macro-F1 | **0.9526** | `toniot_clean_comparison.json` (README-aligned) |
+| Gap to RF | **0.74%** | 0.9864 − historical 0.9790 |
+| ToN-IoT clean macro-F1 | **0.9526** (**INVALID / tombstone**) | DATA-TON-001; active ToN CNN **0.8075** / RF **0.9626** |
 
 **Honest framing:** We do **not** claim beating RF or SOTA detection accuracy. The architecture is retained in part because its recurrent control flow stresses production compilers (e.g. torch.compile CUDA-graph path crashes on BiLSTM).
 
@@ -43,16 +44,16 @@ COLIDE is a **systems / performance** project: hand-written CUDA C++ inference k
 
 Multi-session measurement: framework side 3 sessions × 20 trials; Custom CUDA side 5 independent sessions. Session-to-session drift is real (up to ~14–27% on some configs); we report **ranges**.
 
-| Method | Mean latency range (µs) | vs Custom CUDA (range) |
+| Method | Mean latency range (µs) | Scope note |
 |--------|-------------------------|-------------------------|
-| **Custom CUDA FP16** (block-sum pipeline) | **594–675** | **1.00×** |
-| Eager PyTorch | 2,050–2,247 | **3.04–3.78×** |
-| torch.compile | 1,519–1,777 | **2.25–2.99×** |
-| TensorRT FP16 | 2,427–2,966 | **3.60–4.99×** |
-| ORT GPU | 3,862–4,652 | **5.72–7.83×** |
-| ORT CPU | 487–699 | 0.72–1.18× *(not robust; straddles parity)* |
+| **Custom CUDA FP16** (block-sum pipeline) | **594–675** | **Incomplete** Blocks 1–4 sum only (absolute) |
+| Eager PyTorch | 2,050–2,247 | Full model absolute |
+| torch.compile | 1,519–1,777 | Full model absolute |
+| TensorRT FP16 | 2,427–2,966 | Full model absolute |
+| ORT GPU | 3,862–4,652 | Full model absolute |
+| ORT CPU | 487–699 | Full model absolute *(not robust vs Custom)* |
 
-Welch’s t-test: Eager / compile / TRT / ORT-GPU remain p<0.001 in all three framework sessions. **ORT CPU is not consistently significant** — do not headline “beats all frameworks including ORT CPU.”
+**CLAIM-PIPE-001 / historical tombstone:** partial Custom CUDA vs full-model “3.04–3.78× eager / 3.60–4.99× TensorRT …” ratios are **FORBIDDEN** as active claims. Report Table A (incomplete CUDA) and Table B (full model) as **separate absolutes** only.
 
 ### 3.2 Block 3 (BiLSTM) optimization
 
@@ -195,7 +196,7 @@ Full-pipeline Custom CUDA / full V3 PT ratio: **n/a** (invalid under Option A �
 | F1 / RF | `twostage_botiot.json`, `rf_baseline_processed.json` |
 | Framework / CUDA ranges | `README.md` + `cuda_kernel_stats_rtx3050.json` (multi-session) |
 | LLM | `llm_explainability.json` |
-| Streaming | `streaming_throughput.json` |
+| Bulk batched throughput (not streaming SLA) | `streaming_throughput.json` |
 | Legacy DICC | `dicc_v100_summary.txt`, `dicc_a100_summary.txt` |
 | Fidelity | `numerical_fidelity.json` |
 | Automation | `PYTHONPATH=. python scripts/verify_claims.py` |

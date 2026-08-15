@@ -24,7 +24,7 @@
 | June 551/592 = **legacy single-shot** until re-verified | Raising RF bar silently without protocol |
 | Operation parity on CUDA claims | Leading with invalid speedups |
 
-**Changed vs old freeze:** Systematic HPO, method novelty, retrain under protocol, stronger baselines, and real XAI eval are **now expected** for the WoS path Prof described. Champion `0.9790` remains **baseline reference** until a new champion is selected on **validation only** with backup + test freeze.
+**Changed vs old freeze:** Systematic HPO, method novelty, retrain under protocol, stronger baselines, and real XAI eval are **now expected** for the WoS path Prof described. Champion weights remain frozen (md5 `80a90f7…`); **historical / legacy** single-run label `0.9790` is development-only — principal sealed multi-seed test is **0.9780 ± 0.0033**.
 
 ---
 
@@ -105,7 +105,7 @@ Freeze and document:
 - metrics (macro-F1, balanced acc, minority recall, per-class F1, …)  
 - seeds  
 - hardware protocol for train vs inference  
-- **baseline CNN–BiLSTM** (current path as reference: two-stage 0.9790 / md5 `80a90f7…`)  
+- **baseline CNN–BiLSTM** (current path as reference: two-stage **historical / legacy** 0.9790 / md5 `80a90f7…`; principal sealed **0.9780 ± 0.0033**)  
 
 Report mean ± std over **≥5 independent training runs where feasible** (new protocol).  
 **Do not touch test set for selection.**

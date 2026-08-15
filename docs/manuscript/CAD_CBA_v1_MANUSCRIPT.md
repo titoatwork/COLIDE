@@ -4,8 +4,8 @@
 **Method freeze:** CAD-CBA-v1 · **Option A** CUDA (per-block / operation-matched only)  
 **Claims package:** 64 protocol claims · `PYTHONPATH=. python3 scripts/verify_claims.py` must stay green  
 **Champion weights:** `model/best_model_botiot_twostage.pth` · md5 `80a90f7cc210276300eaa90173a5a385`  
-**Authority for numbers:** `docs/execution_plan/CLAIMS_REGISTRY.md` + on-disk `benchmarks/results/`  
-**Open ops (not claimed):** DICC multi-GPU / multi-day cells remain **TBD** — never invent  
+**Authority for numbers:** `docs/RESULTS_INDEX.md` · `docs/execution_plan/CLAIMS_REGISTRY.md` · on-disk gates under `benchmarks/results/`  
+**Open ops (not claimed):** DICC B3 **post_fix** multi-session latency rebench (historical B3 wall-clock is **PRE_FIX only**); never invent post_fix server µs  
 
 | Field | Value |
 |-------|-------|
@@ -16,7 +16,7 @@
 | Venue target | *[PI to select — systems / multi-obj IDS venue]* |
 | Keywords | IoT intrusion detection; class imbalance; knowledge distillation; multi-objective evaluation; CUDA acceleration; BoT-IoT; protocol-fair baselines |
 
-> **Scope of this draft.** Local science and local systems evidence are complete. Multi-GPU portability is **not** claimed until a dedicated DICC SUCCESS tree exists. All load-bearing numbers trace to sealed JSON on this machine.
+> **Scope of this draft.** Local science and local systems evidence are complete for the sealed BoT package, corrected ToN, and local parity gates. DICC multi-compiler and **pre_fix** B3 wall-clock tables exist and may be cited with that label; **post_fix** server B3 latency is **not** claimed. All load-bearing numbers trace to sealed JSON on this machine (see §8.3 Claim sources).
 
 ---
 
@@ -26,9 +26,9 @@ IoT intrusion detection must handle extreme class imbalance and low-latency edge
 
 We freeze **CAD-CBA-v1**: a V3 CNN–BiLSTM–Attention student distilled from an **ensemble** of tree teachers (mean RF+XGB+LGBM soft labels, α=**0.6**, T=**10**); **focal** loss (γ≈**1.92**); Optuna train hyperparameters (`config/hpo_best.yaml`); **shuffle** sampling; and **argmax** decode. Evaluation uses protocol `botiot_v1` with fair classical and neural baselines, a full ablation ladder, multi-objective Pareto analysis, local multi-session systems ranges under Option A CUDA, structured evidence with dispatch timing, and a ToN recipe-transfer honesty check.
 
-On BoT-IoT **sealed multi-seed TEST** (n=5, freeze path A), CAD-CBA-v1 reaches macro-F1 **0.9780±0.0033**, min-class **0.9292**, and Theft **1.0000**. Protocol classical pure-F1 remains led by LightGBM (**0.9818** val) with RF at **0.9778** val; the published RF **0.9864** is a **different pipeline** and is shown only as a dual bar. The package ladder tops at A7 **0.9699** (seed42), while attention+CE alone **hurts** versus plain CNN–BiLSTM (A4 **0.7378** ≪ A3 **0.9493**). Multi-objective ranking places G6 MLP first on an a priori composite (**0.9056** @ **4.33** µs, F1 0.9285). Local systems (WP6b, n=5 sessions, RTX 3050) report energy **0.920–0.943** mJ/flow (mean **0.933**, CV **1.05%**), PT@256 **24.15–25.68** µs/sample (mean **24.90**, CV **2.22%**), CUDA derived pipeline **565.2–570.3** µs (Option A), and peak alloc **322.2** MiB. Explainability is scoped: dispatch p99 **16.60** µs, rank correlation **0.9636**, faithfulness mass **0.5109**, free-form LLM feature-mention **0.333** — **no** full explainable title claim. On ToN (13-feat), test **0.8110** lags same-split RF **0.9393** (honest gap).
+On BoT-IoT **sealed multi-seed TEST** (n=5, freeze path A), CAD-CBA-v1 reaches macro-F1 **0.9780±0.0033**, min-class **0.9292**, and Theft **1.0000** (champion md5 **`80a90f7cc210276300eaa90173a5a385`**). Protocol classical pure-F1 remains led by LightGBM (**0.9818** val) with RF at **0.9778** val; the published RF **0.9864** is a **different pipeline** and is shown only as a dual bar. The package ladder tops at A7 **0.9699** (seed42), while attention+CE alone **hurts** versus plain CNN–BiLSTM (A4 **0.7378** ≪ A3 **0.9493**). Multi-objective ranking places G6 MLP first on an a priori composite (**0.9056** @ **4.33** µs, F1 0.9285). Local systems (WP6b, n=5 sessions, RTX 3050) report **exploratory** energy **0.920–0.943** mJ/flow (mean **0.933**, CV **1.05%**), PT@256 **24.15–25.68** µs/sample (mean **24.90**, CV **2.22%**), CUDA derived pipeline **565.2–570.3** µs (**Option A** block sum — not full V3 parity), bulk batched throughput **~25,899** f/s @bs=128 only, and peak alloc **322.2** MiB. Explainability is scoped: dispatch p99 **16.60** µs, rank correlation **0.9636**, faithfulness mass **0.5109**, free-form LLM feature-mention **0.333** — **no** full explainable title claim. On ToN-IoT under leakage-safe protocol `toniot_leakage_safe_v1` (seed **42**, random stratified, **not** official split), corrected test macro-F1 is CNN **0.8075** vs RF **0.9626**; historical clean **0.9526/0.9851/+15.4%** is **INVALID**.
 
-Under a sealed, protocol-fair evaluation, CAD-CBA-v1 delivers **near-RF multi-seed test detection** with **strong minority (Theft) recognition**. The primary scientific claim is a **valid accuracy–efficiency multi-objective story** with **operation-matched CUDA** and **local multi-session latency/energy ranges** — not pure-F1 supremacy over LightGBM, and not multi-GPU portability until DICC completes.
+Under a sealed, protocol-fair evaluation, CAD-CBA-v1 delivers **near-RF multi-seed test detection** with **strong minority (Theft) recognition**. The primary scientific claim is a **valid accuracy–efficiency multi-objective story** with **operation-matched CUDA** and **local multi-session latency ranges** — not pure-F1 supremacy over LightGBM, not full custom CUDA vs full V3, and not **post_fix** multi-GPU B3 latency leadership.
 
 ---
 
@@ -45,8 +45,8 @@ Edge and campus IoT deployments need detectors that (i) remain robust under seve
 | **RQ1** | Does CAD-CBA improve detection under protocol-fair evaluation? | Sealed multi-seed **test** macro-F1 **0.9780±0.0033** ≈ protocol RF val **0.9778**; does **not** beat protocol LGBM val **0.9818** or published RF **0.9864** (other pipeline). Detection alone is not the sole headline. |
 | **RQ2** | Does it improve minority recognition? | **Yes on protocol test:** Theft mean **1.0**, min-cls mean **0.9292** (n=5). |
 | **RQ3** | Does it reduce latency or memory on the measured GPU? | **Yes on local RTX 3050:** PT@256 **24.15–25.68** µs/sample; energy **0.920–0.943** mJ/flow; peak alloc **322.2** MiB; multi-obj composite G6 **0.9056** @4.33 µs. |
-| **RQ4** | Are systems results valid across GPUs / multi-day? | **Not yet claimable** — local ranges ≠ multi-day V100S/A100 (DICC open). |
-| **RQ5** | Does explainability add measurable value? | **Dispatch + structured evidence yes; free-form LLM quality no** (full explainable claim dropped). |
+| **RQ4** | Are systems results valid across GPUs / multi-day? | **Partial / honest:** DICC multi-compiler and **pre_fix** B3 wall-clock exist (PT wins B3, e.g. V100S ~**363** vs CUDA ~**513** µs); **post_fix** server B3 rebench **not** claimed. Local ranges ≠ portable post_fix leadership. |
+| **RQ5** | Does explainability add measurable value? | **Dispatch + structured evidence yes; free-form LLM quality no** (full explainable claim dropped). Dispatch **16.60** µs p99 only. |
 
 ### 1.3 Contributions
 
@@ -54,15 +54,18 @@ Edge and campus IoT deployments need detectors that (i) remain robust under seve
 2. **Protocol-fair classical and neural baselines** on the same splits, with dual-bar honesty versus published RF.  
 3. **Ablation and negative results** showing package-level credit (A7) and rejecting attention-alone, multi-scale CNN, gated fusion, SupCon, ASL, neural-teacher KD, and stratified batching.  
 4. **Multi-objective Pareto** analysis and **local multi-session** latency/energy/VRAM ranges under Option A CUDA discipline.  
-5. **Scoped XAI**: low-overhead dispatch + structured evidence; no full “LLM-explainable IDS” title claim.  
-6. **ToN recipe-transfer honesty** on 13-feat processed data with same-split RF gap disclosed.
+5. **Scoped XAI**: low-overhead dispatch (**16.60** µs p99) + structured evidence; no full “LLM-explainable IDS” title claim.  
+6. **ToN multi-dataset honesty** under corrected leakage-safe protocol (`toniot_leakage_safe_v1`): RF test **0.9626**, CNN **0.8075**, with mitm weakness and invalid-clean quarantine disclosed.
 
 ### 1.4 Non-claims (explicit)
 
 - We do **not** claim pure-F1 supremacy over protocol LightGBM.  
-- We do **not** claim full Custom-CUDA versus full V3 PyTorch **parity** (Option A).  
-- We do **not** claim multi-GPU / multi-day portability until DICC artifacts exist.  
-- We do **not** claim full free-form LLM explainability (feature-mention **0.333**).
+- We do **not** claim full Custom-CUDA versus full V3 PyTorch **parity** or full-pipeline speedup (Option A).  
+- We do **not** claim DICC B3 latency as **post_fix** (historical V100S ~513 vs ~363 µs is **PRE_FIX** only).  
+- We do **not** claim portable “CUDA B3 beats matching PT on servers” (PT wins B3 **pre_fix**).  
+- We do **not** claim full free-form LLM explainability (feature-mention **0.333**); dispatch only is **16.60** µs p99.  
+- We do **not** claim ToN clean **0.9526 / 0.9851 / +15.4%** (INVALID; DATA-TON-001).  
+- We do **not** claim bulk batched **~25,899** f/s as a live-stream SLA, nor energy as certified power metrology (**exploratory**).
 
 ---
 
@@ -98,7 +101,7 @@ Recent LLM-assisted IDS work often emphasises narrative quality without faithful
 | Full-pipeline CUDA vs full PT false parity | Option A language + fidelity | `numerical_fidelity.json` |
 | Architecture novelty without ablation | A1–A7 + C\* negatives | `ablation_ladder/`, `cstar_bounded/` |
 | Full LLM-XAI claim without metrics | Drop full claim; keep structured | `xai/summary.json` |
-| Cross-GPU claim from one laptop | Explicit TBD cells | DICC BLOCKED |
+| Cross-GPU claim from one laptop | DICC pre_fix tables + no post_fix B3 claim | `DICC_*` reports; B3 report PRE_FIX |
 
 ---
 
@@ -155,8 +158,7 @@ Primary: **macro-F1**. Always log: balanced accuracy, weighted F1, min per-class
 
 - Multiruns / sealed test seeds: **42–46** (n=5).  
 - Local systems: NVIDIA GeForce **RTX 3050 6GB** Laptop GPU; WP6b **5** sessions; warm-up **50** sync forwards.  
-- DICC V100S/A100 multi-day: **not** in this draft’s numeric tables.
-
+- DICC V100S/A100: multi-compiler absolutes and **pre_fix** B3 CUDA-vs-PT wall-clock may be cited with labels; **post_fix** B3 server latency is **not** claimed.
 ### 4.4 Baselines (same protocol)
 
 **Classical:** LR, LinearSVC, RF, XGB, LGBM (G5 balanced multiclass).  
@@ -301,23 +303,32 @@ A priori composite ranking places **G6 MLP score 0.9056** @ **4.33** µs/sample 
 
 **Table 6.** Local multi-session ranges (n=5 sessions, RTX 3050, champion frozen). Source: `wp6b_local_ranges/summary.json`.
 
-| Metric | Session-mean range | Mean ± std | CV% | 95% CI |
-|--------|--------------------|------------|-----|--------|
-| Energy mJ/flow @bs=128 | **0.920–0.943** | **0.933 ± 0.010** | 1.05 | [0.920, 0.945] |
-| PT µs/sample @bs=256 | **24.15–25.68** | **24.90 ± 0.55** | 2.22 | [24.21, 25.59] |
-| CUDA derived pipeline µs | **565.2–570.3** | 567.4 | 0.34 | — |
-| CUDA block3 FP16 µs | **503.2–508.5** | 505.6 | 0.44 | — |
-| Peak alloc MiB | **322.2** | — | — | global max |
+| Metric | Session-mean range | Mean ± std | CV% | 95% CI | Scope |
+|--------|--------------------|------------|-----|--------|-------|
+| Energy mJ/flow @bs=128 | **0.920–0.943** | **0.933 ± 0.010** | 1.05 | [0.920, 0.945] | **Exploratory** board power |
+| PT µs/sample @bs=256 | **24.15–25.68** | **24.90 ± 0.55** | 2.22 | [24.21, 25.59] | Full V3 absolute |
+| CUDA derived pipeline µs | **565.2–570.3** | 567.4 | 0.34 | — | Option A **block sum** |
+| CUDA block3 FP16 µs | **503.2–508.5** | 505.6 | 0.44 | — | Local only; ≠ DICC post_fix |
+| Bulk throughput f/s @bs=128 | **~25,899** | — | — | — | **Bulk batched only** |
+| Peak alloc MiB | **322.2** | — | — | global max | Allocated VRAM |
 
 ![Systems ranges](figures/fig_wp6b_systems_ranges.png)
 
-**Figure 6.** Local multi-session energy and PT ranges. Do **not** mix WP6b mean energy **0.933** with historical single-shot **0.786** mJ/flow (`energy_table/`, labeled HISTORICAL). CUDA pipeline is Option A **block sum**, not full V3 parity.
+**Figure 6.** Local multi-session energy and PT ranges. Energy is **exploratory**. Do **not** mix WP6b mean energy **0.933** with historical single-shot **0.786** mJ/flow (`energy_table/`, labeled HISTORICAL). CUDA pipeline is Option A **block sum**, not full V3 parity. Throughput **~25,899** f/s is bulk batched only.
 
 Warm-up protocol: **50** discarded sync forwards. Batch-size sensitivity: bs∈{1,8,32,64,128,256,512,1024} multi-session tables in `systems_i8_h3/`.
 
-### 5.10 CUDA Option A and numerical fidelity
+### 5.10 CUDA Option A, B3 honesty, and numerical fidelity
 
-Export path: **bit-identical** real-weight blocks (max abs error 0). CUDA self-checks: **all PASS**. FP16 block3 uses documented looser tolerance. These establish kernel correctness for operation-matched blocks; they do **not** license a full-pipeline Custom CUDA versus full V3 speedup claim.
+**Option A discipline.** Per-block / derived-pipeline Custom CUDA latency and full V3 PyTorch absolute latency are reported **separately**. We do **not** claim full custom CUDA pipeline versus full V3 as a parity speedup.
+
+**Local B3 production-weight parity (claimable).** Gate `benchmarks/results/block3_parity_gate.json`: `valid=true`, `kernel_status=post_fix`, champion md5 match. GPU inject vs PT full-sequence max abs error **~3.43×10⁻⁶**; hybrid logits (CUDA B3 seq through V3 suffix vs PT) max abs **~5.72×10⁻⁶**. This is **local numerical fidelity**, not a server latency claim.
+
+**DICC B3 wall-clock (PRE_FIX only).** Historical multi-session means remain **pre_fix** binaries: e.g. V100S CUDA B3 FP16 ~**513** µs vs matching PT B3 ~**363** µs (PT wins; stable across sessions). Do **not** label these as post_fix. B1/B2/B4 CUDA still win on the same campaigns under Option A. Source: `docs/DICC_B3_CUDA_VS_PT_REPORT.md`.
+
+**Framework logit parity (local).** Gate `benchmarks/results/framework_parity_gate.json`: eager CUDA, ORT (CPU/GPU), and `torch.compile` **pass**; native TensorRT backend **skipped** — no TRT logit-parity claim.
+
+**Export / self-checks.** Export path: **bit-identical** real-weight blocks (max abs error 0). CUDA self-checks: **all PASS**. FP16 block3 uses documented looser tolerance.
 
 ### 5.11 Explainability (scoped)
 
@@ -334,26 +345,33 @@ Export path: **bit-identical** real-weight blocks (max abs error 0). CUDA self-c
 
 **Policy:** drop a full “explainable IDS” title/abstract claim; keep dispatch + structured evidence.
 
-### 5.12 Multi-dataset: ToN-IoT honesty (13-feat)
+### 5.12 Multi-dataset: ToN-IoT (corrected, leakage-safe)
 
-**Table 8.** CAD-CBA-v1 recipe transfer on `processed_toniot` (13 features).
+**Principal multi-dataset claim** uses protocol **`toniot_leakage_safe_v1`** (artifact: `benchmarks/results/toniot_corrected/summary.json`). Settings: **13-feature allowlist**, seed **42**, **random stratified** 60/20/20 (**not** an official temporal/host ToN split), train-only encoders/scaler, **no SMOTE**, **no KD**, hard-label CNN with class-weighted CE, single seed.
 
-| Model | val macro-F1 | test macro-F1 |
-|-------|--------------|---------------|
-| CAD-CBA-v1 (KD selected) | 0.8080 | **0.8110** |
-| RF same-split | 0.9400 | **0.9393** |
+**Table 8.** Corrected ToN-IoT test macro-F1 (seed 42).
 
-This is **not** the historical clean 26-feat CNN result (**0.9526**). The large RF gap is disclosed; this is recipe transfer, not BoT weight transfer.
+| Model | test macro-F1 | Notes |
+|-------|---------------|-------|
+| RF (`class_weight=balanced`) | **0.9626** | Same leakage-safe split |
+| CNN–BiLSTM (hard-label) | **0.8075** | Class-weighted CE; no KD |
 
-### 5.13 Cross-GPU multi-day (TBD)
+**Minority honesty (CNN mitm on test):** F1 **~0.111** (precision **~0.059**, recall **~0.909**) — high recall with very low precision; this class drives much of the CNN macro gap vs RF.
+
+**Invalid clean path (quarantined):** CNN **0.9526** / RF **0.9851** / **+15.4%** improvement language are **INVALID** (DATA-TON-001: target-derived `label` leakage and related issues). Never use as active evidence.
+
+**Older package path (optional comparable only):** WP8 13-feat `toniot_final` neural ~**0.811** vs RF ~**0.939** remains a labeled prior; **prefer Table 8 corrected numbers** for multi-dataset prose.
+
+### 5.13 Cross-GPU / DICC status (honest labels)
 
 | Cell | Status |
 |------|--------|
-| V100S multi-day mean/median/std/CV/CI | **TBD (DICC)** |
-| A100 multi-day | **TBD (DICC)** |
-| Same-GPU B3 CUDA vs matching PT on cluster | **TBD (DICC)** |
+| V100S / A100 multi-compiler absolute matrix | **Available** — cite with protocol; separate from incomplete Custom CUDA ranges |
+| Same-GPU B3 CUDA vs matching PT (DICC) | **Available as PRE_FIX historical** (PT wins; e.g. V100S ~513 vs ~363 µs) — **not** post_fix |
+| B3 multi-session post_fix rebench after kernel fix | **Open** — do not invent |
+| Local B3 production-weight parity | **Done** (`post_fix`, §5.10) |
 
-Local WP6b ranges must **not** be generalised to cluster portability.
+Local WP6b ranges must **not** be generalised as portable post_fix B3 leadership.
 
 ---
 
@@ -392,11 +410,12 @@ For edge GPU deployments that already prefer a neural path, CAD-CBA-v1 offers ne
 3. **Single-seed ladders.** A1–A7 and G6–G12 are seed **42** / fixed budget — multi-seed stability is B14 / multiruns.  
 4. **Local ≠ portable.** WP6b is **RTX 3050 laptop only**.  
 5. **Option A construct validity.** Per-block CUDA latency ≠ “full model Custom CUDA versus full V3.”  
-6. **Energy construct.** WP6b multi-session range is primary; 0.786 is single-shot historical.  
-7. **XAI conclusion validity.** No human SOC study; free-form LLM weak; structured templates use an automatic rubric.  
-8. **ToN external validity.** 13-feat processed recipe transfer; large RF gap.  
+6. **Energy construct.** Energy is **exploratory** (board-power integration). WP6b multi-session range is preferred over single-shot **0.786** historical.  
+7. **XAI conclusion validity.** No human SOC study; free-form LLM weak; structured templates use an automatic rubric; dispatch **16.60** µs p99 is dispatch-only.  
+8. **ToN external validity.** Corrected path is random stratified (not official ToN split); CNN **0.8075** ≪ RF **0.9626**; mitm F1 ~**0.111**. Clean **0.9526/0.9851** INVALID.  
 9. **Theft support.** Test Theft n=**14** — perfect Theft F1 is real under this test set but limited support must be stated.  
-10. **Historical text blocks.** Older draft blocks may mix pre-protocol numbers; **protocol-era claims** and this manuscript override for CAD-CBA-v1.
+10. **B3 construct.** Local parity **post_fix** ≠ DICC wall-clock **pre_fix**. Option A forbids full custom CUDA vs full V3 parity claims.  
+11. **Historical text blocks.** Older draft blocks may mix pre-protocol or invalid ToN numbers; **RESULTS_INDEX / corrected gates** and this manuscript override for CAD-CBA-v1.
 
 ---
 
@@ -404,24 +423,29 @@ For edge GPU deployments that already prefer a neural path, CAD-CBA-v1 offers ne
 
 ```text
 Protocol: botiot_v1 (scripts/protocol/)
+ToN protocol: toniot_leakage_safe_v1 (scripts/protocol/toniot_leakage_safe.py)
 Method: CAD-CBA-v1 (docs/execution_plan/METHOD_PACKAGE_DECISION.md)
 Train HPs: config/hpo_best.yaml
 Freeze: docs/execution_plan/FINAL_CONFIG_FREEZE_CARD.md
 Champion: model/best_model_botiot_twostage.pth
   md5 80a90f7cc210276300eaa90173a5a385
 Sealed test: benchmarks/results/sealed_test/
+ToN corrected: benchmarks/results/toniot_corrected/summary.json
+B3 parity: benchmarks/results/block3_parity_gate.json
+Framework parity: benchmarks/results/framework_parity_gate.json
 Systems: benchmarks/results/wp6b_local_ranges/
+Results index: docs/RESULTS_INDEX.md
 Claims: docs/execution_plan/CLAIMS_REGISTRY.md
 Verify: PYTHONPATH=. python3 scripts/verify_claims.py
 PDF build: PYTHONPATH=. python3 scripts/build_manuscript_pdf.py
 Option A: per-block CUDA only; no full-pipeline parity claims
-DICC: not included until dedicated session SUCCESS tree exists
+DICC B3 latency: PRE_FIX historical only (see DICC_B3_CUDA_VS_PT_REPORT.md)
 Spine: docs/execution_plan/WP9b_MANUSCRIPT_SPINE.md
 This draft: docs/manuscript/CAD_CBA_v1_MANUSCRIPT.md
 Figures: docs/manuscript/figures/
 ```
 
-All load-bearing public numbers are registered in the claims package (**64** claims at last rebuild, including B14 multi-seed test per-class means). Rebuild and re-verify after any prose that introduces new load-bearing numbers.
+All load-bearing public numbers are registered in the claims package (**64** claims at last rebuild, including B14 multi-seed test per-class means) and mapped in `docs/RESULTS_INDEX.md`. Rebuild and re-verify after any prose that introduces new load-bearing numbers.
 
 ### 8.1 Data and code availability (PI to finalise venue wording)
 
@@ -433,11 +457,22 @@ All load-bearing public numbers are registered in the claims package (**64** cla
 
 This work studies intrusion detection on public research datasets. Models and CUDA kernels could be misused for adversarial research; we release evaluation protocols intended for defensive measurement. No human-subject study is reported.
 
+### 8.3 Claim sources (artifacts)
+
+| Claim family | Artifact path |
+|--------------|---------------|
+| ToN corrected multi-dataset (RF **0.9626** / CNN **0.8075**) | `benchmarks/results/toniot_corrected/summary.json` |
+| B3 local production-weight parity (`valid=true`, `post_fix`) | `benchmarks/results/block3_parity_gate.json` |
+| Framework logit parity (eager/ORT/compile; TRT skipped) | `benchmarks/results/framework_parity_gate.json` |
+| Master claim → artifact map (use_in_manuscript flags) | `docs/RESULTS_INDEX.md` |
+| BoT sealed multi-seed principal (**0.9780±0.0033**) | `benchmarks/results/sealed_test/summary.json` |
+| DICC B3 PRE_FIX wall-clock (PT wins) | `docs/DICC_B3_CUDA_VS_PT_REPORT.md` |
+
 ---
 
 ## 9. Conclusion
 
-We presented **CAD-CBA-v1**, a class-aware distilled CNN–BiLSTM package evaluated under a sealed, protocol-fair regime. On BoT-IoT multi-seed **test**, the method reaches **0.9780±0.0033** macro-F1 with Theft **1.0**, near protocol-fair RF, while LightGBM retains the pure-F1 ceiling (**0.9818** val). Ablations credit **package composition** rather than attention alone. Local multi-session systems ranges quantify energy (**0.920–0.943** mJ/flow), latency (PT@256 **24.15–25.68** µs), and peak VRAM (**322.2** MiB) under Option A CUDA discipline. Explainability is scoped to dispatch and structured evidence. Multi-GPU portability remains future work for a dedicated DICC session. The primary claim is therefore a **valid multi-objective accuracy–efficiency evaluation package** with honest limits — not an oversold single-number victory.
+We presented **CAD-CBA-v1**, a class-aware distilled CNN–BiLSTM package evaluated under a sealed, protocol-fair regime. On BoT-IoT multi-seed **test**, the method reaches **0.9780±0.0033** macro-F1 with Theft **1.0**, near protocol-fair RF, while LightGBM retains the pure-F1 ceiling (**0.9818** val). Ablations credit **package composition** rather than attention alone. Local multi-session systems ranges quantify **exploratory** energy (**0.920–0.943** mJ/flow), latency (PT@256 **24.15–25.68** µs), bulk throughput (**~25,899** f/s only), and peak VRAM (**322.2** MiB) under Option A CUDA discipline (no full custom CUDA vs full V3). Local B3 production-weight parity is **post_fix**; DICC B3 wall-clock remains **PRE_FIX** (PT wins). On corrected ToN (`toniot_leakage_safe_v1`), CNN test macro-F1 **0.8075** lags RF **0.9626**; clean **0.9526/0.9851** is invalid. Explainability is scoped to dispatch (**16.60** µs p99) and structured evidence. The primary claim is therefore a **valid multi-objective accuracy–efficiency evaluation package** with honest limits — not an oversold single-number victory.
 
 ---
 
@@ -480,9 +515,10 @@ Source: `config/hpo_best.yaml` / WP3 trial 8 full-train refine val **0.9791**.
 |-------|---------------------|-----------|
 | Detection | Single split / test leakage risk | Sealed multi-seed test after freeze lock |
 | Classical comparison | Different preprocess/pipeline | Protocol-fair same split + dual bar |
-| Acceleration | Full-pipeline CUDA vs PT | Option A per-block + absolute PT ranges |
-| Multi-GPU | Single laptop extrapolated | Explicit TBD until DICC |
+| Acceleration | Full-pipeline CUDA vs PT | Option A per-block + absolute PT; no full vs full V3 |
+| Multi-GPU | Single laptop extrapolated | DICC pre_fix B3 honesty; no post_fix claim |
 | XAI | “Explainable IDS” in title | Metrics first; full claim dropped |
+| ToN | Leaky “clean” headlines | Corrected leakage-safe **0.8075/0.9626**; clean INVALID |
 
 ## Appendix D — PI venue polish checklist
 
@@ -499,8 +535,9 @@ Source: `config/hpo_best.yaml` / WP3 trial 8 full-train refine val **0.9791**.
 | PDF rebuild script | `scripts/build_manuscript_pdf.py` |
 | Final journal class file / IEEE/ACM/Elsevier template | **PI** after venue choice |
 | Bibliography style + BibTeX | **PI** after venue choice |
-| DICC multi-GPU cells | **BLOCKED** until dedicated session |
+| DICC multi-compiler / PRE_FIX B3 tables | **Available** with labels |
+| DICC B3 post_fix rebench | **OPEN** — do not invent µs |
 
 ---
 
-*Local-complete draft assembled 2026-07-22 (WP9c) · PI venue polish 2026-07-22 · playlist closure audit + claims 64 (Table 1b registered) 2026-07-22. Numbers only from on-disk JSON / CLAIMS_REGISTRY. No invented DICC numbers.*
+*Local-complete draft assembled 2026-07-22 (WP9c) · PI venue polish 2026-07-22 · playlist closure audit + claims 64 (Table 1b registered) 2026-07-22 · claim-hygiene sync 2026-08-14 (corrected ToN, B3 pre_fix/post_fix honesty, RESULTS_INDEX gates). Numbers only from on-disk JSON / RESULTS_INDEX / CLAIMS_REGISTRY. No invented post_fix DICC B3 numbers.*

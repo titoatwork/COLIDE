@@ -32,7 +32,7 @@ Evidence freeze above is unchanged for BoT/DICC (no BoT retrain, no new DICC). A
 | ToN clean 0.9526 / 0.9851 / +15.4% | **INVALID** tombstone (DATA-TON-001) |
 | Streaming | Reframed as **bulk batched throughput** (~25,899 f/s) |
 | Energy | **Exploratory**; WP6b ranges preferred over bare 1.089 vs cuML |
-| B3 DICC | Wall-clock honesty retained; **pre_fix** until CUDA-B3-* rebench + production-weight parity |
+| B3 DICC | Wall-clock honesty retained; **pre_fix** historical until multi-session post_fix latency rebench (local production-weight parity already **closed**) |
 | Partial CUDA vs full model | **No cross-table speedups** (CLAIM-PIPE-001); Table A absolutes vs Table B full-model absolutes only |
 | LLM | Dispatch-only; title narrowed |
 
@@ -70,9 +70,9 @@ Guard: `python scripts/check_stale_claims.py`.
 | Tracker DICC rows honest language | **DONE** (subject to Phase 1 claim hygiene) |
 | README / claim hygiene (S1c) | **IN PROGRESS** — Phase 1 of review: partial-vs-full ratios removed; tables separated |
 | Full multi-compiler DICC (eager/compile/ORT/TRT) | **DONE** both GPUs |
-| Production-weight B3 CUDA–PT parity | **OPEN** (CUDA-B3-003) |
-| Corrected server B3 rebench (or drop claim) | **OPEN** |
-| Full sanitizer suite + determinism archive | **PARTIAL** (racecheck local only) |
+| Production-weight B3 CUDA–PT parity (local) | **DONE** (CUDA-B3-003 local; `block3_parity_gate.json` valid=true) |
+| Corrected server B3 rebench (or drop claim) | **OPEN** (DICC post_fix latency) |
+| Full sanitizer suite + determinism archive | **DONE** local sm_86 (racecheck/synccheck/initcheck/memcheck 0 errors FP32+FP16); archive hygiene optional |
 | Manuscript multi-GPU prose / figure sync | **OPEN** (publication synchronization pending) |
 | PI journal class file / BibTeX | **OUT OF SCOPE** (PI after venue) |
 
@@ -120,7 +120,7 @@ Guard: `python scripts/check_stale_claims.py`.
 
 1. **Multi-objective CAD-CBA package** under sealed protocol (detection competitive, not pure-F1 king).  
 2. **Measurement-first multi-GPU study**: three sessions, two GPU classes, JSON-backed, formal compares.  
-3. **Option A systems**: CUDA wins B1/B2/B4; **PT wins B3 on servers** (**pre_fix** wall-clock; parity open).  
+3. **Option A systems**: CUDA wins B1/B2/B4; **PT wins B3 on servers** (**pre_fix** wall-clock; local production-weight parity closed; DICC latency rebench open).  
 4. **Multi-compiler**: laptop **full-model absolute ranges** **and** DICC absolute matrix (eager/compile/ORT/TRT) — separate from incomplete Custom CUDA block-sum ranges.  
 5. **LLM dispatch** micro-result; no full free-form XAI title claim.  
 
@@ -137,11 +137,11 @@ Per `COLIDE_Remediation_Update_Review.md` (Phases 2–8), remaining work include
 
 | # | Action |
 |---|--------|
-| 1 | Production-weight B3 parity gate (complete sequence + hybrid suffix) |
-| 2 | Full sanitizer suite + determinism + provenance archive |
-| 3 | Corrected V100S/A100 B3 rebench **or** drop comparative B3 claim |
+| 1 | ~~Production-weight B3 parity gate~~ **DONE** local (`block3_parity_gate.json` valid=true) |
+| 2 | ~~Full sanitizer suite~~ **DONE** local sm_86; optional provenance archive polish |
+| 3 | Corrected V100S/A100 B3 **post_fix latency** rebench **or** drop comparative server B3 claim |
 | 4 | Clean ToN provenance rerun (categorical missing-value order) if retained |
-| 5 | Full-model framework numerical validation where claimed |
+| 5 | Full-model framework numerical validation where claimed (native TRT engine **not** built in framework gate — do not claim TRT numerical equivalence) |
 | 6 | Manuscript + figures synchronized to corrected claim surfaces |
 | 7 | PI venue class file / BibTeX when journal chosen |
 

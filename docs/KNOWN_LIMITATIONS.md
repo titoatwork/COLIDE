@@ -59,18 +59,19 @@ See **CLAIM-PIPE-001**, `docs/CLAIM_MAP_PREWRITE.md`, `COLIDE_Remediation_Update
 
 ---
 
-## 6. B3: source fixed; production-weight parity not established
+## 6. B3: local production-weight parity closed; DICC latency still pre_fix
 
-DICC multi-session measurements show matching **PyTorch Block 3 faster than CUDA Block 3 FP16** on V100S and A100. Those timings are real as **measured wall-clock latency of pre_fix historical binaries**, not as post_fix semantic parity.
+DICC multi-session measurements show matching **PyTorch Block 3 faster than CUDA Block 3 FP16** on V100S and A100. Those timings are real as **measured wall-clock latency of pre_fix historical binaries**, not as post_fix multi-session latency of rebuilt kernels.
 
-**Source status (2026-08-14):** race double-buffer and reverse-alignment fixes are in the optimized FP32/FP16 kernels; local synthetic self-checks PASS; `racecheck` reported 0 hazards on the laptop rebuild. Tracked as **CUDA-B3-001/002/003** with status **CODE_FIXED_AWAITING_REBENCH**.
+**Source status (2026-08-14):** race double-buffer and reverse-alignment fixes are in the optimized FP32/FP16 kernels; local synthetic self-checks PASS; full sanitizer suite (racecheck/synccheck/initcheck/memcheck) **0 errors** on laptop sm_86. **Local production-weight full-sequence CUDA↔PT parity is CLOSED** (`benchmarks/results/block3_parity_gate.json`, `valid=true`, `kernel_status=post_fix`; CUDA-B3-001/002/003 local).
 
-**Still open:** production-weight CUDA–PyTorch equivalence (export champion LSTM tensors, inject into CUDA, compare full aligned sequence and hybrid PyTorch-suffix logits), full sanitizer suite (synccheck/initcheck/memcheck), and corrected server rebench (or drop of comparative B3 claim).
+**Still open:** corrected **DICC multi-session post_fix B3 latency** rebench (or drop of comparative server B3 claim). Local correctness does **not** automatically refresh historical server wall-clock means.
 
-Until the production-weight parity gate is green:
+Until the DICC post_fix latency rebench is green:
 
-- Treat B3 CUDA vs PT as **provisional / pre_fix** wall-clock of historical kernels.
-- Do not claim closed “matching-op correctness” or post_fix speedups.
+- Treat **server** B3 CUDA vs PT as **provisional / pre_fix** wall-clock of historical kernels.
+- Do not claim closed post_fix **server** matching-op speedups or portable “CUDA B3 beats PT on V100/A100.”
+- Local production-weight parity may be cited as closed with the gate JSON; do not conflate it with DICC latency.
 - Welch/Cohen stats across CUDA n=100 vs PT n=20 harnesses are secondary; direction is unambiguous for wall-clock **pre_fix**.
 
 ---
@@ -149,7 +150,7 @@ WP8 final-method on `data/processed_toniot` (13 features, 10 classes) remains a 
 
 - **Class imbalance:** rare Theft class historically depended on synthetic augmentation in some recipes.
 - **Measurement environment:** WSL2 / RTX 3050 session drift → report framework numbers as **ranges**.
-- **Numerical fidelity:** export path bit-identical on small n; FP16 B3 tolerances disclosed; optimized B3 parity still open.
+- **Numerical fidelity:** export path bit-identical on small n; FP16 B3 tolerances disclosed; **local** B3 production-weight parity closed (`block3_parity_gate.json`); native TRT numerical equivalence not claimed.
 - **Champion freeze:** md5 `80a90f7cc210276300eaa90173a5a385` — do not overwrite without explicit backup and approval.
 
 *End known limitations.*

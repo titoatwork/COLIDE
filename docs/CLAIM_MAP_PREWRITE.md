@@ -1,12 +1,12 @@
 # Claim map — pre-write authority
 
-**Date:** 2026-08-14 (Phase 1 claim hygiene + Phase 2 corrected ToN)  
+**Date:** 2026-08-15 (Phase 1 claim hygiene + Phase 2 corrected ToN + B3 server latency Option B)  
 **Use:** manuscript drafting only. Every number must trace to JSON or a locked doc table.  
 **Champion:** md5 `80a90f7…`  
-**Also read:** `docs/ISSUE_REGISTER.md` · `docs/KNOWN_LIMITATIONS.md` · `docs/PRE_MANUSCRIPT_CLOSURE.md` · `docs/REMEDIATION_STATUS.md`  
+**Also read:** `docs/ISSUE_REGISTER.md` · `docs/KNOWN_LIMITATIONS.md` · `docs/PRE_MANUSCRIPT_CLOSURE.md` · `docs/REMEDIATION_STATUS.md` · `docs/B3_SERVER_LATENCY_DECISION.md`  
 **External readiness review:** `COLIDE_Remediation_Update_Review.md` (Phases 1–8; project **not** submission-ready while CUDA evidence + publication sync pending)
 
-**Closure posture:** DATA remediation closed; CUDA evidence and publication synchronization **pending**. Do not draft as if remediation is fully closed.
+**Closure posture:** DATA remediation closed; **local** B3 parity/sanitizers closed; DICC B3 **latency** under **Option B** (historical pre_fix only — no active post_fix server B3 speed claims). Publication synchronization **pending**. Do not draft as if remediation is fully closed.
 
 ---
 
@@ -28,20 +28,25 @@
 
 ## B. Option A Custom CUDA (DICC multi-session)
 
+**B3 server latency decision (2026-08-15):** **Option B** for active claims — see `docs/B3_SERVER_LATENCY_DECISION.md`. Do **not** present DICC B3 numbers as post_fix or parity-gated performance. Local production-weight parity is closed separately.
+
 | Claim | Status | Source |
 |-------|--------|--------|
 | B1/B2/B4 CUDA much faster than matching PT on V100S/A100 | **OK** | extraction tables (matched operator-vs-operator) |
-| B3 CUDA FP16 **slower** than matching PT B3 (both GPUs, 3 sessions) as wall-clock of **pre_fix** historical binaries | **OK — required honesty** | B3 report + extraction; label **pre_fix** / not post_fix parity |
-| B3 CUDA vs PT as closed matching-op / post_fix parity result | **FORBIDDEN** until CUDA-B3-001/002/003 rebench + production-weight parity green | Issue register |
-| Session-stable B3 means (**pre_fix** trees) | **OK** | max spread ≪ 2% B3 |
+| Historical pre_fix DICC B3 wall-clock (PT B3 faster than CUDA FP16; both GPUs, 3 sessions) **labeled historical / pre_fix only** | **OK** | B3 report + extraction; **not** active post_fix speed claim |
+| post_fix DICC B3 speed / matching-op latency claims **without** a new post_fix SUCCESS tree | **FORBIDDEN** | Option B; `docs/B3_SERVER_LATENCY_DECISION.md` |
+| B3 CUDA vs PT as closed matching-op / post_fix **server** result | **FORBIDDEN** until Option A rebench + claim-eligible SUCCESS JSON | Issue register + decision doc |
+| Local production-weight CUDA↔PT full-sequence parity closed (`valid=true`, `kernel_status=post_fix`) | **OK** | `benchmarks/results/block3_parity_gate.json` (laptop; not DICC latency) |
+| Local B3 sanitizers 0 errors (racecheck/synccheck/initcheck/memcheck, FP32+FP16) | **OK** | `benchmarks/results/sanitizer_b3/summary.json` |
+| Session-stable B3 means (**pre_fix** trees, historical) | **OK** if labeled historical | max spread ≪ 2% B3 |
 | Full Custom CUDA pipeline vs full V3 PT speedup | **FORBIDDEN** | Option A / CLAIM-PIPE-001 |
 | Any ratio of **partial** custom pipeline (Blocks 1–4 sum) vs full V3 / eager / compile / TRT / ORT | **FORBIDDEN** | CLAIM-PIPE-001; review Phase 1 |
-| Portable “CUDA BiLSTM beats PT/cuDNN on servers” | **FORBIDDEN** | PT wins B3 wall-clock **pre_fix** |
+| Portable “CUDA BiLSTM beats PT/cuDNN on servers” | **FORBIDDEN** | historical pre_fix wall-clock; not post_fix |
 | All metrics session-stable S1–Day2 without caveat | **FORBIDDEN** | V100 B1 11% formal spread |
 
-### B3 Welch-style summary (S1/S2/Day2, trial distributions) — **pre_fix** wall-clock only
+### B3 Welch-style summary (S1/S2/Day2, trial distributions) — **historical pre_fix** wall-clock only
 
-Protocol caveat: CUDA n=100 kernel trials vs PT n=20 subprocess trials — different harnesses; direction is unambiguous for wall-clock. Source race+align fixed; **production-weight parity open**. Numbers describe **pre_fix** historical binaries until rebench.
+Protocol caveat: CUDA n=100 kernel trials vs PT n=20 subprocess trials — different harnesses; direction is unambiguous for **historical** wall-clock. Source race+align fixed; **local** production-weight parity **closed** (`block3_parity_gate.json` valid=true). These numbers describe **pre_fix** historical binaries only — **not** claim-eligible post_fix server performance (Option B active path).
 
 | GPU | Session | CUDA mean±std | PT mean±std | Welch t | Cohen d | Winner |
 |-----|---------|---------------|-------------|---------|---------|--------|
@@ -117,19 +122,21 @@ Source: `docs/DICC_MULTI_COMPILER_MATRIX.md` · jobs 395433 / 395417.
 9. Principal BoT accuracy as bare **0.9790** without historical/legacy label (use sealed **0.9780 ± 0.0033**).  
 10. “Streaming latency” or paced-arrival claims from the bulk harness.  
 11. Title-level validated LLM explainability.  
-12. Post_fix B3 matching-op claims before production-weight parity + rebench green.  
-13. “Remediation fully closed / submission-ready” while CUDA evidence + publication sync pending.
+12. Post_fix DICC / server B3 matching-op **speed** claims without a new post_fix SUCCESS tree (Option B).  
+13. Presenting historical pre_fix DICC B3 µs as post_fix or parity-gated server performance.  
+14. “Remediation fully closed / submission-ready” while publication sync (and optional Option A rebench) pending.
 
 ---
 
 ## F. Preferred paper tables (pre-write)
 
 1. Detection dual bars + sealed test (**0.9780 ± 0.0033**).  
-2. Option A **per-block** table (B1–B4) with B3 PT win highlighted (**pre_fix** label).  
-3. DICC multi-session stability for B3 / full PT (**pre_fix** until rebench).  
+2. Option A **per-block** table: B1/B2/B4 CUDA wins; B3 server wall-clock only as **historical pre_fix** (Option B — not active post_fix speed claim).  
+3. Optional appendix: DICC multi-session B3 stability under **historical pre_fix** label only.  
 4. DICC multi-compiler absolute table (both GPUs, batch-1) — full-model only.  
 5. Laptop: **separate** Table A (incomplete Custom CUDA absolute) and Table B (full-model absolute); no cross ratios.  
-6. ToN corrected leakage-safe (**0.8075** CNN / **0.9626** RF); optional older 13-feat ~0.811 vs ~0.939 as comparable prior.  
-7. Bulk throughput + exploratory energy appendix (not streaming chapter).
+6. Local B3 correctness (parity gate + sanitizers) as correctness narrative — not server latency.  
+7. ToN corrected leakage-safe (**0.8075** CNN / **0.9626** RF); optional older 13-feat ~0.811 vs ~0.939 as comparable prior.  
+8. Bulk throughput + exploratory energy appendix (not streaming chapter).
 
 *End claim map.*
