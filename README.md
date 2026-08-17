@@ -30,7 +30,8 @@
 | `scripts/` | Training, benchmarks, parity gates, stale-claim guard |
 | `inference/kernels/` | Option A Custom CUDA sources (`.cu`); build locally — see [Building the CUDA kernels](#building-the-cuda-kernels) |
 | `model/` | Weights — see [`model/README.md`](model/README.md) (champion vs historical vs **invalid** ToN-clean) |
-| `benchmarks/results/` | Claim-eligible JSON/gates (many raw benches stay local / gitignored) |
+| `benchmarks/results/` | Claim-eligible JSON/gates, including the artifacts behind every headline number (many raw benches stay local / gitignored) |
+| `data/` | BoT-IoT raw and processed splits are **not** tracked (size). The ToN-IoT processed splits under `data/processed_toniot/` **are** tracked deliberately, so the corrected leakage-safe result is reproducible without redownloading |
 | `tests/` | Unit tests (`pytest tests/`) |
 | `dicc_scripts/` | UM DICC campaign helpers |
 | `HANDOFF.md`, `DAILY_LOG.md`, `AGENTS.md`, `CLAUDE.md` | **Internal / historical** coding-session notes — not paper authority |

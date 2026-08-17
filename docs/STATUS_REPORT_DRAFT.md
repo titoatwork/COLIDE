@@ -1,7 +1,7 @@
 # COLIDE — Full Interim Status Report
 
 > **SUPERSEDED for current status (2026-08-15).**  
-> Living authority: `docs/PRE_MANUSCRIPT_CLOSURE.md`, `docs/CLAIM_MAP_PREWRITE.md`, `docs/DICC_EXTRACTION_TABLES.md`, `HANDOFF.md`.  
+> Living authority: `docs/PRE_MANUSCRIPT_CLOSURE.md`, `docs/CLAIM_MAP_PREWRITE.md`, `docs/DICC_EXTRACTION_TABLES.md`, `docs/RESULTS_INDEX.md`.  
 > DICC multi-session SUCCESS **exists** on laptop; this draft’s “ABSENT / blocker” sections are **historical**.  
 > **Claim hygiene (tombstone):** bare **0.9790** is **historical / legacy**; ToN clean **0.9526** / **0.9851** / **+15.4%** are **INVALID / tombstone** only — principal BoT is sealed **0.9780 ± 0.0033**; active ToN is CNN **0.8075** / RF **0.9626**.
 

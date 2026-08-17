@@ -1,7 +1,7 @@
 # COLIDE — Prof. Por update (≤3 days) — command plan
 
 > **SUPERSEDED for current status (2026-08-15).**  
-> Campaign + stretch executed. Living authority: `HANDOFF.md`, `docs/PRE_MANUSCRIPT_CLOSURE.md`, `docs/CLAIM_MAP_PREWRITE.md`, `docs/DICC_EXTRACTION_TABLES.md`.  
+> Campaign + stretch executed. Living authority: `docs/RESULTS_INDEX.md`, `docs/PRE_MANUSCRIPT_CLOSURE.md`, `docs/CLAIM_MAP_PREWRITE.md`, `docs/DICC_EXTRACTION_TABLES.md`.  
 > This file remains as a **historical / legacy** run plan only.  
 > **Claim hygiene (tombstone):** bare **0.9790** is **historical / legacy** only; ToN **0.9526** is **INVALID**; partial-vs-full CUDA ratios are **FORBIDDEN**. Principal BoT: **0.9780 ± 0.0033**. Active ToN: CNN **0.8075** / RF **0.9626**.
 

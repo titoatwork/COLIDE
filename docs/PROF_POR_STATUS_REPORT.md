@@ -1,7 +1,7 @@
 # COLIDE — Status Report for Prof. Dr. Por Lip Yee
 
 > **SUPERSEDED for current status (2026-08-15).**  
-> Living authority: `docs/PRE_MANUSCRIPT_CLOSURE.md`, `docs/CLAIM_MAP_PREWRITE.md`, `docs/DICC_B3_CUDA_VS_PT_REPORT.md`, `HANDOFF.md`.  
+> Living authority: `docs/PRE_MANUSCRIPT_CLOSURE.md`, `docs/CLAIM_MAP_PREWRITE.md`, `docs/DICC_B3_CUDA_VS_PT_REPORT.md`, `docs/RESULTS_INDEX.md`.  
 > DICC multi-session campaign is **done** (6 SUCCESS); B3 PT wins on servers (**pre_fix** wall-clock). Historical “blocker / SUCCESS absent” text below is frozen.  
 > **Claim hygiene (tombstone):** numbers below with **0.9790** are **historical / legacy** only; ToN **0.9526** is **INVALID**. Principal BoT: sealed **0.9780 ± 0.0033**. Active ToN: CNN **0.8075** / RF **0.9626**. Partial-vs-full CUDA ratios are **FORBIDDEN**.
 
