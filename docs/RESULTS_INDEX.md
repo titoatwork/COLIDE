@@ -31,7 +31,7 @@ Only rows with `use_in_manuscript: true` (or explicit OK in claim map) may appea
 |-------|-------|----------|--------|
 | B1/B2/B4 CUDA faster than matching PT (DICC) | extraction tables | `docs/DICC_EXTRACTION_TABLES.md` | **OK** wall-clock historical |
 | **B3 server latency (DICC)** | ~363 vs ~513 V100S; ~385–391 vs ~667–671 A100 (PT vs CUDA FP16) | B3 report + SUCCESS trees | **historical pre_fix only** — **Option B (2026-08-15):** comparative post_fix / parity-gated server B3 claim **dropped from active path** pending rebench (`docs/B3_SERVER_LATENCY_DECISION.md`); **not** claim-eligible post_fix |
-| B3 production-weight parity (local) | GPU inject vs PT full seq max abs ~6.5e-6 | `benchmarks/results/block3_parity_gate.json` | **OK** (`valid: true`, local `kernel_status=post_fix`; **not** DICC latency) |
+| B3 production-weight parity (local) | GPU inject vs PT full seq max abs **~3.43e-6** (mean 8.9e-8). Separately, PT vs CPU reference full seq max abs ~6.49e-6 | `benchmarks/results/block3_parity_gate.json` (`comparison.gpu_vs_pt_full_sequence.max_abs_error`) | **OK** (`valid: true`, local `kernel_status=post_fix`; **not** DICC latency) |
 | Local B3 sanitizers | 0 errors FP32+FP16 | `benchmarks/results/sanitizer_b3/summary.json` | **OK** (local correctness) |
 | Full custom pipeline vs full V3 | — | — | **FORBIDDEN** |
 
