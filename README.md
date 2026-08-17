@@ -28,13 +28,43 @@
 | `docs/` | Documentation index — **current authority, manuscript, DICC, historical packs** |
 | `docs/manuscript/` | Draft manuscript + figures |
 | `scripts/` | Training, benchmarks, parity gates, stale-claim guard |
-| `inference/kernels/` | Option A Custom CUDA sources (+ laptop sm_86 binaries) |
+| `inference/kernels/` | Option A Custom CUDA sources (`.cu`); build locally — see [Building the CUDA kernels](#building-the-cuda-kernels) |
 | `model/` | Weights — see [`model/README.md`](model/README.md) (champion vs historical vs **invalid** ToN-clean) |
 | `benchmarks/results/` | Claim-eligible JSON/gates (many raw benches stay local / gitignored) |
 | `tests/` | Unit tests (`pytest tests/`) |
 | `dicc_scripts/` | UM DICC campaign helpers |
 | `HANDOFF.md`, `DAILY_LOG.md`, `AGENTS.md`, `CLAUDE.md` | **Internal / historical** coding-session notes — not paper authority |
 | Root `COLIDE Remediation…Checklist.md` | Long checklist; some boxes lag later gate JSONs — prefer review + RESULTS_INDEX |
+
+### Building the CUDA kernels
+
+Compiled binaries are **not** tracked (they are architecture-specific and rebuildable).
+Each `.cu` file is standalone — no Makefile — and runs its own benchmark when executed:
+
+```bash
+nvcc -arch=sm_86 -o inference/kernels/fused_block1 inference/kernels/fused_block1.cu   # RTX 30xx / A100 (Ampere)
+nvcc -arch=sm_70 -o inference/kernels/fused_block3 inference/kernels/fused_block3.cu   # V100 (Volta)
+```
+
+Swap in `fused_block2`, `fused_block3_fp16`, `fused_block3_naive`, `fused_block4`, or
+`fused_pipeline` as needed. `Dockerfile` builds all of them for `sm_86` by default
+(`--build-arg CUDA_ARCH=sm_89` to override); `benchmark.sh` runs the suite once built.
+Kernels load weights exported by `CNNBiLSTM.export_weights()` into `model/weights/` —
+re-export after retraining or you will be profiling stale weights.
+
+### Verifying a published number
+
+Every headline figure traces to a JSON artifact in `benchmarks/results/`, and the
+artifacts behind the principal results are tracked in this repository:
+
+```bash
+PYTHONPATH=. python scripts/verify_claims.py       # every claim vs its source JSON
+PYTHONPATH=. python scripts/check_stale_claims.py  # withdrawn/forbidden strings
+pytest tests/                                      # champion hash, config, schemas
+```
+
+For example, the principal sealed multi-seed result is
+`benchmarks/results/sealed_test/summary.json` (`test_macro_f1_mean`).
 
 ### What is *not* current authority
 

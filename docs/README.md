@@ -91,16 +91,17 @@ Also historical / internal coding notes: [`../AGENTS.md`](../AGENTS.md), [`../CL
 
 ## Internal correspondence (not paper evidence)
 
-Do not cite emails as experimental evidence.
+**Moved out of the published tree 2026-08-17.** Supervisor and collaborator emails,
+feedback documents, interim status reports, and coordination briefings are retained
+locally under `private/` (gitignored) rather than published on a public repository.
 
-| Path |
-|------|
-| [`EMAIL_CHERAN_MATERIALS_HANDOFF.md`](EMAIL_CHERAN_MATERIALS_HANDOFF.md) |
-| [`EMAIL_FINAL_STATUS_PROF_POR_INTERNSHIP.md`](EMAIL_FINAL_STATUS_PROF_POR_INTERNSHIP.md) |
-| [`EMAIL_REPLY_PROF_POR_FEEDBACK.md`](EMAIL_REPLY_PROF_POR_FEEDBACK.md) |
-| [`EMAIL_STATUS_PROF_POR_POST_FEEDBACK.md`](EMAIL_STATUS_PROF_POR_POST_FEEDBACK.md) |
-| [`EMAIL_STATUS_PROF_POR_SHORT_SENT.md`](EMAIL_STATUS_PROF_POR_SHORT_SENT.md) |
-| [`EMAILS_POR_REPLY_FOLLOWUP.md`](EMAILS_POR_REPLY_FOLLOWUP.md) |
+Nothing was deleted — the keep-and-label policy below governs **results provenance**,
+and correspondence was never results evidence. Historical documents elsewhere in
+`docs/` may still reference filenames such as `feedback1.docx`; those references are
+intentionally left intact as an audit trail, and the files themselves remain available
+on request.
+
+Do not cite emails as experimental evidence.
 
 ---
 

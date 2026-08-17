@@ -52,6 +52,14 @@ def fmt_ratio(value, decimals=2):
     return f"{value:.{decimals}f}x"
 
 
+# Cross-table speedup ratios (incomplete Custom CUDA Blocks 1-4 sum divided by a
+# full-model framework latency). FORBIDDEN by CLAIM-PIPE-001 -- Table A and Table
+# B in README.md have different scopes and must never be ratioed. Populated from
+# live JSON by build_claims() so the ban tracks the data instead of going stale,
+# then enforced as an absence check by check_regressions().
+FORBIDDEN_CROSS_TABLE_RATIOS = []
+
+
 # ================================================================
 # Claim manifest: (id, description, source(s), expected string variants)
 # `check` returns a list of acceptable rendered strings; if ANY of them
@@ -61,12 +69,18 @@ def fmt_ratio(value, decimals=2):
 def build_claims():
     claims = []
 
-    def add(claim_id, description, source, variants):
+    def add(claim_id, description, source, variants, retired=None):
+        # `retired`: a short reason string. A retired claim is recorded (so the
+        # number's provenance and the reason it stopped being asserted stay in
+        # the manifest) but is not required to appear in the prose. Use it when
+        # claim hygiene deliberately removes a sentence -- never to silence a
+        # claim that simply stopped matching.
         claims.append({
             "id": claim_id,
             "description": description,
             "source": source,
             "variants": [v for v in variants if v],
+            "retired": retired,
         })
 
     def fmt_range(lo, hi, decimals=0, suffix="", thousands=False):
@@ -114,18 +128,19 @@ def build_claims():
             return min(vals), max(vals)
 
         cc_lo, cc_hi = latency_range("Custom CUDA FP16")
-        for name, key in [
-            ("TensorRT", "vs_tensorrt"),
-            ("torch.compile", "vs_compile"),
-            ("Eager PyTorch", "vs_eager"),
-        ]:
-            fw_lo, fw_hi = latency_range(name)
-            add(
-                f"framework_speedup_{key}",
-                f"Custom CUDA speedup vs {name} (range across 3 independent n=20/n=100 sessions)",
-                "statistical_significance_v2.json (3 sessions)",
-                [fmt_range(fw_lo / cc_hi, fw_hi / cc_lo, decimals=2, suffix="x")],
-            )
+        # RETIRED 2026-08-17 (CLAIM-PIPE-001). These used to be POSITIVE claims:
+        # the verifier demanded that README contain "Custom CUDA is 3.60x-4.99x
+        # faster than TensorRT" and friends. Those ratios divide an INCOMPLETE
+        # Custom CUDA Blocks 1-4 sum by a FULL-model framework latency -- exactly
+        # the cross-table ratio docs/CLAIM_MAP_PREWRITE.md marks FORBIDDEN, and
+        # which README now names as the canonical example of what not to write.
+        #
+        # The gate had therefore inverted: it failed *because the prose was
+        # correct*, and its failure message told the reader to paste the banned
+        # ratios back in. Rather than deleting the entries (which would lose the
+        # provenance), they are computed here and asserted ABSENT via
+        # check_regressions() -- so the same JSON now guards the claim instead of
+        # demanding it. See scan below and REGRESSION_GUARDS.
         # Raw per-framework latencies -- these should be the ONLY RTX3050
         # framework-latency numbers quoted anywhere in the manuscript. Any
         # other single-run number for these frameworks (there were several
@@ -138,17 +153,14 @@ def build_claims():
                 "statistical_significance_v2.json (3 sessions)",
                 [fmt_range(lo, hi, thousands=True)],
             )
-        # The chained-pipeline "vs PyTorch GPU" ratio IS the eager-PyTorch
-        # speedup ratio -- they're the same comparison. Track it explicitly
-        # so it can't silently drift back to an unsourced constant.
-        eager_lo, eager_hi = latency_range("Eager PyTorch")
-        add(
-            "pipeline_speedup_vs_pytorch_rtx3050",
-            "Chained pipeline speedup vs eager PyTorch -- must equal "
-            "framework_speedup_vs_eager, not an independently-sourced number",
-            "statistical_significance_v2.json (Custom CUDA now n=100-trial "
-            "derived, see cuda_kernel_stats_rtx3050.json; 3 sessions)",
-            [fmt_range(eager_lo / cc_hi, eager_hi / cc_lo, decimals=2, suffix="x")],
+        # RETIRED 2026-08-17 (CLAIM-PIPE-001), same reasoning as the three
+        # framework_speedup_* claims above: the chained Blocks 1-4 pipeline is
+        # not a full-model execution, so no ratio of it against eager PyTorch is
+        # publishable. Guarded as absent rather than asserted as present.
+        FORBIDDEN_CROSS_TABLE_RATIOS.extend(
+            fmt_range(latency_range(n)[0] / cc_hi, latency_range(n)[1] / cc_lo,
+                      decimals=2, suffix="x")
+            for n in ("TensorRT", "torch.compile", "Eager PyTorch", "ORT GPU")
         )
         # Two-sample Welch's significance (fixed 2026-07-01, was one-sample
         # vs a bare constant). The four headline frameworks (Eager PyTorch,
@@ -165,7 +177,13 @@ def build_claims():
             "both fresh 2026-07-02 sessions) -- a separate, real finding "
             "from the ratio-range instability",
             "statistical_significance_v2.json (3 sessions)",
-            ["not consistently", "is not robust"],
+            # Wording updated 2026-08-17: the Phase-1 claim-hygiene rewrite
+            # replaced the old "not consistently / is not robust" sentence with
+            # full-model-vs-full-model phrasing. The finding is unchanged; only
+            # the prose that carries it moved.
+            # Kept short so it cannot straddle a hard line-wrap in the prose.
+            ["competitive with (or faster than) some GPU paths",
+             "not consistently", "is not robust"],
         )
 
     # LLM dispatch overhead -- fixed 2026-07-01 (Phase 1.1). Real p99 over
@@ -221,7 +239,14 @@ def build_claims():
         "rf_gap_botiot_baseline",
         "RF gap before distillation: 0.9864 - 0.9352 (Original V3)",
         "rf_baseline_processed.json + README's own headline number",
+        # RETIRED 2026-08-17: README no longer quotes the pre-distillation gap as
+        # a headline. It now reports only the final gap (0.74%) and frames
+        # detection as accuracy-efficiency rather than gap-closing, so demanding
+        # "5.12" forced prose that the claim map no longer wants. Kept as a
+        # disabled entry so the number's provenance stays visible.
         [fmt_pct(rf_ceiling - 0.9352, 2)],
+        retired="README dropped the pre-distillation gap headline (Phase-1 claim "
+                "hygiene); only the final 0.74% gap is quoted now",
     )
 
     # KD sweep table
@@ -294,7 +319,13 @@ def build_claims():
             "toniot_original_f1",
             "CNN-BiLSTM (original, 13-feature) ToN-IoT macro-F1",
             "distill_toniot_v2.json",
+            # RETIRED 2026-08-17 (DATA-TON-001 fallout): the active ToN evidence
+            # is the corrected leakage-safe protocol (CNN 0.8075 / RF 0.9626).
+            # The old 13-feature distill number is a superseded development path,
+            # so requiring it in README contradicted the corrected-ToN rewrite.
             [fmt(distill_v2["macro_f1"], 4)],
+            retired="superseded by the corrected leakage-safe ToN protocol "
+                    "(CNN 0.8075 / RF 0.9626); DATA-TON-001",
         )
 
     # MLP ablation latency
@@ -622,15 +653,80 @@ def build_claims():
             ["5e-2", "5\\times10^{-2}"],
         )
 
+    # ------------------------------------------------------------------
+    # Added 2026-08-17: numbers that became load-bearing during the Phase-1/2
+    # claim-hygiene rewrite but had no manifest entry, so scan_orphan_numbers()
+    # was flagging them as unverified. Sources are the same JSON the prose was
+    # written from.
+    # ------------------------------------------------------------------
+
+    # Sealed multi-seed BoT test: min-class F1 accompanies the principal macro-F1.
+    sealed = load_json("sealed_test/summary.json")
+    if sealed:
+        add(
+            "sealed_test_min_class_f1_mean",
+            "Sealed multi-seed BoT test: mean minimum per-class F1 (n=5)",
+            "sealed_test/summary.json (test_min_per_class_f1_mean)",
+            [fmt(sealed["test_min_per_class_f1_mean"], 4)],
+        )
+
+    # Corrected leakage-safe ToN-IoT (toniot_leakage_safe_v1) -- the ACTIVE ToN
+    # evidence that replaced the invalid 26-feature "clean" path (DATA-TON-001).
+    ton_corr = load_json("toniot_corrected/summary.json")
+    if ton_corr:
+        for model_key, label in [("cnn", "CNN-BiLSTM"), ("rf", "CPU RF")]:
+            if model_key in ton_corr and "test_macro_f1" in ton_corr[model_key]:
+                add(
+                    f"toniot_corrected_{model_key}_test_f1",
+                    f"Corrected leakage-safe ToN-IoT {label} test macro-F1 "
+                    f"(protocol toniot_leakage_safe_v1, 13 features, no SMOTE/KD)",
+                    "toniot_corrected/summary.json",
+                    [fmt(ton_corr[model_key]["test_macro_f1"], 4)],
+                )
+
+    # DICC multi-compiler matrix (full-model absolute, batch-1). Twelve numbers
+    # across two GPUs; README rounds some to whole microseconds and others to one
+    # decimal, so both renderings are accepted.
+    for gpu, fname in [("V100S", "dicc/framework/multi_compiler_v100s.json"),
+                       ("A100", "dicc/framework/multi_compiler_a100.json")]:
+        matrix = load_json(fname)
+        if not matrix:
+            continue
+        for key, method in [
+            ("eager_full_model_us", "Eager full V3"),
+            ("torch_compile_full_model_us", "torch.compile"),
+            ("ort_cuda_full_model_us", "ORT CUDA"),
+            ("ort_cpu_full_model_us", "ORT CPU"),
+            ("ort_tensorrt_ep_full_model_us", "ORT TensorRT EP"),
+            ("tensorrt_native_full_model_us", "TensorRT native FP16"),
+        ]:
+            entry = matrix.get(key)
+            if not isinstance(entry, dict) or "mean" not in entry:
+                continue
+            mean = entry["mean"]
+            add(
+                f"dicc_multicompiler_{gpu.lower()}_{key.replace('_full_model_us', '')}",
+                f"DICC multi-compiler {gpu}: {method} full-model mean latency "
+                f"(batch-1, n=20, inner=200) -- ABSOLUTE only, never ratioed "
+                f"against incomplete Custom CUDA block sums (CLAIM-PIPE-001)",
+                f"{fname} ({key}.mean)",
+                # README writes these unseparated (1041, 2033); accept the
+                # thousands-separated and one-decimal renderings too.
+                [f"{mean:.0f}", f"{mean:,.0f}", f"{mean:.1f}"],
+            )
+
     return claims
 
 
 def check_claims():
     docs = load_docs()
     claims = build_claims()
-    passed, failed = [], []
+    passed, failed, retired = [], [], []
 
     for claim in claims:
+        if claim.get("retired"):
+            retired.append(claim)
+            continue
         found_in = []
         for doc_name, text in docs.items():
             for variant in claim["variants"]:
@@ -642,7 +738,7 @@ def check_claims():
         else:
             failed.append(claim)
 
-    return passed, failed
+    return passed, failed, retired
 
 
 def scan_orphan_numbers(covered_variants):
@@ -695,8 +791,20 @@ REGRESSION_GUARDS = [
 
 def check_regressions():
     docs = load_docs()
+    guards = list(REGRESSION_GUARDS)
+    # CLAIM-PIPE-001: live-computed forbidden cross-table ratios (see
+    # FORBIDDEN_CROSS_TABLE_RATIOS). Only meaningful after build_claims() has
+    # run, which check_claims() does first in main().
+    guards += [
+        (ratio,
+         "cross-table speedup ratio: incomplete Custom CUDA Blocks 1-4 sum "
+         "divided by a full-model framework latency (CLAIM-PIPE-001 FORBIDDEN; "
+         "Table A and Table B have different scopes)",
+         "2026-08-17")
+        for ratio in dict.fromkeys(FORBIDDEN_CROSS_TABLE_RATIOS)
+    ]
     hits = []
-    for banned, why, fixed_date in REGRESSION_GUARDS:
+    for banned, why, fixed_date in guards:
         for doc_name, text in docs.items():
             if banned in text:
                 hits.append((banned, why, fixed_date, doc_name))
@@ -704,7 +812,7 @@ def check_regressions():
 
 
 def main():
-    passed, failed = check_claims()
+    passed, failed, retired = check_claims()
     regressions = check_regressions()
 
     print("=" * 78)
@@ -723,6 +831,12 @@ def main():
         print(f"         source: {claim['source']}")
         print(f"         expected one of: {claim['variants']}")
         print()
+
+    if retired:
+        print(f"\n{len(retired)} claim(s) RETIRED (recorded, deliberately not "
+              f"asserted in the prose):\n")
+        for claim in retired:
+            print(f"  [RETIRED] {claim['id']:<32} {claim['retired']}")
 
     all_claims = build_claims()
     orphans = scan_orphan_numbers([c["variants"] for c in all_claims])

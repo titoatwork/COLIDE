@@ -1,0 +1,22 @@
+{
+  "n_estimators": 200,
+  "random_state": 42,
+  "data_source": "data/processed/*.npy (preprocessing/preprocess_v2.py: undersample -> SMOTE -> scale)",
+  "train_shape": [
+    268627,
+    10
+  ],
+  "val_shape": [
+    293482,
+    10
+  ],
+  "test_shape": [
+    733705,
+    10
+  ],
+  "val_macro_f1": 0.990308530511674,
+  "val_weighted_f1": 0.990401623082919,
+  "test_macro_f1": 0.9863877607840802,
+  "test_weighted_f1": 0.9906660893970239,
+  "test_accuracy": 0.9906597338167247
+}

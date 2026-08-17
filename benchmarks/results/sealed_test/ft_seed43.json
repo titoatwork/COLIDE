@@ -1,0 +1,443 @@
+{
+  "experiment_id": "protocol_ft_seed43",
+  "protocol_id": "botiot_v1",
+  "stage": "stage_b_ft",
+  "seed": 43,
+  "git_sha": "ead77791409bae659b0e3fd8846ef7699999c638",
+  "timestamp_utc": "2026-07-22T12:56:24.491184+00:00",
+  "config": {
+    "init_checkpoint": "model/best_model_botiot_distill_a0.6_T10.0_focal2.pth",
+    "epochs": 10,
+    "lr": 5.89306076111462e-05,
+    "batch_size": 1024,
+    "focal_gamma": 1.9166447754858478,
+    "dropout_rate": 0.14783769837532068,
+    "attention_dropout": 0.21397343616689848,
+    "weight_decay": 0.00019158219548093185,
+    "scheduler": "cosine",
+    "optimizer": "adamw",
+    "loss": "focal",
+    "logit_tau": 1.0,
+    "patience": 3,
+    "drop_last_train": true,
+    "train_sampler": "shuffle",
+    "hpo_config": "config/hpo_best.yaml",
+    "save_path": "/home/titoisalive/colide/model/sealed_test/ft_seed43.pth"
+  },
+  "metrics": {
+    "best_val_macro_f1": 0.9586701859426048,
+    "val": {
+      "accuracy": 0.9831846586843486,
+      "balanced_accuracy": 0.9532557258332994,
+      "macro_f1": 0.9586701859426048,
+      "weighted_f1": 0.9831949438710479,
+      "min_per_class_f1": 0.9090909090909091,
+      "per_class": {
+        "DDoS": {
+          "precision": 0.9909732091162693,
+          "recall": 0.9772143357641502,
+          "f1": 0.9840456808352172,
+          "support": 154132
+        },
+        "DoS": {
+          "precision": 0.9735892926342147,
+          "recall": 0.9896148164981252,
+          "f1": 0.9815366468447012,
+          "support": 132015
+        },
+        "Normal": {
+          "precision": 0.8780487804878049,
+          "recall": 0.972972972972973,
+          "f1": 0.9230769230769231,
+          "support": 37
+        },
+        "Reconnaissance": {
+          "precision": 0.9980705622932745,
+          "recall": 0.9931431705979156,
+          "f1": 0.9956007698652736,
+          "support": 7292
+        },
+        "Theft": {
+          "precision": 1.0,
+          "recall": 0.8333333333333334,
+          "f1": 0.9090909090909091,
+          "support": 6
+        }
+      },
+      "confusion_matrix": [
+        [
+          150620,
+          3504,
+          0,
+          8,
+          0
+        ],
+        [
+          1365,
+          130644,
+          2,
+          4,
+          0
+        ],
+        [
+          0,
+          0,
+          36,
+          1,
+          0
+        ],
+        [
+          7,
+          40,
+          3,
+          7242,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1,
+          5
+        ]
+      ],
+      "classification_report": {
+        "DDoS": {
+          "precision": 0.9909732091162693,
+          "recall": 0.9772143357641502,
+          "f1-score": 0.9840456808352172,
+          "support": 154132.0
+        },
+        "DoS": {
+          "precision": 0.9735892926342147,
+          "recall": 0.9896148164981252,
+          "f1-score": 0.9815366468447012,
+          "support": 132015.0
+        },
+        "Normal": {
+          "precision": 0.8780487804878049,
+          "recall": 0.972972972972973,
+          "f1-score": 0.9230769230769231,
+          "support": 37.0
+        },
+        "Reconnaissance": {
+          "precision": 0.9980705622932745,
+          "recall": 0.9931431705979156,
+          "f1-score": 0.9956007698652736,
+          "support": 7292.0
+        },
+        "Theft": {
+          "precision": 1.0,
+          "recall": 0.8333333333333334,
+          "f1-score": 0.9090909090909091,
+          "support": 6.0
+        },
+        "accuracy": 0.9831846586843486,
+        "macro avg": {
+          "precision": 0.9681363689063126,
+          "recall": 0.9532557258332994,
+          "f1-score": 0.9586701859426048,
+          "support": 293482.0
+        },
+        "weighted avg": {
+          "precision": 0.9833158131665155,
+          "recall": 0.9831846586843486,
+          "f1-score": 0.9831949438710479,
+          "support": 293482.0
+        }
+      },
+      "theft_f1": 0.9090909090909091,
+      "theft_recall": 0.8333333333333334,
+      "normal_f1": 0.9230769230769231,
+      "normal_recall": 0.972972972972973
+    },
+    "test": {
+      "accuracy": 0.9833734266496753,
+      "balanced_accuracy": 0.9865726268468766,
+      "macro_f1": 0.9797511215031165,
+      "weighted_f1": 0.9833833216839339,
+      "min_per_class_f1": 0.9369369369369369,
+      "per_class": {
+        "DDoS": {
+          "precision": 0.9910945024869076,
+          "recall": 0.9774129335156978,
+          "f1": 0.9842061730121169,
+          "support": 385309
+        },
+        "DoS": {
+          "precision": 0.9738659497289128,
+          "recall": 0.9897640800697944,
+          "f1": 0.9817506569132514,
+          "support": 330112
+        },
+        "Normal": {
+          "precision": 0.9043478260869565,
+          "recall": 0.9719626168224299,
+          "f1": 0.9369369369369369,
+          "support": 107
+        },
+        "Reconnaissance": {
+          "precision": 0.9980094000552945,
+          "recall": 0.9937235038264604,
+          "f1": 0.9958618406532774,
+          "support": 18163
+        },
+        "Theft": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 14
+        }
+      },
+      "confusion_matrix": [
+        [
+          376606,
+          8683,
+          0,
+          20,
+          0
+        ],
+        [
+          3363,
+          326733,
+          2,
+          14,
+          0
+        ],
+        [
+          1,
+          0,
+          104,
+          2,
+          0
+        ],
+        [
+          20,
+          85,
+          9,
+          18049,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          14
+        ]
+      ],
+      "classification_report": {
+        "DDoS": {
+          "precision": 0.9910945024869076,
+          "recall": 0.9774129335156978,
+          "f1-score": 0.9842061730121169,
+          "support": 385309.0
+        },
+        "DoS": {
+          "precision": 0.9738659497289128,
+          "recall": 0.9897640800697944,
+          "f1-score": 0.9817506569132514,
+          "support": 330112.0
+        },
+        "Normal": {
+          "precision": 0.9043478260869565,
+          "recall": 0.9719626168224299,
+          "f1-score": 0.9369369369369369,
+          "support": 107.0
+        },
+        "Reconnaissance": {
+          "precision": 0.9980094000552945,
+          "recall": 0.9937235038264604,
+          "f1-score": 0.9958618406532774,
+          "support": 18163.0
+        },
+        "Theft": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 14.0
+        },
+        "accuracy": 0.9833734266496753,
+        "macro avg": {
+          "precision": 0.9734635356716144,
+          "recall": 0.9865726268468766,
+          "f1-score": 0.9797511215031165,
+          "support": 733705.0
+        },
+        "weighted avg": {
+          "precision": 0.9835016498541436,
+          "recall": 0.9833734266496753,
+          "f1-score": 0.9833833216839339,
+          "support": 733705.0
+        }
+      },
+      "theft_f1": 1.0,
+      "theft_recall": 1.0,
+      "normal_f1": 0.9369369369369369,
+      "normal_recall": 0.9719626168224299
+    }
+  },
+  "extra": {
+    "history": [
+      {
+        "epoch": 1,
+        "train_loss": 0.023971755921728,
+        "val_macro_f1": 0.9368920698983964,
+        "val_balanced_accuracy": 0.9364253665603016,
+        "val_min_per_class_f1": 0.8333333333333334,
+        "val_theft_f1": 0.8333333333333334,
+        "val_normal_f1": 0.8918918918918919,
+        "lr": 5.748847299447978e-05
+      },
+      {
+        "epoch": 2,
+        "train_loss": 0.011642077922013586,
+        "val_macro_f1": 0.7766673353998124,
+        "val_balanced_accuracy": 0.7863163361067902,
+        "val_min_per_class_f1": 0.0,
+        "val_theft_f1": 0.0,
+        "val_normal_f1": 0.9230769230769231,
+        "lr": 5.3303235328702544e-05
+      },
+      {
+        "epoch": 3,
+        "train_loss": 0.010696925203734449,
+        "val_macro_f1": 0.9557755875197881,
+        "val_balanced_accuracy": 0.9476025027138106,
+        "val_min_per_class_f1": 0.9090909090909091,
+        "val_theft_f1": 0.9090909090909091,
+        "val_normal_f1": 0.9090909090909091,
+        "lr": 4.678457483680625e-05
+      },
+      {
+        "epoch": 4,
+        "train_loss": 0.010370883570471941,
+        "val_macro_f1": 0.9557173429998697,
+        "val_balanced_accuracy": 0.947450404181749,
+        "val_min_per_class_f1": 0.9090909090909091,
+        "val_theft_f1": 0.9090909090909091,
+        "val_normal_f1": 0.9090909090909091,
+        "lr": 3.8570583425915996e-05
+      },
+      {
+        "epoch": 5,
+        "train_loss": 0.010163782272970332,
+        "val_macro_f1": 0.9557163768785009,
+        "val_balanced_accuracy": 0.9476684292899492,
+        "val_min_per_class_f1": 0.9090909090909091,
+        "val_theft_f1": 0.9090909090909091,
+        "val_normal_f1": 0.9090909090909091,
+        "lr": 2.9465303805573096e-05
+      },
+      {
+        "epoch": 6,
+        "train_loss": 0.010065226172129167,
+        "val_macro_f1": 0.9558237263150355,
+        "val_balanced_accuracy": 0.9477699228534936,
+        "val_min_per_class_f1": 0.9090909090909091,
+        "val_theft_f1": 0.9090909090909091,
+        "val_normal_f1": 0.9090909090909091,
+        "lr": 2.03600241852302e-05
+      },
+      {
+        "epoch": 7,
+        "train_loss": 0.009973508345570594,
+        "val_macro_f1": 0.9586701859426048,
+        "val_balanced_accuracy": 0.9532557258332994,
+        "val_min_per_class_f1": 0.9090909090909091,
+        "val_theft_f1": 0.9090909090909091,
+        "val_normal_f1": 0.9230769230769231,
+        "lr": 1.2146032774339947e-05
+      },
+      {
+        "epoch": 8,
+        "train_loss": 0.009947093887259652,
+        "val_macro_f1": 0.9559010161118163,
+        "val_balanced_accuracy": 0.9478490025810326,
+        "val_min_per_class_f1": 0.9090909090909091,
+        "val_theft_f1": 0.9090909090909091,
+        "val_normal_f1": 0.9090909090909091,
+        "lr": 5.627372282443652e-06
+      },
+      {
+        "epoch": 9,
+        "train_loss": 0.0098838140146562,
+        "val_macro_f1": 0.9558608732865729,
+        "val_balanced_accuracy": 0.9477828976720643,
+        "val_min_per_class_f1": 0.9090909090909091,
+        "val_theft_f1": 0.9090909090909091,
+        "val_normal_f1": 0.9090909090909091,
+        "lr": 1.4421346166664173e-06
+      },
+      {
+        "epoch": 10,
+        "train_loss": 0.009872622325541196,
+        "val_macro_f1": 0.9558964464912592,
+        "val_balanced_accuracy": 0.9478099634154246,
+        "val_min_per_class_f1": 0.9090909090909091,
+        "val_theft_f1": 0.9090909090909091,
+        "val_normal_f1": 0.9090909090909091,
+        "lr": 0.0
+      }
+    ],
+    "elapsed_sec": 1045.859138250351,
+    "allow_test": true,
+    "device": "cuda",
+    "data_summary": {
+      "protocol_id": "botiot_v1",
+      "stage": "stage_b_ft",
+      "seed": 43,
+      "class_names": [
+        "DDoS",
+        "DoS",
+        "Normal",
+        "Reconnaissance",
+        "Theft"
+      ],
+      "n_train": 2641335,
+      "n_val": 293482,
+      "n_test": 733705,
+      "n_features": 10,
+      "train_class_counts": {
+        "DDoS": 1387183,
+        "DoS": 1188133,
+        "Normal": 333,
+        "Reconnaissance": 65627,
+        "Theft": 59
+      },
+      "val_class_counts": {
+        "DDoS": 154132,
+        "DoS": 132015,
+        "Normal": 37,
+        "Reconnaissance": 7292,
+        "Theft": 6
+      },
+      "test_class_counts": {
+        "DDoS": 385309,
+        "DoS": 330112,
+        "Normal": 107,
+        "Reconnaissance": 18163,
+        "Theft": 14
+      },
+      "meta": {
+        "val_size": 0.1,
+        "feature_columns": [
+          "N_IN_Conn_P_DstIP",
+          "N_IN_Conn_P_SrcIP",
+          "drate",
+          "max",
+          "mean",
+          "min",
+          "seq",
+          "srate",
+          "state_number",
+          "stddev"
+        ],
+        "train_csv": "data/raw/UNSW_2018_IoT_Botnet_Final_10_best_Training.csv",
+        "test_csv": "data/raw/UNSW_2018_IoT_Botnet_Final_10_best_Testing.csv",
+        "smote_applied": false,
+        "note": "Real-data fine-tune path; no SMOTE (matches train_twostage.py)"
+      }
+    }
+  }
+}

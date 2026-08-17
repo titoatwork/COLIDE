@@ -1,0 +1,26 @@
+{
+  "experiment_id": "b14_sealed_multiseed_bot_test",
+  "tracker": "B14",
+  "work_package": "WP3-final-test / sealed_test",
+  "init_path": "A",
+  "init_path_meta": {
+    "name": "distill_hpo_best_ft",
+    "init": "model/best_model_botiot_distill_a0.6_T10.0_focal2.pth",
+    "mode": "train_then_test",
+    "rationale": "Matches WP3 / HPO confirm protocol (recommended)"
+  },
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46
+  ],
+  "hpo_config": "config/hpo_best.yaml",
+  "tag": "sealed_test",
+  "champion_md5_expected": "80a90f7cc210276300eaa90173a5a385",
+  "champion_md5_live": "80a90f7cc210276300eaa90173a5a385",
+  "git_sha": "ead77791409bae659b0e3fd8846ef7699999c638",
+  "dry_run": true,
+  "lock_flags_ok": true
+}

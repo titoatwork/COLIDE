@@ -2,6 +2,39 @@
 .venv/
 .venv-cluster/
 
+# Private correspondence — supervisor/collaborator emails, feedback docs, briefings.
+# NOT deleted (repo policy is keep-and-label); retained locally, just not published
+# on a public repo. These are coordination material, never results evidence.
+private/
+
+# Compiled CUDA kernel binaries — arch-specific (sm_86) and rebuildable via the
+# nvcc one-liners in README.md. Sources in inference/kernels/*.cu are the artifact.
+inference/kernels/fused_block1
+inference/kernels/fused_block2
+inference/kernels/fused_block3
+inference/kernels/fused_block3_fp16
+inference/kernels/fused_block3_naive
+inference/kernels/fused_block4
+inference/kernels/fused_block4_fp16
+inference/kernels/fused_pipeline
+
+# Local experiment checkpoint trees (~131 MB of .pth). Their result JSONs under
+# benchmarks/results/ are the claim surface, not the weights.
+model/ablation_ladder/
+model/baselines_neural/
+model/cstar_bounded/
+model/hpo/
+model/hpo_smoke/
+model/imbalance_loss/
+model/multirun/
+model/multirun_ensemble_hpo/
+model/multirun_hpo_confirm/
+model/sealed_test/
+model/stratified_batch/
+model/teachers_kd/
+model/teachers_kd_neural/
+model/toniot_final/
+
 # Local run logs / thermal guards (not claim artifacts)
 logs/*
 !logs/README.md
@@ -40,6 +73,16 @@ benchmarks/results/*
 !benchmarks/results/toniot_clean_comparison.INVALIDATED.json
 !benchmarks/results/toniot_clean_retrain.json
 !benchmarks/results/toniot_clean_retrain.INVALIDATED.json
+# Claim-eligible sources cited by README / RESULTS_INDEX / CLAIM_MAP. These back
+# the principal sealed-test result and the CUDA/baseline tables — a reader must be
+# able to verify a published number without asking us for a file.
+!benchmarks/results/sealed_test/
+!benchmarks/results/sealed_test/**
+!benchmarks/results/toniot_final/
+!benchmarks/results/toniot_final/summary.json
+!benchmarks/results/cuda_kernel_stats_rtx3050.json
+!benchmarks/results/pytorch_block3_stats_rtx3050.json
+!benchmarks/results/rf_baseline_processed.json
 
 # Compiled CUDA artifacts
 *.so

@@ -1,0 +1,311 @@
+{
+  "experiment_id": "b14_sealed_multiseed_bot_test",
+  "tracker": "B14",
+  "work_package": "WP3-final-test / sealed_test",
+  "protocol_id": "botiot_v1",
+  "stage": "stage_b_ft",
+  "init_path": "A",
+  "init_path_meta": {
+    "name": "distill_hpo_best_ft",
+    "init": "model/best_model_botiot_distill_a0.6_T10.0_focal2.pth",
+    "mode": "train_then_test",
+    "rationale": "Matches WP3 / HPO confirm protocol (recommended)"
+  },
+  "hpo_config": "config/hpo_best.yaml",
+  "init_checkpoint": "model/best_model_botiot_distill_a0.6_T10.0_focal2.pth",
+  "epochs": 10,
+  "patience": 3,
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46
+  ],
+  "tag": "sealed_test",
+  "n_success": 5,
+  "n_requested": 5,
+  "test_macro_f1_mean": 0.9780291710994615,
+  "test_macro_f1_std": 0.003268676917290343,
+  "test_macro_f1_min": 0.9722323534371821,
+  "test_macro_f1_max": 0.9797725919529242,
+  "test_min_per_class_f1_mean": 0.9292231315822865,
+  "test_min_per_class_f1_std": 0.015636994337833103,
+  "test_theft_f1_mean": 1.0,
+  "test_theft_f1_std": 0.0,
+  "val_macro_f1_mean": 0.9688826976802287,
+  "val_macro_f1_std": 0.014534104568735417,
+  "wall_sec": 4767.934163,
+  "started_utc": "2026-07-22T12:27:53.539397+00:00",
+  "finished_utc": "2026-07-22T13:47:21.473560+00:00",
+  "git_sha": "ead77791409bae659b0e3fd8846ef7699999c638",
+  "champion_md5_expected": "80a90f7cc210276300eaa90173a5a385",
+  "champion_md5_before": "80a90f7cc210276300eaa90173a5a385",
+  "champion_md5_after": "80a90f7cc210276300eaa90173a5a385",
+  "champion_unchanged": true,
+  "allow_test": true,
+  "user_lock_confirmed": true,
+  "runs": [
+    {
+      "seed": 42,
+      "returncode": 0,
+      "checkpoint_path": "/home/titoisalive/colide/model/sealed_test/ft_seed42.pth",
+      "mode": "train_then_test",
+      "result_path": "/home/titoisalive/colide/benchmarks/results/sealed_test/ft_seed42.json",
+      "best_val_macro_f1": 0.9790552763944518,
+      "val_macro_f1": 0.9790552763944518,
+      "val_min_per_class_f1": 0.935064935064935,
+      "val_theft_f1": 1.0,
+      "val_balanced_accuracy": 0.9862892708989193,
+      "test_macro_f1": 0.9787413253911893,
+      "test_min_per_class_f1": 0.9333333333333333,
+      "test_theft_f1": 1.0,
+      "test_balanced_accuracy": 0.9881163767521375,
+      "test_per_class": {
+        "DDoS": {
+          "precision": 0.9924753207966064,
+          "recall": 0.9745632725942036,
+          "f1": 0.9834377422531375,
+          "support": 385309
+        },
+        "DoS": {
+          "precision": 0.9707224909759071,
+          "recall": 0.991427151996898,
+          "f1": 0.9809655833889085,
+          "support": 330112
+        },
+        "Normal": {
+          "precision": 0.8898305084745762,
+          "recall": 0.9813084112149533,
+          "f1": 0.9333333333333333,
+          "support": 107
+        },
+        "Reconnaissance": {
+          "precision": 0.9986714641572101,
+          "recall": 0.9932830479546331,
+          "f1": 0.9959699679805675,
+          "support": 18163
+        },
+        "Theft": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 14
+        }
+      },
+      "elapsed_sec": 615.6593647003174,
+      "allow_test": true
+    },
+    {
+      "seed": 43,
+      "returncode": 0,
+      "checkpoint_path": "/home/titoisalive/colide/model/sealed_test/ft_seed43.pth",
+      "mode": "train_then_test",
+      "result_path": "/home/titoisalive/colide/benchmarks/results/sealed_test/ft_seed43.json",
+      "best_val_macro_f1": 0.9586701859426048,
+      "val_macro_f1": 0.9586701859426048,
+      "val_min_per_class_f1": 0.9090909090909091,
+      "val_theft_f1": 0.9090909090909091,
+      "val_balanced_accuracy": 0.9532557258332994,
+      "test_macro_f1": 0.9797511215031165,
+      "test_min_per_class_f1": 0.9369369369369369,
+      "test_theft_f1": 1.0,
+      "test_balanced_accuracy": 0.9865726268468766,
+      "test_per_class": {
+        "DDoS": {
+          "precision": 0.9910945024869076,
+          "recall": 0.9774129335156978,
+          "f1": 0.9842061730121169,
+          "support": 385309
+        },
+        "DoS": {
+          "precision": 0.9738659497289128,
+          "recall": 0.9897640800697944,
+          "f1": 0.9817506569132514,
+          "support": 330112
+        },
+        "Normal": {
+          "precision": 0.9043478260869565,
+          "recall": 0.9719626168224299,
+          "f1": 0.9369369369369369,
+          "support": 107
+        },
+        "Reconnaissance": {
+          "precision": 0.9980094000552945,
+          "recall": 0.9937235038264604,
+          "f1": 0.9958618406532774,
+          "support": 18163
+        },
+        "Theft": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 14
+        }
+      },
+      "elapsed_sec": 1045.859138250351,
+      "allow_test": true
+    },
+    {
+      "seed": 44,
+      "returncode": 0,
+      "checkpoint_path": "/home/titoisalive/colide/model/sealed_test/ft_seed44.pth",
+      "mode": "train_then_test",
+      "result_path": "/home/titoisalive/colide/benchmarks/results/sealed_test/ft_seed44.json",
+      "best_val_macro_f1": 0.9796648052488749,
+      "val_macro_f1": 0.9796648052488749,
+      "val_min_per_class_f1": 0.9367088607594937,
+      "val_theft_f1": 1.0,
+      "val_balanced_accuracy": 0.9919089929777349,
+      "test_macro_f1": 0.9797725919529242,
+      "test_min_per_class_f1": 0.9375,
+      "test_theft_f1": 1.0,
+      "test_balanced_accuracy": 0.9882084886313173,
+      "test_per_class": {
+        "DDoS": {
+          "precision": 0.9889925769379017,
+          "recall": 0.9789052422860614,
+          "f1": 0.9839230560540924,
+          "support": 385309
+        },
+        "DoS": {
+          "precision": 0.9754643457857216,
+          "recall": 0.9873255137650252,
+          "f1": 0.9813590911691291,
+          "support": 330112
+        },
+        "Normal": {
+          "precision": 0.8974358974358975,
+          "recall": 0.9813084112149533,
+          "f1": 0.9375,
+          "support": 107
+        },
+        "Reconnaissance": {
+          "precision": 0.9986717582600033,
+          "recall": 0.9935032758905468,
+          "f1": 0.9960808125413999,
+          "support": 18163
+        },
+        "Theft": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 14
+        }
+      },
+      "elapsed_sec": 1868.2475497722626,
+      "allow_test": true
+    },
+    {
+      "seed": 45,
+      "returncode": 0,
+      "checkpoint_path": "/home/titoisalive/colide/model/sealed_test/ft_seed45.pth",
+      "mode": "train_then_test",
+      "result_path": "/home/titoisalive/colide/benchmarks/results/sealed_test/ft_seed45.json",
+      "best_val_macro_f1": 0.9787305628710552,
+      "val_macro_f1": 0.9787305628710552,
+      "val_min_per_class_f1": 0.9333333333333333,
+      "val_theft_f1": 1.0,
+      "val_balanced_accuracy": 0.9809230931962645,
+      "test_macro_f1": 0.9722323534371821,
+      "test_min_per_class_f1": 0.9014084507042254,
+      "test_theft_f1": 1.0,
+      "test_balanced_accuracy": 0.9709548866352791,
+      "test_per_class": {
+        "DDoS": {
+          "precision": 0.9888465987634729,
+          "recall": 0.9783757970875323,
+          "f1": 0.9835833318113387,
+          "support": 385309
+        },
+        "DoS": {
+          "precision": 0.9748437079357483,
+          "recall": 0.9872406940674681,
+          "f1": 0.9810030372263411,
+          "support": 330112
+        },
+        "Normal": {
+          "precision": 0.9056603773584906,
+          "recall": 0.897196261682243,
+          "f1": 0.9014084507042254,
+          "support": 107
+        },
+        "Reconnaissance": {
+          "precision": 0.9983929956777126,
+          "recall": 0.991961680339151,
+          "f1": 0.9951669474440056,
+          "support": 18163
+        },
+        "Theft": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 14
+        }
+      },
+      "elapsed_sec": 348.54868626594543,
+      "allow_test": true
+    },
+    {
+      "seed": 46,
+      "returncode": 0,
+      "checkpoint_path": "/home/titoisalive/colide/model/sealed_test/ft_seed46.pth",
+      "mode": "train_then_test",
+      "result_path": "/home/titoisalive/colide/benchmarks/results/sealed_test/ft_seed46.json",
+      "best_val_macro_f1": 0.9482926579441567,
+      "val_macro_f1": 0.9482926579441567,
+      "val_min_per_class_f1": 0.8333333333333334,
+      "val_theft_f1": 0.8333333333333334,
+      "val_balanced_accuracy": 0.9531414805218332,
+      "test_macro_f1": 0.9796484632128954,
+      "test_min_per_class_f1": 0.9369369369369369,
+      "test_theft_f1": 1.0,
+      "test_balanced_accuracy": 0.9864603097764963,
+      "test_per_class": {
+        "DDoS": {
+          "precision": 0.9915120020449197,
+          "recall": 0.9765045716554765,
+          "f1": 0.9839510660498493,
+          "support": 385309
+        },
+        "DoS": {
+          "precision": 0.9728647104339028,
+          "recall": 0.9902760275300504,
+          "f1": 0.9814931575123249,
+          "support": 330112
+        },
+        "Normal": {
+          "precision": 0.9043478260869565,
+          "recall": 0.9719626168224299,
+          "f1": 0.9369369369369369,
+          "support": 107
+        },
+        "Reconnaissance": {
+          "precision": 0.9981746778029759,
+          "recall": 0.9935583328745251,
+          "f1": 0.9958611555653661,
+          "support": 18163
+        },
+        "Theft": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 14
+        }
+      },
+      "elapsed_sec": 770.1361920833588,
+      "allow_test": true
+    }
+  ],
+  "comparators_val_only": {
+    "wp1b_multirun_mean_std": "0.9714 \u00b1 0.0109",
+    "wp3_hpo_winner_seed42": 0.9791,
+    "hpo_confirm_mean_std": "0.9689 \u00b1 0.0145",
+    "package_ensemble_hpo_mean_std": "0.9639 \u00b1 0.0185",
+    "protocol_rf_val": 0.9778,
+    "protocol_lgbm_val": 0.9818
+  },
+  "decision": "RUN_DOCUMENTED",
+  "decision_note": "Sealed multi-seed BoT TEST after explicit freeze-card lock. Production champion not overwritten. Numbers from this summary only.",
+  "note": "Do not mix these TEST numbers with val-only multirun claims without labeling. Rebuild claims package after this run."
+}

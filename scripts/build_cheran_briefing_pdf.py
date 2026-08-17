@@ -24,7 +24,10 @@ from reportlab.platypus import (
 
 ROOT = Path(__file__).resolve().parents[1]
 FIG = ROOT / "docs" / "manuscript" / "figures"
-OUT = ROOT / "docs" / "CHERAN_COLIDE_Briefing.pdf"
+# Output lands in the gitignored private/ tree: this briefing names a collaborator
+# and assigns roles, so it is emailed as an attachment rather than published on the
+# public repo. The generator stays tracked; only the rendered document is private.
+OUT = ROOT / "private" / "correspondence" / "CHERAN_COLIDE_Briefing.pdf"
 
 NAVY = colors.HexColor("#152A45")
 TEAL = colors.HexColor("#2A5F6E")
@@ -118,7 +121,7 @@ def header_footer(canvas, doc):
     canvas.setFont("Times-Bold", 8.5)
     canvas.drawString(0.7 * inch, H - 0.25 * inch, "COLIDE  ·  Briefing for Cheranrach Mahandren")
     canvas.setFont("Times-Roman", 8)
-    canvas.drawRightString(W - 0.7 * inch, H - 0.25 * inch, "First materials share  ·  15 August 2026")
+    canvas.drawRightString(W - 0.7 * inch, H - 0.25 * inch, "First materials share  ·  17 August 2026")
     canvas.setFillColor(GOLD)
     canvas.rect(0, 0, W, 0.26 * inch, fill=1, stroke=0)
     canvas.setFillColor(NAVY)
@@ -184,8 +187,13 @@ def story():
             "with Operation-Matched CUDA Acceleration",
             "Quote",
         ),
-        P("Authors / affiliations / venue are for you and Prof. Por to finalise."),
-        P("2. Current state (15 August 2026)", "H1"),
+        P(
+            "<b>Target venue:</b> <i>Future Generation Computer Systems</i> (Elsevier), to be confirmed with "
+            "Prof. Por. If that holds, the template is the Elsevier <font face='Courier'>elsarticle</font> "
+            "LaTeX class or the Elsevier Word template — worth deciding early, because it shapes how we "
+            "should set up the shared draft (§7.4). Authors and affiliations are for Prof. Por to finalise."
+        ),
+        P("2. Current state (17 August 2026)", "H1"),
         grid(
             [
                 ["Layer", "State"],
@@ -195,11 +203,26 @@ def story():
                 ["CUDA Block-3 correctness (laptop)", "Closed locally: race/align fix, sanitizers, real-weight parity."],
                 ["CUDA Block-3 latency on DICC servers", "Historical pre-fix only (Option B). No post-fix campaign."],
                 ["GitHub public repo", "Polished. Stale files kept and labeled, not deleted."],
-                ["Manuscript Markdown", "Working draft with synced numbers — feedstock for you to rewrite."],
+                ["Manuscript Markdown", "Complete draft skeleton with synced numbers — see inventory below."],
                 ["July 22 manuscript PDF", "STALE. Please ignore for writing."],
                 ["Camera-ready paper", "Not started. That is your phase."],
             ],
             [2.55 * inch, 4.2 * inch],
+        ),
+        Spacer(1, 8),
+        P("2.1 What already exists in the draft", "H2"),
+        P(
+            "So you know what you are inheriting: this is <b>not</b> a blank page. The working Markdown draft "
+            "is roughly <b>5,150 words</b> across a complete skeleton — Sections 1–9 (Introduction, Related work, "
+            "Method, Protocol, Results, Discussion, Threats to validity, Reproducibility, Conclusion) with "
+            "<b>39 subsections</b>, plus four appendices. Every results subsection is already populated with "
+            "numbers pulled from artifacts, and there are <b>9 figures</b> rendered on disk "
+            "(7 of them with vector PDF versions, so they will scale cleanly in a venue template)."
+        ),
+        P(
+            "What it needs is what you are best placed to give it: narrative, argument, related-work depth, "
+            "venue style, and a voice that reads like one author rather than a lab notebook. "
+            "The scaffolding and the evidence are done."
         ),
         P("3. The paper’s questions (locked answers)", "H1"),
         P(
@@ -358,16 +381,63 @@ def story():
             ],
             [1.0 * inch, 5.75 * inch],
         ),
+        P("7.4 One shared draft, please — not emailed versions", "H2"),
+        P(
+            "This is the one process request I would push for. Once you pick the format, let us keep the "
+            "manuscript in <b>a single live document</b> that we both edit — Overleaf if we go LaTeX, "
+            "Google Docs if we go Word. Email should carry coordination, never the manuscript itself."
+        ),
+        P(
+            "The reason is specific to this project. The invalid ToN result we had to withdraw, and the stale "
+            "0.9790 figure that lingered for weeks, both came from numbers being re-typed by hand as they moved "
+            "between documents. Two copies of a draft in two inboxes is exactly how that happens again. "
+            "With one live document, tables get copied once from "
+            "<font face='Courier'>TABLES_FROM_ARTIFACTS.md</font> and never re-keyed."
+        ),
+        P("7.5 Claim checking is a service, not a supervision", "H2"),
+        P(
+            "To be clear about how I would like the claim rules to feel: they exist so that you never have to "
+            "guess whether a number is safe. Every figure in this paper traces to a JSON artifact, and I can "
+            "check any sentence against its artifact within <b>24–48 hours</b>. There is also an automated "
+            "scan in the repo (<font face='Courier'>scripts/check_stale_claims.py</font>) that flags withdrawn "
+            "numbers and forbidden phrasings — I am happy to run it over any draft you send and return it "
+            "annotated. Flagging something as uncertain is always the right call and never a problem."
+        ),
         P("8. Access", "H1"),
         P(
             "<b>Repository (preferred):</b> https://github.com/titoatwork/COLIDE — branch <b>master</b>. "
             "Public academic repo (Academic Research license, not MIT)."
         ),
         P(
-            "<b>Optional zip</b> (~2.1 MB, writing + figures + key JSON): "
-            "COLIDE_Cheran_manuscript_pack_20260815.zip — I can re-send with this PDF."
+            "<b>Zip pack</b> (attached with this PDF, ~2 MB): "
+            "<font face='Courier'>COLIDE_Cheran_manuscript_pack_20260817.zip</font> — the working draft, all "
+            "figures, the claim and results documents, and the key result JSON. Everything you need to start "
+            "is in there, so the repository is optional depth rather than a prerequisite."
         ),
-        P("9. A note on tone", "H1"),
+        P(
+            "The repository now also carries the evidence files behind the headline numbers "
+            "(<font face='Courier'>benchmarks/results/sealed_test/</font> and the CUDA and baseline statistics), "
+            "so if you ever want to confirm a figure yourself rather than take my word for it, the artifact is there."
+        ),
+        P("9. Three questions, and a suggested first step", "H1"),
+        P("Whenever you have read this, it would help me to know:", "Body"),
+        P("1. <b>Format</b> — Elsevier <font face='Courier'>elsarticle</font> LaTeX, or the Word template?", "Item"),
+        P("2. <b>Workspace</b> — does a single shared Overleaf or Google Doc work for you (§7.4)?", "Item"),
+        P("3. <b>Timeline</b> — what does your availability look like over the next few weeks?", "Item"),
+        Spacer(1, 6),
+        P(
+            "On the writing itself, rather than starting everywhere at once, I would suggest beginning with "
+            "<b>Section 1 (Introduction)</b> and <b>Section 2 (Related work)</b>. Those are the two sections "
+            "where an outside reader adds the most and where I have the least to offer, and they carry the "
+            "fewest hard numbers — so you can build up context on the project without having to hold the "
+            "whole claim map in your head on day one. The results prose will be much easier afterwards."
+        ),
+        P(
+            "A short call whenever it suits you would also be welcome — thirty minutes would cover "
+            "far more than another round of email.",
+            "Body",
+        ),
+        P("10. A note on tone", "H1"),
         P(
             "This project went through a serious remediation: we withdrew an invalid ToN result, "
             "fixed Block-3 kernel bugs, and refused to invent a server rebench we did not run. "
@@ -379,14 +449,9 @@ def story():
             "and DICC tables whenever you need a check.",
             "Quote",
         ),
-        P("Next 48 hours (suggested)", "H2"),
-        P("1. Reply with preferred venue and Word vs LaTeX.", "Item"),
-        P("2. Clone the repo (or open the zip) and skim the seven files in §7.3.", "Item"),
-        P("3. Draft a one-page outline (sections + which figures). I will sanity-check claims.", "Item"),
-        P("4. Ignore the 22 July manuscript PDF entirely.", "Item"),
         HRFlowable(width="100%", thickness=0.8, color=NAVY, spaceAfter=8),
         P(
-            "Ibteshamul Haque  ·  FCSIT, Universiti Malaya  ·  COLIDE under Prof. Por  ·  15 August 2026. "
+            "Ibteshamul Haque  ·  FCSIT, Universiti Malaya  ·  COLIDE under Prof. Por  ·  17 August 2026. "
             "Authority chain: JSON → RESULTS_INDEX / CLAIM_MAP → manuscript MD → this briefing.",
             "Foot",
         ),
