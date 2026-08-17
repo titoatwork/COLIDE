@@ -151,6 +151,32 @@ def story():
             "<font face='Courier'>docs/CHERAN_MANUSCRIPT_HANDOFF.md</font>. "
             "Do <b>not</b> use <font face='Courier'>CAD_CBA_v1_MANUSCRIPT.pdf</font> dated 22 July — it is stale."
         ),
+        P("How to read this document", "H2"),
+        P(
+            "Not all of it needs your attention today. It is built in two halves:"
+        ),
+        grid(
+            [
+                ["Part", "When to read"],
+                ["§1–§3 · project, state, argument",
+                 "<b>Now.</b> Fifteen minutes. This is the orientation half — what the work is, "
+                 "what it argues, and what is already settled."],
+                ["§4–§6 · numbers, figures, evidence limits",
+                 "<b>Reference.</b> Skim now so you know it exists; come back to it when you are "
+                 "actually drafting a sentence with a number in it."],
+                ["§7–§10 · working together",
+                 "<b>Now.</b> Short. How I suggest we divide the work and keep one source of truth."],
+                ["Glossary (back page)",
+                 "<b>When a term stops making sense.</b> This project accumulated a lot of private "
+                 "shorthand; the glossary decodes it."],
+            ],
+            [2.35 * inch, 4.4 * inch],
+        ),
+        Spacer(1, 6),
+        P(
+            "If you only take one thing from this document, take §3 — the argument. Everything else "
+            "exists to support it or to keep it honest."
+        ),
         P("Working relationship", "H2"),
         grid(
             [
@@ -224,9 +250,63 @@ def story():
             "venue style, and a voice that reads like one author rather than a lab notebook. "
             "The scaffolding and the evidence are done."
         ),
-        P("3. The paper’s questions (locked answers)", "H1"),
+        P("3. The argument (and the questions behind it)", "H1"),
         P(
-            "These research questions are already answered by artifacts. Your job is to write them clearly, "
+            "This is the section I would most like you to have in your head before writing anything. "
+            "Stripped of jargon, the paper argues six things:"
+        ),
+        P(
+            "<b>One.</b> On IoT flow data, tree ensembles are genuinely hard to beat on raw accuracy, "
+            "and a lot of deep-learning IDS papers obscure that by comparing against weak baselines or "
+            "by tuning on the test set. We do not do that. We ran the classical models on the "
+            "<i>same</i> splits under the same protocol, and we report that LightGBM still leads on "
+            "pure F1 (0.9818 val) while our model reaches 0.9780 ± 0.0033 on a sealed multi-seed test.",
+            "Item",
+        ),
+        P(
+            "<b>Two.</b> So accuracy alone is not our claim. The claim is that once you also care about "
+            "latency, energy, memory and minority-class recall — which anyone deploying at the edge "
+            "does — a distilled deep model becomes a defensible choice, and we can show the trade-off "
+            "with real measurements rather than assertion.",
+            "Item",
+        ),
+        P(
+            "<b>Three.</b> The detection result comes from a <i>frozen package</i>, not a single lucky "
+            "trick. Ensemble distillation, focal loss and tuned hyperparameters together produce the "
+            "result; the ablation ladder shows that attention on its own actually <i>hurts</i>. "
+            "Negative results are part of the contribution, not something to hide.",
+            "Item",
+        ),
+        P(
+            "<b>Four.</b> On the systems side we hand-wrote CUDA kernels for the model's inference "
+            "blocks and compared them against the matching PyTorch operations — operation against "
+            "operation, never partial-against-whole. That discipline is unusual in this literature and "
+            "is itself a contribution, because it is precisely where acceleration papers tend to "
+            "overstate.",
+            "Item",
+        ),
+        P(
+            "<b>Five.</b> We measured on three GPUs across multiple sessions, and we report what we "
+            "found even when it is unflattering — including that PyTorch beats our own kernel on one "
+            "of the four blocks.",
+            "Item",
+        ),
+        P(
+            "<b>Six.</b> Where the evidence ran out, we stopped rather than extrapolated. We withdrew "
+            "a ToN-IoT result after finding label leakage in it, and we declined to claim a server "
+            "benchmark we did not actually re-run. Both decisions cost us stronger-sounding numbers.",
+            "Item",
+        ),
+        Spacer(1, 4),
+        P(
+            "<b>The through-line:</b> this is a paper about <i>measuring honestly</i> in a subfield "
+            "where measurement is often careless. That is the sentence I would like the introduction "
+            "to earn. The restraint is not a weakness in the results section to be apologised for — "
+            "it is the argument."
+        ),
+        P("3.1 The same argument, stated as research questions", "H2"),
+        P(
+            "These are already answered by artifacts. Your job is to write them clearly, "
             "not to reopen the experiments unless something is scientifically wrong."
         ),
         grid(
@@ -292,8 +372,29 @@ def story():
         ),
         P("5. Figures (from locked artifacts)", "H1"),
         P(
-            "These are the current figures on disk. Captions below are honest. "
-            "You may redraw for venue style; do not change the underlying numbers."
+            "Nine figures are rendered and current, seven of them with vector PDF versions that will "
+            "scale cleanly in a venue template. You may redraw any of them for style — please keep the "
+            "underlying numbers. Where they belong, and which ones I would fight to keep if space gets tight:"
+        ),
+        grid(
+            [
+                ["Figure", "Section", "Priority"],
+                ["Architecture schematic", "§3 Method", "Essential"],
+                ["Detection dual bars", "§5.1–5.2 Detection results", "Essential"],
+                ["Sealed-test confusion matrix", "§5.1 Sealed multi-seed test", "Essential"],
+                ["Ablation ladder", "§5.4 Ablations", "Essential — carries the negative result"],
+                ["WP6b systems ranges", "§5.9 Latency / energy / VRAM", "Essential"],
+                ["ToN per-class (CNN)", "§5.12 Multi-dataset", "Strong — shows the mitm weakness honestly"],
+                ["Pareto F1–latency", "§5.8 Multi-objective", "Useful; could merge with F1–params"],
+                ["Pareto F1–params", "§5.8 Multi-objective", "Useful; could merge with F1–latency"],
+                ["Class distribution", "§4 Protocol / dataset", "Cut first if space is tight"],
+            ],
+            [2.3 * inch, 2.55 * inch, 1.9 * inch],
+        ),
+        Spacer(1, 8),
+        P(
+            "The six most important are reproduced below with honest captions, so you can judge them "
+            "without opening the repository."
         ),
         P("5.1 Architecture (schematic)", "H2"),
     ]
@@ -337,14 +438,40 @@ def story():
     )
     x += [
         PageBreak(),
-        P("6. Hard non-claims (please keep these in the paper)", "H1"),
-        P("• We do not claim pure-F1 supremacy over protocol LightGBM.", "Item"),
-        P("• We do not claim full custom-CUDA versus full V3 PyTorch speedup or parity.", "Item"),
-        P("• We do not claim DICC Block-3 latency as post-fix, or that CUDA B3 beats cuDNN on servers.", "Item"),
-        P("• We do not claim production LLM explainability.", "Item"),
-        P("• We do not cite ToN “clean” 0.9526 / 0.9851 / +15.4% as valid.", "Item"),
-        P("• We do not call ~25,899 f/s a live streaming SLA, or energy a certified metrology result.", "Item"),
-        P("• We do not treat the 32 latent steps as observed packet chronology (pseudo-sequence).", "Item"),
+        P("6. Where the evidence stops", "H1"),
+        P(
+            "Every result has an edge past which our data does not reach. Rather than a list of "
+            "prohibitions, here is what we <i>can</i> say next to what we cannot — the left column is "
+            "yours to use freely, and the right column marks where a sentence would outrun its evidence. "
+            "Most of these limits exist because we chose not to run a weaker experiment and call it a "
+            "stronger one."
+        ),
+        grid(
+            [
+                ["What the evidence supports", "Where it stops"],
+                ["Competitive detection under a sealed, protocol-fair test",
+                 "Not pure-F1 supremacy — LightGBM leads on val F1"],
+                ["Custom CUDA is faster than the matching PyTorch operations on Blocks 1, 2 and 4",
+                 "Not a full-model speedup: the kernels cover four blocks, the model has more"],
+                ["Block-3 server timings as historical, pre-fix wall-clock",
+                 "Not a post-fix rebench, and not “our kernel beats cuDNN on servers”"],
+                ["Alert dispatch measured at 16.60 µs p99",
+                 "Not validated free-form explanation quality — do not title the paper as explainable"],
+                ["ToN-IoT under the corrected leakage-safe protocol (0.8075 / 0.9626)",
+                 "Not the withdrawn “clean” 0.9526 / 0.9851 numbers — those contained label leakage"],
+                ["~25,899 flows/s as bulk batched throughput; energy as exploratory board power",
+                 "Not a streaming service-level guarantee, and not certified power metrology"],
+                ["A latent 32-step reshape that the recurrent layers operate over",
+                 "Not observed packet chronology — the sequence is internal, not temporal"],
+            ],
+            [3.3 * inch, 3.45 * inch],
+        ),
+        Spacer(1, 6),
+        P(
+            "If a sentence you want to write sits in the right-hand column, that is worth a message to "
+            "me rather than a compromise on your side — sometimes there is a nearby claim that is both "
+            "true and strong enough, and I would rather find it with you than have you write around it."
+        ),
         P("7. How I suggest we work", "H1"),
         P("7.1 Suggested division", "H2"),
         grid(
@@ -403,6 +530,30 @@ def story():
             "numbers and forbidden phrasings — I am happy to run it over any draft you send and return it "
             "annotated. Flagging something as uncertain is always the right call and never a problem."
         ),
+        P("7.6 A rhythm, if it suits you", "H2"),
+        P(
+            "Entirely open to change once I know your availability — this is a proposal, not a schedule "
+            "you are being handed:"
+        ),
+        grid(
+            [
+                ["Stage", "Focus", "My side"],
+                ["Week 1", "Orientation; draft §1 Introduction and §2 Related work",
+                 "Answer anything; supply citations I know of"],
+                ["Weeks 2–3", "Results prose (§5) against the locked tables",
+                 "Fact-check each section within 24–48 h"],
+                ["Week 4", "Discussion, limitations, conclusion",
+                 "Limitations language; make sure restraint reads as strength"],
+                ["Week 5", "Full pass, formatting, figure placement, PDF build",
+                 "Regenerate any figure at venue resolution"],
+            ],
+            [0.95 * inch, 3.3 * inch, 2.5 * inch],
+        ),
+        Spacer(1, 6),
+        P(
+            "Section by section is deliberate. It means you get feedback while a section is still warm, "
+            "rather than a long list of corrections at the end — which is demoralising and much slower."
+        ),
         P("8. Access", "H1"),
         P(
             "<b>Repository (preferred):</b> https://github.com/titoatwork/COLIDE — branch <b>master</b>. "
@@ -448,6 +599,74 @@ def story():
             "Thank you for taking the manuscript lead. I will stay available for numbers, CUDA language, "
             "and DICC tables whenever you need a check.",
             "Quote",
+        ),
+        PageBreak(),
+        P("Glossary — the shorthand in this project", "H1"),
+        P(
+            "This project accumulated a lot of private vocabulary over a year, and it appears "
+            "throughout the repository without explanation. Nothing here is standard terminology, so "
+            "please do not feel you should already know it."
+        ),
+        grid(
+            [
+                ["Term", "What it means"],
+                ["CAD-CBA-v1",
+                 "The frozen method package: CNN–BiLSTM–Attention student, ensemble distillation, "
+                 "focal loss, tuned hyperparameters. The thing the paper evaluates."],
+                ["Champion",
+                 "The one saved model file all headline results are computed from, identified by an "
+                 "MD5 checksum so it cannot be silently swapped."],
+                ["Sealed test / freeze lock",
+                 "The test set was untouched during development; the model was frozen first, then "
+                 "evaluated once across five seeds. This is what makes the headline number credible."],
+                ["Protocol-fair",
+                 "Baselines trained and evaluated on the identical splits and preprocessing as our "
+                 "model — as opposed to quoting a number from someone else's pipeline."],
+                ["Dual bar",
+                 "Showing our protocol result and the published literature result side by side, "
+                 "labelled as different pipelines, instead of merging them into one comparison."],
+                ["Block 1 / 2 / 3 / 4 (B1…B4)",
+                 "The four fused stages of the model's inference path that the CUDA kernels "
+                 "reimplement. B3 is the BiLSTM — the hard one, and the one PyTorch wins."],
+                ["Option A",
+                 "Our self-imposed rule: compare CUDA kernels only against the matching PyTorch "
+                 "operations, never a partial CUDA pipeline against the whole model."],
+                ["Option B",
+                 "The decision, taken 15 August, to report DICC Block-3 timings as historical "
+                 "pre-fix numbers rather than re-run the server campaign and claim it as current."],
+                ["pre_fix / post_fix",
+                 "Before and after a genuine data race was fixed in the Block-3 kernel. Server "
+                 "timings are pre_fix; local correctness checks are post_fix. They are not interchangeable."],
+                ["DICC",
+                 "Data-Intensive Computing Centre at Universiti Malaya — the cluster where the "
+                 "V100S and A100 measurements were taken."],
+                ["KD (knowledge distillation)",
+                 "Training the neural model to imitate the soft predictions of tree ensembles rather "
+                 "than only the hard labels."],
+                ["CLAIM-PIPE-001",
+                 "Our internal identifier for the rule against ratioing an incomplete CUDA block sum "
+                 "against a full-model latency. You will see it cited in the repository."],
+                ["DATA-TON-001",
+                 "The identifier for the ToN-IoT label-leakage incident and the withdrawal of the "
+                 "affected results."],
+            ],
+            [1.55 * inch, 5.2 * inch],
+        ),
+        P("Practicalities", "H1"),
+        grid(
+            [
+                ["", ""],
+                ["Reaching me", "Email is best. I read it daily and will not leave you waiting."],
+                ["Time zone", "I am currently in India (IST, UTC+5:30) — roughly 2.5 hours behind "
+                              "Malaysia, so our working days overlap almost entirely."],
+                ["Turnaround", "Number and claim checks: 24–48 hours. Anything urgent, say so and "
+                               "it moves to the front."],
+                ["Calls", "Happy to fit your schedule, including evenings your time."],
+                ["If I go quiet", "Chase me. It will mean something broke, not that the question "
+                                  "was unwelcome."],
+            ],
+            [1.35 * inch, 5.4 * inch],
+            header=False,
         ),
         HRFlowable(width="100%", thickness=0.8, color=NAVY, spaceAfter=8),
         P(
