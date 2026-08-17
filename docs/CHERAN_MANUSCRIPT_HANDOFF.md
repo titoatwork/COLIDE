@@ -5,7 +5,7 @@
 **Pre-manuscript:** **CLOSED** — see `docs/PRE_MANUSCRIPT_INDEX.md`.  
 **Role for this pack:** frozen evidence + a *working-draft* MD (not a finished paper) so **you can lead paper writing**.  
 **Do not use** `docs/manuscript/CAD_CBA_v1_MANUSCRIPT.pdf` (22 Jul) as current — it is stale vs the Markdown.  
-**Supervisor:** Prof. Por (updated on progress as you prefer).
+**Supervisor:** Prof. Por Lip Yee.
 
 ---
 
@@ -142,7 +142,7 @@ When unsure: open `docs/CLAIM_MAP_PREWRITE.md` or ask Ibteshamul before drafting
 | Unify MD → Word/LaTeX/PDF for venue | Run parity / regenerate a figure if needed |
 | Flag any claim that feels overstrong | Confirm against gate JSON within 24–48 h |
 
-Prof. Por: high-level updates only, as he directed.
+Prof. Por supervises; reporting cadence to be agreed with him.
 
 ---
 
